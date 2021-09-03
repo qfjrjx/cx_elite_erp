@@ -8,10 +8,10 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
  * @author MrBird
  */
 @FebsShiro
-public class FebsShiroApplication {
+public class CxEliteErpShiroApplication {
 
     public static void main(String[] args) {
-        new SpringApplicationBuilder(FebsShiroApplication.class)
+        new SpringApplicationBuilder(CxEliteErpShiroApplication.class)
                 .web(WebApplicationType.SERVLET)
                 .run(args);
     }
