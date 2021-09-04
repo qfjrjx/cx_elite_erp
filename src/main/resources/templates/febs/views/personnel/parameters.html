@@ -1,0 +1,249 @@
+<style>
+    #febs-personnelParameters xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #febs-personnelParameters xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="febs-personnelParameters" lay-title="人事参数">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="parameter-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md10">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label layui-form-label-sm">参数名称</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="parameterName" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label layui-form-label-sm">参数类别</label>
+                                        <div class="layui-input-inline">
+                                            <select name="parameterCategory">
+                                                <option value=""></option>
+                                                <option value="1">岗位</option>
+                                                <option value="2">技术级别</option>
+                                                <option value="3">加班类型</option>
+                                                <option value="4">请假类型</option>
+                                                <option value="5">员工学历</option>
+                                                <option value="6">职务</option>
+                                                <option value="7">人事</option>
+                                                <option value="8">状态</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label layui-form-label-sm">状态</label>
+                                        <div class="layui-input-inline">
+                                            <select name="parameterState">
+                                                <option value=""></option>
+                                                <option value="1">启用</option>
+                                                <option value="2">禁用</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="layui-col-md2 layui-col-sm12 layui-col-xs12 table-action-area">
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                                    <i class="layui-icon">&#xe848;</i>
+                                </div>
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain table-action" id="reset">
+                                    <i class="layui-icon">&#xe79b;</i>
+                                </div>
+                                <div class="layui-btn layui-btn-sm layui-btn-primary table-action action-more"
+                                     shiro:hasAnyPermissions="personnelParameters:add,personnelParameters:update,personnelParameters:export">
+                                    <i class="layui-icon">&#xe875;</i>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="parameterTable" lay-data="{id: 'parameterTable'}"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="parameter-status">
+    {{#
+    let parameterState = {
+    1: {title: '启用', color: 'green'},
+    2: {title: '禁用', color: 'volcano'}
+    }[d.parameterState];
+    }}
+    <span class="layui-badge febs-bg-{{parameterState.color}}">{{ parameterState.title }}</span>
+</script>
+<script type="text/html" id="personnelParameters-parameterCategory">
+    {{#
+    let parameterCategory = {
+    1: {title: '岗位'},
+    2: {title: '技术级别'},
+    3: {title: '加班类型'},
+    4: {title: '请假类型'},
+    5: {title: '员工学历'},
+    6: {title: '职务'},
+    7: {title: '人事'},
+    8: {title: '状态'}
+    }[d.parameterCategory];
+    }}
+    <span>{{ parameterCategory.title }}</span>
+</script>
+<script type="text/html" id="parameter-option">
+    <span shiro:lacksPermission="personnelParameters:view,personnelParameters:update,personnelParameters:delete">
+        <span class="layui-badge-dot febs-bg-orange"></span> 无权限
+    </span>
+    <a lay-event="edit" shiro:hasPermission="personnelParameters:update"><i
+            class="layui-icon febs-edit-area febs-blue">&#xe7a4;</i></a>
+    <a lay-event="del" shiro:hasPermission="personnelParameters:delete"><i class="layui-icon febs-edit-area febs-red">&#xe7f9;</i></a>
+</script>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+            laydate = layui.laydate,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            dropdownMenu = layui.dropdownMenu,
+            $view = $('#febs-personnelParameters'),
+            $query = $view.find('#query'),
+            $reset = $view.find('#reset'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'createTime', type: null},
+            tableIns;
+
+        form.render();
+
+        initTable();
+
+
+
+        dropdownMenu.render({
+            elem: $view.find('.action-more'),
+            click: function (name, elem, event) {
+                let checkStatus = table.checkStatus('parameterTable');
+                if (name === 'add') {
+                    febs.modal.open('新增人事参数', 'personnel/personnelParameters/add', {
+                        btn: ['提交', '重置'],
+                        area: $(window).width() <= 750 ? '95%' : '50%',
+                        yes: function (index, layero) {
+                            $('#personnelParameters-add').find('#submit').trigger('click');
+                        },
+                        btn2: function () {
+                            $('#personnelParameters-add').find('#reset').trigger('click');
+                            return false;
+                        }
+                    });
+                }
+                if (name === 'delete') {
+                    if (!checkStatus.data.length) {
+                        let checkStatus = table.checkStatus('loginLogTable');
+                        febs.alert.warn('请选择需要删除的数据');
+                    } else {
+                        febs.modal.confirm('删除参数信息', '确定删除？', function () {
+                            let ids = [];
+                            layui.each(checkStatus.data, function (key, item) {
+                                ids.push(item.id)
+                            });
+                            deletePersonnelParameters(ids.join(','));
+                        });
+                    }
+                }
+            },
+            options: [{
+                name: 'add',
+                title: '新增',
+                perms: 'personnelParameters:add'
+            }, {
+                name: 'delete',
+                title: '删除',
+                perms: 'personnelParameters:delete'
+            }]
+        });
+
+        table.on('tool(parameterTable)', function (obj) {
+            let data = obj.data,
+                layEvent = obj.event;
+            if (layEvent === 'del') {
+                febs.modal.confirm('删除参数信息', '确定删除？', function () {
+                    deletePersonnelParameters(data.id);
+                });
+            }
+            if (layEvent === 'edit') {
+                febs.modal.open('修改参数', 'personnel/personnelParameters/update/' + data.id, {
+                    area: $(window).width() <= 750 ? '90%' : '50%',
+                    btn: ['提交', '取消'],
+                    yes: function (index, layero) {
+                        $('#personnelParameters-update').find('#submit').trigger('click');
+                    },
+                    btn2: function () {
+                        layer.closeAll();
+                    }
+                });
+            }
+        });
+
+        table.on('sort(parameterTable)', function (obj) {
+            alert(1)
+            sortObject = obj;
+            tableIns.reload({
+                initSort: obj,
+                where: $.extend(getQueryParams(), {
+                    field: obj.field,
+                    order: obj.type
+                })
+            });
+        });
+
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        $reset.on('click', function () {
+            $searchForm[0].reset();
+            tableIns.reload({where: getQueryParams(), page: {curr: 1}});
+        });
+
+        function initTable() {
+            tableIns = febs.table.init({
+                elem: $view.find('table'),
+                id: 'parameterTable',
+                url: ctx + 'personnelParameters/list',
+                cols: [[
+                    {type: 'checkbox'},
+                    {field:'number',title:'序列号',align:'center',width:100,templet:function (d) {
+                                        return d.LAY_INDEX;}},
+                    {field: 'parameterValue', title: '参数值', minWidth: 100},
+                    {field: 'parameterName', title: '参数名称', minWidth: 100},
+                    {title: '参数类别', templet: '#personnelParameters-parameterCategory'},
+                    {field: 'parameterSort', title: '排序'},
+                    {title: '状态', templet: '#parameter-status'},
+                    {field: 'parameterRemarks', title: '备注'},
+                    {field: 'createTime', title: '创建时间', minWidth: 180, sort: true},
+                    {title: '操作', toolbar: '#parameter-option', minWidth: 140}
+                ]]
+            });
+        }
+
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+
+        function deletePersonnelParameters(ids) {
+            febs.get(ctx + 'personnelParameters/delete/' + ids, null, function () {
+                febs.alert.success('删除参数成功');
+                $query.click();
+            });
+        }
+    })
+</script>
