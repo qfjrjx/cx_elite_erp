@@ -15,7 +15,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * @author MrBird
+ * @author qiufeng
  */
 @Data
 @TableName("t_menu")

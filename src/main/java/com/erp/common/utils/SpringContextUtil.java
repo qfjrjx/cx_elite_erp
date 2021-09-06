@@ -10,7 +10,7 @@ import javax.annotation.Nonnull;
 /**
  * Spring Context 工具类
  *
- * @author MrBird
+ * @author qiufeng
  */
 @Component
 public class SpringContextUtil implements ApplicationContextAware {

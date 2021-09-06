@@ -15,7 +15,7 @@ import java.util.Locale;
 /**
  * 时间工具类
  *
- * @author MrBird
+ * @author qiufeng
  */
 public abstract class DateUtil {
 

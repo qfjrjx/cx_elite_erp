@@ -3,7 +3,7 @@ package com.erp.common.utils;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * @author MrBird
+ * @author qiufeng
  */
 public abstract class IpUtil {
 

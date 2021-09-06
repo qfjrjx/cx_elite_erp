@@ -1,7 +1,7 @@
 package com.erp.common.entity;
 
 /**
- * @author MrBird
+ * @author qiufeng
  */
 public enum LimitType {
     /**

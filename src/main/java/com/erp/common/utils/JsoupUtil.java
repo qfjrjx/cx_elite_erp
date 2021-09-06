@@ -8,7 +8,7 @@ import org.jsoup.safety.Whitelist;
 /**
  * Xss过滤工具
  *
- * @author MrBird
+ * @author qiufeng
  */
 public abstract class JsoupUtil {
 

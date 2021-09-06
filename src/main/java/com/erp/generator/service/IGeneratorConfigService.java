@@ -4,7 +4,7 @@ import com.erp.generator.entity.GeneratorConfig;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
- * @author MrBird
+ * @author qiufeng
  */
 public interface IGeneratorConfigService extends IService<GeneratorConfig> {
 

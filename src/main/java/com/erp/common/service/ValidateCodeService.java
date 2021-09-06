@@ -27,7 +27,7 @@ import java.time.LocalDateTime;
  * 验证码服务，
  * 如果febs.enable-redis-cache=true，则存redis，否则存session
  *
- * @author MrBird
+ * @author qiufeng
  */
 @Service
 @RequiredArgsConstructor

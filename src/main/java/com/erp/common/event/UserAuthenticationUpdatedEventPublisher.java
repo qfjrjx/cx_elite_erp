@@ -15,7 +15,7 @@ import java.util.Set;
 /**
  * {@link UserAuthenticationUpdatedEvent}事件发布器
  *
- * @author MrBird
+ * @author qiufeng
  */
 @Slf4j
 @Getter

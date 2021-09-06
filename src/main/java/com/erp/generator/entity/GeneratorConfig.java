@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * @author MrBird
+ * @author qiufeng
  */
 @Data
 @TableName("t_generator_config")

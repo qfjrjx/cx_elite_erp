@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * @author MrBird
+ * @author qiufeng
  */
 @Configuration
 public class FebsMonitorConfigure {

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.List;
 
 /**
- * @author MrBird
+ * @author qiufeng
  */
 @Controller("monitorView")
 @RequestMapping(FebsConstant.VIEW_PREFIX + "monitor")

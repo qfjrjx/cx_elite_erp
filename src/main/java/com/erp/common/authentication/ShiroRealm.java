@@ -27,7 +27,7 @@ import java.util.List;
 /**
  * 自定义实现 ShiroRealm，包含认证和授权两大模块
  *
- * @author MrBird
+ * @author qiufeng
  */
 @Slf4j
 @Component

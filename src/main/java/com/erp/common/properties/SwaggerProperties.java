@@ -3,7 +3,7 @@ package com.erp.common.properties;
 import lombok.Data;
 
 /**
- * @author MrBird
+ * @author qiufeng
  */
 @Data
 public class SwaggerProperties {

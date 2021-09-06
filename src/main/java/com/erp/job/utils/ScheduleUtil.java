@@ -7,7 +7,7 @@ import org.quartz.*;
 /**
  * 定时任务工具类
  *
- * @author MrBird
+ * @author qiufeng
  */
 @Slf4j
 public abstract class ScheduleUtil {

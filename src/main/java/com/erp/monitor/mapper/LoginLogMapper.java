@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author MrBird
+ * @author qiufeng
  */
 @Mapper
 public interface LoginLogMapper extends BaseMapper<LoginLog> {

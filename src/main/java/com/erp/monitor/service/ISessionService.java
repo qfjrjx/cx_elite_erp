@@ -6,7 +6,7 @@ import org.apache.shiro.subject.SimplePrincipalCollection;
 import java.util.List;
 
 /**
- * @author MrBird
+ * @author qiufeng
  */
 public interface ISessionService {
 

@@ -11,7 +11,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 /**
- * @author MrBird
+ * @author qiufeng
  */
 @Mapper
 public interface GeneratorMapper {

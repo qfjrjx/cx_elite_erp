@@ -17,7 +17,7 @@ import java.util.Set;
 /**
  * {@link UserAuthenticationUpdatedEvent}事件监听器
  *
- * @author MrBird
+ * @author qiufeng
  */
 @Slf4j
 @Listener

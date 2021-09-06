@@ -3,7 +3,7 @@ package com.erp.common.exception;
 /**
  * 代码生成异常
  *
- * @author MrBird
+ * @author qiufeng
  */
 public class GeneratorException extends FebsException {
 

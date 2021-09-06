@@ -21,7 +21,7 @@ import java.util.Properties;
 /**
  * SQL拦截器，用于数据脱敏
  *
- * @author MrBird
+ * @author qiufeng
  */
 @Data
 @Intercepts({

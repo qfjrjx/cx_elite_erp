@@ -21,7 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * @author MrBird
+ * @author qiufeng
  */
 @Controller("systemView")
 @RequiredArgsConstructor

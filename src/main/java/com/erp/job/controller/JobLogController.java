@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 
 /**
- * @author MrBird
+ * @author qiufeng
  */
 @Slf4j
 @Validated

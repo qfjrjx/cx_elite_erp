@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * @author MrBird
+ * @author qiufeng
  */
 public interface IUserRoleService extends IService<UserRole> {
 

@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.net.URI;
 
 /**
- * @author MrBird
+ * @author qiufeng
  */
 @Data
 public class FebsHttpTrace implements Serializable {

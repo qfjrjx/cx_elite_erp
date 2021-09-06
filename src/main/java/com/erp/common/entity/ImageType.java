@@ -3,7 +3,7 @@ package com.erp.common.entity;
 /**
  * 图片类型常量类
  *
- * @author MrBird
+ * @author qiufeng
  */
 public interface ImageType {
 

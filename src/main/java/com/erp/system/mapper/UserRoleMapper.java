@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
- * @author MrBird
+ * @author qiufeng
  */
 @Mapper
 public interface UserRoleMapper extends BaseMapper<UserRole> {

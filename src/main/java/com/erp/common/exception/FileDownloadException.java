@@ -3,7 +3,7 @@ package com.erp.common.exception;
 /**
  * 文件下载异常
  *
- * @author MrBird
+ * @author qiufeng
  */
 public class FileDownloadException extends FebsException {
     private static final long serialVersionUID = -4353976687870027960L;

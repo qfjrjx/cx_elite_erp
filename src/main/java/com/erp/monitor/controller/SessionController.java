@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * @author MrBird
+ * @author qiufeng
  */
 @RestController
 @RequestMapping("session")

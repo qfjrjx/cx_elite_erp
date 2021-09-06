@@ -29,7 +29,7 @@ import java.util.Properties;
 /**
  * SQL拦截器，用于动态注入数据权限SQL
  *
- * @author MrBird
+ * @author qiufeng
  */
 @Slf4j
 @Intercepts({@Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})})

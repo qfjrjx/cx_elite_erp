@@ -20,7 +20,7 @@ import java.util.Date;
 import java.util.Set;
 
 /**
- * @author MrBird
+ * @author qiufeng
  */
 @Data
 @TableName("t_user")

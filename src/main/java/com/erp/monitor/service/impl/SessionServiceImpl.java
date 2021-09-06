@@ -24,7 +24,7 @@ import static com.erp.monitor.entity.ActiveUser.OFFLINE;
 import static com.erp.monitor.entity.ActiveUser.ONLINE;
 
 /**
- * @author MrBird
+ * @author qiufeng
  */
 @Service
 @RequiredArgsConstructor

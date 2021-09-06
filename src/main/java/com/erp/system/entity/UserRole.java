@@ -7,7 +7,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * @author MrBird
+ * @author qiufeng
  */
 @Data
 @TableName("t_user_role")

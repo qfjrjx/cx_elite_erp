@@ -27,7 +27,7 @@ import java.lang.reflect.Method;
 /**
  * 基于Redis的接口限流，如果未开启Redis，则该功能不生效
  *
- * @author MrBird
+ * @author qiufeng
  */
 @Slf4j
 @Aspect

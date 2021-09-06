@@ -5,7 +5,7 @@ import com.erp.common.entity.Strings;
 import java.lang.annotation.*;
 
 /**
- * @author MrBird
+ * @author qiufeng
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

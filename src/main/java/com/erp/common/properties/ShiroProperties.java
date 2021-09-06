@@ -7,7 +7,7 @@ import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 
 /**
- * @author MrBird
+ * @author qiufeng
  */
 @Data
 public class ShiroProperties {

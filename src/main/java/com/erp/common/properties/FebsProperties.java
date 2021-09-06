@@ -5,7 +5,7 @@ import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * @author MrBird
+ * @author qiufeng
  */
 @Data
 @SpringBootConfiguration(proxyBeanMethods = false)

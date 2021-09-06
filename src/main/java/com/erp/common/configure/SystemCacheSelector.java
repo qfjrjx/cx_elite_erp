@@ -17,7 +17,7 @@ import java.util.Properties;
 /**
  * 如果未开启Redis缓存，则排除Redis相关Bean
  *
- * @author MrBird
+ * @author qiufeng
  */
 @Configuration(proxyBeanMethods = false)
 public class SystemCacheSelector implements BeanDefinitionRegistryPostProcessor {

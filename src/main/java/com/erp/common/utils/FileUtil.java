@@ -16,7 +16,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 /**
- * @author MrBird
+ * @author qiufeng
  */
 @Slf4j
 public abstract class FileUtil {

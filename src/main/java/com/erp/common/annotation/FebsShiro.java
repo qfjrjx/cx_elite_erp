@@ -13,7 +13,7 @@ import javax.annotation.meta.TypeQualifierNickname;
 import java.lang.annotation.*;
 
 /**
- * @author MrBird
+ * @author qiufeng
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)

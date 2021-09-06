@@ -26,7 +26,7 @@ import org.springframework.lang.Nullable;
 /**
  * Shiro 配置类
  *
- * @author MrBird
+ * @author qiufeng
  */
 @RequiredArgsConstructor
 @Configuration(proxyBeanMethods = false)

@@ -3,7 +3,7 @@ package com.erp.common.exception;
 /**
  * 限流异常
  *
- * @author MrBird
+ * @author qiufeng
  */
 public class LimitAccessException extends FebsException {
 

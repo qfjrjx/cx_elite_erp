@@ -7,7 +7,7 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.lang.NonNull;
 
 /**
- * @author MrBird
+ * @author qiufeng
  */
 public class OnRedisCacheCondition implements Condition {
 

@@ -3,7 +3,7 @@ package com.erp.common.entity;
 import lombok.Getter;
 
 /**
- * @author MrBird
+ * @author qiufeng
  */
 @Getter
 public enum DesensitizationType {

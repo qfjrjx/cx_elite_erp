@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.scheduling.annotation.Async;
 
 /**
- * @author MrBird
+ * @author qiufeng
  */
 public interface IUserService extends IService<User> {
 

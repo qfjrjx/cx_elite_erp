@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 
 /**
- * @author MrBird
+ * @author qiufeng
  */
 @Slf4j
 @RestController

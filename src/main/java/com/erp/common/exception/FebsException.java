@@ -3,7 +3,7 @@ package com.erp.common.exception;
 /**
  * FEBS系统内部异常
  *
- * @author MrBird
+ * @author qiufeng
  */
 public class FebsException extends RuntimeException {
 

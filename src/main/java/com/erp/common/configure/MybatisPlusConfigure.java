@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 
 /**
- * @author MrBird
+ * @author qiufeng
  */
 @MapperScan("com.erp.*.mapper")
 @Configuration(proxyBeanMethods = false)

@@ -14,7 +14,7 @@ import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 /**
- * @author MrBird
+ * @author qiufeng
  */
 @ConditionOnRedisCache
 @Configuration(proxyBeanMethods = false)

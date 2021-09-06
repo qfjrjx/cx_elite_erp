@@ -3,7 +3,7 @@ package com.erp.generator.entity;
 import lombok.Data;
 
 /**
- * @author MrBird
+ * @author qiufeng
  */
 @Data
 public class Column {

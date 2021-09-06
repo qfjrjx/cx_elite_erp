@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.stream.IntStream;
 
 /**
- * @author MrBird
+ * @author qiufeng
  */
 @Slf4j
 @RestController
@@ -62,7 +62,7 @@ public class EximportController extends BaseController {
             Eximport eximport = new Eximport();
             eximport.setField1("字段1");
             eximport.setField2(i + 1);
-            eximport.setField3("mrbird" + i + "@gmail.com");
+            eximport.setField3("qiufeng" + i + "@gmail.com");
             list.add(eximport);
         });
         // 构建模板

@@ -3,7 +3,7 @@ package com.erp.common.exception;
 /**
  * Redis 连接异常
  *
- * @author MrBird
+ * @author qiufeng
  */
 public class RedisConnectException extends FebsException {
 

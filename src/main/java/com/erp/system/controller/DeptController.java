@@ -20,7 +20,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
 /**
- * @author MrBird
+ * @author qiufeng
  */
 @Slf4j
 @RestController

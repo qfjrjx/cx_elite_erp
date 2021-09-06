@@ -5,7 +5,7 @@ import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.util.ByteSource;
 
 /**
- * @author MrBird
+ * @author qiufeng
  */
 public abstract class Md5Util {
 

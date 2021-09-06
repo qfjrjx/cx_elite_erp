@@ -3,7 +3,7 @@ package com.erp.generator.entity;
 /**
  * 代码生成常量
  *
- * @author MrBird
+ * @author qiufeng
  */
 public interface GeneratorConstant {
 

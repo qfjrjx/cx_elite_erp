@@ -3,7 +3,7 @@ package com.erp.common.entity;
 /**
  * 常量
  *
- * @author MrBird
+ * @author qiufeng
  */
 public interface FebsConstant {
 

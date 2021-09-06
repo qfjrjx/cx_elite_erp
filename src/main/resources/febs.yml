@@ -1,4 +1,4 @@
-# cc.mrbird.febs.common.properties.FebsProperties
+# cc.erp.common.properties.FebsProperties
 febs:
   enable-redis-cache: false
   shiro:
@@ -18,12 +18,12 @@ febs:
     length: 4
     char-type: 2
   swagger:
-    base-package: cc.mrbird.febs
+    base-package: cc.erp
     title: FEBS Shiro API
     description: FEBS Shiro API Document.
     version: 2.0
-    author: MrBird
-    url: https://mrbird.com
+    author: qiufeng
+    url: https://qiufeng.com
     email: 1763360484@qq.com
     license: Apache 2.0
     license-url: https://www.apache.org/licenses/LICENSE-2.0.html

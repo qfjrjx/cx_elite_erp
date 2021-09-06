@@ -11,7 +11,7 @@ import java.text.ParseException;
 /**
  * Excel导出时间类型字段格式化
  *
- * @author MrBird
+ * @author qiufeng
  */
 @Slf4j
 public class TimeConverter implements WriteConverter {

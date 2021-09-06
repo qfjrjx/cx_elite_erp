@@ -3,7 +3,7 @@ package com.erp.common.entity;
 /**
  * String常量
  *
- * @author MrBird
+ * @author qiufeng
  */
 public interface Strings {
 

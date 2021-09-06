@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import java.util.HashMap;
 
 /**
- * @author MrBird
+ * @author qiufeng
  */
 public class FebsResponse extends HashMap<String, Object> {
 

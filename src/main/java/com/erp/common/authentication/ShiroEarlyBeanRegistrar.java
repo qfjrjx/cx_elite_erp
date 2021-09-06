@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  * https://github.com/spring-projects/spring-boot/issues/16097
  * https://issues.apache.org/jira/browse/SHIRO-743
  *
- * @author MrBird
+ * @author qiufeng
  */
 @Configuration(proxyBeanMethods = false)
 public class ShiroEarlyBeanRegistrar {

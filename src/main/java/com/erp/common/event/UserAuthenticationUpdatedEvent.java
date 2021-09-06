@@ -12,7 +12,7 @@ import java.util.Set;
 /**
  * 用户权限更新事件
  *
- * @author MrBird
+ * @author qiufeng
  */
 @Getter
 @Setter

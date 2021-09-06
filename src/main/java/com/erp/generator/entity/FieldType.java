@@ -1,7 +1,7 @@
 package com.erp.generator.entity;
 
 /**
- * @author MrBird
+ * @author qiufeng
  */
 public class FieldType {
 
