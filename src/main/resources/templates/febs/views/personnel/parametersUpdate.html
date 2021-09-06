@@ -94,9 +94,10 @@
 
         form.on('submit(personnelParameters-update-form-submit)', function (data) {
 
+            const b = true;
             if (febs.nativeEqual(data.field, parameters)) {
                 febs.alert.warn('数据未作任何修改！');
-                return false;
+                return true;
             }
             febs.post(ctx + 'personnelParameters/update', data.field, function () {
                 layer.closeAll();

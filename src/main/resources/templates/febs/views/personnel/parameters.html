@@ -15,9 +15,9 @@
                 <div class="layui-card-body febs-table-full">
                     <form class="layui-form layui-table-form" lay-filter="parameter-table-form">
                         <div class="layui-row">
-                            <div class="layui-col-md10">
+                            <div class="layui-col-md8">
                                 <div class="layui-form-item">
-                                    <div class="layui-inline">
+                                    <div class="layui-inline" >
                                         <label class="layui-form-label layui-form-label-sm">参数名称</label>
                                         <div class="layui-input-inline">
                                             <input type="text" name="parameterName" autocomplete="off" class="layui-input">
@@ -52,17 +52,27 @@
 
                                 </div>
                             </div>
-                            <div class="layui-col-md2 layui-col-sm12 layui-col-xs12 table-action-area">
+                            <div class="layui-col-md4 layui-col-sm12 layui-col-xs12 table-action-area">
+                                <!--搜索按钮-->
                                 <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
                                     <i class="layui-icon">&#xe848;</i>
                                 </div>
+                               <!-- 刷新表格按钮-->
                                 <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain table-action" id="reset">
                                     <i class="layui-icon">&#xe79b;</i>
                                 </div>
-                                <div class="layui-btn layui-btn-sm layui-btn-primary table-action action-more"
-                                     shiro:hasAnyPermissions="personnelParameters:add,personnelParameters:update,personnelParameters:export">
-                                    <i class="layui-icon">&#xe875;</i>
+                                <!--添加按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "shiro:hasAnyPermissions="personnelParameters:add" id="addTo">
+                                    <i class="layui-icon">&#xe78a;</i>添加
                                 </div>
+                                <!--删除按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "shiro:hasAnyPermissions="personnelParameters:delete" id="deleteTo">
+                                    <i class="layui-icon">&#xe8a1;</i>删除
+                                </div>
+                               <!-- <div class="layui-btn layui-btn-sm layui-btn-primary table-action action-more"
+                                     shiro:hasAnyPermissions="personnelParameters:add,personnelParameters:update">
+                                    <i class="layui-icon">&#xe875;</i>
+                                </div>-->
                             </div>
                         </div>
                     </form>
@@ -114,6 +124,8 @@
             dropdownMenu = layui.dropdownMenu,
             $view = $('#febs-personnelParameters'),
             $query = $view.find('#query'),
+            $addTo = $view.find('#addTo'),
+            $deleteTo = $view.find('#deleteTo'),
             $reset = $view.find('#reset'),
             $searchForm = $view.find('form'),
             sortObject = {field: 'createTime', type: null},
@@ -191,7 +203,6 @@
         });
 
         table.on('sort(parameterTable)', function (obj) {
-            alert(1)
             sortObject = obj;
             tableIns.reload({
                 initSort: obj,
@@ -210,6 +221,34 @@
         $reset.on('click', function () {
             $searchForm[0].reset();
             tableIns.reload({where: getQueryParams(), page: {curr: 1}});
+        });
+        $addTo.on('click', function () {
+            febs.modal.open('新增人事参数', 'personnel/personnelParameters/add', {
+                btn: ['提交', '重置'],
+                area: $(window).width() <= 750 ? '95%' : '50%',
+                yes: function (index, layero) {
+                    $('#personnelParameters-add').find('#submit').trigger('click');
+                },
+                btn2: function () {
+                    $('#personnelParameters-add').find('#reset').trigger('click');
+                    return false;
+                }
+            });
+        });
+        $deleteTo.on('click', function () {
+            let checkStatus = table.checkStatus('parameterTable');
+            if (!checkStatus.data.length) {
+                let checkStatus = table.checkStatus('loginLogTable');
+                febs.alert.warn('请选择需要删除的数据');
+            } else {
+                febs.modal.confirm('删除参数信息', '确定删除？', function () {
+                    let ids = [];
+                    layui.each(checkStatus.data, function (key, item) {
+                        ids.push(item.id)
+                    });
+                    deletePersonnelParameters(ids.join(','));
+                });
+            }
         });
 
         function initTable() {
@@ -245,5 +284,7 @@
                 $query.click();
             });
         }
+
     })
+
 </script>
