@@ -5,13 +5,13 @@
  Source Server Type    : MySQL
  Source Server Version : 50735
  Source Host           : localhost:3306
- Source Schema         : febs_quartz
+ Source Schema         : jrjx_quartz
 
  Target Server Type    : MySQL
  Target Server Version : 50735
  File Encoding         : 65001
 
- Date: 03/09/2021 09:13:56
+ Date: 06/09/2021 11:01:28
 */
 
 SET NAMES utf8mb4;
@@ -163,7 +163,7 @@ CREATE TABLE `qrtz_scheduler_state`  (
 -- ----------------------------
 -- Records of qrtz_scheduler_state
 -- ----------------------------
-INSERT INTO `qrtz_scheduler_state` VALUES ('FEBS_Scheduler', 'PC-20160101XPRF1630571186540', 1630580206412, 15000);
+INSERT INTO `qrtz_scheduler_state` VALUES ('FEBS_Scheduler', 'PC-20160101XPRF1630894693004', 1630897276680, 15000);
 
 -- ----------------------------
 -- Table structure for qrtz_simple_triggers
