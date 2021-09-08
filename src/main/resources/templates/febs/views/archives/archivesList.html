@@ -1,0 +1,374 @@
+<style>
+    #febs-personnelArchives xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #febs-personnelArchives xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="febs-personnelArchives" lay-title="员工档案">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="parameter-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md8">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm">工号</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="jobNumber" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm">姓名</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="userName" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label layui-form-label-sm">部门</label>
+                                        <div class="layui-input-inline" id="dept" name="departmentName">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label layui-form-label-sm">职务</label>
+                                        <div class="layui-input-inline">
+                                            <select name="dutiesId"  id="dutiesId" lay-filter="dutiesId" lay-verify="required">
+                                                <option value="">请选择</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label layui-form-label-sm">岗位</label>
+                                        <div class="layui-input-inline">
+                                            <select name="positionId"  id="positionId" lay-filter="positionId" lay-verify="required">
+                                                <option value="">请选择</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label layui-form-label-sm">状态</label>
+                                        <div class="layui-input-inline">
+                                            <select name="userState">
+                                                <option value=""></option>
+                                                <option value="1">在职</option>
+                                                <option value="2">离职</option>
+                                                <option value="2">休假</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="layui-col-md4 layui-col-sm12 layui-col-xs12 table-action-area">
+                                <!--搜索按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                                    <i class="layui-icon">&#xe848;</i>
+                                </div>
+                               <!-- 刷新表格按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain table-action" id="reset">
+                                    <i class="layui-icon">&#xe79b;</i>
+                                </div>
+                                <!--添加按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "shiro:hasAnyPermissions="personnelArchives:add" id="addTo">
+                                    <i class="layui-icon">&#xe78a;</i>添加
+                                </div>
+                                <!--删除按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "shiro:hasAnyPermissions="personnelArchives:delete" id="deleteTo">
+                                    <i class="layui-icon">&#xe8a1;</i>批量删除
+                                </div>
+                               <!-- <div class="layui-btn layui-btn-sm layui-btn-primary table-action action-more"
+                                     shiro:hasAnyPermissions="personnelArchives:add,personnelArchives:update">
+                                    <i class="layui-icon">&#xe875;</i>
+                                </div>-->
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="personnelArchivesTable" lay-data="{id: 'personnelArchivesTable'}"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/html" id="user-status">
+    {{#
+    let userState = {
+    1: {title: '在职', color: 'green'},
+    2: {title: '离职', color: '#cc0066'},
+    3: {title: '休假', color: 'volcano'}
+    }[d.userState];
+    }}
+    <span class="layui-badge febs-bg-{{userState.color}}">{{ userState.title }}</span>
+</script>
+<script type="text/html" id="parameter-option">
+    <span shiro:lacksPermission="personnelArchives:view,personnelArchives:update,personnelArchives:delete">
+        <span class="layui-badge-dot febs-bg-orange"></span> 无权限
+    </span>
+    <a lay-event="edit" shiro:hasPermission="personnelArchives:update"><i
+            class="layui-icon febs-edit-area febs-blue">&#xe7a4;</i></a>
+    <a lay-event="del" shiro:hasPermission="personnelArchives:delete"><i class="layui-icon febs-edit-area febs-red">&#xe7f9;</i></a>
+</script>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+            laydate = layui.laydate,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            dropdownMenu = layui.dropdownMenu,
+            $view = $('#febs-personnelArchives'),
+            $query = $view.find('#query'),
+            $addTo = $view.find('#addTo'),
+            $deleteTo = $view.find('#deleteTo'),
+            $reset = $view.find('#reset'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'createTime', type: null},
+            tableIns,
+            deptXmlSelect;
+
+        form.render();
+
+        initTable();
+
+
+
+        dropdownMenu.render({
+            elem: $view.find('.action-more'),
+            click: function (name, elem, event) {
+                let checkStatus = table.checkStatus('personnelArchivesTable');
+                if (name === 'add') {
+                    febs.modal.open('新增人事参数', 'personnel/personnelArchives/add', {
+                        btn: ['提交', '重置'],
+                        area: $(window).width() <= 750 ? '95%' : '50%',
+                        yes: function (index, layero) {
+                            $('#personnelArchives-add').find('#submit').trigger('click');
+                        },
+                        btn2: function () {
+                            $('#personnelArchives-add').find('#reset').trigger('click');
+                            return false;
+                        }
+                    });
+                }
+                if (name === 'delete') {
+                    if (!checkStatus.data.length) {
+                        let checkStatus = table.checkStatus('loginLogTable');
+                        febs.alert.warn('请选择需要删除的数据');
+                    } else {
+                        febs.modal.confirm('删除参数信息', '确定删除？', function () {
+                            let ids = [];
+                            layui.each(checkStatus.data, function (key, item) {
+                                ids.push(item.id)
+                            });
+                            deletepersonnelArchives(ids.join(','));
+                        });
+                    }
+                }
+            },
+            options: [{
+                name: 'add',
+                title: '新增',
+                perms: 'personnelArchives:add'
+            }, {
+                name: 'delete',
+                title: '删除',
+                perms: 'personnelArchives:delete'
+            }]
+        });
+        deptXmlSelect = xmSelect.render({
+            el: '#dept',
+            model: {label: {type: 'text'}},
+            tree: {
+                show: true,
+                strict: false,
+                showLine: false,
+                clickCheck: true,
+                expandedKeys: [-1],
+            },
+            name: 'deptId',
+            theme: {
+                color: '#52c41a',
+            },
+            prop: {
+                value: 'id'
+            },
+            height: 'auto',
+            on: function(data){
+                if(data.isAdd){
+                    return data.change.slice(0, 1)
+                }
+            }
+        });
+        febs.get(ctx + 'dept/select/tree', null, function (data) {
+            deptXmlSelect.update(
+                data
+            )
+        });
+        table.on('tool(personnelArchivesTable)', function (obj) {
+            let data = obj.data,
+                layEvent = obj.event;
+            if (layEvent === 'del') {
+                febs.modal.confirm('删除参数信息', '确定删除？', function () {
+                    deletepersonnelArchives(data.id);
+                });
+            }
+            if (layEvent === 'edit') {
+                febs.modal.open('修改参数', 'personnel/personnelArchives/update/' + data.id, {
+                    area: $(window).width() <= 750 ? '90%' : '50%',
+                    btn: ['提交', '取消'],
+                    yes: function (index, layero) {
+                        $('#personnelArchives-update').find('#submit').trigger('click');
+                    },
+                    btn2: function () {
+                        layer.closeAll();
+                    }
+                });
+            }
+        });
+
+        table.on('sort(personnelArchivesTable)', function (obj) {
+            sortObject = obj;
+            tableIns.reload({
+                initSort: obj,
+                where: $.extend(getQueryParams(), {
+                    field: obj.field,
+                    order: obj.type
+                })
+            });
+        });
+
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        $reset.on('click', function () {
+            $searchForm[0].reset();
+            sortObject.type = 'null';
+            deptXmlSelect.setValue(['']);
+            tableIns.reload({where: getQueryParams(true), page: {curr: 1}, initSort: sortObject});
+        });
+        $addTo.on('click', function () {
+            febs.modal.open('新增人事参数', 'personnel/personnelArchives/add', {
+                btn: ['提交', '重置'],
+                area: $(window).width() <= 750 ? '95%' : '50%',
+                yes: function (index, layero) {
+                    $('#personnelArchives-add').find('#submit').trigger('click');
+                },
+                btn2: function () {
+                    $('#personnelArchives-add').find('#reset').trigger('click');
+                    return false;
+                }
+            });
+        });
+        $deleteTo.on('click', function () {
+            let checkStatus = table.checkStatus('personnelArchivesTable');
+            if (!checkStatus.data.length) {
+                let checkStatus = table.checkStatus('loginLogTable');
+                febs.alert.warn('请选择需要删除的数据');
+            } else {
+                febs.modal.confirm('删除参数信息', '确定删除？', function () {
+                    let ids = [];
+                    layui.each(checkStatus.data, function (key, item) {
+                        ids.push(item.id)
+                    });
+                    deletepersonnelArchives(ids.join(','));
+                });
+            }
+        });
+
+        function initTable() {
+            tableIns = febs.table.init({
+                elem: $view.find('table'),
+                id: 'personnelArchivesTable',
+                url: ctx + 'personnelArchives/list',
+                cols: [[
+                    {type: 'checkbox'},
+                    {field:'number',title:'序列号',align:'center',width:50,templet:function (d) {
+                                        return d.LAY_INDEX;}},
+                    {field: 'jobNumber', title: '工号', minWidth: 80},
+                    {field: 'userName', title: '姓名', minWidth: 75},
+                    {field: 'deptName', title: '部门', minWidth: 100},
+                    {field: 'gender', title: '性别', minWidth: 30},
+                    {field: 'dutiesName', title: '职务', minWidth: 100},
+                    {field: 'positionName', title: '岗位', minWidth: 100},
+                    {field: 'education', title: '学历', minWidth: 70},
+                    {field: 'identityArd', title: '身份证号', minWidth: 100},
+                    {field: 'entryDate', title: '入职日期', minWidth: 130, sort: true},
+                    {field: 'quitDate', title: '离职日期', minWidth: 130, sort: true},
+                    {title: '状态', templet: '#user-status'},
+                    {field: 'address', title: '家庭住址', minWidth: 120},
+                    {field: 'socialSecurity', title: '社保缴纳', minWidth: 120}
+                ]]
+            });
+        }
+
+        function getQueryParams(flag) {
+            deptId = deptXmlSelect.getValue('valueStr');
+            if (flag) {
+                deptId = '';
+            }
+            let params = $searchForm.serializeJson();
+            params.departmentId = deptId;
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+
+        function deletepersonnelArchives(ids) {
+            febs.get(ctx + 'personnelArchives/delete/' + ids, null, function () {
+                febs.alert.success('删除参数成功');
+                $query.click();
+            });
+        }
+
+    })
+
+    layui.use('form',function(){
+        var $ = layui.jquery
+        var form = layui.form
+        $.ajax({
+            url: '/personnelParameters/queryDuties',
+            dataType: 'json',
+            type: 'get',
+            success: function(data) {
+                if (data!== null) {
+                    $.each(data.data, function (index, value) {
+                        $('#dutiesId').append(new Option(value.parameterName,value.id));// 下拉菜单里添加元素
+                    });
+                } else {
+                    $("#dutiesId").append(new Option("暂无数据", ""));
+                }
+                //重新渲染
+                form.render("select");
+            }
+        });
+    });
+
+    layui.use('form',function(){
+        var $ = layui.jquery
+        var form = layui.form
+        $.ajax({
+            url: '/personnelParameters/queryPosition',
+            dataType: 'json',
+            type: 'get',
+            success: function(data) {
+                if (data!== null) {
+                    $.each(data.data, function (index, value) {
+                        $('#positionId').append(new Option(value.parameterName,value.id));// 下拉菜单里添加元素
+                    });
+                } else {
+                    $("#positionId").append(new Option("暂无数据", ""));
+                }
+                //重新渲染
+                form.render("select");
+            }
+        });
+    });
+
+
+
+</script>

@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * 人事参数表 Mapper
  *
@@ -15,4 +17,8 @@ import org.apache.ibatis.annotations.Param;
 public interface PersonnelParametersMapper extends BaseMapper<PersonnelParameters> {
 
     PersonnelParameters findById(@Param("id")Long id);
+
+    List<PersonnelParameters> queryDuties();
+
+    List<PersonnelParameters> queryPosition();
 }

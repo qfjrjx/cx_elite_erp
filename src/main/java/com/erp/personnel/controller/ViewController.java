@@ -33,6 +33,7 @@ public class ViewController {
 
     private final IPersonnelParametersService personnelParametersService;
 
+    /* 人事参数模块开始 */
     @GetMapping("personnelParameters")
     @RequiresPermissions("personnelParameters:view")
     public String personnelParametersIndex(){
@@ -56,5 +57,17 @@ public class ViewController {
         PersonnelParameters parameters = personnelParametersService.findById(id);
         model.addAttribute("parameters", parameters);
     }
+    /* 人事参数模块结束 */
+
+    /* 员工档案模块开始 */
+    @GetMapping("personnelArchives")
+    @RequiresPermissions("personnelArchives:view")
+    public String personnelArchivesIndex(){
+        return FebsUtil.view("archives/archivesList");
+    }
+
+    /* 员工档案模块结束 */
+
+
 
 }

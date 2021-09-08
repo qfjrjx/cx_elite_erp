@@ -6,6 +6,7 @@ import com.erp.common.entity.FebsConstant;
 import com.erp.common.entity.FebsResponse;
 import com.erp.common.entity.QueryRequest;
 import com.erp.common.entity.Strings;
+import com.erp.common.exception.FebsException;
 import com.erp.common.utils.FebsUtil;
 import com.erp.personnel.entity.PersonnelParameters;
 import com.erp.personnel.service.IPersonnelParametersService;
@@ -45,11 +46,18 @@ public class PersonnelParametersController extends BaseController {
 
     private final IPersonnelParametersService personnelParametersService;
 
-    @GetMapping("personnelParameters")
+    @GetMapping("personnelParameters/queryDuties")
+    @ControllerEndpoint(exceptionMessage = "获取职务失败")
     @ResponseBody
-    @RequiresPermissions("personnelParameters:list")
-    public FebsResponse getAllPersonnelParameterss(PersonnelParameters personnelParameters) {
-        return new FebsResponse().success().data(personnelParametersService.findPersonnelParameterss(personnelParameters));
+    public FebsResponse queryDuties() throws FebsException {
+        return new FebsResponse().success().data(personnelParametersService.queryDuties());
+    }
+
+    @GetMapping("personnelParameters/queryPosition")
+    @ControllerEndpoint(exceptionMessage = "获取岗位失败")
+    @ResponseBody
+    public FebsResponse queryPosition() throws FebsException {
+        return new FebsResponse().success().data(personnelParametersService.queryPosition());
     }
 
     @GetMapping("personnelParameters/list")
@@ -115,4 +123,5 @@ public class PersonnelParametersController extends BaseController {
         List<PersonnelParameters> personnelParameterss = this.personnelParametersService.findPersonnelParameterss(queryRequest, personnelParameters).getRecords();
         ExcelKit.$Export(PersonnelParameters.class, response).downXlsx(personnelParameterss, false);
     }
+
 }

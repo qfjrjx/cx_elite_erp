@@ -50,10 +50,13 @@ public class PersonnelParametersServiceImpl extends ServiceImpl<PersonnelParamet
     }
 
     @Override
-    public List<PersonnelParameters> findPersonnelParameterss(PersonnelParameters personnelParameters) {
-	    LambdaQueryWrapper<PersonnelParameters> queryWrapper = new LambdaQueryWrapper<>();
-		// TODO 设置查询条件
-		return this.baseMapper.selectList(queryWrapper);
+    public List<PersonnelParameters> queryDuties() {
+		return baseMapper.queryDuties();
+    }
+
+    @Override
+    public List<PersonnelParameters> queryPosition() {
+        return baseMapper.queryPosition();
     }
 
     @Override
@@ -78,5 +81,7 @@ public class PersonnelParametersServiceImpl extends ServiceImpl<PersonnelParamet
     public PersonnelParameters findById(Long id) {
         return baseMapper.findById(id);
     }
+
+
 
 }

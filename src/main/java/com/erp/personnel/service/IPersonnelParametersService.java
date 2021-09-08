@@ -28,10 +28,10 @@ public interface IPersonnelParametersService extends IService<PersonnelParameter
     /**
      * 查询（所有）
      *
-     * @param personnelParameters personnelParameters
+     *
      * @return List<PersonnelParameters>
      */
-    List<PersonnelParameters> findPersonnelParameterss(PersonnelParameters personnelParameters);
+    List<PersonnelParameters> queryDuties();
 
     /**
      * 新增
@@ -55,4 +55,6 @@ public interface IPersonnelParametersService extends IService<PersonnelParameter
     void deletePersonnel(String[] ids);
 
     PersonnelParameters findById(Long id);
+
+    List<PersonnelParameters> queryPosition();
 }

@@ -4,4 +4,14 @@
     <select id="findById" parameterType="long" resultType="com.erp.personnel.entity.PersonnelParameters">
         SELECT p.id,p.parameter_category,p.parameter_value,p.parameter_name,p.parameter_sort,p.parameter_remarks,p.parameter_state from jr_personnel_parameters p where p.id = #{id}
     </select>
+
+
+
+    <select id="queryDuties" parameterType="com.erp.personnel.entity.PersonnelParameters" resultType="com.erp.personnel.entity.PersonnelParameters">
+        SELECT p.id,p.parameter_name parameterName from jr_personnel_parameters p where p.parameter_category = 6 and p.parameter_state = 1
+    </select>
+
+    <select id="queryPosition" parameterType="com.erp.personnel.entity.PersonnelParameters" resultType="com.erp.personnel.entity.PersonnelParameters">
+        SELECT p.id,p.parameter_name parameterName from jr_personnel_parameters p where p.parameter_category = 1 and p.parameter_state = 1
+    </select>
 </mapper>

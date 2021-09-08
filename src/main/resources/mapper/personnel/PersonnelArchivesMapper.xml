@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.personnel.mapper.PersonnelArchivesMapper">
+
+    <sql id="countPersonnelArchivesSql" >
+        SELECT COUNT(1)
+        FROM jr_personnel_archives pe
+        WHERE 1 = 1
+        <if test="personnelArchives.jobNumber != null and personnelArchives.jobNumber != ''">
+            AND pe.job_number = #{personnelArchives.jobNumber}
+        </if>
+        <if test="personnelArchives.userName != null and personnelArchives.userName != ''">
+            AND pe.user_name = #{personnelArchives.userName}
+        </if>
+        <if test="personnelArchives.departmentId != null and personnelArchives.departmentId != ''">
+            AND pe.department_id = #{personnelArchives.departmentId}
+        </if>
+        <if test="personnelArchives.userState != null and personnelArchives.userState != ''">
+            AND pe.user_state = #{personnelArchives.userState}
+        </if>
+        <if test="personnelArchives.dutiesId != null and personnelArchives.dutiesId != ''">
+            AND pe.duties_id = #{personnelArchives.dutiesId}
+        </if>
+        <if test="personnelArchives.positionId != null and personnelArchives.positionId != ''">
+            AND pe.position_id = #{personnelArchives.positionId}
+        </if>
+    </sql>
+
+    <sql id="findPersonnelArchivesSql">
+        SELECT
+        pe.job_number jobNumber,
+        pe.user_name userName,
+        d.dept_name deptName,
+        pe.gender,
+        pa.parameter_name dutiesName,
+        par.parameter_name positionName,
+        pe.education,
+        pe.identity_ard identityArd,
+        pe.entry_date entryDate,
+        pe.quit_date quitDate,
+        pe.user_state userState,
+        pe.address,
+        pe.social_security socialSecurity
+        FROM
+        jr_personnel_archives pe
+        LEFT JOIN t_dept d ON ( pe.department_id = d.dept_id )
+        LEFT JOIN jr_personnel_parameters pa ON ( pe.duties_id = pa.id )
+        LEFT JOIN jr_personnel_parameters par ON ( pe.position_id = par.id )
+        WHERE
+        1 = 1
+        <if test="personnelArchives.jobNumber != null and personnelArchives.jobNumber != ''">
+            AND pe.job_number = #{personnelArchives.jobNumber}
+        </if>
+        <if test="personnelArchives.userName != null and personnelArchives.userName != ''">
+            AND pe.user_name = #{personnelArchives.userName}
+        </if>
+        <if test="personnelArchives.departmentId != null and personnelArchives.departmentId != ''">
+            AND d.dept_id = #{personnelArchives.departmentId}
+        </if>
+        <if test="personnelArchives.userState != null and personnelArchives.userState != ''">
+            AND pe.user_state = #{personnelArchives.userState}
+        </if>
+        <if test="personnelArchives.dutiesId != null and personnelArchives.dutiesId != ''">
+            AND pa.id = #{personnelArchives.dutiesId}
+        </if>
+        <if test="personnelArchives.positionId != null and personnelArchives.positionId != ''">
+            AND par.id = #{personnelArchives.positionId}
+        </if>
+    </sql>
+
+    <select id="countPersonnelArchives" parameterType="com.erp.personnel.entity.PersonnelArchives" resultType="long">
+        <include refid="countPersonnelArchivesSql"/>
+    </select>
+
+    <select id="findPersonnelArchivesPage" parameterType="com.erp.personnel.entity.PersonnelArchives" resultType="com.erp.personnel.entity.PersonnelArchives">
+        <include refid="findPersonnelArchivesSql"/>
+    </select>
+
+
+</mapper>

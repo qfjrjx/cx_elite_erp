@@ -1,0 +1,110 @@
+<style>
+    #personnelParameters-update {
+        padding: 20px 25px 25px 0;
+    }
+</style>
+<div class="layui-fluid" id="personnelParameters-update">
+    <form class="layui-form" action="" lay-filter="personnelParameters-update-form">
+        <div class="layui-form-item febs-hide">
+            <label class="layui-form-label febs-form-item-require">参数id：</label>
+            <div class="layui-input-block">
+                <input type="text" name="id" data-th-value="${parameters.id}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require">参数类别：</label>
+            <div class="layui-input-block">
+                <select name="parameterCategory">
+                    <option value="1">岗位</option>
+                    <option value="2">技术级别</option>
+                    <option value="3">加班类型</option>
+                    <option value="4">请假类型</option>
+                    <option value="5">员工学历</option>
+                    <option value="6">职务</option>
+                    <option value="7">人事</option>
+                    <option value="8">状态</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require">参数值：</label>
+            <div class="layui-input-block">
+                <input type="text" name="parameterValue" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require">参数名称：</label>
+            <div class="layui-input-block">
+                <input type="text" name="parameterName" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require">排序：</label>
+            <div class="layui-input-block">
+                <input type="text" name="parameterSort" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">备注：</label>
+            <div class="layui-input-block">
+                <textarea name="parameterRemarks" maxlength="100" class="layui-textarea">
+                </textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require">状态：</label>
+            <div class="layui-input-block">
+                <select name="parameterState">
+                    <option value="1">启用</option>
+                    <option value="2">禁用</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item febs-hide">
+            <button class="layui-btn" lay-submit="" lay-filter="personnelParameters-update-form-submit" id="submit"></button>
+        </div>
+    </form>
+</div>
+
+<script data-th-inline="javascript">
+    layui.use(['febs', 'form', 'xmSelect', 'validate'], function () {
+        let $ = layui.$,
+            febs = layui.febs,
+            layer = layui.layer,
+            form = layui.form,
+            xmSelect = layui.xmSelect,
+            parameters = [[${parameters}]],
+            validate = layui.validate;
+
+        form.verify(validate);
+        form.render();
+
+        initPersonnelParametersValue();
+
+        function initPersonnelParametersValue() {
+            form.val("personnelParameters-update-form", {
+                "parameterCategory": parameters.parameterCategory,
+                "parameterValue": parameters.parameterValue,
+                "parameterName": parameters.parameterName,
+                "parameterSort": parameters.parameterSort,
+                "parameterRemarks": parameters.parameterRemarks,
+                "parameterState": parameters.parameterState
+            });
+        }
+
+        form.on('submit(personnelParameters-update-form-submit)', function (data) {
+
+            const b = true;
+            if (febs.nativeEqual(data.field, parameters)) {
+                febs.alert.warn('数据未作任何修改！');
+                return true;
+            }
+            febs.post(ctx + 'personnelParameters/update', data.field, function () {
+                layer.closeAll();
+                febs.alert.success('数据修改成功');
+                $('#febs-personnelParameters').find('#query').click();
+            });
+            return false;
+        });
+    });
+</script>
