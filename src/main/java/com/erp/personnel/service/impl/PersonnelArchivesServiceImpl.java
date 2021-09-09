@@ -17,6 +17,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -71,10 +72,9 @@ public class PersonnelArchivesServiceImpl extends ServiceImpl<PersonnelArchivesM
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void deletePersonnelArchives(PersonnelArchives personnelArchives) {
-        LambdaQueryWrapper<PersonnelArchives> wrapper = new LambdaQueryWrapper<>();
+    public void deletePersonnelArchives(String[] ids) {
+        List<String> list = Arrays.asList(ids);
 	    // TODO 设置删除条件
-	    this.remove(wrapper);
+        baseMapper.deleteBatchIds(list);
 	}
 }

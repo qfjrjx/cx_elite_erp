@@ -148,9 +148,9 @@
             <label for="L_email" class="layui-form-label">
                 员工部门:
             </label>
-            <div class="layui-input-inline" id="user-add-dept" style="width: 190px">
+             <div class="layui-input-inline" id="user-add-dept" style="width: 190px">
 
-            </div>
+              </div>
             <div class="layui-form-mid layui-word-aux">
                 <span class="x-red">*</span>
             </div>
@@ -158,20 +158,19 @@
                 技术级别:
             </label>
             <div class="layui-input-inline">
-                <select id="technical"  name="technicalId">
+                <select id="parameterName"  name="technicalId">
                     <option value="" >请选择技术级别</option>
                     <option th:each="technicals:${technical}" th:value="${technicals.id}">[[${technicals.parameterName}]]</option>
                 </select>
             </div>
         </div>
-
         <div class="layui-form-item">
             <label for="L_email" class="layui-form-label">
                 所属岗位:
             </label>
 
             <div class="layui-input-inline">
-                <select name="positionsId"  id="positionsId" lay-filter="positionsId" lay-verify="required">
+                <select name="positionId"  id="positionsId" lay-filter="positionsId" lay-verify="required">
                     <option value="">请选择所属岗位</option>
                 </select>
             </div>
@@ -190,13 +189,14 @@
                 <span class="x-red">*</span>
             </div>
         </div>
+
         <div class="layui-form-item">
             <label for="L_email" class="layui-form-label">
                 出生日期:
             </label>
             <div class="layui-input-inline">
                 <input type="text" id="birthdate" name="birthdate" required="" placeholder="请选择日期"
-                       autocomplete="off" class="layui-input starttime">
+                       autocomplete="off" class="layui-input startTime">
             </div>
             <div class="layui-form-mid layui-word-aux">
                 <span class="x-red">*</span>
@@ -208,7 +208,7 @@
             </label>
             <div class="layui-input-inline">
                 <input type="text" id="entryDate" name="entryDate" required="" placeholder="请选择日期"
-                       autocomplete="off" class="layui-input starttime">
+                       autocomplete="off" class="layui-input startTime">
             </div>
             <div class="layui-form-mid layui-word-aux">
                 <span class="x-red">*</span>
@@ -216,14 +216,13 @@
 
 
         </div>
-
         <div class="layui-form-item">
             <label for="L_email" class="layui-form-label">
                 转正日期:
             </label>
             <div class="layui-input-inline">
                 <input type="text" id="positiveDates" name="positiveDates"
-                       placeholder="请选择日期" class="layui-input starttime">
+                       placeholder="请选择日期" class="layui-input startTime">
 
             </div>
 
@@ -237,10 +236,11 @@
             </label>
             <div class="layui-input-inline">
                 <input type="text" id="quitDate" name="quitDate" placeholder="请选择日期"
-                       class="layui-input starttime">
+                       class="layui-input startTime">
             </div>
 
         </div>
+
         <div class="layui-form-item">
             <label for="L_email" class="layui-form-label">
                 员工学历:
@@ -404,6 +404,7 @@
             </div>
 
         </div>
+
         <div class="layui-form-item">
 
             <label class="layui-form-label">
@@ -459,7 +460,6 @@
         form.render();
 
         form.on('submit(personnelArchives-add-form-submit)', function (data) {
-            alert(data)
             febs.post(ctx + 'personnelArchives', data.field, function () {
                 layer.closeAll();
                 febs.alert.success('新增参数成功');
@@ -470,7 +470,7 @@
         });
 
         //日期同时绑定多个
-        lay('.starttime').each(function(){
+        lay('.startTime').each(function(){
             laydate.render({
                 elem: this
                 ,trigger: 'click'
@@ -479,11 +479,11 @@
         var ehethe = [];
         ehethe.push(1);
         var tagData1 = [
-            {name: '暂不缴纳社保', value: 1},
-            {name: '医疗保险', value: 2},
-            {name: '失业保险', value: 3},
-            {name: '养老保险', value: 4},
-            {name: '工伤保险', value: 5},
+            {name: '暂不缴纳社保', value: '暂不缴纳社保'},
+            {name: '医疗保险', value: '医疗保险'},
+            {name: '失业保险', value: '失业保险'},
+            {name: '养老保险', value: '养老保险'},
+            {name: '工伤保险', value: '工伤保险'},
         ];
         var demo1 = xmSelect.render({
             el: '#socialSecurity',

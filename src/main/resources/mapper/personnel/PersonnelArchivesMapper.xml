@@ -12,8 +12,8 @@
         <if test="personnelArchives.userName != null and personnelArchives.userName != ''">
             AND pe.user_name = #{personnelArchives.userName}
         </if>
-        <if test="personnelArchives.departmentId != null and personnelArchives.departmentId != ''">
-            AND pe.department_id = #{personnelArchives.departmentId}
+        <if test="personnelArchives.deptId != null and personnelArchives.deptId != ''">
+            AND pe.dept_id = #{personnelArchives.deptId}
         </if>
         <if test="personnelArchives.userState != null and personnelArchives.userState != ''">
             AND pe.user_state = #{personnelArchives.userState}
@@ -28,6 +28,7 @@
 
     <sql id="findPersonnelArchivesSql">
         SELECT
+        pe.user_id userId,
         pe.job_number jobNumber,
         pe.user_name userName,
         d.dept_name deptName,
@@ -43,7 +44,7 @@
         pe.social_security socialSecurity
         FROM
         jr_personnel_archives pe
-        LEFT JOIN t_dept d ON ( pe.department_id = d.dept_id )
+        LEFT JOIN t_dept d ON ( pe.dept_id = d.dept_id )
         LEFT JOIN jr_personnel_parameters pa ON ( pe.duties_id = pa.id )
         LEFT JOIN jr_personnel_parameters par ON ( pe.position_id = par.id )
         LEFT JOIN jr_personnel_parameters pas ON ( pe.education_id = pas.id )
@@ -55,8 +56,8 @@
         <if test="personnelArchives.userName != null and personnelArchives.userName != ''">
             AND pe.user_name = #{personnelArchives.userName}
         </if>
-        <if test="personnelArchives.departmentId != null and personnelArchives.departmentId != ''">
-            AND d.dept_id = #{personnelArchives.departmentId}
+        <if test="personnelArchives.deptId != null and personnelArchives.deptId != ''">
+            AND d.dept_id = #{personnelArchives.deptId}
         </if>
         <if test="personnelArchives.userState != null and personnelArchives.userState != ''">
             AND pe.user_state = #{personnelArchives.userState}

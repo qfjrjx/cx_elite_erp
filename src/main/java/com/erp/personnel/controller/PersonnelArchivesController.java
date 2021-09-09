@@ -2,10 +2,7 @@ package com.erp.personnel.controller;
 
 import com.erp.common.annotation.ControllerEndpoint;
 import com.erp.common.controller.BaseController;
-import com.erp.common.entity.FebsConstant;
-import com.erp.common.entity.FebsResponse;
-import com.erp.common.entity.JsonResult;
-import com.erp.common.entity.QueryRequest;
+import com.erp.common.entity.*;
 import com.erp.common.utils.FebsUtil;
 import com.erp.personnel.entity.PersonnelArchives;
 import com.erp.personnel.service.IPersonnelArchivesService;
@@ -14,10 +11,12 @@ import com.wuwenze.poi.ExcelKit;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,9 +24,9 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.validation.constraints.NotBlank;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * 用户表 Controller
@@ -55,16 +54,26 @@ public class PersonnelArchivesController extends BaseController {
     @ResponseBody
     @RequiresPermissions("personnelArchives:add")
     public FebsResponse addPersonnelArchives(@Valid PersonnelArchives personnelArchives) {
+                 String yearLast = new SimpleDateFormat("yy", Locale.CHINESE).format(Calendar.getInstance().getTime());Date d = new Date();
+                 Date date = new Date();
+                 SimpleDateFormat sdf = new SimpleDateFormat("MM-dd");
+                 String dateNowStr = sdf.format(date);
+                 String month = dateNowStr.substring(0,2);
+                 String day = dateNowStr.substring(3,5);
+                 personnelArchives.setJobNumber(yearLast+month+day);
+                 personnelArchives.getEntryDate();
+                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                  simpleDateFormat.format( personnelArchives.getEntryDate());
         this.personnelArchivesService.createPersonnelArchives(personnelArchives);
         return new FebsResponse().success();
     }
 
     @ControllerEndpoint(operation = "删除PersonnelArchives", exceptionMessage = "删除PersonnelArchives失败")
-    @GetMapping("personnelArchives/delete")
+    @GetMapping("personnelArchives/delete/{ids}")
     @ResponseBody
     @RequiresPermissions("personnelArchives:delete")
-    public FebsResponse deletePersonnelArchives(PersonnelArchives personnelArchives) {
-        this.personnelArchivesService.deletePersonnelArchives(personnelArchives);
+    public FebsResponse deletePersonnelArchives(@NotBlank(message = "{required}") @PathVariable String ids) {
+        this.personnelArchivesService.deletePersonnelArchives(StringUtils.split(ids, Strings.COMMA));
         return new FebsResponse().success();
     }
 

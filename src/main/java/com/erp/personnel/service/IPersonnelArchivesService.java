@@ -47,9 +47,9 @@ public interface IPersonnelArchivesService extends IService<PersonnelArchives> {
     /**
      * 删除
      *
-     * @param personnelArchives personnelArchives
+     * @param
      */
-    void deletePersonnelArchives(PersonnelArchives personnelArchives);
+    void deletePersonnelArchives(String[] ids);
 
 
 

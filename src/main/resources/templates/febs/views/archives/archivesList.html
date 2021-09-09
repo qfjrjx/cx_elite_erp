@@ -94,7 +94,6 @@
         </div>
     </div>
 </div>
-
 <script type="text/html" id="user-status">
     {{#
     let userState = {
@@ -104,6 +103,15 @@
     }[d.userState];
     }}
     <span class="layui-badge febs-bg-{{userState.color}}">{{ userState.title }}</span>
+</script>
+<script type="text/html" id="user-gender">
+    {{#
+    let gender = {
+    1: {title: '男'},
+    2: {title: '女'}
+    }[d.gender];
+    }}
+    <span>{{ gender.title }}</span>
 </script>
 <script type="text/html" id="parameter-option">
     <span shiro:lacksPermission="personnelArchives:view,personnelArchives:update,personnelArchives:delete">
@@ -274,7 +282,7 @@
                 febs.modal.confirm('删除参数信息', '确定删除？', function () {
                     let ids = [];
                     layui.each(checkStatus.data, function (key, item) {
-                        ids.push(item.id)
+                        ids.push(item.userId)
                     });
                     deletepersonnelArchives(ids.join(','));
                 });
@@ -293,13 +301,13 @@
                     {field: 'jobNumber', title: '工号', minWidth: 80},
                     {field: 'userName', title: '姓名', minWidth: 75},
                     {field: 'deptName', title: '部门', minWidth: 100},
-                    {field: 'gender', title: '性别', minWidth: 30},
+                    {title: '性别', templet: '#user-gender',minWidth: 30},
                     {field: 'dutiesName', title: '职务', minWidth: 100},
                     {field: 'positionName', title: '岗位', minWidth: 100},
                     {field: 'educationName', title: '学历', minWidth: 70},
                     {field: 'identityArd', title: '身份证号', minWidth: 100},
-                    {field: 'entryDate', title: '入职日期', minWidth: 130, sort: true},
-                    {field: 'quitDate', title: '离职日期', minWidth: 130, sort: true},
+                    {field: 'entryDate', title: '入职日期', minWidth: 130,templet:'<div>{{ layui.util.toDateString(d.entryDate, "yyyy-MM-dd") }}</div>', sort: true},
+                    {field: 'quitDate', title: '离职日期', minWidth: 130, templet:'<div>{{ layui.util.toDateString(d.quitDate, "yyyy-MM-dd") }}</div>',sort: true},
                     {title: '状态', templet: '#user-status'},
                     {field: 'address', title: '家庭住址', minWidth: 120},
                     {field: 'socialSecurity', title: '社保缴纳', minWidth: 120}

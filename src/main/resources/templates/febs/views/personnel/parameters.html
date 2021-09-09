@@ -238,7 +238,6 @@
         $deleteTo.on('click', function () {
             let checkStatus = table.checkStatus('parameterTable');
             if (!checkStatus.data.length) {
-                let checkStatus = table.checkStatus('loginLogTable');
                 febs.alert.warn('请选择需要删除的数据');
             } else {
                 febs.modal.confirm('删除参数信息', '确定删除？', function () {

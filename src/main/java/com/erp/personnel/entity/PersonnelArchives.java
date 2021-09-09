@@ -2,12 +2,15 @@ package com.erp.personnel.entity;
 
 import java.util.Date;
 
+import com.erp.common.converter.TimeConverter;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.wuwenze.poi.annotation.ExcelField;
 import lombok.Data;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * 用户表 Entity
@@ -23,7 +26,7 @@ public class PersonnelArchives {
      * 编号
      */
     @TableId(value = "user_id", type = IdType.AUTO)
-    private String userId;
+    private Long userId;
 
     /**
      * 员工工号
@@ -52,8 +55,11 @@ public class PersonnelArchives {
     /**
      * 员工部门
      */
-    @TableField("department_id")
-    private Long departmentId;
+    /**
+     * 部门 ID
+     */
+    @TableField("dept_id")
+    private Long deptId;
 
     /**
      * 技术级别
@@ -101,6 +107,7 @@ public class PersonnelArchives {
      * 出生日期
      */
     @TableField("birthdate")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date birthdate;
 
     /**
@@ -167,12 +174,14 @@ public class PersonnelArchives {
      * 入职日期
      */
     @TableField("entry_date")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date entryDate;
 
     /**
      * 离职日期
      */
     @TableField("quit_date")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date quitDate;
 
     /**
@@ -209,6 +218,7 @@ public class PersonnelArchives {
      * 转正日期
      */
     @TableField("positive_dates")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date positiveDates;
 
     /**
