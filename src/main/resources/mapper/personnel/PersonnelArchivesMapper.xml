@@ -34,7 +34,7 @@
         pe.gender,
         pa.parameter_name dutiesName,
         par.parameter_name positionName,
-        pe.education,
+        pas.parameter_name educationName,
         pe.identity_ard identityArd,
         pe.entry_date entryDate,
         pe.quit_date quitDate,
@@ -46,6 +46,7 @@
         LEFT JOIN t_dept d ON ( pe.department_id = d.dept_id )
         LEFT JOIN jr_personnel_parameters pa ON ( pe.duties_id = pa.id )
         LEFT JOIN jr_personnel_parameters par ON ( pe.position_id = par.id )
+        LEFT JOIN jr_personnel_parameters pas ON ( pe.education_id = pas.id )
         WHERE
         1 = 1
         <if test="personnelArchives.jobNumber != null and personnelArchives.jobNumber != ''">

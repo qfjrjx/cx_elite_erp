@@ -21,4 +21,8 @@ public interface PersonnelParametersMapper extends BaseMapper<PersonnelParameter
     List<PersonnelParameters> queryDuties();
 
     List<PersonnelParameters> queryPosition();
+
+    List<PersonnelParameters> queryTechnical();
+
+    List<PersonnelParameters> queryEducation();
 }

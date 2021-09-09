@@ -1,25 +1,24 @@
 package com.erp.personnel.controller;
 
 import com.erp.common.entity.FebsConstant;
-import com.erp.common.utils.DateUtil;
+import com.erp.common.entity.JsonResult;
 import com.erp.common.utils.FebsUtil;
-import com.erp.monitor.endpoint.FebsMetricsEndpoint;
-import com.erp.monitor.entity.JvmInfo;
-import com.erp.monitor.entity.ServerInfo;
-import com.erp.monitor.entity.TomcatInfo;
 import com.erp.monitor.helper.FebsActuatorHelper;
 import com.erp.personnel.entity.PersonnelParameters;
 import com.erp.personnel.service.IPersonnelParametersService;
-import com.erp.system.entity.User;
+import com.erp.personnel.util.FileUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author qiufeng
@@ -65,6 +64,23 @@ public class ViewController {
     public String personnelArchivesIndex(){
         return FebsUtil.view("archives/archivesList");
     }
+
+
+    @GetMapping("personnelArchives/add")
+    @RequiresPermissions("personnelArchives:add")
+    public String archivesAdd(Model model) {
+
+        List<PersonnelParameters> technical  = personnelParametersService.queryTechnical();
+        model.addAttribute("technical",technical);
+
+        List<PersonnelParameters> education  = personnelParametersService.queryEducation();
+        model.addAttribute("education",education);
+
+
+        return FebsUtil.view("archives/archivesAdd");
+    }
+
+
 
     /* 员工档案模块结束 */
 

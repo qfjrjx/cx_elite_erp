@@ -57,4 +57,8 @@ public interface IPersonnelParametersService extends IService<PersonnelParameter
     PersonnelParameters findById(Long id);
 
     List<PersonnelParameters> queryPosition();
+
+    List<PersonnelParameters> queryTechnical();
+
+    List<PersonnelParameters> queryEducation();
 }

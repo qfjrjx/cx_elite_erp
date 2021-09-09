@@ -14,4 +14,12 @@
     <select id="queryPosition" parameterType="com.erp.personnel.entity.PersonnelParameters" resultType="com.erp.personnel.entity.PersonnelParameters">
         SELECT p.id,p.parameter_name parameterName from jr_personnel_parameters p where p.parameter_category = 1 and p.parameter_state = 1
     </select>
+
+    <select id="queryTechnical" parameterType="com.erp.personnel.entity.PersonnelParameters" resultType="com.erp.personnel.entity.PersonnelParameters">
+        SELECT p.id,p.parameter_name parameterName from jr_personnel_parameters p where p.parameter_category = 2 and p.parameter_state = 1
+    </select>
+
+    <select id="queryEducation" parameterType="com.erp.personnel.entity.PersonnelParameters" resultType="com.erp.personnel.entity.PersonnelParameters">
+        SELECT p.id,p.parameter_name parameterName from jr_personnel_parameters p where p.parameter_category = 5 and p.parameter_state = 1
+    </select>
 </mapper>

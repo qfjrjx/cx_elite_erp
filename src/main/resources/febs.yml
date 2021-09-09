@@ -18,7 +18,7 @@ febs:
     length: 4
     char-type: 2
   swagger:
-    base-package: cc.erp
+    base-package: com.erp
     title: FEBS Shiro API
     description: FEBS Shiro API Document.
     version: 2.0

@@ -253,7 +253,7 @@
             tableIns.reload({where: getQueryParams(true), page: {curr: 1}, initSort: sortObject});
         });
         $addTo.on('click', function () {
-            febs.modal.open('新增人事参数', 'personnel/personnelArchives/add', {
+            febs.modal.open('新增员工档案', 'personnel/personnelArchives/add', {
                 btn: ['提交', '重置'],
                 area: $(window).width() <= 750 ? '95%' : '50%',
                 yes: function (index, layero) {
@@ -296,7 +296,7 @@
                     {field: 'gender', title: '性别', minWidth: 30},
                     {field: 'dutiesName', title: '职务', minWidth: 100},
                     {field: 'positionName', title: '岗位', minWidth: 100},
-                    {field: 'education', title: '学历', minWidth: 70},
+                    {field: 'educationName', title: '学历', minWidth: 70},
                     {field: 'identityArd', title: '身份证号', minWidth: 100},
                     {field: 'entryDate', title: '入职日期', minWidth: 130, sort: true},
                     {field: 'quitDate', title: '离职日期', minWidth: 130, sort: true},

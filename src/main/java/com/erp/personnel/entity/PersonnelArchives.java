@@ -58,8 +58,8 @@ public class PersonnelArchives {
     /**
      * 技术级别
      */
-    @TableField("technical_level")
-    private String technicalLevel;
+    @TableField("technical_id")
+    private Long technicalId;
 
     /**
      * 手机号码
@@ -148,8 +148,8 @@ public class PersonnelArchives {
     /**
      * 员工学历
      */
-    @TableField("education")
-    private String education;
+    @TableField("education_id")
+    private Long educationId;
 
     /**
      * 毕业院校
@@ -261,5 +261,11 @@ public class PersonnelArchives {
     @ExcelField(value = "职务")
     @TableField(exist = false)
     private String dutiesName;
+    /**
+     * 员工学历
+     */
+    @ExcelField(value = "学历")
+    @TableField(exist = false)
+    private String educationName;
 
 }
