@@ -461,6 +461,7 @@
         form.render();
 
         form.on('submit(personnelArchives-add-form-submit)', function (data) {
+            data.field.userImg =  $("#imgDom").attr("src");
             febs.post(ctx + 'personnelArchives', data.field, function () {
                 layer.closeAll();
                 febs.alert.success('新增参数成功');

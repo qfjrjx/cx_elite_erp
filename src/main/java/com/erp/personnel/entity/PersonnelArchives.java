@@ -79,7 +79,6 @@ public class PersonnelArchives {
     @TableField("fixed_telephone")
     private String fixedTelephone;
 
-    @NotBlank(message = "{required}")
     @TableField(exist = false)
     private String id;
     /**
