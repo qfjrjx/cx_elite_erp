@@ -3,6 +3,7 @@ package com.erp.personnel.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.erp.common.entity.QueryRequest;
+import com.erp.personnel.entity.ArchivesParameters;
 import com.erp.personnel.entity.PersonnelArchives;
 
 import java.util.List;
@@ -52,5 +53,6 @@ public interface IPersonnelArchivesService extends IService<PersonnelArchives> {
     void deletePersonnelArchives(String[] ids);
 
 
+    PersonnelArchives findArchivesById(Long userId);
 
 }

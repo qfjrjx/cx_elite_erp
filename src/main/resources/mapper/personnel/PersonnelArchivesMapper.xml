@@ -41,13 +41,16 @@
         pe.quit_date quitDate,
         pe.user_state userState,
         pe.address,
-        pe.social_security socialSecurity
+        GROUP_CONCAT(pp.id) parametersId,
+        GROUP_CONCAT(pp.parameter_name) parameterName
         FROM
         jr_personnel_archives pe
         LEFT JOIN t_dept d ON ( pe.dept_id = d.dept_id )
         LEFT JOIN jr_personnel_parameters pa ON ( pe.duties_id = pa.id )
         LEFT JOIN jr_personnel_parameters par ON ( pe.position_id = par.id )
         LEFT JOIN jr_personnel_parameters pas ON ( pe.education_id = pas.id )
+        LEFT JOIN jr_archives_parameters ap ON (pe.user_id = ap.archives_id)
+        LEFT JOIN jr_personnel_parameters pp ON pp.id = ap.parameters_id
         WHERE
         1 = 1
         <if test="personnelArchives.jobNumber != null and personnelArchives.jobNumber != ''">
@@ -68,6 +71,7 @@
         <if test="personnelArchives.positionId != null and personnelArchives.positionId != ''">
             AND par.id = #{personnelArchives.positionId}
         </if>
+        GROUP BY pe.entry_date
     </sql>
 
     <select id="countPersonnelArchives" parameterType="com.erp.personnel.entity.PersonnelArchives" resultType="long">
@@ -78,5 +82,91 @@
         <include refid="findPersonnelArchivesSql"/>
     </select>
 
-
+    <select id="findArchivesById" parameterType="long" resultType="com.erp.personnel.entity.PersonnelArchives">
+        SELECT
+            pe.user_id userId,
+            pe.job_number jobNumber,
+            pe.user_name userName,
+            pe.dept_id deptId,
+            pe.gender,
+            pe.nation,
+            pe.phone,
+            pe.duties_id dutiesId,
+            pe.technical_id technicalId,
+            pe.position_id positionId,
+            pe.education_id educationId,
+            pe.identity_ard identityArd,
+            pe.fixed_telephone fixedTelephone,
+            pe.entry_date entryDate,
+            pe.birthdate,
+            pe.quit_date quitDate,
+            pe.positive_dates positiveDates,
+            pe.user_state userState,
+            pe.hukou_type hukouType,
+            pe.staff_native staffNative,
+            pe.identity_ard identityArd,
+            pe.address,
+            pe.attendance,
+            pe.marriage,
+            pe.occupational,
+            pe.age,
+            pe.specialty,
+            pe.emergency_phone emergencyPhone,
+            pe.emergency_user emergencyUser,
+            pe.present_address presentAddress,
+            pe.education_id educationId,
+            pe.school_by schoolBy,
+            pe.payroll_bank payrollBank,
+            pe.bank_card bankCard,
+            pe.user_img userImg,
+            pe.education_undergo educationUndergo,
+            pe.filiality_fine_card filialityFineCard,
+            pe.filiality_fine_bank filialityFineBank,
+            GROUP_CONCAT(pp.id) id,
+            GROUP_CONCAT(pp.parameter_name) parameterName
+        FROM
+            jr_personnel_archives pe
+            LEFT JOIN jr_archives_parameters ap ON (pe.user_id = ap.archives_id)
+            LEFT JOIN jr_personnel_parameters pp ON pp.id = ap.parameters_id
+        WHERE
+            pe.user_id = #{userId}
+    </select>
+   <update id = "saveOrUpdate" parameterType = "com.erp.personnel.entity.PersonnelArchives" >
+        UPDATE jr_personnel_archives pe
+        SET pe.user_name = #{userName},
+        pe.gender = #{gender},
+        pe.nation = #{nation},
+        pe.dept_id = #{deptId},
+        pe.technical_id = #{technicalId},
+        pe.phone = #{phone},
+        pe.fixed_telephone = #{fixedTelephone},
+        pe.hukou_type = #{hukouType},
+        pe.address = #{address},
+        pe.attendance = #{attendance},
+        pe.birthdate = #{birthdate},
+        pe.staff_native = #{staffNative},
+        pe.identity_ard = #{identityArd},
+        pe.position_id = #{positionId},
+        pe.emergency_phone = #{emergencyPhone},
+        pe.emergency_user = #{emergencyUser},
+        pe.present_address = #{presentAddress},
+        pe.duties_id = #{dutiesId},
+        pe.education_id = #{educationId},
+        pe.school_by = #{schoolBy},
+        pe.marriage = #{marriage},
+        pe.entry_date = #{entryDate},
+        pe.quit_date = #{quitDate},
+        pe.user_state = #{userState},
+        pe.user_img = #{userImg},
+        pe.education_undergo = #{educationUndergo},
+        pe.occupational = #{occupational},
+        pe.age = #{age},
+        pe.positive_dates = #{positiveDates},
+        pe.specialty = #{specialty},
+        pe.payroll_bank = #{payrollBank},
+        pe.bank_card = #{bankCard},
+        pe.filiality_fine_card = #{filialityFineCard},
+        pe.filiality_fine_bank = #{filialityFineBank}
+        where pe.user_id = #{userId}
+    </update>
 </mapper>

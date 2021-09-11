@@ -23,4 +23,7 @@ public interface PersonnelArchivesMapper extends BaseMapper<PersonnelArchives> {
 
     long countPersonnelArchives(@Param("personnelArchives") PersonnelArchives personnelArchives);
 
+    PersonnelArchives findArchivesById(@Param("userId")Long userId);
+
+    void saveOrUpdate(PersonnelArchives personnelArchives);
 }

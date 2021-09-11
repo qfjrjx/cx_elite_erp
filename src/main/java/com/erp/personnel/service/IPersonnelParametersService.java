@@ -61,4 +61,6 @@ public interface IPersonnelParametersService extends IService<PersonnelParameter
     List<PersonnelParameters> queryTechnical();
 
     List<PersonnelParameters> queryEducation();
+
+    List<PersonnelParameters> querySocialSecurity();
 }

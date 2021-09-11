@@ -60,6 +60,15 @@ public class PersonnelParametersController extends BaseController {
         return new FebsResponse().success().data(personnelParametersService.queryPosition());
     }
 
+    @GetMapping("personnelParameters/querySocialSecurity")
+    @ControllerEndpoint(exceptionMessage = "获取社保失败")
+    @ResponseBody
+    public FebsResponse querySocialSecurity() throws FebsException {
+        return new FebsResponse().success().data(personnelParametersService.querySocialSecurity());
+    }
+
+
+
     @GetMapping("personnelParameters/list")
     @ResponseBody
     @RequiresPermissions("personnelParameters:view")

@@ -2,8 +2,6 @@ package com.erp.personnel.entity;
 
 import java.util.Date;
 
-import com.erp.common.converter.TimeConverter;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.wuwenze.poi.annotation.ExcelField;
 import lombok.Data;
 import com.baomidou.mybatisplus.annotation.IdType;
@@ -11,6 +9,8 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import org.springframework.format.annotation.DateTimeFormat;
+
+import javax.validation.constraints.NotBlank;
 
 /**
  * 用户表 Entity
@@ -79,11 +79,13 @@ public class PersonnelArchives {
     @TableField("fixed_telephone")
     private String fixedTelephone;
 
+    @NotBlank(message = "{required}")
+    @TableField(exist = false)
+    private String id;
     /**
      * 社保缴纳
      */
-    @TableField("social_security")
-    private String socialSecurity;
+    private String parameterName;
 
     /**
      * 户口类型

@@ -71,6 +71,11 @@ public class PersonnelParametersServiceImpl extends ServiceImpl<PersonnelParamet
     }
 
     @Override
+    public List<PersonnelParameters> querySocialSecurity() {
+        return  baseMapper.querySocialSecurity();
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void createPersonnelParameters(PersonnelParameters personnelParameters) {
         this.save(personnelParameters);

@@ -1,24 +1,24 @@
 package com.erp.personnel.controller;
 
 import com.erp.common.entity.FebsConstant;
-import com.erp.common.entity.JsonResult;
+import com.erp.common.utils.DateUtil;
 import com.erp.common.utils.FebsUtil;
 import com.erp.monitor.helper.FebsActuatorHelper;
+import com.erp.personnel.entity.PersonnelArchives;
 import com.erp.personnel.entity.PersonnelParameters;
+import com.erp.personnel.service.IPersonnelArchivesService;
 import com.erp.personnel.service.IPersonnelParametersService;
-import com.erp.personnel.util.FileUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.util.HashMap;
+import java.text.DateFormat;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author qiufeng
@@ -31,6 +31,9 @@ public class ViewController {
     private final FebsActuatorHelper actuatorHelper;
 
     private final IPersonnelParametersService personnelParametersService;
+
+
+    private final IPersonnelArchivesService personnelArchivesService;
 
     /* 人事参数模块开始 */
     @GetMapping("personnelParameters")
@@ -80,7 +83,33 @@ public class ViewController {
         return FebsUtil.view("archives/archivesAdd");
     }
 
+    @GetMapping("personnelArchives/update/{userId}")
+    @RequiresPermissions("personnelArchives:update")
+    public String personnelArchivesUpdate(@PathVariable Long userId, Model model) {
+        List<PersonnelParameters> technical  = personnelParametersService.queryTechnical();
+        model.addAttribute("technical",technical);
 
+        List<PersonnelParameters> education  = personnelParametersService.queryEducation();
+        model.addAttribute("education",education);
+        personnelArchivesParametersModel(userId, model, false);
+        return FebsUtil.view("archives/archivesUpdate");
+    }
+
+    private void personnelArchivesParametersModel(Long userId, Model model, Boolean transform) {
+        PersonnelArchives archives = personnelArchivesService.findArchivesById(userId);
+
+        model.addAttribute("archives", archives);
+
+        if (archives.getEntryDate() != null) {
+            model.addAttribute("entryDate", DateUtil.getDateFormat(archives.getEntryDate(), DateUtil.FULL_TIME_SPLIT));
+        } if (archives.getBirthdate() != null) {
+            model.addAttribute("birthDate", DateUtil.getDateFormat(archives.getBirthdate(), DateUtil.FULL_TIME_SPLIT));
+        } if (archives.getQuitDate() != null) {
+            model.addAttribute("quitDate", DateUtil.getDateFormat(archives.getQuitDate(), DateUtil.FULL_TIME_SPLIT));
+        } if (archives.getPositiveDates() != null) {
+            model.addAttribute("positiveDates", DateUtil.getDateFormat(archives.getPositiveDates(), DateUtil.FULL_TIME_SPLIT));
+        }
+    }
 
     /* 员工档案模块结束 */
 

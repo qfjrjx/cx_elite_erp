@@ -410,7 +410,7 @@
             <label class="layui-form-label">
                 社保缴纳情况:
             </label>
-            <div class="layui-input-block" id="socialSecurity">
+            <div class="layui-input-block" id="user-add-social">
 
             </div>
         </div>
@@ -454,6 +454,7 @@
             validate = layui.validate,
             upload = layui.upload,
             laydate = layui.laydate,
+            socialXmSelect,
             deptXmlSelect;
 
         form.verify(validate);
@@ -476,31 +477,6 @@
                 ,trigger: 'click'
             });
         })
-        var ehethe = [];
-        ehethe.push(1);
-        var tagData1 = [
-            {name: '暂不缴纳社保', value: '暂不缴纳社保'},
-            {name: '医疗保险', value: '医疗保险'},
-            {name: '失业保险', value: '失业保险'},
-            {name: '养老保险', value: '养老保险'},
-            {name: '工伤保险', value: '工伤保险'},
-        ];
-        var demo1 = xmSelect.render({
-            el: '#socialSecurity',
-            language: 'zn',
-            data: tagData1,
-            //最多选中个数，默认5
-            max : 4,
-            //默认值
-            selected: ehethe,
-            //空值项提示，支持将{max}替换为max
-            tips: '请选择 最多 4 个'
-            ,name: 'socialSecurity'
-            //值的分隔符
-            ,delimiter: ','
-
-        })
-
         //普通图片上传
         var uploadInst = upload.render({
             elem: '#toImg'
@@ -555,6 +531,28 @@
             deptXmlSelect.update(
                 data
             )
+        });
+
+        socialXmSelect = xmSelect.render({
+            el: '#user-add-social',
+            toolbar: {show: true},
+            name: 'id',
+            max:4,
+            theme: {
+                color: '#32c787',
+            },
+            prop: {
+                name: 'parameterName',
+                value: 'id'
+            },
+            data: []
+        });
+
+        febs.get(ctx + 'personnelParameters/querySocialSecurity', null, function (data) {
+            socialXmSelect.update({
+                data: data.data,
+                autoRow: true,
+            })
         });
     });
 
