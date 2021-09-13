@@ -6,13 +6,12 @@
 <div class="layui-fluid" id="personnelArchives-update">
     <form class="layui-form" action="" lay-filter="personnelArchives-update-form">
         <div class="layui-form-item febs-hide">
-            <label class="layui-form-label febs-form-item-require">参数id：</label>
+            <label class="layui-form-label febs-form-item-require">员工档案id：</label>
             <div class="layui-input-block">
                 <input type="text" name="userId" data-th-value="${archives.userId}">
             </div>
         </div>
         <div class="layui-form-item">
-
             <div style="width: 50%; float: left">
                 <div>
                     <label for="username" class="layui-form-label">
@@ -52,23 +51,17 @@
                         <span class="x-red">*</span>
                     </div>
                 </div>
-
             </div>
-
-
             <div style="width: 50%; float: left">
-
-
                 <div class="layui-form-item">
                     <div class="layui-upload" style="margin-left: 59px;">
                         <div class="layui-upload-list" id="toImg"
                              style="margin-top: 10%;width: 107px;height: 127px; border: 1px solid #c2c2c2;margin-left: 14%;">
-                            <img class="layui-upload-img" data-th-src="${archives.userImg}" id="imgDom" width="107px" >
+                            <img class="layui-upload-img" id="imgDom" width="107px" >
                             <p id="demoText"></p>
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
         <div class="layui-form-item">
@@ -115,8 +108,6 @@
                 <input type="text" name="specialty" placeholder="请输入专业" lay-verify="required"
                        autocomplete="off" class="layui-input">
             </div>
-
-
         </div>
         <div class="layui-form-item">
             <label for="L_email" class="layui-form-label">
@@ -141,25 +132,18 @@
             <div class="layui-form-mid layui-word-aux">
                 <span class="x-red">*</span>
             </div>
-
-
         </div>
         <div class="layui-form-item">
-
-            <label for="L_email" class="layui-form-label">
-                员工部门:
-            </label>
-            <div class="layui-input-inline" id="user-update-dept" style="width: 190px">
-
-            </div>
+            <label class="layui-form-label">员工部门：</label>
+            <div class="layui-input-inline" id="personnelArchives-update-dept" style="width: 190px"></div>
             <div class="layui-form-mid layui-word-aux">
-                <span class="x-red">*</span>
+            <span class="x-red">*</span>
             </div>
             <label for="L_email" class="layui-form-label">
                 技术级别:
             </label>
             <div class="layui-input-inline">
-                <select id="parameterName"  name="technicalId">
+                <select id="technicalId"  name="technicalId">
                     <option value="" >请选择技术级别</option>
                     <option th:each="technicals:${technical}" th:value="${technicals.id}">[[${technicals.parameterName}]]</option>
                 </select>
@@ -171,8 +155,9 @@
             </label>
 
             <div class="layui-input-inline">
-                <select name="positionId"  id="positionsId" lay-filter="positionsId" lay-verify="required">
-                    <option value="">请选择所属岗位</option>
+                <select id="positionId"  name="positionId">
+                    <option value="" >请选择所属岗位</option>
+                    <option th:each="position:${position}" th:value="${position.id}">[[${position.parameterName}]]</option>
                 </select>
             </div>
             <div class="layui-form-mid layui-word-aux">
@@ -182,8 +167,9 @@
                 所属职务:
             </label>
             <div class="layui-input-inline">
-                <select name="dutiesId"  id="duties_Id" lay-filter="duties_Id" lay-verify="required">
-                    <option value="">请选择所属职务</option>
+                <select id="dutiesId"  name="dutiesId">
+                    <option value="" >请选择所属职务</option>
+                    <option th:each="duties:${duties}" th:value="${duties.id}">[[${duties.parameterName}]]</option>
                 </select>
             </div>
             <div class="layui-form-mid layui-word-aux">
@@ -223,14 +209,10 @@
             <div class="layui-input-inline">
                 <input type="text" id="positiveDates" name="positiveDates"
                        placeholder="请选择日期" class="layui-input startTime">
-
             </div>
-
             <div class="layui-form-mid layui-word-aux">
                 <span class="x-red">*</span>
             </div>
-
-
             <label for="L_email" class="layui-form-label">
                 离职日期:
             </label>
@@ -238,7 +220,6 @@
                 <input type="text" id="quitDate" name="quitDate" placeholder="请选择日期"
                        class="layui-input startTime">
             </div>
-
         </div>
         <div class="layui-form-item">
             <label for="L_email" class="layui-form-label">
@@ -250,12 +231,9 @@
                     <option th:each="educations:${education}" th:value="${educations.id}">[[${educations.parameterName}]]</option>
                 </select>
             </div>
-
             <div class="layui-form-mid layui-word-aux">
                 <span class="x-red">*</span>
             </div>
-
-
             <label for="L_email" class="layui-form-label">
                 是否考勤:
             </label>
@@ -326,7 +304,7 @@
                 员工年龄:
             </label>
             <div class="layui-input-inline">
-                <input type="text" name="age" placeholder="请输入年龄" lay-verify="required"
+                <input type="text" name="age" id="age" placeholder="请输入年龄" lay-verify="required"
                        autocomplete="off" class="layui-input">
             </div>
             <div class="layui-form-mid layui-word-aux">
@@ -347,7 +325,7 @@
                 工资账号:
             </label>
             <div class="layui-input-inline">
-                <input type="text" name="bankCard" placeholder="请输入开户银行账号"
+                <input type="text" name="bankCard" id="bankCard" placeholder="请输入开户银行账号"
                        autocomplete="off" class="layui-input">
             </div>
             <div class="layui-form-mid layui-word-aux">
@@ -357,7 +335,7 @@
                 工资开户行:
             </label>
             <div class="layui-input-inline">
-                <input type="text" name="payrollBank" lay-verify="required" placeholder="请输入开户银行"
+                <input type="text" name="payrollBank" id="payrollBank" lay-verify="required" placeholder="请输入开户银行"
                        autocomplete="off" class="layui-input">
             </div>
 
@@ -367,7 +345,7 @@
                 紧急联系人:
             </label>
             <div class="layui-input-inline">
-                <input type="text" name="emergencyUser" required="" lay-verify="required"  placeholder="请输入紧急联系人"
+                <input type="text" name="emergencyUser" id="emergencyUser" required="" lay-verify="required"  placeholder="请输入紧急联系人"
                        autocomplete="off" class="layui-input">
             </div>
             <div class="layui-form-mid layui-word-aux">
@@ -377,7 +355,7 @@
                 紧急联系人电话:
             </label>
             <div class="layui-input-inline">
-                <input type="text" name="emergencyPhone" required="" lay-verify="required" placeholder="请输入紧急联系人电话"
+                <input type="text" name="emergencyPhone"  id="emergencyPhone" required="" lay-verify="required" placeholder="请输入紧急联系人电话"
                        autocomplete="off" class="layui-input">
             </div>
         </div>
@@ -386,7 +364,7 @@
                 孝善奖账号:
             </label>
             <div class="layui-input-inline">
-                <input type="text" name="filialityFineCard" placeholder="请输入孝善奖账号"
+                <input type="text" name="filialityFineCard"  id="filialityFineCard" placeholder="请输入孝善奖账号"
                        autocomplete="off" class="layui-input">
             </div>
             <div class="layui-form-mid layui-word-aux">
@@ -396,18 +374,15 @@
                 孝善奖开户行:
             </label>
             <div class="layui-input-inline">
-                <input type="text" name="filialityFineBank" lay-verify="required" placeholder="请输入孝善奖开户行"
+                <input type="text" name="filialityFineBank" id="filialityFineBank" lay-verify="required" placeholder="请输入孝善奖开户行"
                        autocomplete="off" class="layui-input">
             </div>
-
         </div>
         <div class="layui-form-item">
-
             <label class="layui-form-label">
                 社保缴纳情况:
             </label>
             <div class="layui-input-block" id="user-update-social">
-
             </div>
         </div>
         <div class="layui-form-item">
@@ -417,7 +392,7 @@
             </label>
 
             <div class="layui-input-inline">
-                <textarea rows="6" cols="60" name="educationUndergo" placeholder="请输入教育经历"></textarea>
+                <textarea rows="6" cols="60" name="educationUndergo" id="educationUndergo" placeholder="请输入教育经历"></textarea>
             </div>
 
         </div>
@@ -429,7 +404,7 @@
             </label>
 
             <div class="layui-input-inline">
-                <textarea rows="6" cols="60" name="occupational" placeholder="请输入工作经历"></textarea>
+                <textarea rows="6" cols="60" name="occupational" id="occupational" placeholder="请输入工作经历"></textarea>
             </div>
 
         </div>
@@ -440,7 +415,7 @@
 </div>
 
 <script data-th-inline="javascript">
-    layui.use(['febs', 'form', 'validate', 'xmSelect','upload','laydate'], function () {
+    layui.use(['febs', 'form', 'xmSelect', 'validate','laydate'], function () {
         let $ = layui.$,
             febs = layui.febs,
             layer = layui.layer,
@@ -448,8 +423,8 @@
             xmSelect = layui.xmSelect,
             laydate = layui.laydate,
             archives = [[${archives}]],
-            entryDate = [[${entryDate}]],
             birthDate = [[${birthDate}]],
+            entryDate = [[${entryDate}]],
             quitDate = [[${quitDate}]],
             positiveDates = [[${positiveDates}]],
             validate = layui.validate,
@@ -459,9 +434,10 @@
         form.verify(validate);
         form.render();
 
-        initPersonnelArchivesValue();
+        initArchivesValue();
+
         deptXmlSelect = xmSelect.render({
-            el: '#user-update-dept',
+            el: '#personnelArchives-update-dept',
             model: {label: {type: 'text'}},
             tree: {
                 show: true,
@@ -478,17 +454,17 @@
                 value: 'id'
             },
             height: 'auto',
-            on: function(data){
-                if(data.isAdd){
+            on: function (data) {
+                if (data.isAdd) {
                     return data.change.slice(0, 1)
                 }
             }
         });
+
         febs.get(ctx + 'dept/select/tree', null, function (data) {
             deptXmlSelect.update(data)
             archives.deptId && deptXmlSelect.setValue([archives.deptId]);
         });
-
         socialXmSelect = xmSelect.render({
             el: '#user-update-social',
             toolbar: {show: true},
@@ -512,60 +488,56 @@
             socialXmSelect.setValue(archives.id.split(','));
         });
 
-        function initPersonnelArchivesValue() {
+        function initArchivesValue() {
             form.val("personnelArchives-update-form", {
-                "jobNumber": archives.jobNumber,
                 "userName": archives.userName,
-                "deptId": archives.deptId,
-                "gender": archives.gender,
-                "nation": archives.nation,
-                "userState": archives.userState,
                 "phone": archives.phone,
-                "dutiesId": archives.dutiesId,
+                "fixedTelephone": archives.fixedTelephone,
+                "userImg":$("#imgDom").attr("src"),
+                "schoolBy":archives.schoolBy,
+                "identityArd":archives.identityArd,
+                "address":archives.address,
+                "specialty":archives.specialty,
+                "presentAddress":archives.presentAddress,
+                "nation":archives.nation,
                 "technicalId": archives.technicalId,
                 "positionId": archives.positionId,
-                "educationId": archives.educationId,
-                "identityArd": archives.identityArd,
-                "fixedTelephone": archives.fixedTelephone,
-                "entryDate": entryDate,
+                "dutiesId": archives.dutiesId,
                 "birthdate": birthDate,
-                "quitDate": quitDate,
+                "entryDate": entryDate,
                 "positiveDates": positiveDates,
-                "hukouType": archives.hukouType,
-                "specialty": archives.specialty,
+                "quitDate": quitDate,
+                "educationId": archives.educationId,
                 "staffNative": archives.staffNative,
-                "identityArd": archives.identityArd,
-                "address": archives.address,
-                "attendance": archives.attendance,
+                "userState": archives.userState,
+                "gender": archives.gender,
                 "marriage": archives.marriage,
-                "occupational": archives.occupational,
                 "age": archives.age,
-                "emergencyPhone": archives.emergencyPhone,
-                "emergencyUser": archives.emergencyUser,
-                "presentAddress": archives.presentAddress,
-                "schoolBy": archives.schoolBy,
-                "payrollBank": archives.payrollBank,
+                "hukouType": archives.hukouType,
                 "bankCard": archives.bankCard,
-                "userImg": archives.userImg,
-                "educationUndergo": archives.educationUndergo,
+                "payrollBank": archives.payrollBank,
+                "emergencyUser": archives.emergencyUser,
+                "emergencyPhone": archives.emergencyPhone,
                 "filialityFineCard": archives.filialityFineCard,
-                "filialityFineBank": archives.filialityFineBank
+                "filialityFineBank": archives.filialityFineBank,
+                "educationUndergo": archives.educationUndergo,
+                "occupational": archives.occupational
             });
         }
 
         form.on('submit(personnelArchives-update-form-submit)', function (data) {
-            const b = true;
             if (febs.nativeEqual(data.field, archives)) {
                 febs.alert.warn('数据未作任何修改！');
-                return true;
+                return false;
             }
             febs.post(ctx + 'personnelArchives/update', data.field, function () {
                 layer.closeAll();
-                febs.alert.success('数据修改成功');
+                febs.alert.success(' 数据修改成功');
                 $('#febs-personnelArchives').find('#query').click();
             });
             return false;
         });
+
         //日期同时绑定多个
         lay('.startTime').each(function(){
             laydate.render({
@@ -574,72 +546,6 @@
             });
         })
 
-        //普通图片上传
-        var uploadInst = upload.render({
-            elem: '#toImg'
-            , url: 'personnelArchives/uploadFiles' //改成您自己的上传接口
-            , field: 'imgs'
-            , before: function (obj) {
-                //预读本地文件示例，不支持ie8
 
-            }
-            , done: function (res) {
-                $('#imgDom').attr('height', 127); //图片链接（base64
-                $('#imgDom').attr('width',107); //图片链接（base64
-                $('#imgDom').attr('src', res.data.file); //图片链接（base64
-
-            }
-            , error: function () {
-                //演示失败状态，并实现重传
-                var demoText = $('#demoText');
-                demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
-                demoText.find('.demo-reload').on('click', function () {
-                    uploadInst.upload();
-                });
-            }
-        });
-
-    });
-
-    layui.use('form',function(){
-        var $ = layui.jquery
-        var form = layui.form
-        $.ajax({
-            url: '/personnelParameters/queryPosition',
-            dataType: 'json',
-            type: 'get',
-            success: function(data) {
-                if (data!== null) {
-                    $.each(data.data, function (index, value) {
-                        $('#positionsId').append(new Option(value.parameterName,value.id));// 下拉菜单里添加元素
-                    });
-                } else {
-                    $("#positionsId").append(new Option("暂无数据", ""));
-                }
-                //重新渲染
-                form.render("select");
-            }
-        });
-    });
-
-    layui.use('form',function(){
-        var $ = layui.jquery
-        var form = layui.form
-        $.ajax({
-            url: '/personnelParameters/queryDuties',
-            dataType: 'json',
-            type: 'get',
-            success: function(data) {
-                if (data!== null) {
-                    $.each(data.data, function (index, value) {
-                        $('#duties_Id').append(new Option(value.parameterName,value.id));// 下拉菜单里添加元素
-                    });
-                } else {
-                    $("#duties_Id").append(new Option("暂无数据", ""));
-                }
-                //重新渲染
-                form.render("select");
-            }
-        });
     });
 </script>

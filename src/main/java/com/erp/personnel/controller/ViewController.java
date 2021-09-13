@@ -86,9 +86,17 @@ public class ViewController {
     @GetMapping("personnelArchives/update/{userId}")
     @RequiresPermissions("personnelArchives:update")
     public String personnelArchivesUpdate(@PathVariable Long userId, Model model) {
+        //查询技术级别
         List<PersonnelParameters> technical  = personnelParametersService.queryTechnical();
         model.addAttribute("technical",technical);
 
+        //查询岗位信息
+        List<PersonnelParameters> position  = personnelParametersService.queryPosition();
+        model.addAttribute("position",position);
+        //查询岗位信息
+        List<PersonnelParameters> duties  = personnelParametersService.queryDuties();
+        model.addAttribute("duties",duties);
+        //查询学历信息
         List<PersonnelParameters> education  = personnelParametersService.queryEducation();
         model.addAttribute("education",education);
         personnelArchivesParametersModel(userId, model, false);
