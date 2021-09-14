@@ -102,12 +102,30 @@ public class ViewController {
         personnelArchivesParametersModel(userId, model, false);
         return FebsUtil.view("archives/archivesUpdate");
     }
+    @GetMapping("personnelArchives/detail/{userId}")
+    @RequiresPermissions("personnelArchives:view")
+    public String personnelArchivesDetail(@PathVariable Long userId, Model model) {
+        //查询技术级别
+        List<PersonnelParameters> technical  = personnelParametersService.queryTechnical();
+        model.addAttribute("technical",technical);
+
+        //查询岗位信息
+        List<PersonnelParameters> position  = personnelParametersService.queryPosition();
+        model.addAttribute("position",position);
+        //查询岗位信息
+        List<PersonnelParameters> duties  = personnelParametersService.queryDuties();
+        model.addAttribute("duties",duties);
+        //查询学历信息
+        List<PersonnelParameters> education  = personnelParametersService.queryEducation();
+        model.addAttribute("education",education);
+        personnelArchivesParametersModel(userId, model, false);
+        return FebsUtil.view("archives/archivesDetail");
+    }
 
     private void personnelArchivesParametersModel(Long userId, Model model, Boolean transform) {
         PersonnelArchives archives = personnelArchivesService.findArchivesById(userId);
 
         model.addAttribute("archives", archives);
-
         if (archives.getEntryDate() != null) {
             model.addAttribute("entryDate", DateUtil.getDateFormat(archives.getEntryDate(), DateUtil.FULL_TIME_SPLIT));
         } if (archives.getBirthdate() != null) {

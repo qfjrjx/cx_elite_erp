@@ -1,10 +1,13 @@
 <style>
-    #personnelArchives-update {
+    #personnelArchives-view {
         padding: 20px 25px 25px 0;
     }
+    .notclick{
+        pointer-events: none;
+    }
 </style>
-<div class="layui-fluid" id="personnelArchives-update">
-    <form class="layui-form" action="" lay-filter="personnelArchives-update-form">
+<div class="layui-fluid" id="personnelArchives-view">
+    <form class="layui-form" action="" lay-filter="personnelArchives-view-form">
         <div class="layui-form-item febs-hide">
             <label class="layui-form-label febs-form-item-require">员工档案id：</label>
             <div class="layui-input-block">
@@ -18,7 +21,7 @@
                         员工姓名:
                     </label>
                     <div class="layui-input-inline">
-                        <input type="text" id="userName" name="userName" placeholder="请输入姓名" lay-verify="required"
+                        <input type="text" id="userName" name="userName" placeholder="请输入姓名" readonly lay-verify="required"
                                autocomplete="off" class="layui-input">
                     </div>
                     <div class="layui-form-mid layui-word-aux">
@@ -31,7 +34,7 @@
                         手机号码:
                     </label>
                     <div class="layui-input-inline">
-                        <input type="text" id="phone" name="phone" placeholder="请输入手机号码" lay-verify="phone"
+                        <input type="text" id="phone" name="phone" readonly placeholder="请输入手机号码" lay-verify="phone"
                                autocomplete="off" class="layui-input">
                     </div>
                     <div class="layui-form-mid layui-word-aux">
@@ -44,7 +47,7 @@
                         固定电话:
                     </label>
                     <div class="layui-input-inline">
-                        <input type="text" id="L_email" name="fixedTelephone" placeholder="请输入固定电话" lay-verify="required"
+                        <input type="text" id="L_email" name="fixedTelephone" readonly placeholder="请输入固定电话" lay-verify="required"
                                autocomplete="off" class="layui-input">
                     </div>
                     <div class="layui-form-mid layui-word-aux">
@@ -52,13 +55,13 @@
                     </div>
                 </div>
             </div>
-            <div style="width: 50%; float: left" >
+            <div style="width: 50%; float: left">
                 <div class="layui-form-item">
-                    <div class="layui-upload" style="margin-left: 59px;">
+                    <div class="layui-upload notclick" style="margin-left: 59px;">
                         　<input type="hidden" id="img_url" name="userImg" value=""/>
-                        <div class="layui-upload-list" id="uploadPic"
+                        <div class="layui-upload-list" id="uploadPic" readonly="readonly"
                              style="margin-top: 2%;width: 107px;height: 127px; border: 1px solid #c2c2c2;margin-left: 14%;">
-                            <img class="layui-upload-img" th:src="@{'/file/upload/'+${archives.userImg}}" id="preShow" width="107px" >
+                            <img class="layui-upload-img" th:src="@{'/file/upload/'+${archives.userImg}}"  id="preShow" width="107px" >
                             <p id="demoText"></p>
                         </div>
                     </div>
@@ -70,7 +73,7 @@
                 毕业院校:
             </label>
             <div class="layui-input-inline">
-                <input type="text" name="schoolBy" placeholder="请输入毕业院校" lay-verify="required"
+                <input type="text" name="schoolBy" placeholder="请输入毕业院校" lay-verify="required" readonly
                        autocomplete="off" class="layui-input">
             </div>
             <div class="layui-form-mid layui-word-aux">
@@ -81,7 +84,7 @@
                 身份证号:
             </label>
             <div class="layui-input-inline">
-                <input type="text" name="identityArd" placeholder="请输入18位有效身份证号码" lay-verify="required"
+                <input type="text" name="identityArd" placeholder="请输入18位有效身份证号码" lay-verify="required" readonly
                        autocomplete="off" class="layui-input">
             </div>
             <div class="layui-form-mid layui-word-aux">
@@ -96,7 +99,7 @@
                 家庭地址:
             </label>
             <div class="layui-input-inline">
-                <input type="text" name="address" placeholder="请输入身份证家庭地址" lay-verify="required"
+                <input type="text" name="address" placeholder="请输入身份证家庭地址" lay-verify="required" readonly
                        autocomplete="off" class="layui-input">
             </div>
             <div class="layui-form-mid layui-word-aux">
@@ -106,7 +109,7 @@
                 员工专业:
             </label>
             <div class="layui-input-inline">
-                <input type="text" name="specialty" placeholder="请输入专业" lay-verify="required"
+                <input type="text" name="specialty" placeholder="请输入专业" lay-verify="required" readonly
                        autocomplete="off" class="layui-input">
             </div>
         </div>
@@ -115,7 +118,7 @@
                 现住地址:
             </label>
             <div class="layui-input-inline">
-                <input type="text" name="presentAddress" placeholder="请输入现居住地" lay-verify="required"
+                <input type="text" name="presentAddress" placeholder="请输入现居住地" lay-verify="required" readonly
                        autocomplete="off" class="layui-input">
             </div>
             <div class="layui-form-mid layui-word-aux">
@@ -127,7 +130,7 @@
                 员工民族:
             </label>
             <div class="layui-input-inline">
-                <input type="text" name="nation" placeholder="请输入民族"
+                <input type="text" name="nation" placeholder="请输入民族" readonly
                        autocomplete="off" class="layui-input">
             </div>
             <div class="layui-form-mid layui-word-aux">
@@ -136,7 +139,7 @@
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">员工部门:</label>
-            <div class="layui-input-inline" id="personnelArchives-update-dept" style="width: 190px"></div>
+            <div class="layui-input-inline notclick" id="personnelArchives-view-dept" style="width: 190px" ></div>
             <div class="layui-form-mid layui-word-aux">
             <span class="x-red">*</span>
             </div>
@@ -144,7 +147,7 @@
                 技术级别:
             </label>
             <div class="layui-input-inline">
-                <select id="technicalId"  name="technicalId">
+                <select id="technicalId"  name="technicalId" disabled>
                     <option value="" >请选择技术级别</option>
                     <option th:each="technicals:${technical}" th:value="${technicals.id}">[[${technicals.parameterName}]]</option>
                 </select>
@@ -156,7 +159,7 @@
             </label>
 
             <div class="layui-input-inline">
-                <select id="positionId"  name="positionId">
+                <select id="positionId"  name="positionId" disabled>
                     <option value="" >请选择所属岗位</option>
                     <option th:each="position:${position}" th:value="${position.id}">[[${position.parameterName}]]</option>
                 </select>
@@ -168,7 +171,7 @@
                 所属职务:
             </label>
             <div class="layui-input-inline">
-                <select id="dutiesId"  name="dutiesId">
+                <select id="dutiesId"  name="dutiesId" disabled>
                     <option value="" >请选择所属职务</option>
                     <option th:each="duties:${duties}" th:value="${duties.id}">[[${duties.parameterName}]]</option>
                 </select>
@@ -182,7 +185,7 @@
                 出生日期:
             </label>
             <div class="layui-input-inline">
-                <input type="text" id="birthdate" name="birthdate" required="" placeholder="请选择日期"
+                <input type="text" id="birthdate" name="birthdate" disabled required="" placeholder="请选择日期"
                        autocomplete="off" class="layui-input startTime">
             </div>
             <div class="layui-form-mid layui-word-aux">
@@ -194,7 +197,7 @@
                 入职日期:
             </label>
             <div class="layui-input-inline">
-                <input type="text" id="entryDate" name="entryDate" required="" placeholder="请选择日期"
+                <input type="text" id="entryDate" name="entryDate" disabled required="" placeholder="请选择日期"
                        autocomplete="off" class="layui-input startTime">
             </div>
             <div class="layui-form-mid layui-word-aux">
@@ -208,7 +211,7 @@
                 转正日期:
             </label>
             <div class="layui-input-inline">
-                <input type="text" id="positiveDates" name="positiveDates"
+                <input type="text" id="positiveDates" name="positiveDates" disabled
                        placeholder="请选择日期" class="layui-input startTime">
             </div>
             <div class="layui-form-mid layui-word-aux">
@@ -218,7 +221,7 @@
                 离职日期:
             </label>
             <div class="layui-input-inline">
-                <input type="text" id="quitDate" name="quitDate" placeholder="请选择日期"
+                <input type="text" id="quitDate" name="quitDate" placeholder="请选择日期" disabled
                        class="layui-input startTime">
             </div>
         </div>
@@ -227,7 +230,7 @@
                 员工学历:
             </label>
             <div class="layui-input-inline">
-                <select id="educationId"  name="educationId">
+                <select id="educationId"  name="educationId" disabled>
                     <option value="" >请选择学历</option>
                     <option th:each="educations:${education}" th:value="${educations.id}">[[${educations.parameterName}]]</option>
                 </select>
@@ -239,7 +242,7 @@
                 是否考勤:
             </label>
             <div class="layui-input-inline">
-                <select id="attendance" lay-filter="" name="attendance">
+                <select id="attendance" lay-filter="" name="attendance" disabled>
                     <option value="1">是</option>
                     <option value="2">否</option>
                 </select>
@@ -250,7 +253,7 @@
                 员工籍贯:
             </label>
             <div class="layui-input-inline">
-                <input type="text" id="staffNative"  placeholder="请输入籍贯" name="staffNative"
+                <input type="text" id="staffNative" readonly placeholder="请输入籍贯" name="staffNative"
                        class="layui-input">
 
             </div>
@@ -264,7 +267,7 @@
                 在职状态:
             </label>
             <div class="layui-input-inline">
-                <select id="userState" lay-filter="" name="userState">
+                <select id="userState" lay-filter="" name="userState" disabled>
                     <option value="1">在职</option>
                     <option value="2">离职</option>
                     <option value="3">休假</option>
@@ -277,7 +280,7 @@
                 员工性别:
             </label>
             <div class="layui-input-inline">
-                <select id="gender" lay-filter="" name="gender">
+                <select id="gender" lay-filter="" name="gender" disabled>
                     <option value="1">男</option>
                     <option value="2">女</option>
                 </select>
@@ -290,7 +293,7 @@
                 婚姻状况:
             </label>
             <div class="layui-input-inline">
-                <select id="marriage" lay-filter="" name="marriage">
+                <select id="marriage" lay-filter="" name="marriage" disabled>
                     <option value="1">未婚</option>
                     <option value="2">已婚</option>
                     <option value="3">离异</option>
@@ -305,7 +308,7 @@
                 员工年龄:
             </label>
             <div class="layui-input-inline">
-                <input type="text" name="age" id="age" placeholder="请输入年龄" lay-verify="required"
+                <input type="text" name="age" id="age" readonly placeholder="请输入年龄" lay-verify="required"
                        autocomplete="off" class="layui-input">
             </div>
             <div class="layui-form-mid layui-word-aux">
@@ -315,7 +318,7 @@
                 户口类型:
             </label>
             <div class="layui-input-inline">
-                <select id="hukouType" lay-filter="" name="hukouType">
+                <select id="hukouType" lay-filter="" name="hukouType" disabled>
                     <option value="1">城镇</option>
                     <option value="2">农村</option>
                 </select>
@@ -326,7 +329,7 @@
                 工资账号:
             </label>
             <div class="layui-input-inline">
-                <input type="text" name="bankCard" id="bankCard" placeholder="请输入开户银行账号"
+                <input type="text" name="bankCard" id="bankCard" placeholder="请输入开户银行账号" readonly
                        autocomplete="off" class="layui-input">
             </div>
             <div class="layui-form-mid layui-word-aux">
@@ -336,7 +339,7 @@
                 工资开户行:
             </label>
             <div class="layui-input-inline">
-                <input type="text" name="payrollBank" id="payrollBank" lay-verify="required" placeholder="请输入开户银行"
+                <input type="text" name="payrollBank" id="payrollBank" lay-verify="required" placeholder="请输入开户银行" readonly
                        autocomplete="off" class="layui-input">
             </div>
 
@@ -346,7 +349,7 @@
                 紧急联系人:
             </label>
             <div class="layui-input-inline">
-                <input type="text" name="emergencyUser" id="emergencyUser" required="" lay-verify="required"  placeholder="请输入紧急联系人"
+                <input type="text" name="emergencyUser" id="emergencyUser" required="" lay-verify="required" readonly  placeholder="请输入紧急联系人"
                        autocomplete="off" class="layui-input">
             </div>
             <div class="layui-form-mid layui-word-aux">
@@ -356,7 +359,7 @@
                 紧急联系人电话:
             </label>
             <div class="layui-input-inline">
-                <input type="text" name="emergencyPhone"  id="emergencyPhone" required="" lay-verify="required" placeholder="请输入紧急联系人电话"
+                <input type="text" name="emergencyPhone"  id="emergencyPhone" readonly required="" lay-verify="required" placeholder="请输入紧急联系人电话"
                        autocomplete="off" class="layui-input">
             </div>
         </div>
@@ -365,7 +368,7 @@
                 孝善奖账号:
             </label>
             <div class="layui-input-inline">
-                <input type="text" name="filialityFineCard"  id="filialityFineCard" placeholder="请输入孝善奖账号"
+                <input type="text" name="filialityFineCard"  id="filialityFineCard" readonly placeholder="请输入孝善奖账号"
                        autocomplete="off" class="layui-input">
             </div>
             <div class="layui-form-mid layui-word-aux">
@@ -375,7 +378,7 @@
                 孝善奖开户行:
             </label>
             <div class="layui-input-inline">
-                <input type="text" name="filialityFineBank" id="filialityFineBank" lay-verify="required" placeholder="请输入孝善奖开户行"
+                <input type="text" name="filialityFineBank" id="filialityFineBank" readonly lay-verify="required" placeholder="请输入孝善奖开户行"
                        autocomplete="off" class="layui-input">
             </div>
         </div>
@@ -383,7 +386,7 @@
             <label class="layui-form-label">
                 社保缴纳情况:
             </label>
-            <div class="layui-input-block" id="user-update-social">
+            <div class="layui-input-block notclick" id="user-update-social">
             </div>
         </div>
         <div class="layui-form-item">
@@ -393,7 +396,7 @@
             </label>
 
             <div class="layui-input-inline">
-                <textarea rows="6" cols="60" name="educationUndergo" id="educationUndergo" placeholder="请输入教育经历"></textarea>
+                <textarea rows="6" cols="60" name="educationUndergo" id="educationUndergo" placeholder="请输入教育经历" disabled></textarea>
             </div>
 
         </div>
@@ -405,12 +408,12 @@
             </label>
 
             <div class="layui-input-inline">
-                <textarea rows="6" cols="60" name="occupational" id="occupational" placeholder="请输入工作经历"></textarea>
+                <textarea rows="6" cols="60" name="occupational" id="occupational" placeholder="请输入工作经历" disabled></textarea>
             </div>
 
         </div>
         <div class="layui-form-item febs-hide">
-            <button class="layui-btn" lay-submit="" lay-filter="personnelArchives-update-form-submit" id="submit"></button>
+            <button class="layui-btn" lay-submit="" lay-filter="personnelArchives-view-form-submit" id="submit"></button>
         </div>
     </form>
 </div>
@@ -439,7 +442,7 @@
         initArchivesValue();
 
         deptXmlSelect = xmSelect.render({
-            el: '#personnelArchives-update-dept',
+            el: '#personnelArchives-view-dept',
             model: {label: {type: 'text'}},
             tree: {
                 show: true,
@@ -491,7 +494,7 @@
         });
 
         function initArchivesValue() {
-            form.val("personnelArchives-update-form", {
+            form.val("personnelArchives-view-form", {
                 "userName": archives.userName,
                 "phone": archives.phone,
                 "fixedTelephone": archives.fixedTelephone,
@@ -527,7 +530,7 @@
             });
         }
 
-        form.on('submit(personnelArchives-update-form-submit)', function (data) {
+        form.on('submit(personnelArchives-view-form-submit)', function (data) {
             if (febs.nativeEqual(data.field, archives)) {
                 febs.alert.warn('数据未作任何修改！');
                 return false;

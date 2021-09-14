@@ -33,14 +33,38 @@
         pe.user_name userName,
         d.dept_name deptName,
         pe.gender,
+        pe.nation,
+        pe.phone,
         pa.parameter_name dutiesName,
         par.parameter_name positionName,
         pas.parameter_name educationName,
         pe.identity_ard identityArd,
+        pe.fixed_telephone fixedTelephone,
         pe.entry_date entryDate,
+        pe.birthdate,
         pe.quit_date quitDate,
+        pe.positive_dates positiveDates,
         pe.user_state userState,
+        pe.hukou_type hukouType,
+        pe.staff_native staffNative,
+        pe.identity_ard identityArd,
         pe.address,
+        pe.attendance,
+        pe.marriage,
+        pe.occupational,
+        pe.age,
+        pe.specialty,
+        pe.emergency_phone emergencyPhone,
+        pe.emergency_user emergencyUser,
+        pe.present_address presentAddress,
+        pe.education_id educationId,
+        pe.school_by schoolBy,
+        pe.payroll_bank payrollBank,
+        pe.bank_card bankCard,
+        pe.user_img userImg,
+        pe.education_undergo educationUndergo,
+        pe.filiality_fine_card filialityFineCard,
+        pe.filiality_fine_bank filialityFineBank,
         GROUP_CONCAT(pp.id) parametersId,
         GROUP_CONCAT(pp.parameter_name) parameterName
         FROM
@@ -71,7 +95,7 @@
         <if test="personnelArchives.positionId != null and personnelArchives.positionId != ''">
             AND par.id = #{personnelArchives.positionId}
         </if>
-        GROUP BY pe.entry_date
+        GROUP BY pe.user_name,pe.job_number
     </sql>
 
     <select id="countPersonnelArchives" parameterType="com.erp.personnel.entity.PersonnelArchives" resultType="long">

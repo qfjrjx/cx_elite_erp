@@ -1,7 +1,9 @@
 package com.erp.personnel.service.impl;
 
+import com.erp.common.entity.FebsConstant;
 import com.erp.common.entity.QueryRequest;
 import com.erp.common.entity.Strings;
+import com.erp.common.utils.SortUtil;
 import com.erp.personnel.entity.ArchivesParameters;
 import com.erp.personnel.entity.PersonnelArchives;
 import com.erp.personnel.entity.PersonnelParameters;
@@ -42,19 +44,10 @@ public class PersonnelArchivesServiceImpl extends ServiceImpl<PersonnelArchivesM
 
     @Override
     public IPage<PersonnelArchives> findPersonnelArchivess(QueryRequest request, PersonnelArchives personnelArchives) {
-        LambdaQueryWrapper<PersonnelArchives> queryWrapper = new LambdaQueryWrapper<>();
-        // TODO 设置查询条件
-        if (StringUtils.isNotBlank(personnelArchives.getJobNumber())) {
-            queryWrapper.eq(PersonnelArchives::getJobNumber, personnelArchives.getJobNumber());
-        }
-        if (StringUtils.isNotBlank(personnelArchives.getUserName())) {
-            queryWrapper.eq(PersonnelArchives::getUserName, personnelArchives.getUserName());
-        }
-        if (StringUtils.isNotBlank(personnelArchives.getUserState())) {
-            queryWrapper.eq(PersonnelArchives::getUserState, personnelArchives.getUserState());
-        }
         Page<PersonnelArchives> page = new Page<>(request.getPageNum(), request.getPageSize());
-        return this.page(page, queryWrapper);
+        page.setSearchCount(false);
+        page.setTotal(baseMapper.countPersonnelArchives(personnelArchives));
+        return baseMapper.findPersonnelArchivesPage(page,personnelArchives);
     }
 
     @Override
@@ -62,6 +55,7 @@ public class PersonnelArchivesServiceImpl extends ServiceImpl<PersonnelArchivesM
         Page<PersonnelArchives> page = new Page<>(request.getPageNum(), request.getPageSize());
         page.setSearchCount(false);
         page.setTotal(baseMapper.countPersonnelArchives(personnelArchives));
+        SortUtil.handlePageSort(request, page, "entryDate", FebsConstant.ORDER_DESC, true);
         return baseMapper.findPersonnelArchivesPage(page,personnelArchives);
     }
 

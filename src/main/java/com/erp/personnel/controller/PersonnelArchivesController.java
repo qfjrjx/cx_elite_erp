@@ -3,10 +3,12 @@ package com.erp.personnel.controller;
 import com.erp.common.annotation.ControllerEndpoint;
 import com.erp.common.controller.BaseController;
 import com.erp.common.entity.*;
+import com.erp.common.exception.FebsException;
 import com.erp.common.utils.FebsUtil;
 import com.erp.personnel.entity.PersonnelArchives;
 import com.erp.personnel.service.IPersonnelArchivesService;
 import com.erp.personnel.util.FileUtil;
+import com.erp.system.entity.User;
 import com.wuwenze.poi.ExcelKit;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
@@ -15,16 +17,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -86,39 +87,54 @@ public class PersonnelArchivesController extends BaseController {
         return new FebsResponse().success();
     }
 
-    @ControllerEndpoint(operation = "修改PersonnelArchives", exceptionMessage = "导出Excel失败")
-    @PostMapping("personnelArchives/excel")
-    @ResponseBody
+    @GetMapping("personnelArchives/excel")
     @RequiresPermissions("personnelArchives:export")
-    public void export(QueryRequest queryRequest, PersonnelArchives personnelArchives, HttpServletResponse response) {
-        List<PersonnelArchives> personnelArchivess = this.personnelArchivesService.findPersonnelArchivess(queryRequest, personnelArchives).getRecords();
-        ExcelKit.$Export(PersonnelArchives.class, response).downXlsx(personnelArchivess, false);
+    @ControllerEndpoint(exceptionMessage = "导出Excel失败")
+    public void export(QueryRequest queryRequest, PersonnelArchives personnelArchives, HttpServletResponse response){
+        ExcelKit.$Export(PersonnelArchives.class, response)
+                .downXlsx(personnelArchivesService.findPersonnelArchivesList(personnelArchives,queryRequest).getRecords(),false);
     }
-    //图片上传功能
+    //图片上传控制器
     @PostMapping("personnelArchives/uploadFiles")
     @ResponseBody
-    public JsonResult uploadFiles(@Valid MultipartFile imgs, HttpServletRequest request) throws Exception{
-        String fileName = imgs.getOriginalFilename();
-        //设置文件上传路径
-        try {
-            //获取图片在服务器地址下
-            String fangdi= request.getScheme() + "://" +request.getServerName() + ":" + request.getServerPort()+"/imgupload/";
-            String filePath = request.getSession().getServletContext().getRealPath("imgupload/");
-            FileUtil.uploadFile(imgs.getBytes(), filePath, fileName);
+    public Map uploadPicture(@RequestParam("file")MultipartFile file, HttpServletRequest servletRequest)
+            throws IOException {
 
-            //获取图片在项目路径下的地址
-            String basePath=request.getSession().getServletContext().getRealPath("/");
+        Map res = new HashMap();
 
-            FileUtil.uploadFile(imgs.getBytes(), basePath, fileName);
+        //上传文件名
+        String name = file.getOriginalFilename();//上传文件的真实名称
 
-            Map<String,String> map=new HashMap<>();
-            map.put("file",fangdi+fileName);
-            map.put("name","imgupload/"+fileName);
-
-            return new JsonResult( map, ExecuteResultState.SUCCEED,"成功");
-        } catch (Exception e) {
-            return new JsonResult( false, ExecuteResultState.FAILURE,"失败");
+        String suffixName = name.substring(name.lastIndexOf("."));//获取后缀名
+        // String hash = Integer.toHexString(new Random().nextInt());//自定义随机数（字母+数字）作为文件名
+        String hash = UUID.randomUUID().toString().replaceAll("-","");
+        String fileName = hash + suffixName;
+        String os = System.getProperty("os.name");
+        ////上传文件保存路径
+        String filePath="";
+        if(os.toLowerCase().startsWith("win")){
+            //windows下的路径
+            filePath ="d:/pictureUpload/upload";
+        }else {
+            //linux下的路径
+            filePath="/root/pictureUpload/upload";
         }
+        File filepath = new File(filePath, fileName);
+        System.out.println("随机数文件名称"+filepath.getName());
+        System.out.println("文件地址"+filepath);
+        //判断路径是否存在，没有就创建一个
+        if (!filepath.getParentFile().exists()) {
+            filepath.getParentFile().mkdirs();
+        }
+        //将上传文件保存到一个目标文档中
+        File tempFile = new File(filePath + File.separator + fileName);
+        System.out.println("将上传文件保存到一个目标文档中"+tempFile);
+        file.transferTo(tempFile);
 
+        // resUrl.put("src", tempFile.getPath());
+        res.put("code", "0");
+        res.put("msg", "");
+        res.put("data", tempFile.getName());
+        return res;
     }
 }

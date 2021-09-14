@@ -74,17 +74,19 @@
                                     <i class="layui-icon">&#xe79b;</i>
                                 </div>
                                 <!--添加按钮-->
-                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "shiro:hasAnyPermissions="personnelArchives:add" id="addTo">
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                                        shiro:hasAnyPermissions="personnelArchives:add" id="addTo">
                                     <i class="layui-icon">&#xe78a;</i>添加
                                 </div>
                                 <!--删除按钮-->
-                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "shiro:hasAnyPermissions="personnelArchives:delete" id="deleteTo">
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                                        shiro:hasAnyPermissions="personnelArchives:delete" id="deleteTo">
                                     <i class="layui-icon">&#xe8a1;</i>批量删除
                                 </div>
-                               <!-- <div class="layui-btn layui-btn-sm layui-btn-primary table-action action-more"
-                                     shiro:hasAnyPermissions="personnelArchives:add,personnelArchives:update">
-                                    <i class="layui-icon">&#xe875;</i>
-                                </div>-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action action-more"
+                                     shiro:hasAnyPermissions="personnelArchives:export" id="exportTo">
+                                    <i class="layui-icon">&#xe7a8;</i>导出
+                                </div>
                             </div>
                         </div>
                     </form>
@@ -117,6 +119,8 @@
     <span shiro:lacksPermission="personnelArchives:view,personnelArchives:update,personnelArchives:delete">
         <span class="layui-badge-dot febs-bg-orange"></span> 无权限
     </span>
+    <a lay-event="detail" shiro:hasPermission="personnelArchives:view"><i
+            class="layui-icon febs-edit-area febs-green">&#xe7a5;</i></a>
     <a lay-event="edit" shiro:hasPermission="personnelArchives:update"><i
             class="layui-icon febs-edit-area febs-blue">&#xe7a4;</i></a>
 </script>
@@ -133,6 +137,7 @@
             $addTo = $view.find('#addTo'),
             $deleteTo = $view.find('#deleteTo'),
             $updateTo = $view.find('#updateTo'),
+            $exportTo = $view.find('#exportTo'),
             $reset = $view.find('#reset'),
             $searchForm = $view.find('form'),
             sortObject = {field: 'createTime', type: null},
@@ -176,11 +181,7 @@
                     }
                 }
             },
-            options: [{
-                name: 'add',
-                title: '新增',
-                perms: 'personnelArchives:add'
-            }]
+            options: []
         });
         deptXmlSelect = xmSelect.render({
             el: '#dept',
@@ -215,13 +216,14 @@
             let data = obj.data,
                 layEvent = obj.event;
             if (layEvent === 'detail') {
-                febs.modal.view('用户信息', 'system/user/detail/' + data.username, {
-                    area: $(window).width() <= 750 ? '95%' : '660px'
+                febs.modal.view('员工档案信息', 'personnel/personnelArchives/detail/' + data.userId, {
+                    area: $(window).width() <= 750 ? '95%' : '50%'
                 });
             }
             if (layEvent === 'edit') {
                 febs.modal.open('修改员工档案', 'personnel/personnelArchives/update/' + data.userId, {
                     area: $(window).width() <= 750 ? '90%' : '50%',
+                    content: $('#uploadPic'), // 可以添加另外的页面 通过 div
                     btn: ['提交', '取消'],
                     yes: function (index, layero) {
                         $('#personnelArchives-update').find('#submit').trigger('click');
@@ -281,9 +283,12 @@
                 });
             }
         });
-
-
-
+        $exportTo.on('click', function () {
+            let params = getQueryParams();
+            params.pageSize = $view.find(".layui-laypage-limits option:selected").val();
+            params.pageNum = $view.find(".layui-laypage-em").next().html();
+            febs.download(ctx + 'personnelArchives/excel', params, '员工档案表.xlsx');
+        });
         function initTable() {
             tableIns = febs.table.init({
                 elem: $view.find('table'),
@@ -291,22 +296,22 @@
                 url: ctx + 'personnelArchives/list',
                 cols: [[
                     {type: 'checkbox'},
-                    {field:'number',title:'序列号',align:'center',width:100,templet:function (d) {
+                    {field:'number',title:'序列号',align:'center',width:80,templet:function (d) {
                                         return d.LAY_INDEX;}},
-                    {field: 'jobNumber', title: '工号', minWidth: 80},
-                    {field: 'userName', title: '姓名', minWidth: 75},
-                    {field: 'deptName', title: '部门', minWidth: 80},
-                    {title: '性别', templet: '#user-gender',minWidth: 20},
-                    {field: 'dutiesName', title: '职务', minWidth: 90},
-                    {field: 'positionName', title: '岗位', minWidth: 100},
-                    {field: 'educationName', title: '学历', minWidth: 50},
-                    {field: 'identityArd', title: '身份证号', minWidth: 100},
-                    {field: 'entryDate', title: '入职日期', minWidth: 110,templet:'<div>{{ layui.util.toDateString(d.entryDate, "yyyy-MM-dd") }}</div>', sort: true},
-                    {field: 'quitDate', title: '离职日期', minWidth: 110, templet:'<div>{{ layui.util.toDateString(d.quitDate, "yyyy-MM-dd") }}</div>',sort: true},
-                    {title: '状态', templet: '#user-status',minWidth: 70},
+                    {field: 'jobNumber', title: '工号',align:'center', minWidth: 80},
+                    {field: 'userName', title: '姓名',align:'center', minWidth: 75},
+                    {field: 'deptName', title: '部门',align:'center', minWidth: 90},
+                    {title: '性别', templet: '#user-gender',align:'center',minWidth: 10},
+                    {field: 'dutiesName', title: '职务',align:'center', minWidth: 90},
+                    {field: 'positionName', title: '岗位',align:'center', minWidth: 100},
+                    {field: 'educationName', title: '学历',align:'center', minWidth: 50},
+                    {field: 'identityArd', title: '身份证号', minWidth: 90},
+                    {field: 'entryDate', title: '入职日期',align:'center', minWidth: 110,templet:'<div>{{ layui.util.toDateString(d.entryDate, "yyyy-MM-dd") }}</div>', sort: true},
+                    {field: 'quitDate', title: '离职日期',align:'center', minWidth: 110, templet:'<div>{{ layui.util.toDateString(d.quitDate, "yyyy-MM-dd") }}</div>',sort: true},
+                    {title: '状态', templet: '#user-status',align:'center',minWidth: 80},
                     {field: 'address', title: '家庭住址', minWidth: 90},
                     {field: 'parameterName', title: '社保缴纳', minWidth: 100},
-                    {title: '操作', toolbar: '#parameter-option', minWidth: 30}
+                    {title: '操作', toolbar: '#parameter-option', minWidth: 100}
                 ]]
             });
         }

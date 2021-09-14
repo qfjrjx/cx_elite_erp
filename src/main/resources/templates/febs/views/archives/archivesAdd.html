@@ -49,24 +49,19 @@
                 </div>
 
             </div>
-
-
-            <div style="width: 50%; float: left">
-
-
+            <div style="width: 50%; float: left" >
                 <div class="layui-form-item">
                     <div class="layui-upload" style="margin-left: 59px;">
-                        <div class="layui-upload-list" id="toImg"
-                             style="margin-top: 10%;width: 107px;height: 127px; border: 1px solid #c2c2c2;margin-left: 14%;">
-                            <img class="layui-upload-img" id="imgDom" name="userImg">
+                        　<!-- 隐藏的input,一个隐藏的input（用于保存文件url） -->
+                        　<input type="hidden" id="img_url" name="userImg" value=""/>
+                        <div class="layui-upload-list" id="uploadPic"
+                             style="margin-top: 2%;width: 107px;height: 127px; border: 1px solid #c2c2c2;margin-left: 14%;">
+                            <img class="layui-upload-img" id="preShow" name="preShow" width="107px" >
                             <p id="demoText"></p>
                         </div>
                     </div>
                 </div>
-
             </div>
-
-
         </div>
         <div class="layui-form-item">
             <label for="L_email" class="layui-form-label">
@@ -461,7 +456,7 @@
         form.render();
 
         form.on('submit(personnelArchives-add-form-submit)', function (data) {
-            data.field.userImg =  $("#imgDom").attr("src");
+            data.field.userImg =   document.getElementById("img_url").value;
             febs.post(ctx + 'personnelArchives', data.field, function () {
                 layer.closeAll();
                 febs.alert.success('新增参数成功');
@@ -478,26 +473,36 @@
                 ,trigger: 'click'
             });
         })
-        //普通图片上传
+        //上传图片
         var uploadInst = upload.render({
-            elem: '#toImg'
-            , url: 'personnelArchives/uploadFiles' //改成您自己的上传接口
-            , field: 'imgs'
-            , before: function (obj) {
+            elem: '#uploadPic' //绑定元素
+            ,url: 'personnelArchives/uploadFiles' //上传接口 [[@{/upload/img}]]
+            ,accept: 'file' //允许上传的文件类型
+            ,exts: 'doc|docx|pdf|jpg|jpeg|png|zip|'
+            ,before: function(obj){
                 //预读本地文件示例，不支持ie8
+                obj.preview(function(index, file, result){
+                    $('#preShow').attr('src', result); //图片链接（base64）
+                });
+            }
+            ,done: function(res){
+                //上传失败
+                if(res.code > 0){
+                    return layer.msg('上传失败');
+                }
+                //上传成功
+                if(res.code == 0){
+                    // $('#aftershow').attr('src', "/uploadFile/"+res.data);
+                    $('#img_url').attr("value", res.data);
+                     document.getElementById("img_url").value = res.data;
+                    return layer.msg('上传成功');
+                }
 
             }
-            , done: function (res) {
-                $('#imgDom').attr('height', 127); //图片链接（base64
-                $('#imgDom').attr('width',107); //图片链接（base64
-                $('#imgDom').attr('src', res.data.file); //图片链接（base64
-
-            }
-            , error: function () {
-                //演示失败状态，并实现重传
+            ,error: function(re){
                 var demoText = $('#demoText');
-                demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
-                demoText.find('.demo-reload').on('click', function () {
+                demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-mini demo-reload">重试</a>');
+                demoText.find('.demo-reload').on('click', function(){
                     uploadInst.upload();
                 });
             }
