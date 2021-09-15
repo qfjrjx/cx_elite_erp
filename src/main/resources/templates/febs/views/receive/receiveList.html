@@ -1,0 +1,270 @@
+<style>
+    #febs-personnelReceive xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #febs-personnelReceive xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="febs-personnelReceive" lay-title="员工领取记录">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="parameter-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md8">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm">姓名</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="userName" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label layui-form-label-sm">部门</label>
+                                        <div class="layui-input-inline" id="dept" name="departmentName">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md4 layui-col-sm12 layui-col-xs12 table-action-area">
+                                <!--搜索按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                                    <i class="layui-icon">&#xe848;</i>
+                                </div>
+                               <!-- 刷新表格按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain table-action" id="reset">
+                                    <i class="layui-icon">&#xe79b;</i>
+                                </div>
+                                <!--添加按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "shiro:hasAnyPermissions="personnelReceive:add" id="addTo">
+                                    <i class="layui-icon">&#xe78a;</i>添加
+                                </div>
+                                <!--删除按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "shiro:hasAnyPermissions="personnelReceive:delete" id="deleteTo">
+                                    <i class="layui-icon">&#xe8a1;</i>批量删除
+                                </div>
+                               <!-- <div class="layui-btn layui-btn-sm layui-btn-primary table-action action-more"
+                                     shiro:hasAnyPermissions="personnelReceive:add,personnelReceive:update">
+                                    <i class="layui-icon">&#xe875;</i>
+                                </div>-->
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="receiveTable" lay-data="{id: 'receiveTable'}"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="receive_state">
+    {{#
+    let receiveState = {
+    1: {title: '已领取', color: 'green'},
+    2: {title: '已归还', color: 'volcano'}
+    }[d.receiveState];
+    }}
+    <span class="layui-badge febs-bg-{{receiveState.color}}">{{ receiveState.title }}</span>
+</script>
+<script type="text/html" id="parameter-option">
+    <span shiro:lacksPermission="personnelReceive:view,personnelReceive:update,personnelReceive:delete">
+        <span class="layui-badge-dot febs-bg-orange"></span> 无权限
+    </span>
+    <a lay-event="edit" shiro:hasPermission="personnelReceive:update"><i
+            class="layui-icon febs-edit-area febs-blue">&#xe7a4;</i></a>
+    <a lay-event="del" shiro:hasPermission="personnelReceive:delete"><i class="layui-icon febs-edit-area febs-red">&#xe7f9;</i></a>
+</script>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+            laydate = layui.laydate,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            dropdownMenu = layui.dropdownMenu,
+            $view = $('#febs-personnelReceive'),
+            $query = $view.find('#query'),
+            $addTo = $view.find('#addTo'),
+            $deleteTo = $view.find('#deleteTo'),
+            $reset = $view.find('#reset'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'createTime', type: null},
+            tableIns,
+            deptXmlSelect;
+
+        form.render();
+
+        initTable();
+
+
+
+        dropdownMenu.render({
+            elem: $view.find('.action-more'),
+            click: function (name, elem, event) {
+                let checkStatus = table.checkStatus('receiveTable');
+                if (name === 'delete') {
+                    if (!checkStatus.data.length) {
+                        let checkStatus = table.checkStatus('loginLogTable');
+                        febs.alert.warn('请选择需要删除的数据');
+                    } else {
+                        febs.modal.confirm('删除参数信息', '确定删除？', function () {
+                            let ids = [];
+                            layui.each(checkStatus.data, function (key, item) {
+                                ids.push(item.id)
+                            });
+                            deletePersonnelReceive(ids.join(','));
+                        });
+                    }
+                }
+            },
+            options: [{
+                name: 'add',
+                title: '新增',
+                perms: 'personnelReceive:add'
+            }, {
+                name: 'delete',
+                title: '删除',
+                perms: 'personnelReceive:delete'
+            }]
+        });
+        deptXmlSelect = xmSelect.render({
+            el: '#dept',
+            model: {label: {type: 'text'}},
+            tree: {
+                show: true,
+                strict: false,
+                showLine: false,
+                clickCheck: true,
+                expandedKeys: [-1],
+            },
+            name: 'deptId',
+            theme: {
+                color: '#52c41a',
+            },
+            prop: {
+                value: 'id'
+            },
+            height: 'auto',
+            on: function(data){
+                if(data.isAdd){
+                    return data.change.slice(0, 1)
+                }
+            }
+        });
+        febs.get(ctx + 'dept/select/tree', null, function (data) {
+            deptXmlSelect.update(
+                data
+            )
+        });
+        table.on('tool(receiveTable)', function (obj) {
+            let data = obj.data,
+                layEvent = obj.event;
+            if (layEvent === 'del') {
+                febs.modal.confirm('删除参数信息', '确定删除？', function () {
+                    deletePersonnelReceive(data.id);
+                });
+            }
+            if (layEvent === 'edit') {
+                febs.modal.open('修改参数', 'personnel/personnelReceive/update/' + data.id, {
+                    area: $(window).width() <= 750 ? '90%' : '50%',
+                    btn: ['提交', '取消'],
+                    yes: function (index, layero) {
+                        $('#personnelReceive-update').find('#submit').trigger('click');
+                    },
+                    btn2: function () {
+                        layer.closeAll();
+                    }
+                });
+            }
+        });
+
+        table.on('sort(receiveTable)', function (obj) {
+            sortObject = obj;
+            tableIns.reload({
+                initSort: obj,
+                where: $.extend(getQueryParams(), {
+                    field: obj.field,
+                    order: obj.type
+                })
+            });
+        });
+
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        $reset.on('click', function () {
+            $searchForm[0].reset();
+            deptXmlSelect.setValue(['']);
+            tableIns.reload({where: getQueryParams(), page: {curr: 1}});
+        });
+        $addTo.on('click', function () {
+            febs.modal.open('新增领取记录', 'personnel/personnelReceive/add', {
+                type:1,
+                btn: ['提交', '重置'],
+                area: $(window).width() <= 750 ? '95%' : '35%',
+                yes: function (index, layero) {
+                    $('#personnelReceive-add').find('#submit').trigger('click');
+                },
+                btn2: function () {
+                    $('#personnelReceive-add').find('#reset').trigger('click');
+                    return false;
+                }
+            });
+        });
+        $deleteTo.on('click', function () {
+            let checkStatus = table.checkStatus('receiveTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要删除的数据');
+            } else {
+                febs.modal.confirm('删除参数信息', '确定删除？', function () {
+                    let ids = [];
+                    layui.each(checkStatus.data, function (key, item) {
+                        ids.push(item.id)
+                    });
+                    deletePersonnelReceive(ids.join(','));
+                });
+            }
+        });
+
+        function initTable() {
+            tableIns = febs.table.init({
+                elem: $view.find('table'),
+                id: 'receiveTable',
+                url: ctx + 'personnelReceive/list',
+                cols: [[
+                    {type: 'checkbox'},
+                    {field:'number',title:'序列号',align:'center',width:100,templet:function (d) {
+                                        return d.LAY_INDEX;}},
+                    {field: 'receiveWno', title: '工号',align:'center', minWidth: 100},
+                    {field: 'userName', title: '姓名',align:'center', minWidth: 100},
+                    {field: 'deptName', title: '部门',align:'center'},
+                    {field: 'positionName', title: '岗位',align:'center'},
+                    {field: 'receiveGoods', title: '物品',align:'center'},
+                    {field: 'createDate', title: '领取时间',align:'center', minWidth: 180, sort: true},
+                    {title: '状态', templet: '#receive_state',align:'center'},
+                    {title: '操作', toolbar: '#parameter-option', minWidth: 140}
+                ]]
+            });
+        }
+
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+
+        function deletePersonnelReceive(ids) {
+            febs.get(ctx + 'personnelReceive/delete/' + ids, null, function () {
+                febs.alert.success('删除参数成功');
+                $query.click();
+            });
+        }
+
+    })
+
+</script>

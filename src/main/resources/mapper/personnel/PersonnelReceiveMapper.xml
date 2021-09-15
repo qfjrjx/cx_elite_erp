@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.personnel.mapper.PersonnelReceiveMapper">
+
+    <sql id="countPersonnelReceiveSql" >
+        SELECT
+        COUNT( 1 )
+        FROM
+        jr_personnel_receive pr
+        LEFT JOIN jr_personnel_archives pe ON (pr.user_id = pe.user_id )
+        WHERE
+        1 = 1
+        <if test="personnelReceive.userName != null and personnelReceive.userName != ''">
+            AND pe.user_name = #{personnelReceive.userName}
+        </if>
+        <if test="personnelReceive.deptId != null and personnelReceive.deptId != ''">
+            AND pe.dept_id = #{personnelReceive.deptId}
+        </if>
+    </sql>
+    <sql id="findPersonnelReceiveSql" >
+        SELECT
+            pr.id,
+            pr.receive_wno receiveWno,
+            pe.user_name userName,
+            d.DEPT_NAME deptName,
+            par.parameter_name positionName,
+            pr.receive_goods receiveGoods,
+            pr.create_date createDate,
+            pr.receive_state receiveState
+        FROM
+            jr_personnel_receive pr
+                LEFT JOIN jr_personnel_archives pe ON (pr.user_id = pe.user_id )
+                LEFT JOIN t_dept d ON ( pe.dept_id = d.dept_id )
+                LEFT JOIN jr_personnel_parameters par ON ( pe.position_id = par.id )
+        WHERE
+            1 = 1
+        <if test="personnelReceive.userName != null and personnelReceive.userName != ''">
+            AND pe.user_name = #{personnelReceive.userName}
+        </if>
+        <if test="personnelReceive.deptId != null and personnelReceive.deptId != ''">
+            AND d.dept_id = #{personnelReceive.deptId}
+        </if>
+    </sql>
+
+    <select id="countPersonnelReceive" parameterType="com.erp.personnel.entity.PersonnelReceive" resultType="long">
+        <include refid="countPersonnelReceiveSql"/>
+    </select>
+
+    <select id="findPersonnelReceivePage" parameterType="com.erp.personnel.entity.PersonnelReceive" resultType="com.erp.personnel.entity.PersonnelReceive">
+        <include refid="findPersonnelReceiveSql"/>
+    </select>
+
+    <sql id="countReceiveArchivesSql" >
+        SELECT COUNT(1)
+        FROM jr_personnel_archives pe
+        WHERE 1 = 1
+        <if test="personnelArchives.jobNumber != null and personnelArchives.jobNumber != ''">
+            AND pe.job_number = #{personnelArchives.jobNumber}
+        </if>
+        <if test="personnelArchives.userName != null and personnelArchives.userName != ''">
+            AND pe.user_name = #{personnelArchives.userName}
+        </if>
+        <if test="personnelArchives.deptId != null and personnelArchives.deptId != ''">
+            AND pe.dept_id = #{personnelArchives.deptId}
+        </if>
+        <if test="personnelArchives.userState != null and personnelArchives.userState != ''">
+            AND pe.user_state = #{personnelArchives.userState}
+        </if>
+    </sql>
+    <sql id="findReceiveArchivesPageSql">
+        SELECT
+        pe.user_id userId,
+        pe.job_number jobNumber,
+        pe.user_name userName,
+        d.dept_name deptName,
+        pe.phone,
+        pa.parameter_name dutiesName,
+        par.parameter_name positionName,
+        pe.entry_date entryDate,
+        pe.user_state userState
+        FROM
+        jr_personnel_archives pe
+        LEFT JOIN t_dept d ON ( pe.dept_id = d.dept_id )
+        LEFT JOIN jr_personnel_parameters pa ON ( pe.duties_id = pa.id )
+        LEFT JOIN jr_personnel_parameters par ON ( pe.position_id = par.id )
+        WHERE
+        1 = 1
+        <if test="personnelArchives.jobNumber != null and personnelArchives.jobNumber != ''">
+            AND pe.job_number = #{personnelArchives.jobNumber}
+        </if>
+        <if test="personnelArchives.userName != null and personnelArchives.userName != ''">
+            AND pe.user_name = #{personnelArchives.userName}
+        </if>
+        <if test="personnelArchives.deptId != null and personnelArchives.deptId != ''">
+            AND d.dept_id = #{personnelArchives.deptId}
+        </if>
+        <if test="personnelArchives.userState != null and personnelArchives.userState != ''">
+            AND pe.user_state = #{personnelArchives.userState}
+        </if>
+        GROUP BY pe.user_name,pe.job_number
+    </sql>
+    <select id="countReceiveArchives" parameterType="com.erp.personnel.entity.PersonnelArchives" resultType="long">
+        <include refid="countReceiveArchivesSql"/>
+    </select>
+
+    <select id="findReceiveArchivesPage" parameterType="com.erp.personnel.entity.PersonnelArchives" resultType="com.erp.personnel.entity.PersonnelArchives">
+        <include refid="findReceiveArchivesPageSql"/>
+    </select>
+
+</mapper>

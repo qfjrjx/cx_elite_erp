@@ -67,8 +67,6 @@ public class ViewController {
     public String personnelArchivesIndex(){
         return FebsUtil.view("archives/archivesList");
     }
-
-
     @GetMapping("personnelArchives/add")
     @RequiresPermissions("personnelArchives:add")
     public String archivesAdd(Model model) {
@@ -135,6 +133,25 @@ public class ViewController {
         } if (archives.getPositiveDates() != null) {
             model.addAttribute("positiveDates", DateUtil.getDateFormat(archives.getPositiveDates(), DateUtil.FULL_TIME_SPLIT));
         }
+    }
+    /* 员工档案模块结束 */
+
+    /* 员工领取记录开始*/
+    @GetMapping("personnelReceive")
+    @RequiresPermissions("personnelReceive:view")
+    public String personnelReceiveIndex(){
+        return FebsUtil.view("receive/receiveList");
+    }
+    /* 员工领取记录开始*/
+    @GetMapping("personnelReceive/add")
+    @RequiresPermissions("personnelReceive:add")
+    public String personnelReceiveAdd(){
+        return FebsUtil.view("receive/receiveAdd");
+    }
+    @GetMapping("receiveArchives")
+    @RequiresPermissions("personnelArchives:view")
+    public String receiveArchivesIndex(){
+        return FebsUtil.view("receive/receiveArchivesList");
     }
 
     /* 员工档案模块结束 */
