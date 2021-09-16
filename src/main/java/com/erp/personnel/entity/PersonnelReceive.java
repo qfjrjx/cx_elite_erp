@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * 领取记录表 Entity
@@ -47,10 +48,11 @@ public class PersonnelReceive {
      * 领取时间
      */
     @TableField("create_date")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createDate;
 
     /**
-     * 1.已领取2.已归还
+     * 1.已领取,2.已归还
      */
     @TableField("receive_state")
     private Integer receiveState;
@@ -69,7 +71,8 @@ public class PersonnelReceive {
     /**
      * 员工姓名
      */
-    private String userName;
+    @TableField("receive_name")
+    private String receiveName;
 
     /**
      * 岗位

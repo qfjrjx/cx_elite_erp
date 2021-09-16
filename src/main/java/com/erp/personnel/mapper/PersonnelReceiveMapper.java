@@ -24,4 +24,10 @@ public interface PersonnelReceiveMapper extends BaseMapper<PersonnelReceive> {
     long countReceiveArchives(@Param("personnelArchives") PersonnelArchives personnelArchives);
 
     IPage<PersonnelArchives> findReceiveArchivesPage(Page<PersonnelArchives> page,@Param("personnelArchives") PersonnelArchives personnelArchives);
+
+    void createPersonnelReceive(@Param("personnelReceive") PersonnelReceive personnelReceive);
+
+    PersonnelReceive findById(@Param("id")Long id);
+
+    void saveOrUpdate(@Param("personnelReceive") PersonnelReceive personnelReceive);
 }

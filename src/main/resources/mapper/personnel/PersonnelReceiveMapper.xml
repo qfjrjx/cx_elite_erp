@@ -10,8 +10,8 @@
         LEFT JOIN jr_personnel_archives pe ON (pr.user_id = pe.user_id )
         WHERE
         1 = 1
-        <if test="personnelReceive.userName != null and personnelReceive.userName != ''">
-            AND pe.user_name = #{personnelReceive.userName}
+        <if test="personnelReceive.receiveName != null and personnelReceive.receiveName != ''">
+            AND pr.receive_name = #{personnelReceive.receiveName}
         </if>
         <if test="personnelReceive.deptId != null and personnelReceive.deptId != ''">
             AND pe.dept_id = #{personnelReceive.deptId}
@@ -21,7 +21,7 @@
         SELECT
             pr.id,
             pr.receive_wno receiveWno,
-            pe.user_name userName,
+            pr.receive_name receiveName,
             d.DEPT_NAME deptName,
             par.parameter_name positionName,
             pr.receive_goods receiveGoods,
@@ -34,8 +34,8 @@
                 LEFT JOIN jr_personnel_parameters par ON ( pe.position_id = par.id )
         WHERE
             1 = 1
-        <if test="personnelReceive.userName != null and personnelReceive.userName != ''">
-            AND pe.user_name = #{personnelReceive.userName}
+        <if test="personnelReceive.receiveName != null and personnelReceive.receiveName != ''">
+            AND pr.receive_name = #{personnelReceive.receiveName}
         </if>
         <if test="personnelReceive.deptId != null and personnelReceive.deptId != ''">
             AND d.dept_id = #{personnelReceive.deptId}
@@ -107,4 +107,38 @@
         <include refid="findReceiveArchivesPageSql"/>
     </select>
 
+    <insert id="createPersonnelReceive" parameterType="com.erp.personnel.entity.PersonnelReceive">
+        INSERT INTO  jr_personnel_receive(
+            user_id,receive_wno,receive_name,receive_goods,receive_state,create_date
+        )VALUES (
+                    #{personnelReceive.userId},
+                    #{personnelReceive.receiveWno},
+                    #{personnelReceive.receiveName},
+                    #{personnelReceive.receiveGoods},
+                    #{personnelReceive.receiveState},
+                    #{personnelReceive.createDate}
+                )
+    </insert>
+
+    <select id="findById" parameterType="long" resultType="com.erp.personnel.entity.PersonnelReceive">
+        SELECT
+            pr.id,
+            pr.user_id userId,
+            pr.receive_wno receiveWno,
+            pr.receive_name receiveName,
+            pr.receive_goods receiveGoods,
+            pr.create_date createDate,
+            pr.receive_state receiveState
+        FROM
+            jr_personnel_receive pr
+        WHERE
+            pr.id = #{id}
+    </select>
+
+
+    <update id = "saveOrUpdate" parameterType = "com.erp.personnel.entity.PersonnelReceive" >
+        UPDATE jr_personnel_receive pr
+        SET pr.receive_state = #{personnelReceive.receiveState}
+        where pr.id = #{personnelReceive.id}
+    </update>
 </mapper>

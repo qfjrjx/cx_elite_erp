@@ -20,7 +20,7 @@
                                     <div class="layui-inline" >
                                         <label class="layui-form-label layui-form-label-sm">姓名</label>
                                         <div class="layui-input-inline">
-                                            <input type="text" name="userName" autocomplete="off" class="layui-input">
+                                            <input type="text" name="receiveName" autocomplete="off" class="layui-input">
                                         </div>
                                     </div>
                                     <div class="layui-inline">
@@ -107,10 +107,9 @@
                 let checkStatus = table.checkStatus('receiveTable');
                 if (name === 'delete') {
                     if (!checkStatus.data.length) {
-                        let checkStatus = table.checkStatus('loginLogTable');
                         febs.alert.warn('请选择需要删除的数据');
                     } else {
-                        febs.modal.confirm('删除参数信息', '确定删除？', function () {
+                        febs.modal.confirm('删除领取记录信息', '确定删除？', function () {
                             let ids = [];
                             layui.each(checkStatus.data, function (key, item) {
                                 ids.push(item.id)
@@ -163,13 +162,13 @@
             let data = obj.data,
                 layEvent = obj.event;
             if (layEvent === 'del') {
-                febs.modal.confirm('删除参数信息', '确定删除？', function () {
+                febs.modal.confirm('删除领取记录信息', '确定删除？', function () {
                     deletePersonnelReceive(data.id);
                 });
             }
             if (layEvent === 'edit') {
-                febs.modal.open('修改参数', 'personnel/personnelReceive/update/' + data.id, {
-                    area: $(window).width() <= 750 ? '90%' : '50%',
+                febs.modal.open('修改领取记录信息', 'personnel/personnelReceive/update/' + data.id, {
+                    area: $(window).width() <= 750 ? '90%' : '30%',
                     btn: ['提交', '取消'],
                     yes: function (index, layero) {
                         $('#personnelReceive-update').find('#submit').trigger('click');
@@ -212,6 +211,8 @@
                 },
                 btn2: function () {
                     $('#personnelReceive-add').find('#reset').trigger('click');
+                    $("#receiveName").attr("value","");
+                    $("#receiveWno").attr("value","");
                     return false;
                 }
             });
@@ -241,7 +242,7 @@
                     {field:'number',title:'序列号',align:'center',width:100,templet:function (d) {
                                         return d.LAY_INDEX;}},
                     {field: 'receiveWno', title: '工号',align:'center', minWidth: 100},
-                    {field: 'userName', title: '姓名',align:'center', minWidth: 100},
+                    {field: 'receiveName', title: '姓名',align:'center', minWidth: 100},
                     {field: 'deptName', title: '部门',align:'center'},
                     {field: 'positionName', title: '岗位',align:'center'},
                     {field: 'receiveGoods', title: '物品',align:'center'},
@@ -260,7 +261,7 @@
 
         function deletePersonnelReceive(ids) {
             febs.get(ctx + 'personnelReceive/delete/' + ids, null, function () {
-                febs.alert.success('删除参数成功');
+                febs.alert.success('删除领取记录成功');
                 $query.click();
             });
         }

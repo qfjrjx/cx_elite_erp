@@ -5,6 +5,8 @@
 </style>
 <div class="layui-fluid" id="personnelReceive-add">
     <form class="layui-form" action="" lay-filter="personnelReceive-add-form">
+        <input type="hidden" name="userId" id="receiveUserId"
+               autocomplete="off" class="layui-input" readonly>
         <div class="layui-form-item">
             <label class="layui-form-label febs-form-item-require" >员工工号:</label>
             <div class="layui-input-block">
@@ -15,18 +17,37 @@
         <div class="layui-form-item">
             <label class="layui-form-label febs-form-item-require" >员工姓名:</label>
             <div class="layui-input-block">
-                <input type="text" name="userName" id="userName"
+                <input type="text" name="receiveName" id="receiveName"
                        autocomplete="off" class="layui-input" placeholder="请输入员工姓名" readonly>
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label febs-form-item-require">领取物品:</label>
             <div class="layui-input-block">
-                <input type="text" name="parameterName"
+                <input type="text" name="receiveGoods"
                        autocomplete="off" class="layui-input" placeholder="请输入领取的物品">
             </div>
         </div>
-
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require">
+                领取日期:
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="createDate" name="createDate" required="" placeholder="请选择日期"
+                       autocomplete="off" class="layui-input receiveTime">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require">
+                状态:
+            </label>
+            <div class="layui-input-inline">
+                <select id="receiveState" lay-filter="" name="receiveState">
+                    <option value="1" selected="selected">已领取</option>
+                    <option value="2">已归还</option>
+                </select>
+            </div>
+        </div>
 
 
         <div class="layui-form-item febs-hide">
@@ -40,12 +61,13 @@
 </div>
 
 <script>
-    layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
+    layui.use(['febs', 'form', 'validate', 'xmSelect','laydate'], function () {
         let $ = layui.$,
             febs = layui.febs,
             layer = layui.layer,
             form = layui.form,
             xmSelect = layui.xmSelect,
+            laydate = layui.laydate,
             validate = layui.validate;
 
         form.verify(validate);
@@ -53,15 +75,22 @@
 
 
         form.on('submit(personnelReceive-add-form-submit)', function (data) {
-            febs.post(ctx + 'personnelReceive', data.field, function () {
+            febs.post(ctx + 'personnelReceive/add', data.field, function () {
                 layer.closeAll();
-                febs.alert.success('新增参数成功');
+                febs.alert.success('新增记录成功');
                 $('#febs-personnelReceive').find('#query').click();
             });
             return false;
 
         });
-
+//日期同时绑定多个
+        lay('.receiveTime').each(function(){
+            laydate.render({
+                elem: this
+                ,type: 'datetime'
+                ,trigger: 'click'
+            });
+        })
     });
 
     function dblclickt(){
@@ -72,19 +101,6 @@
             febs.modal.open('员工档案', 'personnel/receiveArchives', {
             area:["60%","90%"],
             yes: function (index, layero) {
-                //得到“mainIframeName”输入框中存储的值
-                var userName = $("#uName").val();
-                var jobNumber = $("#uNumber").val();
-                alert(userName)
-                if (userName!=null && userName != ""){
-                    $("#userName").attr("value","");
-                }
-                if (jobNumber!=null && jobNumber != ""){
-                    $("#receiveWno").attr("value","");
-                }
-                $("#userName").attr("value",userName);
-                $("#receiveWno").attr("value",jobNumber);
-                parent.layer.close(2);
 
             }
 

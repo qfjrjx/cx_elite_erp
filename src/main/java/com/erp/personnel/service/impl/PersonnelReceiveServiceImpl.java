@@ -17,6 +17,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -50,22 +51,22 @@ public class PersonnelReceiveServiceImpl extends ServiceImpl<PersonnelReceiveMap
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void createPersonnelReceive(PersonnelReceive personnelReceive) {
-        this.save(personnelReceive);
+        baseMapper.createPersonnelReceive(personnelReceive);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updatePersonnelReceive(PersonnelReceive personnelReceive) {
-        this.saveOrUpdate(personnelReceive);
+        baseMapper.saveOrUpdate(personnelReceive);
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void deletePersonnelReceive(PersonnelReceive personnelReceive) {
-        LambdaQueryWrapper<PersonnelReceive> wrapper = new LambdaQueryWrapper<>();
-	    // TODO 设置删除条件
-	    this.remove(wrapper);
-	}
+    public void deletePersonnelReceive(String[] ids) {
+        List<String> list = Arrays.asList(ids);
+
+        baseMapper.deleteBatchIds(list);
+    }
+
 
     @Override
     public IPage<PersonnelArchives> findReceiveArchivesList(PersonnelArchives personnelArchives, QueryRequest request) {
@@ -74,5 +75,11 @@ public class PersonnelReceiveServiceImpl extends ServiceImpl<PersonnelReceiveMap
         page.setTotal(baseMapper.countReceiveArchives(personnelArchives));
         SortUtil.handlePageSort(request, page, "entryDate", FebsConstant.ORDER_DESC, true);
         return baseMapper.findReceiveArchivesPage(page,personnelArchives);
+    }
+
+    @Override
+    public PersonnelReceive findById(Long id) {
+
+        return baseMapper.findById(id);
     }
 }

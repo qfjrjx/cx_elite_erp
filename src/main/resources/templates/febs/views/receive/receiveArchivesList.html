@@ -188,19 +188,19 @@
                     $('#febs-receiveArchives').find('.layui-table-body').find("table" ).find("tbody").children("tr").on('dblclick',function(){
                         var id = JSON.stringify($('#febs-receiveArchives').find('.layui-table-body').find("table" ).find("tbody").find(".layui-table-hover").data('index'));
                         var obj = res.data[id];
-                        $("#uName").val((obj.userName));
-                        $("#uNumber").val((obj.jobNumber));
-
-                        var username = $("#userName").val();
+                        var receiveName = $("#receiveName").val();
                         var receiveWno = $("#receiveWno").val();
-                        if (username!=null && username!=""){
-                            $("#userName").attr("value","");
+                        var userId = $("#receiveUserId").val();
+                        if (receiveName!=null && receiveName!=""){
+                            $("#receiveName").attr("value","");
                         }
                         if (receiveWno!=null && receiveWno!=""){
                             $("#receiveWno").attr("value","");
+                        } if (userId!=null && userId!=""){
+                            $("#receiveUserId").attr("value","");
                         }
-
-                        $("#userName").attr("value",obj.userName);
+                        $("#receiveUserId").attr("value",obj.userId);
+                        $("#receiveName").attr("value",obj.userName);
                         $("#receiveWno").attr("value",obj.jobNumber);
 
                         parent.layer.close(layer.index)

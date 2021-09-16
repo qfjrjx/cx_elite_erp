@@ -49,9 +49,12 @@ public interface IPersonnelReceiveService extends IService<PersonnelReceive> {
     /**
      * 删除
      *
-     * @param personnelReceive personnelReceive
+     * @param ids ids
      */
-    void deletePersonnelReceive(PersonnelReceive personnelReceive);
+    void deletePersonnelReceive(String[] ids);
 
     IPage<PersonnelArchives> findReceiveArchivesList(PersonnelArchives personnelArchives, QueryRequest request);
+
+
+    PersonnelReceive findById(Long id);
 }

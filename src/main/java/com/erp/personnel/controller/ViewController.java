@@ -6,8 +6,10 @@ import com.erp.common.utils.FebsUtil;
 import com.erp.monitor.helper.FebsActuatorHelper;
 import com.erp.personnel.entity.PersonnelArchives;
 import com.erp.personnel.entity.PersonnelParameters;
+import com.erp.personnel.entity.PersonnelReceive;
 import com.erp.personnel.service.IPersonnelArchivesService;
 import com.erp.personnel.service.IPersonnelParametersService;
+import com.erp.personnel.service.IPersonnelReceiveService;
 import lombok.RequiredArgsConstructor;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.stereotype.Controller;
@@ -34,6 +36,8 @@ public class ViewController {
 
 
     private final IPersonnelArchivesService personnelArchivesService;
+
+    private final IPersonnelReceiveService personnelReceiveService;
 
     /* 人事参数模块开始 */
     @GetMapping("personnelParameters")
@@ -155,6 +159,20 @@ public class ViewController {
     }
 
     /* 员工档案模块结束 */
+    /* 员工领取记录模块开始 */
+
+    @GetMapping("personnelReceive/update/{id}")
+    @RequiresPermissions("personnelReceive:update")
+    public String personnelReceiveUpdate(@PathVariable Long id, Model model) {
+        receiveModel(id, model, false);
+        return FebsUtil.view("receive/receiveUpdate");
+    }
+
+    private void receiveModel(Long id, Model model, Boolean transform) {
+        PersonnelReceive receive = personnelReceiveService.findById(id);
+        model.addAttribute("receives", receive);
+    }
+    /* 员工领取记录模块结束 */
 
 
 
