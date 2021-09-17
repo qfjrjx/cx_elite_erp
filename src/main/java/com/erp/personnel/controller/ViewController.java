@@ -5,9 +5,11 @@ import com.erp.common.utils.DateUtil;
 import com.erp.common.utils.FebsUtil;
 import com.erp.monitor.helper.FebsActuatorHelper;
 import com.erp.personnel.entity.PersonnelArchives;
+import com.erp.personnel.entity.PersonnelContract;
 import com.erp.personnel.entity.PersonnelParameters;
 import com.erp.personnel.entity.PersonnelReceive;
 import com.erp.personnel.service.IPersonnelArchivesService;
+import com.erp.personnel.service.IPersonnelContractService;
 import com.erp.personnel.service.IPersonnelParametersService;
 import com.erp.personnel.service.IPersonnelReceiveService;
 import lombok.RequiredArgsConstructor;
@@ -34,10 +36,11 @@ public class ViewController {
 
     private final IPersonnelParametersService personnelParametersService;
 
-
     private final IPersonnelArchivesService personnelArchivesService;
 
     private final IPersonnelReceiveService personnelReceiveService;
+
+    private final IPersonnelContractService personnelContractService;
 
     /* 人事参数模块开始 */
     @GetMapping("personnelParameters")
@@ -146,7 +149,8 @@ public class ViewController {
     public String personnelReceiveIndex(){
         return FebsUtil.view("receive/receiveList");
     }
-    /* 员工领取记录开始*/
+
+
     @GetMapping("personnelReceive/add")
     @RequiresPermissions("personnelReceive:add")
     public String personnelReceiveAdd(){
@@ -157,9 +161,6 @@ public class ViewController {
     public String receiveArchivesIndex(){
         return FebsUtil.view("receive/receiveArchivesList");
     }
-
-    /* 员工档案模块结束 */
-    /* 员工领取记录模块开始 */
 
     @GetMapping("personnelReceive/update/{id}")
     @RequiresPermissions("personnelReceive:update")
@@ -173,6 +174,41 @@ public class ViewController {
         model.addAttribute("receives", receive);
     }
     /* 员工领取记录模块结束 */
+
+    /* 员工合同模块开始 */
+
+    @GetMapping("personnelContract")
+    @RequiresPermissions("personnelContract:list")
+    public String personnelContractIndex(){
+        return FebsUtil.view("contract/contractList");
+    }
+
+
+    @GetMapping("personnelContract/add")
+    @RequiresPermissions("personnelContract:add")
+    public String personnelContractAdd(){
+        return FebsUtil.view("contract/contractAdd");
+    }
+
+
+    @GetMapping("personnelContract/update/{id}")
+    @RequiresPermissions("personnelContract:update")
+    public String personnelContractUpdate(@PathVariable Long id, Model model) {
+        personnelContractModel(id, model, false);
+        return FebsUtil.view("contract/contractUpdate");
+    }
+
+    private void personnelContractModel(Long id, Model model, Boolean transform) {
+        PersonnelContract contract = personnelContractService.findContractById(id);
+        model.addAttribute("contracts", contract);
+
+        if (contract.getSignedDate()!= null) {
+            model.addAttribute("signedDate", DateUtil.getDateFormat(contract.getSignedDate(), DateUtil.FULL_TIME_SPLIT));
+        } if (contract.getExpireDate() != null) {
+            model.addAttribute("expireDate", DateUtil.getDateFormat(contract.getExpireDate(), DateUtil.FULL_TIME_SPLIT));
+        }
+    }
+    /* 员工合同模块结束 */
 
 
 

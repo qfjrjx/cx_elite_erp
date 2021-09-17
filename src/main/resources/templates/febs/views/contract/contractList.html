@@ -1,0 +1,289 @@
+<style>
+    #febs-personnelContract xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #febs-personnelContract xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+    .layui-form-item .layui-input-inline {
+        width: 160px;
+    }
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="febs-personnelContract" lay-title="员工合同">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="parameter-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md9">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm">姓名</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="staffName" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label layui-form-label-sm">状态</label>
+                                        <div class="layui-input-inline">
+                                            <select name="contractState">
+                                                <option value=""></option>
+                                                <option value="1">未到期</option>
+                                                <option value="2">已到期</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                   <div class="layui-inline">
+                                        <label class="layui-form-label layui-form-label-sm">签订时间</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="signedTime" id="signedTime" class="layui-input createTime">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                       <label class="layui-form-label layui-form-label-sm">到期时间</label>
+                                       <div class="layui-input-inline">
+                                           <input type="text" name="expireTime" id="expireTime" class="layui-input createTime">
+                                       </div>
+                                   </div>
+
+                                </div>
+                            </div>
+                            <div class="layui-col-md3 layui-col-sm12 layui-col-xs12 table-action-area">
+                                <!--搜索按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                                    <i class="layui-icon">&#xe848;</i>
+                                </div>
+                               <!-- 刷新表格按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain table-action" id="reset">
+                                    <i class="layui-icon">&#xe79b;</i>
+                                </div>
+                                <!--添加按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "shiro:hasAnyPermissions="personnelContract:add" id="addTo">
+                                    <i class="layui-icon">&#xe78a;</i>添加
+                                </div>
+                                <!--删除按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "shiro:hasAnyPermissions="personnelContract:delete" id="deleteTo">
+                                    <i class="layui-icon">&#xe8a1;</i>批量删除
+                                </div>
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action action-more"
+                                     shiro:hasAnyPermissions="personnelArchives:export" id="exportTo">
+                                    <i class="layui-icon">&#xe7a8;</i>导出
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="contractTable" lay-data="{id: 'contractTable'}"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="contract_state">
+    {{#
+    let contractState = {
+    1: {title: '未到期', color: 'green'},
+    2: {title: '已到期', color: 'red'}
+    }[d.contractState];
+    }}
+    <span class="layui-badge febs-bg-{{contractState.color}}">{{ contractState.title }}</span>
+</script>
+<script type="text/html" id="parameter-option">
+    <span shiro:lacksPermission="personnelContract:list,personnelContract:update,personnelContract:delete">
+        <span class="layui-badge-dot febs-bg-orange"></span> 无权限
+    </span>
+    <a lay-event="edit" shiro:hasPermission="personnelContract:update"><i
+            class="layui-icon febs-edit-area febs-blue">&#xe7a4;</i></a>
+    <a lay-event="del" shiro:hasPermission="personnelContract:delete"><i class="layui-icon febs-edit-area febs-red">&#xe7f9;</i></a>
+</script>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+            laydate = layui.laydate,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            dropdownMenu = layui.dropdownMenu,
+            $view = $('#febs-personnelContract'),
+            $query = $view.find('#query'),
+            $addTo = $view.find('#addTo'),
+            $deleteTo = $view.find('#deleteTo'),
+            $reset = $view.find('#reset'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'createDate', type: null},
+            signedDateFrom,
+            signedDateTo,
+            expireDateFrom,
+            expireDateTo,
+            tableIns;
+
+        form.render();
+
+        initTable();
+
+        //日期同时绑定多个
+        lay('.createTime').each(function(){
+            laydate.render({
+                elem: this,
+                range: true,
+                trigger: 'click'
+            });
+        })
+        dropdownMenu.render({
+            elem: $view.find('.action-more'),
+            click: function (name, elem, event) {
+                let checkStatus = table.checkStatus('contractTable');
+                if (name === 'delete') {
+                    if (!checkStatus.data.length) {
+                        febs.alert.warn('请选择需要删除的数据');
+                    } else {
+                        febs.modal.confirm('删除领取记录信息', '确定删除？', function () {
+                            let ids = [];
+                            layui.each(checkStatus.data, function (key, item) {
+                                ids.push(item.id)
+                            });
+                            deletePersonnelContract(ids.join(','));
+                        });
+                    }
+                }
+            },
+            options: [{
+                name: 'add',
+                title: '新增',
+                perms: 'personnelContract:add'
+            }, {
+                name: 'delete',
+                title: '删除',
+                perms: 'personnelContract:delete'
+            }]
+        });
+        table.on('tool(contractTable)', function (obj) {
+            let data = obj.data,
+                layEvent = obj.event;
+            if (layEvent === 'del') {
+                febs.modal.confirm('删除领取记录信息', '确定删除？', function () {
+                   deletePersonnelContract(data.contractId);
+                });
+            }
+            if (layEvent === 'edit') {
+                febs.modal.open('修改领取记录信息', 'personnel/personnelContract/update/' + data.contractId, {
+                    area: $(window).width() <= 750 ? '90%' : '30%',
+                    btn: ['提交', '取消'],
+                    yes: function (index, layero) {
+                        $('#personnelContract-update').find('#submit').trigger('click');
+                    },
+                    btn2: function () {
+                        layer.closeAll();
+                    }
+                });
+            }
+        });
+
+        table.on('sort(contractTable)', function (obj) {
+            sortObject = obj;
+            tableIns.reload({
+                initSort: obj,
+                where: $.extend(getQueryParams(), {
+                    field: obj.field,
+                    order: obj.type
+                })
+            });
+        });
+
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        $reset.on('click', function () {
+            $searchForm[0].reset();
+            signedDateFrom = null;
+            expireDateFrom = null;
+            signedDateTo = null;
+            expireDateTo = null;
+            tableIns.reload({where: getQueryParams(), page: {curr: 1}});
+        });
+        $addTo.on('click', function () {
+            febs.modal.open('新增员工合同', 'personnel/personnelContract/add', {
+                type:1,
+                btn: ['提交', '重置'],
+                area: $(window).width() <= 750 ? '95%' : '35%',
+                yes: function (index, layero) {
+                    $('#personnelContract-add').find('#submit').trigger('click');
+                },
+                btn2: function () {
+                    $('#personnelContract-add').find('#reset').trigger('click');
+                    $("#receiveName").attr("value","");
+                    $("#receiveWno").attr("value","");
+                    return false;
+                }
+            });
+        });
+        $deleteTo.on('click', function () {
+            let checkStatus = table.checkStatus('contractTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要删除的数据');
+            } else {
+                febs.modal.confirm('删除参数信息', '确定删除？', function () {
+                    let ids = [];
+                    layui.each(checkStatus.data, function (key, item) {
+                        ids.push(item.contractId)
+                    });
+                    deletePersonnelContract(ids.join(','));
+                });
+            }
+        });
+
+        function initTable() {
+            tableIns = febs.table.init({
+                elem: $view.find('table'),
+                id: 'contractTable',
+                url: ctx + 'personnelContract/list',
+                cols: [[
+                    {type: 'checkbox'},
+                    {field:'number',title:'序列号',align:'center',width:100,templet:function (d) {
+                                        return d.LAY_INDEX;}},
+                    {field: 'contractId', title: '编号',hide:true,sort: true},
+                    {field: 'staffWno', title: '工号',align:'center', minWidth: 100},
+                    {field: 'staffName', title: '姓名',align:'center', minWidth: 100},
+                    {field: 'signedDate', title: '签订日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.signedDate, "yyyy-MM-dd") }}</div>', minWidth: 180, sort: true},
+                    {field: 'expireDate', title: '到期时间',align:'center',templet:'<div>{{ layui.util.toDateString(d.expireDate, "yyyy-MM-dd") }}</div>', minWidth: 180, sort: true},
+                    {title: '状态', templet: '#contract_state',align:'center'},
+                    {title: '操作', toolbar: '#parameter-option', minWidth: 140}
+                ]]
+            });
+        }
+
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            let signedTime = params.signedTime;
+            let expireTime = params.expireTime;
+            if (signedTime) {
+                signedDateFrom = signedTime.split(' - ')[0];
+                signedDateTo = signedTime.split(' - ')[1];
+            }
+            if (expireTime) {
+                expireDateFrom = expireTime.split(' - ')[0];
+                expireDateTo = expireTime.split(' - ')[1];
+            }
+            params.invalidate_ie_cache = new Date();
+            params.signedDateFrom = signedDateFrom;
+            params.signedDateTo = signedDateTo;
+            params.expireDateFrom = expireDateFrom;
+            params.expireDateTo = expireDateTo;
+            return params;
+        }
+
+
+        function deletePersonnelContract(ids) {
+            febs.get(ctx + 'personnelContract/delete/' + ids, null, function () {
+                febs.alert.success('删除领取记录成功');
+                $query.click();
+            });
+        }
+
+    })
+
+</script>

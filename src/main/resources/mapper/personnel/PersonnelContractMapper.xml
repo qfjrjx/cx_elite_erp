@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.personnel.mapper.PersonnelContractMapper">
+
+    <sql id="countPersonnelContractSql" >
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_personnel_contract pc
+        WHERE
+            1 = 1
+        <if test="personnelContract.staffName!= null and personnelContract.staffName !=''">
+            And pc.staff_name &lt; #{personnelContract.staffName}
+        </if>
+        <if test="personnelContract.contractState!= null and personnelContract.contractState !=''">
+            And pc.contract_state &lt; #{personnelContract.contractState}
+        </if>
+        <if test="personnelContract.signedDateFrom != null and personnelContract.signedDateFrom !=''">
+            And pc.signed_date &gt; #{personnelContract.signedDateFrom}
+        </if>
+        <if test="personnelContract.signedDateTo!= null and personnelContract.signedDateTo !=''">
+            And pc.signed_date &lt; #{personnelContract.signedDateTo}
+        </if>
+        <if test="personnelContract.expireDateFrom != null and personnelContract.expireDateFrom !=''">
+            And pc.expire_date &gt; #{personnelContract.expireDateFrom}
+        </if>
+        <if test="personnelContract.expireDateTo!= null and personnelContract.expireDateTo !=''">
+            And pc.expire_date &lt; #{personnelContract.expireDateTo}
+        </if>
+    </sql>
+    <sql id="findPersonnelContractSql" >
+        SELECT
+            pc.contract_id contractId,
+            pc.user_id userId,
+            pc.staff_wno staffWno,
+            pc.staff_name staffName,
+            pc.signed_date signedDate,
+            pc.expire_date expireDate,
+            pc.contract_state  contractState
+        FROM
+            jr_personnel_contract pc
+        WHERE
+            1 = 1
+        <if test="personnelContract.staffName!= null and personnelContract.staffName !=''">
+            And pc.staff_name = #{personnelContract.staffName}
+        </if>
+        <if test="personnelContract.contractState!= null and personnelContract.contractState !=''">
+            And pc.contract_state = #{personnelContract.contractState}
+        </if>
+        <if test="personnelContract.signedDateFrom != null and personnelContract.signedDateFrom !=''">
+        And pc.signed_date &gt; #{personnelContract.signedDateFrom}
+        </if>
+        <if test="personnelContract.signedDateTo!= null and personnelContract.signedDateTo !=''">
+            And pc.signed_date &lt; #{personnelContract.signedDateTo}
+        </if>
+        <if test="personnelContract.expireDateFrom != null and personnelContract.expireDateFrom !=''">
+            And pc.expire_date &gt; #{personnelContract.expireDateFrom}
+        </if>
+        <if test="personnelContract.expireDateTo!= null and personnelContract.expireDateTo !=''">
+            And pc.expire_date &lt; #{personnelContract.expireDateTo}
+        </if>
+    </sql>
+
+    <select id="countPersonnelContract" parameterType="com.erp.personnel.entity.PersonnelContract" resultType="long">
+        <include refid="countPersonnelContractSql"/>
+    </select>
+
+    <select id="findPersonnelContractPage" parameterType="com.erp.personnel.entity.PersonnelContract" resultType="com.erp.personnel.entity.PersonnelContract">
+        <include refid="findPersonnelContractSql"/>
+    </select>
+
+    <select id="queryContractList" parameterType="com.erp.personnel.entity.PersonnelContract" resultType="com.erp.personnel.entity.PersonnelContract">
+        SELECT
+            pc.contract_id contractId,
+            pc.user_id userId,
+            pc.staff_wno staffWno,
+            pc.staff_name staffName,
+            pc.signed_date signedDate,
+            pc.expire_date expireDate,
+            pc.contract_state  contractState
+        FROM
+            jr_personnel_contract pc
+        WHERE
+            pc.contract_state = 1
+    </select>
+    <update id = "contractStateUpdate" parameterType = "com.erp.personnel.entity.PersonnelContract" >
+        UPDATE jr_personnel_contract pc
+        SET pc.contract_state = 2
+        where pc.contract_id = #{contractId}
+    </update>
+    <select id="findContractById" parameterType="long" resultType="com.erp.personnel.entity.PersonnelContract">
+        SELECT
+            pc.contract_id contractId,
+            pc.user_id userId,
+            pc.staff_wno staffWno,
+            pc.staff_name staffName,
+            pc.signed_date signedDate,
+            pc.expire_date expireDate,
+            pc.contract_state  contractState
+        FROM
+            jr_personnel_contract pc
+        WHERE
+            pc.contract_id = #{id}
+    </select>
+
+    <update id = "saveOrContractUpdate" parameterType = "com.erp.personnel.entity.PersonnelContract" >
+        UPDATE jr_personnel_contract pc
+        SET pc.signed_date = #{signedDate},
+            pc.expire_date = #{expireDate}
+        where pc.contract_id = #{contractId}
+    </update>
+</mapper>
