@@ -44,7 +44,7 @@ public interface IPersonnelContractService extends IService<PersonnelContract> {
      *
      * @param personnelContract personnelContract
      */
-    void updatePersonnelContract(PersonnelContract personnelContract);
+    void updatePersonnelContract(PersonnelContract personnelContract) throws ParseException;
 
     /**
      * 删除
@@ -55,8 +55,12 @@ public interface IPersonnelContractService extends IService<PersonnelContract> {
 
     List<PersonnelContract> queryContractList();
 
-    void contractStateUpdate(Long contractId);
-
+    void contractStateUpdate(Long contractId, int contractState);
 
     PersonnelContract findContractById(Long id);
+
+
+    List<PersonnelContract> queryContractTipsList();
+
+    void updateContractTipsState(String[] name);
 }

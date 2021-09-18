@@ -36,7 +36,8 @@
             pc.staff_name staffName,
             pc.signed_date signedDate,
             pc.expire_date expireDate,
-            pc.contract_state  contractState
+            pc.contract_state  contractState,
+            pc.contract_tips_state  contractTipsState
         FROM
             jr_personnel_contract pc
         WHERE
@@ -77,7 +78,8 @@
             pc.staff_name staffName,
             pc.signed_date signedDate,
             pc.expire_date expireDate,
-            pc.contract_state  contractState
+            pc.contract_state  contractState,
+            pc.contract_tips_state  contractTipsState
         FROM
             jr_personnel_contract pc
         WHERE
@@ -85,7 +87,7 @@
     </select>
     <update id = "contractStateUpdate" parameterType = "com.erp.personnel.entity.PersonnelContract" >
         UPDATE jr_personnel_contract pc
-        SET pc.contract_state = 2
+        SET pc.contract_state = #{contractState}
         where pc.contract_id = #{contractId}
     </update>
     <select id="findContractById" parameterType="long" resultType="com.erp.personnel.entity.PersonnelContract">
@@ -96,17 +98,54 @@
             pc.staff_name staffName,
             pc.signed_date signedDate,
             pc.expire_date expireDate,
-            pc.contract_state  contractState
+            pc.contract_state  contractState,
+            pc.contract_tips_state  contractTipsState
         FROM
             jr_personnel_contract pc
         WHERE
             pc.contract_id = #{id}
     </select>
 
-    <update id = "saveOrContractUpdate" parameterType = "com.erp.personnel.entity.PersonnelContract" >
+    <update id = "saveOrUpdate" parameterType = "com.erp.personnel.entity.PersonnelContract" >
         UPDATE jr_personnel_contract pc
         SET pc.signed_date = #{signedDate},
-            pc.expire_date = #{expireDate}
+            pc.expire_date = #{expireDate},
+            pc.contract_state = #{contractState},
+            pc.contract_tips_state = #{contractTipsState}
+        WHERE pc.contract_id = #{contractId}
+    </update>
+
+
+    <select id="queryContractTipsList" parameterType="com.erp.personnel.entity.PersonnelContract" resultType="com.erp.personnel.entity.PersonnelContract">
+        SELECT
+            pc.contract_id contractId,
+            pc.user_id userId,
+            pc.staff_wno staffWno,
+            pc.staff_name staffName,
+            pc.signed_date signedDate,
+            pc.expire_date expireDate,
+            pc.contract_state  contractState,
+            pc.contract_tips_state  contractTipsState
+        FROM
+            jr_personnel_contract pc
+        WHERE
+            pc.contract_state = 1 and  pc.contract_tips_state = 1
+    </select>
+    <update id="updateContractTipsState" parameterType="java.util.List">
+
+            update jr_personnel_contract pc
+            <set>
+                pc.contract_tips_state = 2
+            </set>
+        WHERE pc.staff_name in
+        <foreach collection="name" index="index" item="item" open="(" separator="," close=")">
+             #{item,jdbcType=VARCHAR}
+        </foreach>
+    </update>
+
+    <update id = "contractTipsStateUpdate" parameterType = "com.erp.personnel.entity.PersonnelContract" >
+        UPDATE jr_personnel_contract pc
+        SET pc.contract_tips_state = #{contractTipsState}
         where pc.contract_id = #{contractId}
     </update>
 </mapper>

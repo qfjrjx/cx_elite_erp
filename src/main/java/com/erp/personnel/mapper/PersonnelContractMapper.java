@@ -24,9 +24,15 @@ public interface PersonnelContractMapper extends BaseMapper<PersonnelContract> {
 
     List<PersonnelContract> queryContractList();
 
-    void contractStateUpdate(@Param("contractId")Long contractId);
+    void contractStateUpdate(@Param("contractId") Long contractId,@Param("contractState")int contractState);
 
-    PersonnelContract findContractById(@Param("id")Long id);
+    PersonnelContract findContractById(@Param("id") Long id);
 
-    void saveOrContractUpdate(PersonnelContract personnelContract);
+    void saveOrUpdate(PersonnelContract personnelContract);
+
+    List<PersonnelContract> queryContractTipsList();
+
+    void updateContractTipsState(@Param("name")String[] name);
+
+    void contractTipsStateUpdate(@Param("contractId") Long contractId,@Param("contractTipsState") int contractTipsState);
 }

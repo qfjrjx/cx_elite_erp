@@ -8,7 +8,9 @@
         <div class="layui-form-item febs-hide">
             <label class="layui-form-label febs-form-item-require">参数id：</label>
             <div class="layui-input-block">
-                <input type="text" name="id" data-th-value="${contracts.contractId}">
+                <input type="text" name="contractId" data-th-value="${contracts.contractId}">
+                <input type="text" name="contractState" data-th-value="${contracts.contractState}">
+                <input type="text" name="contractTipsState" data-th-value="${contracts.contractTipsState}">
             </div>
         </div>
         <div class="layui-form-item">
@@ -78,11 +80,15 @@
 
 
         form.on('submit(personnelContract-update-form-submit)', function (data) {
-
-            const b = true;
-            if (febs.nativeEqual(data.field, contracts)) {
-                febs.alert.warn('数据未作任何修改！');
-                return true;
+            var signedDate = data.field.signedDate //签订日期
+            var expireDate = data.field.expireDate //到期时间
+            var signedArr = signedDate.split(/[-]/);//签订日期
+            var expireArr = expireDate.split(/[-]/);//到期时间
+            var signedDateM = (new Date(signedArr)).getTime(); //得到签订日期毫秒数
+            var expireDateM = (new Date(expireArr)).getTime(); //得到到期时间毫秒数
+            if (signedDateM > expireDateM) {
+                febs.alert.warn('到期时间不能小于签订时间');
+                return false;
             }
             febs.post(ctx + 'personnelContract/update', data.field, function () {
                 layer.closeAll();

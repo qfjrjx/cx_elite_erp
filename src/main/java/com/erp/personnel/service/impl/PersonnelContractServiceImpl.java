@@ -70,8 +70,36 @@ public class PersonnelContractServiceImpl extends ServiceImpl<PersonnelContractM
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void updatePersonnelContract(PersonnelContract personnelContract) {
-        baseMapper.saveOrContractUpdate(personnelContract);
+    public void updatePersonnelContract(PersonnelContract personnelContract) throws ParseException{
+
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");//设置日期格式
+        //System.out.println(simpleDateFormat.format(new Date()));// new Date()为获取当前系统时间
+        String date = simpleDateFormat.format(new Date());//系统当前时间
+        //System.out.println("系统当前时间："+date);
+        long timeStart = simpleDateFormat.parse(date).getTime();//转化系统当前时间为毫秒值
+        //System.out.println("转化系统当前时间为毫秒值："+timeStart);
+        String expireDate = simpleDateFormat.format(personnelContract.getExpireDate());//获取到期时间
+        //System.out.println("获取到期时间："+expireDate);
+        long timeEnd = simpleDateFormat.parse(expireDate).getTime();//转化到期时间为毫秒值
+        //System.out.println("转化到期时间为毫秒值："+timeEnd);
+        long dayCount= (timeEnd-timeStart)/(24*3600*1000);////两个日期想减得到天数
+        //System.out.println("两个日期想减得到天数："+dayCount);
+        Long contractId = personnelContract.getContractId();//获取合同id
+        if(dayCount>0){
+            personnelContract.setContractState(1);
+            /*int contractState = 1;
+            baseMapper.contractStateUpdate(contractId,contractState);*/
+        }else if (dayCount<0){
+            personnelContract.setContractState(2);
+           /* int contractState = 2;
+            baseMapper.contractStateUpdate(contractId,contractState);*/
+        }if (dayCount>30){
+            personnelContract.setContractTipsState(1);
+          /*  int contractTipsState = 1;
+            baseMapper.contractTipsStateUpdate(contractId,contractTipsState);*/
+        }
+        baseMapper.saveOrUpdate(personnelContract);
     }
 
     @Override
@@ -91,8 +119,8 @@ public class PersonnelContractServiceImpl extends ServiceImpl<PersonnelContractM
     }
 
     @Override
-    public void contractStateUpdate(Long contractId) {
-        baseMapper.contractStateUpdate(contractId);
+    public void contractStateUpdate(Long contractId, int contractState) {
+        baseMapper.contractStateUpdate(contractId,contractState);
     }
 
     @Override
@@ -101,4 +129,15 @@ public class PersonnelContractServiceImpl extends ServiceImpl<PersonnelContractM
 
         return baseMapper.findContractById(id);
     }
+
+    @Override
+    public List<PersonnelContract> queryContractTipsList() {
+        return baseMapper.queryContractTipsList();
+    }
+
+    @Override
+    public void updateContractTipsState(String[] name) {
+        baseMapper.updateContractTipsState(name);
+    }
+
 }

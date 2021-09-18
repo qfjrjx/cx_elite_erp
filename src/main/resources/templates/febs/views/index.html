@@ -128,6 +128,11 @@
                 </div>
             </div>
         </div>
+        <div class="layui-form-item febs-hide">
+            <div class="layui-input-block">
+                <input type="text" name="contractTips"  id="contractTips">
+            </div>
+        </div>
         <div class="layui-col-md6 layui-col-sm6 layui-col-xs12">
             <div class="layui-card">
                 <div class="layui-card-body">
@@ -424,5 +429,38 @@
             febs.navigate("/user/profile");
         })
 
+        layer.ready(function(){
+            if(currentUser.username == "mrbird"){
+                var contractTips = null;
+                $.ajax({
+                    url: '/personnelContract',
+                    success : function(res) {
+                        $("#contractTips").attr("value",res.data);
+                        contractTips =document.getElementById("contractTips").value;
+                        if (contractTips != "" && contractTips != null){
+                        layer.open({
+                            title: '还有30天到期合同人员',
+                            content: contractTips,
+                            yes: function(index, layero){
+                                $.ajax({
+                                    url: '/personnelContractTips/update/',
+                                    type:"post",
+                                    data: {name: contractTips},
+                                    success : function(res) {
+                                    }
+                                });
+                                layer.close(index); //如果设定了yes回调，需进行手工关闭
+                            }
+                        });
+                        }
+                    }
+
+                });
+            }
+
+        });
+
     });
+
+
 </script>
