@@ -1,0 +1,275 @@
+<style>
+    #febs-personnelDormitory xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #febs-personnelDormitory xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+    .layui-form-item .layui-input-inline {
+        width: 160px;
+    }
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="febs-personnelDormitory" lay-title="宿舍管理">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="parameter-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md9">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm">宿舍编号</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="dormitoryNo" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label layui-form-label-sm">状态</label>
+                                        <div class="layui-input-inline">
+                                            <select name="state">
+                                                <option value=""></option>
+                                                <option value="1">启用</option>
+                                                <option value="2">禁用</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md3 layui-col-sm12 layui-col-xs12 table-action-area">
+                                <!--搜索按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                                    <i class="layui-icon">&#xe848;</i>
+                                </div>
+                               <!-- 刷新表格按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain table-action" id="reset">
+                                    <i class="layui-icon">&#xe79b;</i>
+                                </div>
+                                <!--添加按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "shiro:hasAnyPermissions="personnelDormitory:add" id="addTo">
+                                    <i class="layui-icon">&#xe78a;</i>添加
+                                </div>
+                                <!--删除按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "shiro:hasAnyPermissions="personnelDormitory:delete" id="deleteTo">
+                                    <i class="layui-icon">&#xe8a1;</i>批量删除
+                                </div>
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action action-more"
+                                     shiro:hasAnyPermissions="personnelDormitory:export" id="exportTo">
+                                    <i class="layui-icon">&#xe7a8;</i>导出
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="dormitoryTable" lay-data="{id: 'dormitoryTable'}"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="contract_state">
+    {{#
+    let state = {
+    1: {title: '启用', color: 'green'},
+    2: {title: '禁用', color: 'red'}
+    }[d.state];
+    }}
+    <span class="layui-badge febs-bg-{{state.color}}">{{ state.title }}</span>
+</script>
+<script type="text/html" id="parameter-option">
+    <span shiro:lacksPermission="personnelDormitory:list,personnelDormitory:update,personnelDormitory:delete">
+        <span class="layui-badge-dot febs-bg-orange"></span> 无权限
+    </span>
+    <a lay-event="edit" shiro:hasPermission="personnelDormitory:update"><i
+            class="layui-icon febs-edit-area febs-blue">&#xe7a4;</i></a>
+    <a lay-event="del" shiro:hasPermission="personnelDormitory:delete"><i class="layui-icon febs-edit-area febs-red">&#xe7f9;</i></a>
+</script>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+            laydate = layui.laydate,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            dropdownMenu = layui.dropdownMenu,
+            $view = $('#febs-personnelDormitory'),
+            $query = $view.find('#query'),
+            $addTo = $view.find('#addTo'),
+            $deleteTo = $view.find('#deleteTo'),
+            $exportTo = $view.find('#exportTo'),
+            $reset = $view.find('#reset'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'createDate', type: null},
+            signedDateFrom,
+            signedDateTo,
+            expireDateFrom,
+            expireDateTo,
+            tableIns;
+
+        form.render();
+
+        initTable();
+
+        dropdownMenu.render({
+            elem: $view.find('.action-more'),
+            click: function (name, elem, event) {
+                let checkStatus = table.checkStatus('dormitoryTable');
+                if (name === 'delete') {
+                    if (!checkStatus.data.length) {
+                        febs.alert.warn('请选择需要删除的数据');
+                    } else {
+                        febs.modal.confirm('删除领取记录信息', '确定删除？', function () {
+                            let ids = [];
+                            layui.each(checkStatus.data, function (key, item) {
+                                ids.push(item.id)
+                            });
+                            deletepersonnelDormitory(ids.join(','));
+                        });
+                    }
+                }
+            },
+            options: [{
+                name: 'add',
+                title: '新增',
+                perms: 'personnelDormitory:add'
+            }, {
+                name: 'delete',
+                title: '删除',
+                perms: 'personnelDormitory:delete'
+            }]
+        });
+        table.on('tool(dormitoryTable)', function (obj) {
+            let data = obj.data,
+                layEvent = obj.event;
+            if (layEvent === 'del') {
+                febs.modal.confirm('删除领取记录信息', '确定删除？', function () {
+                   deletePersonnelDormitory(data.contractId);
+                });
+            }
+            if (layEvent === 'edit') {
+                febs.modal.open('修改领取记录信息', 'personnel/personnelDormitory/update/' + data.contractId, {
+                    area: $(window).width() <= 750 ? '90%' : '30%',
+                    btn: ['提交', '取消'],
+                    yes: function (index, layero) {
+                        $('#personnelDormitory-update').find('#submit').trigger('click');
+                    },
+                    btn2: function () {
+                        layer.closeAll();
+                    }
+                });
+            }
+        });
+
+        table.on('sort(dormitoryTable)', function (obj) {
+            sortObject = obj;
+            tableIns.reload({
+                initSort: obj,
+                where: $.extend(getQueryParams(), {
+                    field: obj.field,
+                    order: obj.type
+                })
+            });
+        });
+
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        $reset.on('click', function () {
+            $searchForm[0].reset();
+            signedDateFrom = null;
+            expireDateFrom = null;
+            signedDateTo = null;
+            expireDateTo = null;
+            tableIns.reload({where: getQueryParams(), page: {curr: 1}});
+        });
+        $addTo.on('click', function () {
+            febs.modal.open('新增员工合同', 'personnel/personnelDormitory/add', {
+                type:1,
+                btn: ['提交', '重置'],
+                area: $(window).width() <= 750 ? '95%' : '35%',
+                yes: function (index, layero) {
+                    $('#personnelDormitory-add').find('#submit').trigger('click');
+                },
+                btn2: function () {
+                    $('#personnelDormitory-add').find('#reset').trigger('click');
+                    $("#receiveName").attr("value","");
+                    $("#receiveWno").attr("value","");
+                    return false;
+                }
+            });
+        });
+        $deleteTo.on('click', function () {
+            let checkStatus = table.checkStatus('dormitoryTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要删除的数据');
+            } else {
+                febs.modal.confirm('删除参数信息', '确定删除？', function () {
+                    let ids = [];
+                    layui.each(checkStatus.data, function (key, item) {
+                        ids.push(item.contractId)
+                    });
+                    deletePersonnelDormitory(ids.join(','));
+                });
+            }
+        });
+        $exportTo.on('click', function () {
+            let params = getQueryParams();
+            params.pageSize = $view.find(".layui-laypage-limits option:selected").val();
+            params.pageNum = $view.find(".layui-laypage-em").next().html();
+            febs.download(ctx + 'personnelDormitory/excel', params, '员工合同表.xlsx');
+        });
+        function initTable() {
+            tableIns = febs.table.init({
+                elem: $view.find('table'),
+                id: 'dormitoryTable',
+                url: ctx + 'personnelDormitory/list',
+                cols: [[
+                    {type: 'checkbox'},
+                    {field:'number',title:'序列号',align:'center',width:100,templet:function (d) {
+                                        return d.LAY_INDEX;}},
+                    {field: 'dormitoryNo', title: '宿舍编号',align:'center',minWidth: 100},
+                    {field: 'place', title: '宿舍地址',align:'center', minWidth: 100},
+                    {field: 'resideNnt', title: '床位总数',align:'center', minWidth: 100},
+                    {field: 'presentNnt', title: '已用床位',align:'center', minWidth: 100},
+                    {field: 'administrators', title: '管理员',align:'center', minWidth: 100},
+                    {field: 'createDate', title: '创建时间',align:'center',templet:'<div>{{ layui.util.toDateString(d.createDate, "yyyy-MM-dd") }}</div>', minWidth: 180, sort: true},
+                    {title: '状态', templet: '#contract_state',align:'center'},
+                    {title: '操作', toolbar: '#parameter-option', minWidth: 140}
+                ]]
+            });
+        }
+
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            let signedTime = params.signedTime;
+            let expireTime = params.expireTime;
+            if (signedTime) {
+                signedDateFrom = signedTime.split(' - ')[0];
+                signedDateTo = signedTime.split(' - ')[1];
+            }
+            if (expireTime) {
+                expireDateFrom = expireTime.split(' - ')[0];
+                expireDateTo = expireTime.split(' - ')[1];
+            }
+            params.invalidate_ie_cache = new Date();
+            params.signedDateFrom = signedDateFrom;
+            params.signedDateTo = signedDateTo;
+            params.expireDateFrom = expireDateFrom;
+            params.expireDateTo = expireDateTo;
+            return params;
+        }
+
+
+        function deletePersonnelDormitory(ids) {
+            febs.get(ctx + 'personnelDormitory/delete/' + ids, null, function () {
+                febs.alert.success('删除领取记录成功');
+                $query.click();
+            });
+        }
+
+    })
+
+</script>

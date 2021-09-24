@@ -1,0 +1,216 @@
+
+<div class="layui-fluid layui-anim febs-anim" id="febs-dept" lay-title="部门管理">
+    <div class="layui-row layui-col-space8 febs-container">
+        <div class="layui-col-md6 layui-col-sm6 layui-col-xs12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="dept-table-form" id="dept-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md8 layui-col-sm9 layui-col-xs9">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label layui-form-label-sm">名称</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="deptName" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md4 layui-col-sm12 layui-col-xs12 table-action-area">
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain  table-action" id="query">
+                                    <i class="layui-icon">&#xe848;</i>
+                                </div>
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain  table-action" id="reset">
+                                    <i class="layui-icon">&#xe79b;</i>
+                                </div>
+                                <div class="layui-btn layui-btn-sm layui-btn-primary table-action action-more"
+                                     shiro:hasAnyPermissions="dept:add,dept:delete,dept:export">
+                                    <i class="layui-icon">&#xe875;</i>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="dept-tree" lay-filter="deptTree" style="margin-left: 1rem"></div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md6 layui-col-sm6 layui-col-xs12">
+            <div class="layui-card">
+                <div class="layui-card-header" id="form-header">新增部门</div>
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" action="" lay-filter="dept-form">
+                        <div class="layui-form-item febs-hide">
+                            <label class="layui-form-label febs-form-item-require">ID：</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="deptId" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">上级部门：</label>
+                            <div class="layui-input-block" id="parent-dept-id">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label febs-form-item-require">部门名称：</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="deptName" autocomplete="off" class="layui-input"
+                                       minlength="2" maxlength="10" lay-verify="range">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">部门排序：</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="orderNum" autocomplete="off" class="layui-input"
+                                       lay-verify="number">
+                            </div>
+                        </div>
+                        <button type="reset" class="layui-btn febs-hide" id="reset-form"></button>
+                        <button class="layui-btn febs-hide" lay-submit="" lay-filter="dept-form-submit"
+                                id="submit-form"></button>
+                    </form>
+                </div>
+                <div class="layui-card-footer">
+                    <button class="layui-btn layui-btn-normal" id="submit">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<input type="text" id="ctx" hidden="hidden" th:value="${#request.getContextPath()}">
+<script type="text/html" id="parameter-option">
+    <span shiro:lacksPermission="personnelParameters:view">
+        <span class="layui-badge-dot febs-bg-orange"></span> 无权限
+    </span>
+</script>
+<script>
+    // 权限类型为菜单时展示
+    $('#outsideDiv').hide();
+    $('#urlDiv').hide();
+    $('#parentDiv').hide();
+
+    // 渲染树形表格
+    layui.config({
+        base: ctx+'/static/js/'
+    }).use(['treeTable'], function () {
+        var $ = layui.jquery;
+        var treeTable = layui.treeTable;
+        var form = layui.form;
+
+        // 渲染树形表格
+        var insTb = treeTable.render({
+            elem: '#SysMenu',
+            //url: '/sysMenu/list',
+            //data: data,
+            toolbar: '#toolBar', // 工具栏
+            tree: {
+                iconIndex: 1,           // 折叠图标显示在第几列
+                isPidData: true,        // 是否是id、pid形式数据
+                idName: 'deptId',  // id字段名称
+                pidName: 'parentId'     // pid字段名称
+            },
+            cols: [
+                [
+                {type: 'numbers', title:'序号', width:80},
+                {field: 'deptName', title: '部门名称'},
+                {field: 'orderNum', title: '排序'},
+                {field: 'createTime', title: '创建时间'},
+                {field: 'modifyTime', title: '修改时间'},
+                {align: 'center', toolbar: '#tbBar', title: '操作', width: 120}
+            ]
+            ],
+            reqData: function(data, callback) {
+                // 在这里写ajax请求，通过callback方法回调数据
+                $.get(ctx+'/sysMenu/list', function (res) {
+                    if(res.success) callback(res.data);
+                    else callback(res.message);
+                });
+            }
+        });
+
+        // 展开全部，延迟0.5s执行
+      /*  function expandAll(){
+            insTb.expandAll();
+        }
+        setTimeout(expandAll,500);*/
+
+        // 切换权限类型变换菜单
+        form.on('select(menuType)', function(e) {
+            resetForm();
+        })
+
+        function resetForm(){
+            var type = $('#menuType').val();
+            if (type == 0) {
+                $('#iconDiv').show();
+                $('#parentDiv').hide();
+                $('#urlDiv').hide();
+                $('#outsideDiv').hide();
+                $("#outside").prop("checked",false);
+                $('#sourceUrl').val('');
+            } else if (type == 1) {
+                $('#parentDiv').show();
+                $('#urlDiv').show();
+                $('#iconDiv').hide();
+                $('#icon').val('');
+                $('#outsideDiv').show()
+                $('#iconShow').removeAttr('class');
+            } else if (type == 2) {
+                $('#parentDiv').show();
+                $('#urlDiv').hide();
+                $('#iconDiv').hide();
+                $('#outsideDiv').hide();
+                $('#icon').val('');
+                $("#outside").prop("checked",false);
+                $('#iconShow').removeAttr('class');
+
+            }
+            form.render();
+        }
+        // 填充form
+        function setFormValue(obj, data){
+            if(data != null){
+                $("#id").val(data.id);
+                $("#pid").val(data.pid);
+                $("#menuName").val(data.menuName);
+                $("#menuCode").val(data.menuCode);
+                $("#menuType").val(data.menuType);
+                $("#icon").val(data.icon);
+                $("#url").val(data.url);
+                if(data.outside=='0'){
+                    $("#outside").prop("checked",true);
+                }
+                resetForm();
+            }
+        }
+
+        function clearForm() {
+            $("#id").val("");
+            $("#menuName").val("");
+            $("#menuCode").val("");
+            $("#menuType").val(0);
+            $("#icon").val("");
+            $("#url").val("");
+            $("#outside").val("");
+            $('#pid').val("");
+            $('#outsideDiv').hide();
+            $("#outside").prop("checked",false);
+            $('#urlDiv').hide();
+            $('#parentDiv').hide();
+            form.render();
+        }
+    });
+
+    $("#choseIcon").click(function(){
+        layer.open({
+            type: 2,
+            area:['95%', '95%'],
+            content:'../static/page/icons.html',
+            shadeClose:true,
+            end: function(){
+                $("#icon").select();
+            }
+        });
+        return false;
+    });
+
+</script>

@@ -1,0 +1,101 @@
+<style>
+    #personnelContract-update {
+        padding: 20px 25px 25px 0;
+    }
+</style>
+<div class="layui-fluid" id="personnelContract-update">
+    <form class="layui-form" action="" lay-filter="personnelContract-update-form">
+        <div class="layui-form-item febs-hide">
+            <label class="layui-form-label febs-form-item-require">参数id：</label>
+            <div class="layui-input-block">
+                <input type="text" name="contractId" data-th-value="${contracts.contractId}">
+                <input type="text" name="contractState" data-th-value="${contracts.contractState}">
+                <input type="text" name="contractTipsState" data-th-value="${contracts.contractTipsState}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require" >员工工号:</label>
+            <div class="layui-input-block">
+                <input type="text" name="staffWno" id="receiveWno" ondblclick="dblclickt()"
+                       autocomplete="off" class="layui-input" placeholder="请输入员工工号" readonly>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require" >员工姓名:</label>
+            <div class="layui-input-block">
+                <input type="text" name="staffName" id="receiveName"
+                       autocomplete="off" class="layui-input" placeholder="请输入员工姓名" readonly>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require">签订时间</label>
+            <div class="layui-input-inline">
+                <input type="text" name="signedDate" id="signedDate" class="layui-input start-Time">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require">到期时间</label>
+            <div class="layui-input-inline">
+                <input type="text" name="expireDate" id="expireDate" class="layui-input start-Time">
+            </div>
+        </div>
+        <div class="layui-form-item febs-hide">
+            <button class="layui-btn" lay-submit="" lay-filter="personnelContract-update-form-submit" id="submit"></button>
+        </div>
+    </form>
+</div>
+
+<script data-th-inline="javascript">
+    layui.use(['febs', 'form', 'validate','laydate'], function () {
+        let $ = layui.$,
+            febs = layui.febs,
+            layer = layui.layer,
+            form = layui.form,
+            laydate = layui.laydate,
+            contracts = [[${contracts}]],
+            signedDates = [[${signedDate}]],
+            expireDates = [[${expireDate}]],
+            validate = layui.validate;
+
+        form.verify(validate);
+        form.render();
+
+        initPersonnelContractValue();
+
+        function initPersonnelContractValue() {
+            form.val("personnelContract-update-form", {
+                "staffWno": contracts.staffWno,
+                "staffName": contracts.staffName,
+                "signedDate": signedDates,
+                "expireDate": expireDates
+            });
+        }
+        //日期同时绑定多个
+        lay('.start-Time').each(function(){
+            laydate.render({
+                elem: this
+                ,trigger: 'click'
+            });
+        })
+
+
+        form.on('submit(personnelContract-update-form-submit)', function (data) {
+            var signedDate = data.field.signedDate //签订日期
+            var expireDate = data.field.expireDate //到期时间
+            var signedArr = signedDate.split(/[-]/);//签订日期
+            var expireArr = expireDate.split(/[-]/);//到期时间
+            var signedDateM = (new Date(signedArr)).getTime(); //得到签订日期毫秒数
+            var expireDateM = (new Date(expireArr)).getTime(); //得到到期时间毫秒数
+            if (signedDateM > expireDateM) {
+                febs.alert.warn('到期时间不能小于签订时间');
+                return false;
+            }
+            febs.post(ctx + 'personnelContract/update', data.field, function () {
+                layer.closeAll();
+                febs.alert.success('数据修改成功');
+                $('#febs-personnelContract').find('#query').click();
+            });
+            return false;
+        });
+    });
+</script>

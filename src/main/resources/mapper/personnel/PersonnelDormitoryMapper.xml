@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.personnel.mapper.PersonnelDormitoryMapper">
+
+
+    <sql id="countPersonnelDormitorysSql" >
+        SELECT
+        COUNT( 1 )
+        FROM
+        jr_personnel_dormitory pd
+        WHERE
+        1 = 1
+    </sql>
+    <sql id="findPersonnelDormitorysSql" >
+        SELECT
+            pd.id,
+            pd.dormitoryNo,
+            pd.place,
+            pd.reside_nnt resideNnt,
+            pd.present_nnt presentNnt,
+            pd.administrators,
+            pd.create_date createDate,
+            pd.state
+        FROM
+            jr_personnel_dormitory pd
+        WHERE
+            1 = 1
+    </sql>
+
+    <select id="countPersonnelDormitorys" parameterType="com.erp.personnel.entity.PersonnelDormitory" resultType="long">
+        <include refid="countPersonnelDormitorysSql"/>
+    </select>
+
+    <select id="findPersonnelDormitorysPage" parameterType="com.erp.personnel.entity.PersonnelDormitory" resultType="com.erp.personnel.entity.PersonnelDormitory">
+        <include refid="findPersonnelDormitorysSql"/>
+    </select>
+</mapper>

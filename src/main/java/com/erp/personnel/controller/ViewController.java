@@ -211,5 +211,20 @@ public class ViewController {
     /* 员工合同模块结束 */
 
 
+    /* 员工宿舍模块开始 */
+    @GetMapping("personnelDormitory")
+    @RequiresPermissions("personnelDormitory:list")
+    public String personnelDormitoryIndex(){
+        return FebsUtil.view("dormitory/dormitoryList");
+    }
+
+    @GetMapping("personnelDormitoryInformation")
+    @RequiresPermissions("personnelDormitoryInformation:list")
+    public String personnelDormitoryInformationIndex(){
+        return FebsUtil.view("dormitoryInformation/dormitoryInformationList");
+    }
+    /* 员工宿舍模块结束 */
+
+
 
 }
