@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.personnel.mapper.PersonnelRewardPunishMapper">
+
+
+    <sql id="countPersonnelRewardPunishsSql" >
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_personnel_reward_punish prp
+        WHERE
+            1 = 1
+    </sql>
+
+    <sql id="findPersonnelRewardPunishsSql">
+        SELECT
+            prp.job_number jobNumber,
+            prp.user_name userName,
+            prp.department_name departmentName,
+            prp.position_name positionName,
+            prp.grouping_name groupingName,
+            prp.magnitude,
+            prp.reward_punish_explain rewardPunishExplain,
+            prp.reward_punish_type rewardPunishType,
+            prp.create_date createDate
+        FROM
+            jr_personnel_reward_punish prp
+        WHERE
+            1 = 1
+    </sql>
+
+    <select id="countPersonnelRewardPunishs" parameterType="com.erp.personnel.entity.PersonnelRewardPunish" resultType="long">
+        <include refid="countPersonnelRewardPunishsSql"/>
+    </select>
+
+    <select id="findPersonnelRewardPunishsPage" parameterType="com.erp.personnel.entity.PersonnelRewardPunish" resultType="com.erp.personnel.entity.PersonnelRewardPunish">
+        <include refid="findPersonnelRewardPunishsSql"/>
+    </select>
+</mapper>

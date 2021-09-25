@@ -1,9 +1,9 @@
 <style>
-    #febs-personnelDormitory xm-select {
+    #febs-personnelRewardPunish xm-select {
         min-height: 30px;
         line-height: 30px;
     }
-    #febs-personnelDormitory xm-select > .xm-label .scroll .label-content {
+    #febs-personnelRewardPunish xm-select > .xm-label .scroll .label-content {
         display: flex;
         padding: 0 30px 0 10px;
     }
@@ -11,7 +11,7 @@
         width: 160px;
     }
 </style>
-<div class="layui-fluid layui-anim febs-anim" id="febs-personnelDormitory" lay-title="宿舍列表">
+<div class="layui-fluid layui-anim febs-anim" id="febs-personnelRewardPunish" lay-title="奖罚记录">
     <div class="layui-row febs-container">
         <div class="layui-col-md12">
             <div class="layui-card">
@@ -21,21 +21,34 @@
                             <div class="layui-col-md9">
                                 <div class="layui-form-item">
                                     <div class="layui-inline" >
-                                        <label class="layui-form-label layui-form-label-sm">宿舍编号</label>
+                                        <label class="layui-form-label layui-form-label-sm">姓名</label>
                                         <div class="layui-input-inline">
-                                            <input type="text" name="dormitoryNo" autocomplete="off" class="layui-input">
+                                            <input type="text" name="staffName" autocomplete="off" class="layui-input">
                                         </div>
                                     </div>
                                     <div class="layui-inline">
                                         <label class="layui-form-label layui-form-label-sm">状态</label>
                                         <div class="layui-input-inline">
-                                            <select name="state">
+                                            <select name="contractState">
                                                 <option value=""></option>
-                                                <option value="1">启用</option>
-                                                <option value="2">禁用</option>
+                                                <option value="1">未到期</option>
+                                                <option value="2">已到期</option>
                                             </select>
                                         </div>
                                     </div>
+                                   <div class="layui-inline">
+                                        <label class="layui-form-label layui-form-label-sm">签订时间</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="signedTime" id="signedTime" class="layui-input createTime">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                       <label class="layui-form-label layui-form-label-sm">到期时间</label>
+                                       <div class="layui-input-inline">
+                                           <input type="text" name="expireTime" id="expireTime" class="layui-input createTime">
+                                       </div>
+                                   </div>
+
                                 </div>
                             </div>
                             <div class="layui-col-md3 layui-col-sm12 layui-col-xs12 table-action-area">
@@ -48,42 +61,42 @@
                                     <i class="layui-icon">&#xe79b;</i>
                                 </div>
                                 <!--添加按钮-->
-                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "shiro:hasAnyPermissions="personnelDormitory:add" id="addTo">
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "shiro:hasAnyPermissions="personnelRewardPunish:add" id="addTo">
                                     <i class="layui-icon">&#xe78a;</i>添加
                                 </div>
                                 <!--删除按钮-->
-                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "shiro:hasAnyPermissions="personnelDormitory:delete" id="deleteTo">
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "shiro:hasAnyPermissions="personnelRewardPunish:delete" id="deleteTo">
                                     <i class="layui-icon">&#xe8a1;</i>批量删除
                                 </div>
                                 <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action action-more"
-                                     shiro:hasAnyPermissions="personnelDormitory:export" id="exportTo">
+                                     shiro:hasAnyPermissions="personnelRewardPunish:export" id="exportTo">
                                     <i class="layui-icon">&#xe7a8;</i>导出
                                 </div>
                             </div>
                         </div>
                     </form>
-                    <table lay-filter="dormitoryTable" lay-data="{id: 'dormitoryTable'}"></table>
+                    <table lay-filter="rewardPunishTable" lay-data="{id: 'rewardPunishTable'}"></table>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<script type="text/html" id="contract_state">
+<script type="text/html" id="rewardPunish-type">
     {{#
-    let state = {
-    1: {title: '启用', color: 'green'},
-    2: {title: '禁用', color: 'red'}
-    }[d.state];
+    let rewardPunishType = {
+    1: {title: '奖励', color: 'green'},
+    2: {title: '惩罚', color: 'red'}
+    }[d.rewardPunishType];
     }}
-    <span class="layui-badge febs-bg-{{state.color}}">{{ state.title }}</span>
+    <span class="layui-badge febs-bg-{{rewardPunishType.color}}">{{ rewardPunishType.title }}</span>
 </script>
 <script type="text/html" id="parameter-option">
-    <span shiro:lacksPermission="personnelDormitory:list,personnelDormitory:update,personnelDormitory:delete">
+    <span shiro:lacksPermission="personnelRewardPunish:list,personnelRewardPunish:update,personnelRewardPunish:delete">
         <span class="layui-badge-dot febs-bg-orange"></span> 无权限
     </span>
-    <a lay-event="edit" shiro:hasPermission="personnelDormitory:update"><i
+    <a lay-event="edit" shiro:hasPermission="personnelRewardPunish:update"><i
             class="layui-icon febs-edit-area febs-blue">&#xe7a4;</i></a>
-    <a lay-event="del" shiro:hasPermission="personnelDormitory:delete"><i class="layui-icon febs-edit-area febs-red">&#xe7f9;</i></a>
+    <a lay-event="del" shiro:hasPermission="personnelRewardPunish:delete"><i class="layui-icon febs-edit-area febs-red">&#xe7f9;</i></a>
 </script>
 <script data-th-inline="none" type="text/javascript">
     layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
@@ -93,7 +106,7 @@
             form = layui.form,
             table = layui.table,
             dropdownMenu = layui.dropdownMenu,
-            $view = $('#febs-personnelDormitory'),
+            $view = $('#febs-personnelRewardPunish'),
             $query = $view.find('#query'),
             $addTo = $view.find('#addTo'),
             $deleteTo = $view.find('#deleteTo'),
@@ -101,20 +114,24 @@
             $reset = $view.find('#reset'),
             $searchForm = $view.find('form'),
             sortObject = {field: 'createDate', type: null},
-            signedDateFrom,
-            signedDateTo,
-            expireDateFrom,
-            expireDateTo,
             tableIns;
 
         form.render();
 
         initTable();
 
+        //日期同时绑定多个
+        lay('.createTime').each(function(){
+            laydate.render({
+                elem: this,
+                range: true,
+                trigger: 'click'
+            });
+        })
         dropdownMenu.render({
             elem: $view.find('.action-more'),
             click: function (name, elem, event) {
-                let checkStatus = table.checkStatus('dormitoryTable');
+                let checkStatus = table.checkStatus('rewardPunishTable');
                 if (name === 'delete') {
                     if (!checkStatus.data.length) {
                         febs.alert.warn('请选择需要删除的数据');
@@ -124,7 +141,7 @@
                             layui.each(checkStatus.data, function (key, item) {
                                 ids.push(item.id)
                             });
-                            deletepersonnelDormitory(ids.join(','));
+                            deletePersonnelRewardPunish(ids.join(','));
                         });
                     }
                 }
@@ -132,27 +149,27 @@
             options: [{
                 name: 'add',
                 title: '新增',
-                perms: 'personnelDormitory:add'
+                perms: 'personnelRewardPunish:add'
             }, {
                 name: 'delete',
                 title: '删除',
-                perms: 'personnelDormitory:delete'
+                perms: 'personnelRewardPunish:delete'
             }]
         });
-        table.on('tool(dormitoryTable)', function (obj) {
+        table.on('tool(rewardPunishTable)', function (obj) {
             let data = obj.data,
                 layEvent = obj.event;
             if (layEvent === 'del') {
                 febs.modal.confirm('删除领取记录信息', '确定删除？', function () {
-                   deletePersonnelDormitory(data.contractId);
+                   deletePersonnelRewardPunish(data.contractId);
                 });
             }
             if (layEvent === 'edit') {
-                febs.modal.open('修改领取记录信息', 'personnel/personnelDormitory/update/' + data.contractId, {
+                febs.modal.open('修改领取记录信息', 'personnel/personnelRewardPunish/update/' + data.contractId, {
                     area: $(window).width() <= 750 ? '90%' : '30%',
                     btn: ['提交', '取消'],
                     yes: function (index, layero) {
-                        $('#personnelDormitory-update').find('#submit').trigger('click');
+                        $('#personnelRewardPunish-update').find('#submit').trigger('click');
                     },
                     btn2: function () {
                         layer.closeAll();
@@ -161,7 +178,7 @@
             }
         });
 
-        table.on('sort(dormitoryTable)', function (obj) {
+        table.on('sort(rewardPunishTable)', function (obj) {
             sortObject = obj;
             tableIns.reload({
                 initSort: obj,
@@ -179,22 +196,18 @@
 
         $reset.on('click', function () {
             $searchForm[0].reset();
-            signedDateFrom = null;
-            expireDateFrom = null;
-            signedDateTo = null;
-            expireDateTo = null;
             tableIns.reload({where: getQueryParams(), page: {curr: 1}});
         });
         $addTo.on('click', function () {
-            febs.modal.open('新增员工合同', 'personnel/personnelDormitory/add', {
+            febs.modal.open('新增员工合同', 'personnel/personnelRewardPunish/add', {
                 type:1,
                 btn: ['提交', '重置'],
                 area: $(window).width() <= 750 ? '95%' : '35%',
                 yes: function (index, layero) {
-                    $('#personnelDormitory-add').find('#submit').trigger('click');
+                    $('#personnelRewardPunish-add').find('#submit').trigger('click');
                 },
                 btn2: function () {
-                    $('#personnelDormitory-add').find('#reset').trigger('click');
+                    $('#personnelRewardPunish-add').find('#reset').trigger('click');
                     $("#receiveName").attr("value","");
                     $("#receiveWno").attr("value","");
                     return false;
@@ -202,7 +215,7 @@
             });
         });
         $deleteTo.on('click', function () {
-            let checkStatus = table.checkStatus('dormitoryTable');
+            let checkStatus = table.checkStatus('rewardPunishTable');
             if (!checkStatus.data.length) {
                 febs.alert.warn('请选择需要删除的数据');
             } else {
@@ -211,7 +224,7 @@
                     layui.each(checkStatus.data, function (key, item) {
                         ids.push(item.contractId)
                     });
-                    deletePersonnelDormitory(ids.join(','));
+                    deletePersonnelRewardPunish(ids.join(','));
                 });
             }
         });
@@ -219,52 +232,40 @@
             let params = getQueryParams();
             params.pageSize = $view.find(".layui-laypage-limits option:selected").val();
             params.pageNum = $view.find(".layui-laypage-em").next().html();
-            febs.download(ctx + 'personnelDormitory/excel', params, '员工合同表.xlsx');
+            febs.download(ctx + 'personnelRewardPunish/excel', params, '员工合同表.xlsx');
         });
         function initTable() {
             tableIns = febs.table.init({
                 elem: $view.find('table'),
-                id: 'dormitoryTable',
-                url: ctx + 'personnelDormitory/list',
+                id: 'rewardPunishTable',
+                url: ctx + 'personnelRewardPunish/list',
                 cols: [[
                     {type: 'checkbox'},
-                    {field:'number',title:'序列号',align:'center',width:100,templet:function (d) {
+                    {field:'number',title:'序列号',align:'center',width:80,templet:function (d) {
                                         return d.LAY_INDEX;}},
-                    {field: 'dormitoryNo', title: '宿舍编号',align:'center',minWidth: 100},
-                    {field: 'place', title: '宿舍地址',align:'center', minWidth: 100},
-                    {field: 'resideNnt', title: '床位总数',align:'center', minWidth: 100},
-                    {field: 'presentNnt', title: '已用床位',align:'center', minWidth: 100},
-                    {field: 'administrators', title: '管理员',align:'center', minWidth: 100},
-                    {field: 'createDate', title: '创建时间',align:'center',templet:'<div>{{ layui.util.toDateString(d.createDate, "yyyy-MM-dd") }}</div>', minWidth: 180, sort: true},
-                    {title: '状态', templet: '#contract_state',align:'center'},
-                    {title: '操作', toolbar: '#parameter-option', minWidth: 140}
+                    {field: 'id', title: '编号',hide:true,sort: true},
+                    {field: 'jobNumber', title: '工号',align:'center', minWidth: 100},
+                    {field: 'userName', title: '姓名',align:'center', minWidth: 80},
+                    {field: 'departmentName', title: '部门',align:'center', minWidth: 80},
+                    {field: 'positionName', title: '岗位', minWidth: 100},
+                    {field: 'groupingName', title: '职位', minWidth: 100},
+                    {field: 'magnitude', title: '奖罚数', minWidth: 100},
+                    {field: 'rewardPunishExplain', title: '原因', minWidth: 100},
+                    {field: 'createDate', title: '生效日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.createDate, "yyyy-MM-dd") }}</div>', minWidth: 110, sort: true},
+                    {title: '类型', templet: '#rewardPunish-type',align:'center', minWidth: 100}
                 ]]
             });
         }
 
         function getQueryParams() {
             let params = $searchForm.serializeJson();
-            let signedTime = params.signedTime;
-            let expireTime = params.expireTime;
-            if (signedTime) {
-                signedDateFrom = signedTime.split(' - ')[0];
-                signedDateTo = signedTime.split(' - ')[1];
-            }
-            if (expireTime) {
-                expireDateFrom = expireTime.split(' - ')[0];
-                expireDateTo = expireTime.split(' - ')[1];
-            }
             params.invalidate_ie_cache = new Date();
-            params.signedDateFrom = signedDateFrom;
-            params.signedDateTo = signedDateTo;
-            params.expireDateFrom = expireDateFrom;
-            params.expireDateTo = expireDateTo;
             return params;
         }
 
 
-        function deletePersonnelDormitory(ids) {
-            febs.get(ctx + 'personnelDormitory/delete/' + ids, null, function () {
+        function deletePersonnelRewardPunish(ids) {
+            febs.get(ctx + 'personnelRewardPunish/delete/' + ids, null, function () {
                 febs.alert.success('删除领取记录成功');
                 $query.click();
             });

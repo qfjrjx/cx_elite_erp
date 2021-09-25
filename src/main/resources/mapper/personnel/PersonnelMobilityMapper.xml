@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.personnel.mapper.PersonnelMobilityMapper">
+    <sql id="countPersonnelMobilitySql" >
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_personnel_mobility pm
+        WHERE
+            1 = 1
+        <if test="personnelMobility.jobNumber != null and personnelMobility.jobNumber != ''">
+            AND pm.job_number = #{personnelMobility.jobNumber}
+        </if>
+        <if test="personnelMobility.userName != null and personnelMobility.userName != ''">
+            AND pm.user_name = #{personnelMobility.userName}
+        </if>
+        <if test="personnelMobility.transferStatus != null and personnelMobility.transferStatus != ''">
+            AND pm.transfer_status = #{personnelMobility.transferStatus}
+        </if>
+    </sql>
+
+    <sql id="findPersonnelMobilitySql">
+        SELECT
+        pm.job_number jobNumber,
+        pm.user_name userName,
+        pm.gender,
+        pm.birthdate,
+        pm.phone,
+        pm.identity_ard identityArd,
+        pm.department_name departmentName,
+        pm.position_name positionName,
+        pm.grouping_name groupingName,
+        d.DEPT_NAME toDepartmentName,
+        pa.parameter_name toPositionName,
+        par.parameter_name toGroupingName,
+        pm.transfer_data transferData,
+        pm.transfer_status transferStatus
+        FROM
+        jr_personnel_mobility pm
+        LEFT JOIN t_dept d ON ( pm.dept_id = d.dept_id )
+        LEFT JOIN jr_personnel_parameters pa ON ( pm.to_position_id = pa.id )
+        LEFT JOIN jr_personnel_parameters par ON ( pm.to_grouping_id = par.id )
+        WHERE
+        1 = 1
+        <if test="personnelMobility.jobNumber != null and personnelMobility.jobNumber != ''">
+            AND pm.job_number = #{personnelMobility.jobNumber}
+        </if>
+        <if test="personnelMobility.userName != null and personnelMobility.userName != ''">
+            AND pm.user_name = #{personnelMobility.userName}
+        </if>
+        <if test="personnelMobility.transferStatus != null and personnelMobility.transferStatus != ''">
+            AND pm.transfer_status = #{personnelMobility.transferStatus}
+        </if>
+    </sql>
+
+    <select id="countPersonnelMobility" parameterType="com.erp.personnel.entity.PersonnelMobility" resultType="long">
+        <include refid="countPersonnelMobilitySql"/>
+    </select>
+
+    <select id="findPersonnelMobilityPage" parameterType="com.erp.personnel.entity.PersonnelMobility" resultType="com.erp.personnel.entity.PersonnelMobility">
+        <include refid="findPersonnelMobilitySql"/>
+    </select>
+
+    <sql id="countReceiveArchivesMobilitySql" >
+        SELECT COUNT(1)
+        FROM jr_personnel_archives pe
+        WHERE 1 = 1
+        <if test="personnelArchives.jobNumber != null and personnelArchives.jobNumber != ''">
+            AND pe.job_number = #{personnelArchives.jobNumber}
+        </if>
+        <if test="personnelArchives.userName != null and personnelArchives.userName != ''">
+            AND pe.user_name = #{personnelArchives.userName}
+        </if>
+        <if test="personnelArchives.deptId != null and personnelArchives.deptId != ''">
+            AND pe.dept_id = #{personnelArchives.deptId}
+        </if>
+        <if test="personnelArchives.userState != null and personnelArchives.userState != ''">
+            AND pe.user_state = #{personnelArchives.userState}
+        </if>
+    </sql>
+
+    <sql id="findReceiveArchivesMobilityPageSql">
+        SELECT
+        pe.user_id userId,
+        pe.job_number jobNumber,
+        pe.user_name userName,
+        d.dept_name deptName,
+        pe.phone,
+        pe.gender,
+        pa.parameter_name dutiesName,
+        par.parameter_name positionName,
+        pe.birthdate,
+        pe.identity_ard identityArd,
+        pe.entry_date entryDate,
+        pe.user_state userState
+        FROM
+        jr_personnel_archives pe
+        LEFT JOIN t_dept d ON ( pe.dept_id = d.dept_id )
+        LEFT JOIN jr_personnel_parameters pa ON ( pe.duties_id = pa.id )
+        LEFT JOIN jr_personnel_parameters par ON ( pe.position_id = par.id )
+        WHERE
+        1 = 1
+        <if test="personnelArchives.jobNumber != null and personnelArchives.jobNumber != ''">
+            AND pe.job_number = #{personnelArchives.jobNumber}
+        </if>
+        <if test="personnelArchives.userName != null and personnelArchives.userName != ''">
+            AND pe.user_name = #{personnelArchives.userName}
+        </if>
+        <if test="personnelArchives.deptId != null and personnelArchives.deptId != ''">
+            AND d.dept_id = #{personnelArchives.deptId}
+        </if>
+        <if test="personnelArchives.userState != null and personnelArchives.userState != ''">
+            AND pe.user_state = #{personnelArchives.userState}
+        </if>
+        GROUP BY pe.user_name,pe.job_number
+    </sql>
+    <select id="countReceiveArchivesMobility" parameterType="com.erp.personnel.entity.PersonnelArchives" resultType="long">
+        <include refid="countReceiveArchivesMobilitySql"/>
+    </select>
+
+    <select id="findReceiveArchivesMobilityPage" parameterType="com.erp.personnel.entity.PersonnelArchives" resultType="com.erp.personnel.entity.PersonnelArchives">
+        <include refid="findReceiveArchivesMobilityPageSql"/>
+    </select>
+</mapper>

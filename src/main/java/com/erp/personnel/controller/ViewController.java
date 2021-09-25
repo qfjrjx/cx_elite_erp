@@ -225,6 +225,46 @@ public class ViewController {
     }
     /* 员工宿舍模块结束 */
 
+    /* 调岗记录模块开始 */
+    @GetMapping("personnelMobility")
+    @RequiresPermissions("personnelMobility:list")
+    public String personnelMobilityIndex(){
+        return FebsUtil.view("mobility/mobilityList");
+    }
+
+    /* 添加调薪记录 */
+    @GetMapping("personnelMobility/add")
+    @RequiresPermissions("personnelMobility:add")
+    public String personnelMobilityAdd(){
+        return FebsUtil.view("mobility/mobilityAdd");
+    }
+
+    /* 调岗记录模块结束 */
+
+    /* 调薪记录模块开始 */
+    @GetMapping("personnelSalaryChange")
+    @RequiresPermissions("personnelSalaryChange:list")
+    public String personnelSalaryIndex(){
+        return FebsUtil.view("salary/salaryList");
+    }
+    /* 调薪记录模块结束 */
+
+    /* 奖罚记录模块开始 */
+    @GetMapping("personnelRewardPunish")
+    @RequiresPermissions("personnelRewardPunish:list")
+    public String personnelRewardPunishIndex(){
+        return FebsUtil.view("rewardPunish/rewardPunishList");
+    }
+    /* 奖罚记录模块结束 */
+
+    /* 员工档案开始 */
+    @GetMapping("employeeFile")
+    public String employeeFileIndex(){
+        return FebsUtil.view("mobility/employeeFile");
+    }
+    /* 员工档案结束 */
+
+
 
 
 }

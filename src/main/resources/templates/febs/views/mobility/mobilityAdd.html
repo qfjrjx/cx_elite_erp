@@ -1,0 +1,227 @@
+<style>
+    #personnelMobility-add {
+        padding: 20px 25px 25px 0;
+    }
+</style>
+<div class="layui-fluid" id="personnelMobility-add">
+    <form class="layui-form" action="" lay-filter="personnelMobility-add-form">
+        <input type="hidden" name="userId" id="mobilityUserId"
+               autocomplete="off" class="layui-input" readonly>
+        <input type="hidden" name="gender" id="mobilityGender"
+               autocomplete="off" class="layui-input" readonly>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require" >员工工号:</label>
+            <div class="layui-input-inline">
+                <input type="text" name="jobNumber" id="mobilityJobNumber" ondblclick="dblclickt()"
+                       autocomplete="off" class="layui-input" placeholder="请输入员工工号" readonly>
+            </div>
+
+            <label class="layui-form-label febs-form-item-require" >员工姓名:</label>
+            <div class="layui-input-inline">
+                <input type="text" name="userName" id="mobilityUserName"
+                       autocomplete="off" class="layui-input" placeholder="员工姓名" readonly>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require">出生日期</label>
+            <div class="layui-input-inline">
+                <input type="text" name="birthdate" readonly id="mobilityBirthdate" placeholder="出生日期" class="layui-input">
+            </div>
+            <label class="layui-form-label febs-form-item-require" >联系人电话:</label>
+            <div class="layui-input-inline">
+                <input type="text" name="phone" id="mobilityPhone"
+                       autocomplete="off" class="layui-input" placeholder="联系人电话" readonly>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require" >原部门:</label>
+            <div class="layui-input-inline">
+                <input type="text" name="departmentName" id="mobilityDepartmentName"
+                       autocomplete="off" class="layui-input" placeholder="原部门" readonly>
+            </div>
+            <label class="layui-form-label febs-form-item-require" >原岗位:</label>
+            <div class="layui-input-inline">
+                <input type="text" name="positionName" id="mobilityPositionName"
+                       autocomplete="off" class="layui-input" placeholder="原职位" readonly>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require" >原职务:</label>
+            <div class="layui-input-inline">
+                <input type="text" name="groupingName" id="mobilityGroupingName"
+                       autocomplete="off" class="layui-input" placeholder="原职务" readonly>
+            </div>
+            <label class="layui-form-label febs-form-item-require" >身份证号:</label>
+            <div class="layui-input-inline">
+                <input type="text" name="identityArd" id="mobilityIdentityArd"
+                       autocomplete="off" class="layui-input" placeholder="身份证号" readonly>
+            </div>
+        </div>
+            <br>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require" >调至部门:</label>
+            <div class="layui-input-inline" id="mobility-add-dept">
+
+            </div>
+            <label class="layui-form-label febs-form-item-require" >调至岗位:</label>
+            <div class="layui-input-inline">
+                <select name="toPositionId"  id="toPositionId" lay-filter="toPositionId" lay-verify="required">
+                    <option value="">请选择调至岗位</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require" >调至职务:</label>
+            <div class="layui-input-inline">
+                <select name="toGroupingId"  id="toGroupingId" lay-filter="toGroupingId" lay-verify="required">
+                    <option value="">请选择调至职务</option>
+                </select>
+            </div>
+            <label class="layui-form-label febs-form-item-require" >生效日期:</label>
+            <div class="layui-input-inline">
+                <input type="text" name="transferData" id="transferData"
+                       autocomplete="off" class="layui-input createDate" placeholder="生效日期" readonly>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require" >类型:</label>
+            <div class="layui-input-inline">
+                <select id="transferStatus" lay-filter="" name="transferStatus">
+                    <option value="">请选择</option>
+                    <option value="1">晋升</option>
+                    <option value="2">降级</option>
+                    <option value="3">岗位调动</option>
+                </select>
+            </div>
+        </div>
+
+
+        <div class="layui-form-item febs-hide">
+            <button class="layui-btn" lay-submit="" lay-filter="personnelMobility-add-form-submit" id="submit"></button>
+            <button type="reset" class="layui-btn" id="reset"></button>
+        </div>
+    </form>
+</div>
+<div id="hidden1" lay-filter="hidden1" style="display: none">
+    <table id="department_result" lay-filter="department_result"></table>
+</div>
+
+<script>
+    layui.use(['febs', 'form', 'validate', 'xmSelect','laydate'], function () {
+        let $ = layui.$,
+            febs = layui.febs,
+            layer = layui.layer,
+            form = layui.form,
+            xmSelect = layui.xmSelect,
+            laydate = layui.laydate,
+            validate = layui.validate,
+            deptXmlSelect;
+
+        form.verify(validate);
+        form.render();
+        //日期同时绑定多个
+        lay('.createDate').each(function(){
+            laydate.render({
+                elem: this
+                ,trigger: 'click'
+            });
+        })
+
+        deptXmlSelect = xmSelect.render({
+            el: '#mobility-add-dept',
+            model: {label: {type: 'text'}},
+            tree: {
+                show: true,
+                strict: false,
+                showLine: false,
+                clickCheck: true,
+                expandedKeys: [-1],
+            },
+            name: 'deptId',
+            theme: {
+                color: '#52c41a',
+            },
+            prop: {
+                value: 'id'
+            },
+            height: 'auto',
+            on: function(data){
+                if(data.isAdd){
+                    return data.change.slice(0, 1)
+                }
+            }
+        });
+        febs.get(ctx + 'dept/select/tree', null, function (data) {
+            deptXmlSelect.update(
+                data
+            )
+        });
+
+        form.on('submit(personnelMobility-add-form-submit)', function (data) {
+            febs.post(ctx + 'personnelMobility/add', data.field, function () {
+                layer.closeAll();
+                febs.alert.success('新增调岗记录成功');
+                $('#febs-personnelMobility').find('#query').click();
+            });
+            return false;
+
+        });
+    });
+    function dblclickt(){
+        layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
+            let $ = layui.$,
+                febs = layui.febs;
+
+            febs.modal.open('员工档案', 'personnel/employeeFile', {
+            area:["75%","90%"],
+            yes: function (index, layero) {
+
+            }
+
+           });
+        });
+    }
+
+
+    layui.use('form',function(){
+        var $ = layui.jquery
+        var form = layui.form
+        $.ajax({
+            url: '/personnelParameters/queryPosition',
+            dataType: 'json',
+            type: 'get',
+            success: function(data) {
+                if (data!== null) {
+                    $.each(data.data, function (index, value) {
+                        $('#toPositionId').append(new Option(value.parameterName,value.id));// 下拉菜单里添加元素
+                    });
+                } else {
+                    $("#toPositionId").append(new Option("暂无数据", ""));
+                }
+                //重新渲染
+                form.render("select");
+            }
+        });
+    });
+
+    layui.use('form',function(){
+        var $ = layui.jquery
+        var form = layui.form
+        $.ajax({
+            url: '/personnelParameters/queryDuties',
+            dataType: 'json',
+            type: 'get',
+            success: function(data) {
+                if (data!== null) {
+                    $.each(data.data, function (index, value) {
+                        $('#toGroupingId').append(new Option(value.parameterName,value.id));// 下拉菜单里添加元素
+                    });
+                } else {
+                    $("#toGroupingId").append(new Option("暂无数据", ""));
+                }
+                //重新渲染
+                form.render("select");
+            }
+        });
+    });
+</script>

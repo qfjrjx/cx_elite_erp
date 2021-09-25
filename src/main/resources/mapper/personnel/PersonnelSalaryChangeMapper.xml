@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.personnel.mapper.PersonnelSalaryChangeMapper">
+
+    <sql id="countPersonnelSalaryChangeSql" >
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_personnel_salary_change psc
+        WHERE
+            1 = 1
+    </sql>
+
+    <sql id="findPersonnelSalaryChangeSql">
+        SELECT
+            psc.job_number jobNumber,
+            psc.user_name userName,
+            psc.gender,
+            psc.department_name departmentName,
+            psc.position_name positionName,
+            psc.grouping_name groupingName,
+            psc.adjustment_base adjustmentBase,
+            psc.entry_time entryTime,
+            psc.adjustment_data adjustmentData,
+            psc.create_date createDate,
+            psc.salary_state salaryState
+        FROM
+            jr_personnel_salary_change psc
+        WHERE
+            1 = 1
+    </sql>
+
+    <select id="countPersonnelSalaryChange" parameterType="com.erp.personnel.entity.PersonnelSalaryChange" resultType="long">
+        <include refid="countPersonnelSalaryChangeSql"/>
+    </select>
+
+    <select id="findPersonnelSalaryChangePage" parameterType="com.erp.personnel.entity.PersonnelSalaryChange" resultType="com.erp.personnel.entity.PersonnelSalaryChange">
+        <include refid="findPersonnelSalaryChangeSql"/>
+    </select>
+
+</mapper>
