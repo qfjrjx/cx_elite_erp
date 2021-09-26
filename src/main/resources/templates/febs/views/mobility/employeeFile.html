@@ -74,6 +74,15 @@
     }}
     <span class="layui-badge febs-bg-{{userState.color}}">{{ userState.title }}</span>
 </script>
+<script type="text/html" id="mobility-gender">
+    {{#
+    let gender = {
+    1: {title: '男'},
+    2: {title: '女'}
+    }[d.gender];
+    }}
+    <span>{{ gender.title }}</span>
+</script>
 <script type="text/html" id="parameter-option">
     <span shiro:lacksPermission="personnelMobility:list">
         <span class="layui-badge-dot febs-bg-orange"></span> 无权限
@@ -178,13 +187,14 @@
                                         return d.LAY_INDEX;}},
                     {field: 'jobNumber', title: '工号',align:'center', minWidth: 50},
                     {field: 'userName', title: '姓名',align:'center', minWidth: 50},
+                    {title: '性别', templet: '#mobility-gender',align:'center', minWidth: 50},
+                    {field: 'phone', title: '手机号',align:'center', minWidth: 100},
                     {field: 'deptName', title: '部门',align:'center', minWidth: 70},
-                    {field: 'phone', title: '手机号',align:'center', minWidth: 70},
                     {field: 'dutiesName', title: '职务',align:'center', minWidth: 70},
                     {field: 'positionName', title: '岗位',align:'center', minWidth: 80},
                     {field: 'identityArd', title: '身份证号', minWidth: 90},
-                    {field: 'birthdate', title: '出生日期',align:'center', minWidth: 100,templet:'<div>{{ layui.util.toDateString(d.birthdate, "yyyy-MM-dd") }}</div>', sort: true},
-                    {field: 'entryDate', title: '入职日期',align:'center', minWidth: 100,templet:'<div>{{ layui.util.toDateString(d.entryDate, "yyyy-MM-dd") }}</div>', sort: true},
+                    {field: 'birthdate', title: '出生日期',align:'center', minWidth: 120,templet:'<div>{{ layui.util.toDateString(d.birthdate, "yyyy-MM-dd") }}</div>', sort: true},
+                    {field: 'entryDate', title: '入职日期',align:'center', minWidth: 120,templet:'<div>{{ layui.util.toDateString(d.entryDate, "yyyy-MM-dd") }}</div>', sort: true},
                     {title: '状态', templet: '#user-status',align:'center',minWidth: 50}
                 ]],done: function(res, curr, count){
                     $('#febs-employeeFile').find('.layui-table-body').find("table" ).find("tbody").children("tr").on('dblclick',function(){
