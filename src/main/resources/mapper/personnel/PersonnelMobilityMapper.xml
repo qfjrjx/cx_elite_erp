@@ -21,6 +21,8 @@
 
     <sql id="findPersonnelMobilitySql">
         SELECT
+        pm.id,
+        pm.user_id userId,
         pm.job_number jobNumber,
         pm.user_name userName,
         pm.gender,
@@ -71,9 +73,6 @@
         <if test="personnelArchives.userName != null and personnelArchives.userName != ''">
             AND pe.user_name = #{personnelArchives.userName}
         </if>
-        <if test="personnelArchives.deptId != null and personnelArchives.deptId != ''">
-            AND pe.dept_id = #{personnelArchives.deptId}
-        </if>
         <if test="personnelArchives.userState != null and personnelArchives.userState != ''">
             AND pe.user_state = #{personnelArchives.userState}
         </if>
@@ -105,9 +104,6 @@
         </if>
         <if test="personnelArchives.userName != null and personnelArchives.userName != ''">
             AND pe.user_name = #{personnelArchives.userName}
-        </if>
-        <if test="personnelArchives.deptId != null and personnelArchives.deptId != ''">
-            AND d.dept_id = #{personnelArchives.deptId}
         </if>
         <if test="personnelArchives.userState != null and personnelArchives.userState != ''">
             AND pe.user_state = #{personnelArchives.userState}

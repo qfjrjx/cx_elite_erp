@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.erp.personnel.entity.PersonnelRewardPunish;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 奖罚记录 Mapper
@@ -15,7 +16,7 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface PersonnelRewardPunishMapper extends BaseMapper<PersonnelRewardPunish> {
 
-    long countPersonnelRewardPunishs(PersonnelRewardPunish personnelRewardPunish);
+    long countPersonnelRewardPunishs(@Param("personnelRewardPunish") PersonnelRewardPunish personnelRewardPunish);
 
-    IPage<PersonnelRewardPunish> findPersonnelRewardPunishsPage(Page<PersonnelRewardPunish> page, PersonnelRewardPunish personnelRewardPunish);
+    IPage<PersonnelRewardPunish> findPersonnelRewardPunishsPage(Page<PersonnelRewardPunish> page,@Param("personnelRewardPunish") PersonnelRewardPunish personnelRewardPunish);
 }

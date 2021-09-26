@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.erp.personnel.entity.PersonnelSalaryChange;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 调薪记录 Mapper
@@ -16,7 +17,7 @@ import org.apache.ibatis.annotations.Mapper;
 public interface PersonnelSalaryChangeMapper extends BaseMapper<PersonnelSalaryChange> {
 
 
-    long countPersonnelSalaryChange(PersonnelSalaryChange personnelSalaryChange);
+    long countPersonnelSalaryChange(@Param("personnelSalaryChange") PersonnelSalaryChange personnelSalaryChange);
 
-    IPage<PersonnelSalaryChange> findPersonnelSalaryChangePage(Page<PersonnelSalaryChange> page, PersonnelSalaryChange personnelSalaryChange);
+    IPage<PersonnelSalaryChange> findPersonnelSalaryChangePage(Page<PersonnelSalaryChange> page,@Param("personnelSalaryChange") PersonnelSalaryChange personnelSalaryChange);
 }

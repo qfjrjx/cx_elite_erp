@@ -10,10 +10,21 @@
             jr_personnel_reward_punish prp
         WHERE
             1 = 1
+        <if test="personnelRewardPunish.jobNumber != null and personnelRewardPunish.jobNumber != ''">
+            AND prp.job_number = #{personnelRewardPunish.jobNumber}
+        </if>
+        <if test="personnelRewardPunish.userName != null and personnelRewardPunish.userName != ''">
+            AND prp.user_name = #{personnelRewardPunish.userName}
+        </if>
+        <if test="personnelRewardPunish.rewardPunishType != null and personnelRewardPunish.rewardPunishType != ''">
+            AND prp.reward_punish_type = #{personnelRewardPunish.rewardPunishType}
+        </if>
     </sql>
 
     <sql id="findPersonnelRewardPunishsSql">
         SELECT
+            prp.id,
+            prp.user_id userId,
             prp.job_number jobNumber,
             prp.user_name userName,
             prp.department_name departmentName,
@@ -22,11 +33,22 @@
             prp.magnitude,
             prp.reward_punish_explain rewardPunishExplain,
             prp.reward_punish_type rewardPunishType,
+            prp.entry_time entryTime,
+            prp.reward_punish_date rewardPunishDate,
             prp.create_date createDate
         FROM
             jr_personnel_reward_punish prp
         WHERE
             1 = 1
+        <if test="personnelRewardPunish.jobNumber != null and personnelRewardPunish.jobNumber != ''">
+            AND prp.job_number = #{personnelRewardPunish.jobNumber}
+        </if>
+        <if test="personnelRewardPunish.userName != null and personnelRewardPunish.userName != ''">
+            AND prp.user_name = #{personnelRewardPunish.userName}
+        </if>
+        <if test="personnelRewardPunish.rewardPunishType != null and personnelRewardPunish.rewardPunishType != ''">
+            AND prp.reward_punish_type = #{personnelRewardPunish.rewardPunishType}
+        </if>
     </sql>
 
     <select id="countPersonnelRewardPunishs" parameterType="com.erp.personnel.entity.PersonnelRewardPunish" resultType="long">

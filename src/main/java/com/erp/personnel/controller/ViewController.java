@@ -232,7 +232,7 @@ public class ViewController {
         return FebsUtil.view("mobility/mobilityList");
     }
 
-    /* 添加调薪记录 */
+    /* 添加调岗记录 */
     @GetMapping("personnelMobility/add")
     @RequiresPermissions("personnelMobility:add")
     public String personnelMobilityAdd(){
@@ -247,6 +247,15 @@ public class ViewController {
     public String personnelSalaryIndex(){
         return FebsUtil.view("salary/salaryList");
     }
+
+
+    /* 添加调薪记录 */
+    @GetMapping("personnelSalaryChange/add")
+    @RequiresPermissions("personnelSalaryChange:add")
+    public String personnelSalaryChangeAdd(){
+        return FebsUtil.view("salary/salaryAdd");
+    }
+
     /* 调薪记录模块结束 */
 
     /* 奖罚记录模块开始 */
@@ -255,6 +264,15 @@ public class ViewController {
     public String personnelRewardPunishIndex(){
         return FebsUtil.view("rewardPunish/rewardPunishList");
     }
+
+
+    /* 添加奖罚记录 */
+    @GetMapping("personnelRewardPunish/add")
+    @RequiresPermissions("personnelRewardPunish:add")
+    public String personnelRewardPunishAdd(){
+        return FebsUtil.view("rewardPunish/rewardPunishAdd");
+    }
+
     /* 奖罚记录模块结束 */
 
     /* 员工档案开始 */

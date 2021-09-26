@@ -9,10 +9,21 @@
             jr_personnel_salary_change psc
         WHERE
             1 = 1
+        <if test="personnelSalaryChange.jobNumber != null and personnelSalaryChange.jobNumber != ''">
+            AND psc.job_number = #{personnelSalaryChange.jobNumber}
+        </if>
+        <if test="personnelSalaryChange.userName != null and personnelSalaryChange.userName != ''">
+            AND psc.user_name = #{personnelSalaryChange.userName}
+        </if>
+        <if test="personnelSalaryChange.salaryState != null and personnelSalaryChange.salaryState != ''">
+            AND psc.salary_state = #{personnelSalaryChange.salaryState}
+        </if>
     </sql>
 
     <sql id="findPersonnelSalaryChangeSql">
         SELECT
+            psc.id,
+            psc.user_id userId,
             psc.job_number jobNumber,
             psc.user_name userName,
             psc.gender,
@@ -28,6 +39,15 @@
             jr_personnel_salary_change psc
         WHERE
             1 = 1
+        <if test="personnelSalaryChange.jobNumber != null and personnelSalaryChange.jobNumber != ''">
+            AND psc.job_number = #{personnelSalaryChange.jobNumber}
+        </if>
+        <if test="personnelSalaryChange.userName != null and personnelSalaryChange.userName != ''">
+            AND psc.user_name = #{personnelSalaryChange.userName}
+        </if>
+        <if test="personnelSalaryChange.salaryState != null and personnelSalaryChange.salaryState != ''">
+            AND psc.salary_state = #{personnelSalaryChange.salaryState}
+        </if>
     </sql>
 
     <select id="countPersonnelSalaryChange" parameterType="com.erp.personnel.entity.PersonnelSalaryChange" resultType="long">

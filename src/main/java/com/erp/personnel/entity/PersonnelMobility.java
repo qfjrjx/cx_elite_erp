@@ -157,6 +157,7 @@ public class PersonnelMobility {
      * 创建时间
      */
     @TableField("create_date")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createDate;
 
 }

@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * 奖罚记录 Entity
@@ -79,9 +80,23 @@ public class PersonnelRewardPunish {
     private Integer rewardPunishType;
 
     /**
+     * 入职日期
+     */
+    @TableField("entry_time")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date entryTime;
+
+    /**
      * 创建日期
      */
     @TableField("create_date")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createDate;
+    /**
+     * 奖罚日期
+     */
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @TableField("reward_punish_date")
+    private Date rewardPunishDate;
 
 }

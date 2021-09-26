@@ -21,34 +21,27 @@
                             <div class="layui-col-md9">
                                 <div class="layui-form-item">
                                     <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm">工号</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="jobNumber" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
                                         <label class="layui-form-label layui-form-label-sm">姓名</label>
                                         <div class="layui-input-inline">
-                                            <input type="text" name="staffName" autocomplete="off" class="layui-input">
+                                            <input type="text" name="userName" autocomplete="off" class="layui-input">
                                         </div>
                                     </div>
                                     <div class="layui-inline">
                                         <label class="layui-form-label layui-form-label-sm">状态</label>
                                         <div class="layui-input-inline">
-                                            <select name="contractState">
+                                            <select name="salaryState">
                                                 <option value=""></option>
-                                                <option value="1">未到期</option>
-                                                <option value="2">已到期</option>
+                                                <option value="1">上调</option>
+                                                <option value="2">下调</option>
                                             </select>
                                         </div>
                                     </div>
-                                   <div class="layui-inline">
-                                        <label class="layui-form-label layui-form-label-sm">签订时间</label>
-                                        <div class="layui-input-inline">
-                                            <input type="text" name="signedTime" id="signedTime" class="layui-input createTime">
-                                        </div>
-                                    </div>
-                                    <div class="layui-inline">
-                                       <label class="layui-form-label layui-form-label-sm">到期时间</label>
-                                       <div class="layui-input-inline">
-                                           <input type="text" name="expireTime" id="expireTime" class="layui-input createTime">
-                                       </div>
-                                   </div>
-
                                 </div>
                             </div>
                             <div class="layui-col-md3 layui-col-sm12 layui-col-xs12 table-action-area">
@@ -123,10 +116,6 @@
             $reset = $view.find('#reset'),
             $searchForm = $view.find('form'),
             sortObject = {field: 'createDate', type: null},
-            signedDateFrom,
-            signedDateTo,
-            expireDateFrom,
-            expireDateTo,
             tableIns;
 
         form.render();
@@ -174,7 +163,7 @@
                 layEvent = obj.event;
             if (layEvent === 'del') {
                 febs.modal.confirm('删除领取记录信息', '确定删除？', function () {
-                   deletePersonnelSalaryChange(data.contractId);
+                   deletePersonnelSalaryChange(data.id);
                 });
             }
             if (layEvent === 'edit') {
@@ -212,10 +201,10 @@
             tableIns.reload({where: getQueryParams(), page: {curr: 1}});
         });
         $addTo.on('click', function () {
-            febs.modal.open('新增员工合同', 'personnel/personnelSalaryChange/add', {
+            febs.modal.open('新增员工调薪记录', 'personnel/personnelSalaryChange/add', {
                 type:1,
                 btn: ['提交', '重置'],
-                area: $(window).width() <= 750 ? '95%' : '35%',
+                area: $(window).width() <= 750 ? '95%' : '40%',
                 yes: function (index, layero) {
                     $('#personnelSalaryChange-add').find('#submit').trigger('click');
                 },
@@ -235,7 +224,7 @@
                 febs.modal.confirm('删除参数信息', '确定删除？', function () {
                     let ids = [];
                     layui.each(checkStatus.data, function (key, item) {
-                        ids.push(item.contractId)
+                        ids.push(item.id)
                     });
                     deletePersonnelSalaryChange(ids.join(','));
                 });
@@ -264,9 +253,9 @@
                     {field: 'positionName', title: '岗位', minWidth: 100},
                     {field: 'groupingName', title: '职务', minWidth: 100},
                     {field: 'entryTime', title: '入职日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.entryTime, "yyyy-MM-dd") }}</div>', minWidth: 110, sort: true},
-                    {field: 'adjustmentBase', title: '调整基数', minWidth: 100,align:'center'},
+                    {field: 'adjustmentBase', title: '调整基数', minWidth: 80,align:'center'},
                     {field: 'adjustmentData', title: '调整日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.adjustmentData, "yyyy-MM-dd") }}</div>', minWidth: 110, sort: true},
-                    {field: 'createDate', title: '创建日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.createDate, "yyyy-MM-dd") }}</div>', minWidth: 110, sort: true},
+                    {field: 'createDate', title: '创建日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.createDate, "yyyy-MM-dd HH:mm:ss") }}</div>', minWidth: 170, sort: true},
                     {title: '类型', templet: '#salary_salaryState',align:'center', minWidth: 100}
                 ]]
             });
@@ -281,7 +270,7 @@
 
         function deletePersonnelSalaryChange(ids) {
             febs.get(ctx + 'personnelSalaryChange/delete/' + ids, null, function () {
-                febs.alert.success('删除领取记录成功');
+                febs.alert.success('删除调薪记录成功');
                 $query.click();
             });
         }

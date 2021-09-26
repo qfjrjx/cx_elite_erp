@@ -15,6 +15,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -47,7 +51,11 @@ public class PersonnelSalaryChangeServiceImpl extends ServiceImpl<PersonnelSalar
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void createPersonnelSalaryChange(PersonnelSalaryChange personnelSalaryChange) {
+    public void createPersonnelSalaryChange(PersonnelSalaryChange personnelSalaryChange) throws ParseException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
+        String date = simpleDateFormat.format(new Date());//系统当前时间
+        Date today = simpleDateFormat.parse(date);
+        personnelSalaryChange.setCreateDate(today);
         this.save(personnelSalaryChange);
     }
 
@@ -58,10 +66,10 @@ public class PersonnelSalaryChangeServiceImpl extends ServiceImpl<PersonnelSalar
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void deletePersonnelSalaryChange(PersonnelSalaryChange personnelSalaryChange) {
-        LambdaQueryWrapper<PersonnelSalaryChange> wrapper = new LambdaQueryWrapper<>();
-	    // TODO 设置删除条件
-	    this.remove(wrapper);
-	}
+    public void deletePersonnelSalaryChange(String[] ids) {
+        List<String> list = Arrays.asList(ids);
+        baseMapper.deleteBatchIds(list);
+    }
+
+
 }

@@ -184,6 +184,7 @@
                     {field: 'positionName', title: '岗位',align:'center', minWidth: 80},
                     {field: 'identityArd', title: '身份证号', minWidth: 90},
                     {field: 'birthdate', title: '出生日期',align:'center', minWidth: 100,templet:'<div>{{ layui.util.toDateString(d.birthdate, "yyyy-MM-dd") }}</div>', sort: true},
+                    {field: 'entryDate', title: '入职日期',align:'center', minWidth: 100,templet:'<div>{{ layui.util.toDateString(d.entryDate, "yyyy-MM-dd") }}</div>', sort: true},
                     {title: '状态', templet: '#user-status',align:'center',minWidth: 50}
                 ]],done: function(res, curr, count){
                     $('#febs-employeeFile').find('.layui-table-body').find("table" ).find("tbody").children("tr").on('dblclick',function(){
@@ -199,6 +200,7 @@
                         var mobilityGroupingName = $("#mobilityGroupingName").val();
                         var mobilityIdentityArd = $("#mobilityIdentityArd").val();
                         var mobilityGender = $("#mobilityGender").val();
+                        var mobilityEntryTime = $("#mobilityEntryTime").val();
                         if (mobilityUserId!=null && mobilityUserId!=""){
                             $("#mobilityUserId").attr("value","");
                         }if (mobilityJobNumber!=null && mobilityJobNumber!=""){
@@ -219,6 +221,8 @@
                             $("#mobilityIdentityArd").attr("value","");
                         }if (mobilityGender!=null && mobilityGender!=""){
                             $("#mobilityGender").attr("value","");
+                        }if (mobilityEntryTime!=null && mobilityEntryTime!=""){
+                            $("#mobilityEntryTime").attr("value","");
                         }
                         $("#mobilityUserId").attr("value",obj.userId);
                         $("#mobilityJobNumber").attr("value",obj.jobNumber);
@@ -231,6 +235,8 @@
                         $("#mobilityGroupingName").attr("value",obj.dutiesName);
                         $("#mobilityIdentityArd").attr("value",obj.identityArd);
                         $("#mobilityGender").attr("value",obj.gender);
+                        var entryDate = layui.util.toDateString(obj.entryDate, "yyyy-MM-dd")
+                        $("#mobilityEntryTime").attr("value",entryDate);
 
                         parent.layer.close(layer.index)
 

@@ -165,11 +165,11 @@
                 layEvent = obj.event;
             if (layEvent === 'del') {
                 febs.modal.confirm('删除领取记录信息', '确定删除？', function () {
-                   deletePersonnelMobility(data.contractId);
+                   deletePersonnelMobility(data.id);
                 });
             }
             if (layEvent === 'edit') {
-                febs.modal.open('修改领取记录信息', 'personnel/personnelMobility/update/' + data.contractId, {
+                febs.modal.open('修改领取记录信息', 'personnel/personnelMobility/update/' + data.id, {
                     area: $(window).width() <= 750 ? '90%' : '30%',
                     btn: ['提交', '取消'],
                     yes: function (index, layero) {
@@ -226,7 +226,7 @@
                 febs.modal.confirm('删除参数信息', '确定删除？', function () {
                     let ids = [];
                     layui.each(checkStatus.data, function (key, item) {
-                        ids.push(item.contractId)
+                        ids.push(item.id)
                     });
                     deletePersonnelMobility(ids.join(','));
                 });
@@ -274,7 +274,7 @@
 
         function deletePersonnelMobility(ids) {
             febs.get(ctx + 'personnelMobility/delete/' + ids, null, function () {
-                febs.alert.success('删除领取记录成功');
+                febs.alert.success('删除调岗记录成功');
                 $query.click();
             });
         }

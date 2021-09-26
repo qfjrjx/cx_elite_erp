@@ -21,34 +21,27 @@
                             <div class="layui-col-md9">
                                 <div class="layui-form-item">
                                     <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm">工号</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="jobNumber" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
                                         <label class="layui-form-label layui-form-label-sm">姓名</label>
                                         <div class="layui-input-inline">
-                                            <input type="text" name="staffName" autocomplete="off" class="layui-input">
+                                            <input type="text" name="userName" autocomplete="off" class="layui-input">
                                         </div>
                                     </div>
                                     <div class="layui-inline">
                                         <label class="layui-form-label layui-form-label-sm">状态</label>
                                         <div class="layui-input-inline">
-                                            <select name="contractState">
+                                            <select name="rewardPunishType">
                                                 <option value=""></option>
-                                                <option value="1">未到期</option>
-                                                <option value="2">已到期</option>
+                                                <option value="1">奖励</option>
+                                                <option value="2">惩罚</option>
                                             </select>
                                         </div>
                                     </div>
-                                   <div class="layui-inline">
-                                        <label class="layui-form-label layui-form-label-sm">签订时间</label>
-                                        <div class="layui-input-inline">
-                                            <input type="text" name="signedTime" id="signedTime" class="layui-input createTime">
-                                        </div>
-                                    </div>
-                                    <div class="layui-inline">
-                                       <label class="layui-form-label layui-form-label-sm">到期时间</label>
-                                       <div class="layui-input-inline">
-                                           <input type="text" name="expireTime" id="expireTime" class="layui-input createTime">
-                                       </div>
-                                   </div>
-
                                 </div>
                             </div>
                             <div class="layui-col-md3 layui-col-sm12 layui-col-xs12 table-action-area">
@@ -161,11 +154,11 @@
                 layEvent = obj.event;
             if (layEvent === 'del') {
                 febs.modal.confirm('删除领取记录信息', '确定删除？', function () {
-                   deletePersonnelRewardPunish(data.contractId);
+                   deletePersonnelRewardPunish(data.id);
                 });
             }
             if (layEvent === 'edit') {
-                febs.modal.open('修改领取记录信息', 'personnel/personnelRewardPunish/update/' + data.contractId, {
+                febs.modal.open('修改领取记录信息', 'personnel/personnelRewardPunish/update/' + data.id, {
                     area: $(window).width() <= 750 ? '90%' : '30%',
                     btn: ['提交', '取消'],
                     yes: function (index, layero) {
@@ -199,10 +192,10 @@
             tableIns.reload({where: getQueryParams(), page: {curr: 1}});
         });
         $addTo.on('click', function () {
-            febs.modal.open('新增员工合同', 'personnel/personnelRewardPunish/add', {
+            febs.modal.open('新增员工奖罚记录', 'personnel/personnelRewardPunish/add', {
                 type:1,
                 btn: ['提交', '重置'],
-                area: $(window).width() <= 750 ? '95%' : '35%',
+                area: $(window).width() <= 750 ? '95%' : '40%',
                 yes: function (index, layero) {
                     $('#personnelRewardPunish-add').find('#submit').trigger('click');
                 },
@@ -222,7 +215,7 @@
                 febs.modal.confirm('删除参数信息', '确定删除？', function () {
                     let ids = [];
                     layui.each(checkStatus.data, function (key, item) {
-                        ids.push(item.contractId)
+                        ids.push(item.id)
                     });
                     deletePersonnelRewardPunish(ids.join(','));
                 });
@@ -244,14 +237,14 @@
                     {field:'number',title:'序列号',align:'center',width:80,templet:function (d) {
                                         return d.LAY_INDEX;}},
                     {field: 'id', title: '编号',hide:true,sort: true},
-                    {field: 'jobNumber', title: '工号',align:'center', minWidth: 100},
+                    {field: 'jobNumber', title: '工号',align:'center', minWidth: 80},
                     {field: 'userName', title: '姓名',align:'center', minWidth: 80},
                     {field: 'departmentName', title: '部门',align:'center', minWidth: 80},
-                    {field: 'positionName', title: '岗位', minWidth: 100},
-                    {field: 'groupingName', title: '职位', minWidth: 100},
-                    {field: 'magnitude', title: '奖罚数', minWidth: 100},
+                    {field: 'positionName', title: '岗位', align:'center',minWidth: 80},
+                    {field: 'groupingName', title: '职位',align:'center', minWidth: 80},
+                    {field: 'magnitude', title: '奖罚数(单位：元)',align:'center', minWidth: 140},
                     {field: 'rewardPunishExplain', title: '原因', minWidth: 100},
-                    {field: 'createDate', title: '生效日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.createDate, "yyyy-MM-dd") }}</div>', minWidth: 110, sort: true},
+                    {field: 'rewardPunishDate', title: '奖罚日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.rewardPunishDate, "yyyy-MM-dd HH:mm:ss") }}</div>', minWidth: 170, sort: true},
                     {title: '类型', templet: '#rewardPunish-type',align:'center', minWidth: 100}
                 ]]
             });
@@ -266,7 +259,7 @@
 
         function deletePersonnelRewardPunish(ids) {
             febs.get(ctx + 'personnelRewardPunish/delete/' + ids, null, function () {
-                febs.alert.success('删除领取记录成功');
+                febs.alert.success('删除奖罚记录成功');
                 $query.click();
             });
         }

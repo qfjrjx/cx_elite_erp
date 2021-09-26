@@ -50,9 +50,11 @@ public interface IPersonnelMobilityService extends IService<PersonnelMobility> {
     /**
      * 删除
      *
-     * @param personnelMobility personnelMobility
+     * @param ids ids
      */
-    void deletePersonnelMobility(PersonnelMobility personnelMobility);
+    void deletePersonnelMobility(String[] ids);
 
     IPage<PersonnelArchives> findReceiveArchivesMobilityList(PersonnelArchives personnelArchives, QueryRequest request);
+
+
 }

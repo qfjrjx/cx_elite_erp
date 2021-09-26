@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.erp.common.entity.QueryRequest;
 import com.erp.personnel.entity.PersonnelSalaryChange;
 
+import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -36,7 +37,7 @@ public interface IPersonnelSalaryChangeService extends IService<PersonnelSalaryC
      *
      * @param personnelSalaryChange personnelSalaryChange
      */
-    void createPersonnelSalaryChange(PersonnelSalaryChange personnelSalaryChange);
+    void createPersonnelSalaryChange(PersonnelSalaryChange personnelSalaryChange) throws ParseException;
 
     /**
      * 修改
@@ -48,7 +49,7 @@ public interface IPersonnelSalaryChangeService extends IService<PersonnelSalaryC
     /**
      * 删除
      *
-     * @param personnelSalaryChange personnelSalaryChange
+     * @param ids ids
      */
-    void deletePersonnelSalaryChange(PersonnelSalaryChange personnelSalaryChange);
+    void deletePersonnelSalaryChange(String[] ids);
 }

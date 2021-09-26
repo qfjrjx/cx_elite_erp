@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -53,13 +54,10 @@ public class PersonnelMobilityServiceImpl extends ServiceImpl<PersonnelMobilityM
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void createPersonnelMobility(PersonnelMobility personnelMobility) throws ParseException {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");//设置日期格式
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
         String date = simpleDateFormat.format(new Date());//系统当前时间
         Date today = simpleDateFormat.parse(date);
         personnelMobility.setCreateDate(today);
-
-
-
         this.save(personnelMobility);
     }
 
@@ -70,12 +68,11 @@ public class PersonnelMobilityServiceImpl extends ServiceImpl<PersonnelMobilityM
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void deletePersonnelMobility(PersonnelMobility personnelMobility) {
-        LambdaQueryWrapper<PersonnelMobility> wrapper = new LambdaQueryWrapper<>();
-	    // TODO 设置删除条件
-	    this.remove(wrapper);
-	}
+    public void deletePersonnelMobility(String[] ids) {
+        List<String> list = Arrays.asList(ids);
+        baseMapper.deleteBatchIds(list);
+    }
+
 
     @Override
     public IPage<PersonnelArchives> findReceiveArchivesMobilityList(PersonnelArchives personnelArchives, QueryRequest request) {

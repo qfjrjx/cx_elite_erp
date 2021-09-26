@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.erp.common.entity.QueryRequest;
 import com.erp.personnel.entity.PersonnelRewardPunish;
 
+import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -36,7 +37,7 @@ public interface IPersonnelRewardPunishService extends IService<PersonnelRewardP
      *
      * @param personnelRewardPunish personnelRewardPunish
      */
-    void createPersonnelRewardPunish(PersonnelRewardPunish personnelRewardPunish);
+    void createPersonnelRewardPunish(PersonnelRewardPunish personnelRewardPunish) throws ParseException;
 
     /**
      * 修改
@@ -48,7 +49,7 @@ public interface IPersonnelRewardPunishService extends IService<PersonnelRewardP
     /**
      * 删除
      *
-     * @param personnelRewardPunish personnelRewardPunish
+     * @param ids ids
      */
-    void deletePersonnelRewardPunish(PersonnelRewardPunish personnelRewardPunish);
+    void deletePersonnelRewardPunish(String[] ids);
 }

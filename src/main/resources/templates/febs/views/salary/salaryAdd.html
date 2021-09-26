@@ -1,40 +1,78 @@
 <style>
-    #personnelContract-add {
+    #personnelSalaryChange-add {
         padding: 20px 25px 25px 0;
     }
 </style>
-<div class="layui-fluid" id="personnelContract-add">
-    <form class="layui-form" action="" lay-filter="personnelContract-add-form">
-        <input type="hidden" name="userId" id="receiveUserId"
+<div class="layui-fluid" id="personnelSalaryChange-add">
+    <form class="layui-form" action="" lay-filter="personnelSalaryChange-add-form">
+        <input type="hidden" name="userId" id="mobilityUserId"
+               autocomplete="off" class="layui-input" readonly>
+        <input type="hidden" name="gender" id="mobilityGender"
                autocomplete="off" class="layui-input" readonly>
         <div class="layui-form-item">
             <label class="layui-form-label febs-form-item-require" >员工工号:</label>
-            <div class="layui-input-block">
-                <input type="text" name="staffWno" id="receiveWno" ondblclick="dblclickt()"
+            <div class="layui-input-inline">
+                <input type="text" name="jobNumber" id="mobilityJobNumber" ondblclick="dblclickt()"
                        autocomplete="off" class="layui-input" placeholder="请输入员工工号" readonly>
             </div>
-        </div>
-        <div class="layui-form-item">
+
             <label class="layui-form-label febs-form-item-require" >员工姓名:</label>
-            <div class="layui-input-block">
-                <input type="text" name="staffName" id="receiveName"
-                       autocomplete="off" class="layui-input" placeholder="请输入员工姓名" readonly>
+            <div class="layui-input-inline">
+                <input type="text" name="userName" id="mobilityUserName"
+                       autocomplete="off" class="layui-input" placeholder="员工姓名" readonly>
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label febs-form-item-require">签订时间</label>
+            <label class="layui-form-label febs-form-item-require">入职日期</label>
             <div class="layui-input-inline">
-                <input type="text" name="signedDate" id="signedDate" class="layui-input createDate">
+                <input type="text" name="entryTime" readonly id="mobilityEntryTime" placeholder="入职日期" class="layui-input">
+            </div>
+            <label class="layui-form-label febs-form-item-require" >员工部门:</label>
+            <div class="layui-input-inline">
+                <input type="text" name="departmentName" id="mobilityDepartmentName"
+                       autocomplete="off" class="layui-input" placeholder="员工部门" readonly>
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label febs-form-item-require">到期时间</label>
+
+            <label class="layui-form-label febs-form-item-require" >员工岗位:</label>
             <div class="layui-input-inline">
-                <input type="text" name="expireDate" id="expireDate" class="layui-input createDate">
+                <input type="text" name="positionName" id="mobilityPositionName"
+                       autocomplete="off" class="layui-input" placeholder="员工岗位" readonly>
+            </div>
+            <label class="layui-form-label febs-form-item-require" >员工职务:</label>
+            <div class="layui-input-inline">
+                <input type="text" name="groupingName" id="mobilityGroupingName"
+                       autocomplete="off" class="layui-input" placeholder="员工职务" readonly>
             </div>
         </div>
+        <br>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require" >生效日期:</label>
+            <div class="layui-input-inline">
+                <input type="text" name="adjustmentData" id="adjustmentData"
+                       autocomplete="off" class="layui-input createDate" placeholder="生效日期" readonly>
+            </div>
+            <label class="layui-form-label febs-form-item-require" >调整基数:</label>
+            <div class="layui-input-inline">
+                <input type="text" name="adjustmentBase" id="adjustmentBase"
+                       autocomplete="off" class="layui-input" placeholder="调整基数">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require" >类型:</label>
+            <div class="layui-input-inline">
+                <select id="salaryState" lay-filter="" name="salaryState">
+                    <option value="">请选择</option>
+                    <option value="1">上调</option>
+                    <option value="2">下调</option>
+                </select>
+            </div>
+        </div>
+
+
         <div class="layui-form-item febs-hide">
-            <button class="layui-btn" lay-submit="" lay-filter="personnelContract-add-form-submit" id="submit"></button>
+            <button class="layui-btn" lay-submit="" lay-filter="personnelSalaryChange-add-form-submit" id="submit"></button>
             <button type="reset" class="layui-btn" id="reset"></button>
         </div>
     </form>
@@ -55,29 +93,6 @@
 
         form.verify(validate);
         form.render();
-
-
-        form.on('submit(personnelContract-add-form-submit)', function (data) {
-
-
-            var signedDate = data.field.signedDate //签订日期
-            var expireDate = data.field.expireDate //到期时间
-            var signedArr = signedDate.split(/[-]/);//签订日期
-            var expireArr = expireDate.split(/[-]/);//到期时间
-            var signedDateM = (new Date(signedArr)).getTime(); //得到签订日期毫秒数
-            var expireDateM = (new Date(expireArr)).getTime(); //得到到期时间毫秒数
-            if (signedDateM > expireDateM) {
-                febs.alert.warn('到期时间不能小于签订时间');
-                return false;
-            }
-            febs.post(ctx + 'personnelContract/add', data.field, function () {
-                layer.closeAll();
-                febs.alert.success('新增合同信息成功');
-                $('#febs-personnelContract').find('#query').click();
-            });
-            return false;
-
-        });
         //日期同时绑定多个
         lay('.createDate').each(function(){
             laydate.render({
@@ -85,19 +100,30 @@
                 ,trigger: 'click'
             });
         })
+
+
+        form.on('submit(personnelSalaryChange-add-form-submit)', function (data) {
+            febs.post(ctx + 'personnelSalaryChange/add', data.field, function () {
+                layer.closeAll();
+                febs.alert.success('新增调岗记录成功');
+                $('#febs-personnelSalaryChange').find('#query').click();
+            });
+            return false;
+
+        });
     });
     function dblclickt(){
         layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
             let $ = layui.$,
                 febs = layui.febs;
 
-            febs.modal.open('员工档案', 'personnel/receiveArchives', {
-            area:["60%","90%"],
-            yes: function (index, layero) {
+            febs.modal.open('员工档案', 'personnel/employeeFile', {
+                area:["75%","90%"],
+                yes: function (index, layero) {
 
-            }
+                }
 
-           });
+            });
         });
     }
 </script>

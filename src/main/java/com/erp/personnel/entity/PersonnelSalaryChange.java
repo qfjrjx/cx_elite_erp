@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * 调薪记录 Entity
@@ -31,7 +32,7 @@ public class PersonnelSalaryChange {
     private Long userId;
 
     /**
-     * 姓名
+     * 工号
      */
     @TableField("job_number")
     private String jobNumber;
@@ -69,11 +70,13 @@ public class PersonnelSalaryChange {
      * 入职日期
      */
     @TableField("entry_time")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date entryTime;
 
     /**
      * 调整日期
      */
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @TableField("adjustment_data")
     private Date adjustmentData;
 
@@ -81,6 +84,7 @@ public class PersonnelSalaryChange {
      * 创建日期
      */
     @TableField("create_date")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createDate;
 
     /**

@@ -5,6 +5,7 @@ import com.erp.common.controller.BaseController;
 import com.erp.common.entity.FebsConstant;
 import com.erp.common.entity.FebsResponse;
 import com.erp.common.entity.QueryRequest;
+import com.erp.common.entity.Strings;
 import com.erp.common.utils.FebsUtil;
 import com.erp.personnel.entity.PersonnelArchives;
 import com.erp.personnel.entity.PersonnelMobility;
@@ -13,15 +14,18 @@ import com.wuwenze.poi.ExcelKit;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
@@ -70,11 +74,11 @@ public class PersonnelMobilityController extends BaseController {
     }
 
     @ControllerEndpoint(operation = "删除PersonnelMobility", exceptionMessage = "删除PersonnelMobility失败")
-    @GetMapping("personnelMobility/delete")
+    @GetMapping("personnelMobility/delete/{ids}")
     @ResponseBody
     @RequiresPermissions("personnelMobility:delete")
-    public FebsResponse deletePersonnelMobility(PersonnelMobility personnelMobility) {
-        this.personnelMobilityService.deletePersonnelMobility(personnelMobility);
+    public FebsResponse deletePersonnelMobility(@NotBlank(message = "{required}") @PathVariable String ids) {
+        this.personnelMobilityService.deletePersonnelMobility(StringUtils.split(ids, Strings.COMMA));
         return new FebsResponse().success();
     }
 
