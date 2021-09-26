@@ -117,4 +117,34 @@
     <select id="findReceiveArchivesMobilityPage" parameterType="com.erp.personnel.entity.PersonnelArchives" resultType="com.erp.personnel.entity.PersonnelArchives">
         <include refid="findReceiveArchivesMobilityPageSql"/>
     </select>
+
+
+    <select id="countPersonnelMobilityUser" parameterType="String" resultType="long">
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_personnel_mobility pm
+        WHERE
+            pm.user_id = #{userId}
+    </select>
+
+    <select id="findPersonnelMobilityUserPage" parameterType="String" resultType="com.erp.personnel.entity.PersonnelMobility">
+        SELECT
+            pm.department_name departmentName,
+            pm.position_name positionName,
+            pm.grouping_name groupingName,
+            d.DEPT_NAME toDepartmentName,
+            pa.parameter_name toPositionName,
+            par.parameter_name toGroupingName,
+            pm.transfer_data transferData,
+            pm.transfer_status transferStatus
+        FROM
+            jr_personnel_mobility pm
+                LEFT JOIN t_dept d ON ( pm.dept_id = d.dept_id )
+                LEFT JOIN jr_personnel_parameters pa ON ( pm.to_position_id = pa.id )
+                LEFT JOIN jr_personnel_parameters par ON ( pm.to_grouping_id = par.id )
+        WHERE
+            pm.user_id = #{userId}
+    </select>
+
 </mapper>

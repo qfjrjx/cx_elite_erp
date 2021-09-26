@@ -82,4 +82,15 @@ public class PersonnelMobilityServiceImpl extends ServiceImpl<PersonnelMobilityM
         SortUtil.handlePageSort(request, page, "entryDate", FebsConstant.ORDER_DESC, true);
         return baseMapper.findReceiveArchivesMobilityPage(page,personnelArchives);
     }
+
+    @Override
+    public IPage<PersonnelMobility> personnelMobilityUserList(QueryRequest request, String userId) {
+
+        Page<PersonnelMobility> page = new Page<>(request.getPageNum(), request.getPageSize());
+        page.setSearchCount(false);
+        page.setTotal(baseMapper.countPersonnelMobilityUser(userId));
+        return baseMapper.findPersonnelMobilityUserPage(page,userId);
+    }
+
+
 }

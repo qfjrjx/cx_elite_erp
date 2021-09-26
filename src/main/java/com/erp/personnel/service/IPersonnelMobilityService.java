@@ -56,5 +56,5 @@ public interface IPersonnelMobilityService extends IService<PersonnelMobility> {
 
     IPage<PersonnelArchives> findReceiveArchivesMobilityList(PersonnelArchives personnelArchives, QueryRequest request);
 
-
+    IPage<PersonnelMobility> personnelMobilityUserList(QueryRequest request, String userId);
 }

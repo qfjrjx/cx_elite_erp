@@ -10,6 +10,7 @@ import com.erp.common.utils.FebsUtil;
 import com.erp.personnel.entity.PersonnelArchives;
 import com.erp.personnel.entity.PersonnelMobility;
 import com.erp.personnel.service.IPersonnelMobilityService;
+import com.erp.personnel.util.LayuiUtil;
 import com.wuwenze.poi.ExcelKit;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
@@ -105,5 +106,13 @@ public class PersonnelMobilityController extends BaseController {
     @RequiresPermissions("personnelMobility:list")
     public FebsResponse personnelReceiveArchivesList(PersonnelArchives personnelArchives, QueryRequest request) {
         return new FebsResponse().success().data(getDataTable(personnelMobilityService.findReceiveArchivesMobilityList(personnelArchives,request)));
+    }
+
+    @GetMapping("personnelMobilityUser/list/{userId}")
+    @ResponseBody
+    @RequiresPermissions("personnelMobility:list")
+    public FebsResponse personnelMobilityUserList(QueryRequest request,@PathVariable String userId) {
+        Map<String, Object> dataTable = getDataTable(this.personnelMobilityService.personnelMobilityUserList(request, userId));
+        return new FebsResponse().success().data(dataTable);
     }
 }

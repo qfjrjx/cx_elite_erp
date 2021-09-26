@@ -8,6 +8,8 @@ import com.erp.personnel.entity.PersonnelMobility;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * 调岗记录 Mapper
  *
@@ -24,4 +26,8 @@ public interface PersonnelMobilityMapper extends BaseMapper<PersonnelMobility> {
     long countReceiveArchivesMobility(@Param("personnelArchives")PersonnelArchives personnelArchives);
 
     IPage<PersonnelArchives> findReceiveArchivesMobilityPage(Page<PersonnelArchives> page,@Param("personnelArchives") PersonnelArchives personnelArchives);
+
+    long countPersonnelMobilityUser(@Param("userId")String userId);
+
+    IPage<PersonnelMobility> findPersonnelMobilityUserPage(Page<PersonnelMobility> page,@Param("userId") String userId);
 }
