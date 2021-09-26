@@ -98,4 +98,12 @@ public class PersonnelSalaryChangeController extends BaseController {
         List<PersonnelSalaryChange> personnelSalaryChanges = this.personnelSalaryChangeService.findPersonnelSalaryChanges(queryRequest, personnelSalaryChange).getRecords();
         ExcelKit.$Export(PersonnelSalaryChange.class, response).downXlsx(personnelSalaryChanges, false);
     }
+
+    @GetMapping("personnelSalaryChangeUser/list/{userId}")
+    @ResponseBody
+    @RequiresPermissions("personnelSalaryChange:list")
+    public FebsResponse personnelSalaryChangeUserList(QueryRequest request,@PathVariable String userId) {
+        Map<String, Object> dataTable = getDataTable(this.personnelSalaryChangeService.personnelSalaryChangeUserList(request, userId));
+        return new FebsResponse().success().data(dataTable);
+    }
 }

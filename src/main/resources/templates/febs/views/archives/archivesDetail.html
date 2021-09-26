@@ -419,6 +419,8 @@
     <br>
      <div>&nbsp;&nbsp;&nbsp;<span>调岗记录</span></div>
     <table lay-filter="mobilityTableUser" id="mobilityTableUser" lay-data="{id: 'mobilityTableUser'}"></table>
+    <div>&nbsp;&nbsp;&nbsp;<span>调薪记录</span></div>
+    <table lay-filter="salaryTableUser" id="salaryTableUser" lay-data="{id: 'salaryTableUser'}"></table>
 </div>
 <script type="text/html" id="mobility_transferStatus">
     {{#
@@ -447,13 +449,15 @@
             validate = layui.validate,
             deptXmlSelect,
             socialXmSelect,
-            tableIns;
+            tableInsMobility,
+            tableInsSalary;
 
         form.verify(validate);
         form.render();
 
         initArchivesValue();
-        initTable();
+        initMobilityTable();
+        initSalaryTable();
 
 
         deptXmlSelect = xmSelect.render({
@@ -600,10 +604,10 @@
         })
 
 
-        function initTable() {
+        function initMobilityTable() {
             let input = document.getElementById("userId");
             let userId = input.value;
-            tableIns = febs.table.init({
+            tableInsMobility = febs.table.init({
                 elem: '#mobilityTableUser',
                 id: 'mobilityTableUser',
                 url: ctx + 'personnelMobilityUser/list/'+userId,
@@ -620,6 +624,24 @@
                     {title: '类型', templet: '#mobility_transferStatus',align:'center', minWidth: 100}
                   ]
                 ]
+            });
+        }
+
+
+        function initSalaryTable() {
+            let input = document.getElementById("userId");
+            let userId = input.value;
+            tableInsSalary = febs.table.init({
+                elem:'#salaryTableUser',
+                id: 'salaryTableUser',
+                url: ctx + 'personnelSalaryChangeUser/list/'+userId,
+                cols: [
+                        [
+                        {field: 'adjustmentBase', title: '调整基数', minWidth: 80,align:'center'},
+                        {field: 'adjustmentData', title: '调整日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.adjustmentData, "yyyy-MM-dd") }}</div>', minWidth: 110, sort: true},
+                        {title: '类型', templet: '#salary_salaryState',align:'center', minWidth: 100}
+                        ]
+                     ]
             });
         }
 

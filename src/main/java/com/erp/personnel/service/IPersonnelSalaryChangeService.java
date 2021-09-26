@@ -52,4 +52,6 @@ public interface IPersonnelSalaryChangeService extends IService<PersonnelSalaryC
      * @param ids ids
      */
     void deletePersonnelSalaryChange(String[] ids);
+
+    IPage<PersonnelSalaryChange> personnelSalaryChangeUserList(QueryRequest request, String userId);
 }

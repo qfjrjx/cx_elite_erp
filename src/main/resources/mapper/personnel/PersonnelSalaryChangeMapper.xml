@@ -58,4 +58,36 @@
         <include refid="findPersonnelSalaryChangeSql"/>
     </select>
 
+
+    <select id="countPersonnelSalaryChangeUser" parameterType="String" resultType="long">
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_personnel_salary_change psc
+        WHERE
+            psc.user_id = #{userId}
+    </select>
+
+    <select id="findPersonnelSalaryChangeUserPage" parameterType="String" resultType="com.erp.personnel.entity.PersonnelSalaryChange">
+        SELECT
+            psc.id,
+            psc.user_id userId,
+            psc.job_number jobNumber,
+            psc.user_name userName,
+            psc.gender,
+            psc.department_name departmentName,
+            psc.position_name positionName,
+            psc.grouping_name groupingName,
+            psc.adjustment_base adjustmentBase,
+            psc.entry_time entryTime,
+            psc.adjustment_data adjustmentData,
+            psc.create_date createDate,
+            psc.salary_state salaryState
+        FROM
+            jr_personnel_salary_change psc
+        WHERE
+            psc.user_id = #{userId}
+
+    </select>
+
 </mapper>

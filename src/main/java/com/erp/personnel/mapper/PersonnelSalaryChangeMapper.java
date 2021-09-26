@@ -20,4 +20,8 @@ public interface PersonnelSalaryChangeMapper extends BaseMapper<PersonnelSalaryC
     long countPersonnelSalaryChange(@Param("personnelSalaryChange") PersonnelSalaryChange personnelSalaryChange);
 
     IPage<PersonnelSalaryChange> findPersonnelSalaryChangePage(Page<PersonnelSalaryChange> page,@Param("personnelSalaryChange") PersonnelSalaryChange personnelSalaryChange);
+
+    long countPersonnelSalaryChangeUser(@Param("userId")String userId);
+
+    IPage<PersonnelSalaryChange> findPersonnelSalaryChangeUserPage(Page<PersonnelSalaryChange> page,@Param("userId") String userId);
 }

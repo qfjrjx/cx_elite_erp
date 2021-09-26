@@ -71,5 +71,14 @@ public class PersonnelSalaryChangeServiceImpl extends ServiceImpl<PersonnelSalar
         baseMapper.deleteBatchIds(list);
     }
 
+    @Override
+    public IPage<PersonnelSalaryChange> personnelSalaryChangeUserList(QueryRequest request, String userId) {
+
+        Page<PersonnelSalaryChange> page = new Page<>(request.getPageNum(), request.getPageSize());
+        page.setSearchCount(false);
+        page.setTotal(baseMapper.countPersonnelSalaryChangeUser(userId));
+        return baseMapper.findPersonnelSalaryChangeUserPage(page,userId);
+    }
+
 
 }
