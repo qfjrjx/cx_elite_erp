@@ -98,4 +98,13 @@ public class PersonnelRewardPunishController extends BaseController {
         List<PersonnelRewardPunish> personnelRewardPunishs = this.personnelRewardPunishService.findPersonnelRewardPunishs(queryRequest, personnelRewardPunish).getRecords();
         ExcelKit.$Export(PersonnelRewardPunish.class, response).downXlsx(personnelRewardPunishs, false);
     }
+
+
+    @GetMapping("personnelRewardPunishUser/list/{userId}")
+    @ResponseBody
+    @RequiresPermissions("personnelRewardPunish:list")
+    public FebsResponse personnelRewardPunishUserList(QueryRequest request,@PathVariable String userId) {
+        Map<String, Object> dataTable = getDataTable(this.personnelRewardPunishService.personnelRewardPunishUserList(request, userId));
+        return new FebsResponse().success().data(dataTable);
+    }
 }

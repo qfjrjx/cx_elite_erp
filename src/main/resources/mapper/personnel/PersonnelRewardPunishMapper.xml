@@ -58,4 +58,35 @@
     <select id="findPersonnelRewardPunishsPage" parameterType="com.erp.personnel.entity.PersonnelRewardPunish" resultType="com.erp.personnel.entity.PersonnelRewardPunish">
         <include refid="findPersonnelRewardPunishsSql"/>
     </select>
+
+
+    <select id="countPersonnelRewardPunishUser" parameterType="String" resultType="long">
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_personnel_reward_punish prp
+        WHERE
+            prp.user_id = #{userId}
+    </select>
+
+    <select id="findPersonnelRewardPunishUserPage" parameterType="String" resultType="com.erp.personnel.entity.PersonnelRewardPunish">
+        SELECT
+            prp.id,
+            prp.user_id userId,
+            prp.job_number jobNumber,
+            prp.user_name userName,
+            prp.department_name departmentName,
+            prp.position_name positionName,
+            prp.grouping_name groupingName,
+            prp.magnitude,
+            prp.reward_punish_explain rewardPunishExplain,
+            prp.reward_punish_type rewardPunishType,
+            prp.entry_time entryTime,
+            prp.reward_punish_date rewardPunishDate,
+            prp.create_date createDate
+        FROM
+            jr_personnel_reward_punish prp
+        WHERE
+            prp.user_id = #{userId}
+    </select>
 </mapper>

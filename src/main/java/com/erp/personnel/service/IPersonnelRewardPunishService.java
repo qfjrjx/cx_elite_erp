@@ -52,4 +52,6 @@ public interface IPersonnelRewardPunishService extends IService<PersonnelRewardP
      * @param ids ids
      */
     void deletePersonnelRewardPunish(String[] ids);
+
+    IPage<PersonnelRewardPunish> personnelRewardPunishUserList(QueryRequest request, String userId);
 }

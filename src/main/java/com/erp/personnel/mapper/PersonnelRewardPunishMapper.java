@@ -19,4 +19,8 @@ public interface PersonnelRewardPunishMapper extends BaseMapper<PersonnelRewardP
     long countPersonnelRewardPunishs(@Param("personnelRewardPunish") PersonnelRewardPunish personnelRewardPunish);
 
     IPage<PersonnelRewardPunish> findPersonnelRewardPunishsPage(Page<PersonnelRewardPunish> page,@Param("personnelRewardPunish") PersonnelRewardPunish personnelRewardPunish);
+
+    long countPersonnelRewardPunishUser(@Param("userId") String userId);
+
+    IPage<PersonnelRewardPunish> findPersonnelRewardPunishUserPage(Page<PersonnelRewardPunish> page,@Param("userId") String userId);
 }

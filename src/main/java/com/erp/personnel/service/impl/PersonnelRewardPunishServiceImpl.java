@@ -70,4 +70,13 @@ public class PersonnelRewardPunishServiceImpl extends ServiceImpl<PersonnelRewar
         List<String> list = Arrays.asList(ids);
         baseMapper.deleteBatchIds(list);
 	}
+
+    @Override
+    public IPage<PersonnelRewardPunish> personnelRewardPunishUserList(QueryRequest request, String userId) {
+
+        Page<PersonnelRewardPunish> page = new Page<>(request.getPageNum(), request.getPageSize());
+        page.setSearchCount(false);
+        page.setTotal(baseMapper.countPersonnelRewardPunishUser(userId));
+        return baseMapper.findPersonnelRewardPunishUserPage(page,userId);
+    }
 }
