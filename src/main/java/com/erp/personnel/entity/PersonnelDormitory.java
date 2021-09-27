@@ -27,14 +27,14 @@ public class PersonnelDormitory {
     /**
      * 宿舍编号
      */
-    @TableField("dormitoryNo")
-    private Integer dormitoryNo;
+    @TableField("dormitory_no")
+    private String dormitoryNo;
 
     /**
      * 宿舍地点
      */
-    @TableField("place")
-    private String place;
+    @TableField("dormitory_place")
+    private String dormitoryPlace;
 
     /**
      * 床位总数
@@ -49,10 +49,10 @@ public class PersonnelDormitory {
     private Integer presentNnt;
 
     /**
-     * 状态
+     * 状态   1-启用，2-禁用
      */
-    @TableField("state")
-    private Integer state;
+    @TableField("dormitory_state")
+    private String dormitoryState;
 
     /**
      * 创建日期
@@ -63,7 +63,7 @@ public class PersonnelDormitory {
     /**
      * 管理员
      */
-    @TableField("administrators")
-    private String administrators;
+    @TableField("dormitory_administrators")
+    private String dormitoryAdministrators;
 
 }

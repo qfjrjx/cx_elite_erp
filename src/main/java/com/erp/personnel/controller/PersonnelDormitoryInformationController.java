@@ -6,6 +6,7 @@ import com.erp.common.entity.FebsConstant;
 import com.erp.common.entity.FebsResponse;
 import com.erp.common.entity.QueryRequest;
 import com.erp.common.utils.FebsUtil;
+import com.erp.personnel.entity.PersonnelDormitory;
 import com.erp.personnel.entity.PersonnelDormitoryInformation;
 import com.erp.personnel.service.IPersonnelDormitoryInformationService;
 import com.wuwenze.poi.ExcelKit;
@@ -59,7 +60,7 @@ public class PersonnelDormitoryInformationController extends BaseController {
     }
 
     @ControllerEndpoint(operation = "新增PersonnelDormitoryInformation", exceptionMessage = "新增PersonnelDormitoryInformation失败")
-    @PostMapping("personnelDormitoryInformation")
+    @PostMapping("personnelDormitoryInformation/add")
     @ResponseBody
     @RequiresPermissions("personnelDormitoryInformation:add")
     public FebsResponse addPersonnelDormitoryInformation(@Valid PersonnelDormitoryInformation personnelDormitoryInformation) {
@@ -92,5 +93,13 @@ public class PersonnelDormitoryInformationController extends BaseController {
     public void export(QueryRequest queryRequest, PersonnelDormitoryInformation personnelDormitoryInformation, HttpServletResponse response) {
         List<PersonnelDormitoryInformation> personnelDormitoryInformations = this.personnelDormitoryInformationService.findPersonnelDormitoryInformations(queryRequest, personnelDormitoryInformation).getRecords();
         ExcelKit.$Export(PersonnelDormitoryInformation.class, response).downXlsx(personnelDormitoryInformations, false);
+    }
+
+    @GetMapping("personneldormitoryBackfill/list")
+    @ResponseBody
+    @RequiresPermissions("personnelDormitory:list")
+    public FebsResponse personnelDormitoryList(QueryRequest request, PersonnelDormitory personnelDormitory) {
+        Map<String, Object> dataTable = getDataTable(this.personnelDormitoryInformationService.findPersonnelDormitorys(request, personnelDormitory));
+        return new FebsResponse().success().data(dataTable);
     }
 }

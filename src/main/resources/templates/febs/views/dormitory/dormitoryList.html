@@ -27,9 +27,19 @@
                                         </div>
                                     </div>
                                     <div class="layui-inline">
+                                        <label class="layui-form-label layui-form-label-sm">宿舍地址</label>
+                                        <div class="layui-input-inline">
+                                            <select name="dormitoryPlace">
+                                                <option value="">请选择</option>
+                                                <option value="1">东宿舍</option>
+                                                <option value="2">西宿舍</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
                                         <label class="layui-form-label layui-form-label-sm">状态</label>
                                         <div class="layui-input-inline">
-                                            <select name="state">
+                                            <select name="dormitoryState">
                                                 <option value=""></option>
                                                 <option value="1">启用</option>
                                                 <option value="2">禁用</option>
@@ -68,14 +78,23 @@
         </div>
     </div>
 </div>
-<script type="text/html" id="contract_state">
+<script type="text/html" id="dormitory-state">
     {{#
-    let state = {
+    let dormitoryState = {
     1: {title: '启用', color: 'green'},
     2: {title: '禁用', color: 'red'}
-    }[d.state];
+    }[d.dormitoryState];
     }}
-    <span class="layui-badge febs-bg-{{state.color}}">{{ state.title }}</span>
+    <span class="layui-badge febs-bg-{{dormitoryState.color}}">{{ dormitoryState.title }}</span>
+</script>
+<script type="text/html" id="dormitory-place">
+    {{#
+    let dormitoryPlace = {
+    1: {title: '东宿舍'},
+    2: {title: '西宿舍'}
+    }[d.dormitoryPlace];
+    }}
+    <span>{{ dormitoryPlace.title }}</span>
 </script>
 <script type="text/html" id="parameter-option">
     <span shiro:lacksPermission="personnelDormitory:list,personnelDormitory:update,personnelDormitory:delete">
@@ -101,10 +120,6 @@
             $reset = $view.find('#reset'),
             $searchForm = $view.find('form'),
             sortObject = {field: 'createDate', type: null},
-            signedDateFrom,
-            signedDateTo,
-            expireDateFrom,
-            expireDateTo,
             tableIns;
 
         form.render();
@@ -124,7 +139,7 @@
                             layui.each(checkStatus.data, function (key, item) {
                                 ids.push(item.id)
                             });
-                            deletepersonnelDormitory(ids.join(','));
+                            deletePersonnelDormitory(ids.join(','));
                         });
                     }
                 }
@@ -143,12 +158,12 @@
             let data = obj.data,
                 layEvent = obj.event;
             if (layEvent === 'del') {
-                febs.modal.confirm('删除领取记录信息', '确定删除？', function () {
-                   deletePersonnelDormitory(data.contractId);
+                febs.modal.confirm('删除宿舍信息', '确定删除？', function () {
+                   deletePersonnelDormitory(data.id);
                 });
             }
             if (layEvent === 'edit') {
-                febs.modal.open('修改领取记录信息', 'personnel/personnelDormitory/update/' + data.contractId, {
+                febs.modal.open('修改领取记录信息', 'personnel/personnelDormitory/update/' + data.id, {
                     area: $(window).width() <= 750 ? '90%' : '30%',
                     btn: ['提交', '取消'],
                     yes: function (index, layero) {
@@ -179,14 +194,10 @@
 
         $reset.on('click', function () {
             $searchForm[0].reset();
-            signedDateFrom = null;
-            expireDateFrom = null;
-            signedDateTo = null;
-            expireDateTo = null;
             tableIns.reload({where: getQueryParams(), page: {curr: 1}});
         });
         $addTo.on('click', function () {
-            febs.modal.open('新增员工合同', 'personnel/personnelDormitory/add', {
+            febs.modal.open('新增宿舍信息', 'personnel/personnelDormitory/add', {
                 type:1,
                 btn: ['提交', '重置'],
                 area: $(window).width() <= 750 ? '95%' : '35%',
@@ -195,8 +206,6 @@
                 },
                 btn2: function () {
                     $('#personnelDormitory-add').find('#reset').trigger('click');
-                    $("#receiveName").attr("value","");
-                    $("#receiveWno").attr("value","");
                     return false;
                 }
             });
@@ -209,7 +218,7 @@
                 febs.modal.confirm('删除参数信息', '确定删除？', function () {
                     let ids = [];
                     layui.each(checkStatus.data, function (key, item) {
-                        ids.push(item.contractId)
+                        ids.push(item.id)
                     });
                     deletePersonnelDormitory(ids.join(','));
                 });
@@ -231,12 +240,12 @@
                     {field:'number',title:'序列号',align:'center',width:100,templet:function (d) {
                                         return d.LAY_INDEX;}},
                     {field: 'dormitoryNo', title: '宿舍编号',align:'center',minWidth: 100},
-                    {field: 'place', title: '宿舍地址',align:'center', minWidth: 100},
+                    {title: '宿舍地址', templet: '#dormitory-place',align:'center'},
                     {field: 'resideNnt', title: '床位总数',align:'center', minWidth: 100},
                     {field: 'presentNnt', title: '已用床位',align:'center', minWidth: 100},
-                    {field: 'administrators', title: '管理员',align:'center', minWidth: 100},
+                    {field: 'dormitoryAdministrators', title: '管理员',align:'center', minWidth: 100},
                     {field: 'createDate', title: '创建时间',align:'center',templet:'<div>{{ layui.util.toDateString(d.createDate, "yyyy-MM-dd") }}</div>', minWidth: 180, sort: true},
-                    {title: '状态', templet: '#contract_state',align:'center'},
+                    {title: '状态', templet: '#dormitory-state',align:'center'},
                     {title: '操作', toolbar: '#parameter-option', minWidth: 140}
                 ]]
             });
@@ -244,28 +253,13 @@
 
         function getQueryParams() {
             let params = $searchForm.serializeJson();
-            let signedTime = params.signedTime;
-            let expireTime = params.expireTime;
-            if (signedTime) {
-                signedDateFrom = signedTime.split(' - ')[0];
-                signedDateTo = signedTime.split(' - ')[1];
-            }
-            if (expireTime) {
-                expireDateFrom = expireTime.split(' - ')[0];
-                expireDateTo = expireTime.split(' - ')[1];
-            }
-            params.invalidate_ie_cache = new Date();
-            params.signedDateFrom = signedDateFrom;
-            params.signedDateTo = signedDateTo;
-            params.expireDateFrom = expireDateFrom;
-            params.expireDateTo = expireDateTo;
             return params;
         }
 
 
         function deletePersonnelDormitory(ids) {
             febs.get(ctx + 'personnelDormitory/delete/' + ids, null, function () {
-                febs.alert.success('删除领取记录成功');
+                febs.alert.success('删除宿舍成功');
                 $query.click();
             });
         }

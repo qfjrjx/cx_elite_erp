@@ -147,4 +147,41 @@
             pm.user_id = #{userId}
     </select>
 
+
+
+    <!--查询所有调岗记录，根据生效时间生成定时任务-->
+    <select id="queryPersonnelMobilityList" parameterType="com.erp.personnel.entity.PersonnelMobility" resultType="com.erp.personnel.entity.PersonnelMobility">
+        SELECT
+            pm.id,
+            pm.user_id userId,
+            pm.job_number jobNumber,
+            pm.user_name userName,
+            pm.gender,
+            pm.birthdate,
+            pm.phone,
+            pm.identity_ard identityArd,
+            pm.department_name departmentName,
+            pm.position_name positionName,
+            pm.grouping_name groupingName,
+            pm.dept_id deptId,
+            pm.to_position_id toPositionId,
+            pm.to_grouping_id toGroupingId,
+            pm.transfer_data transferData,
+            pm.transfer_status transferStatus
+        FROM
+            jr_personnel_mobility pm
+    </select>
+
+    <update id = "updatePersonnelArchives" parameterType = "com.erp.personnel.entity.PersonnelArchives" >
+        UPDATE jr_personnel_archives pa
+        <trim prefix="set" suffixOverrides=",">
+            <if test="personnelArchives.deptId!=null">
+            pa.dept_id = #{personnelArchives.deptId},</if>
+            <if test="personnelArchives.positionId!=null">
+            pa.position_id =#{personnelArchives.positionId},</if>
+            <if test="personnelArchives.dutiesId!=null">
+            pa.duties_id =#{personnelArchives.dutiesId},</if>
+        </trim>
+        where pa.user_id = #{personnelArchives.userId}
+    </update>
 </mapper>

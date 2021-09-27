@@ -5,6 +5,7 @@ import com.erp.common.controller.BaseController;
 import com.erp.common.entity.FebsConstant;
 import com.erp.common.entity.FebsResponse;
 import com.erp.common.entity.QueryRequest;
+import com.erp.common.entity.Strings;
 import com.erp.common.utils.FebsUtil;
 import com.erp.personnel.entity.PersonnelDormitory;
 import com.erp.personnel.service.IPersonnelDormitoryService;
@@ -12,15 +13,19 @@ import com.wuwenze.poi.ExcelKit;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
@@ -59,20 +64,20 @@ public class PersonnelDormitoryController extends BaseController {
     }
 
     @ControllerEndpoint(operation = "新增PersonnelDormitory", exceptionMessage = "新增PersonnelDormitory失败")
-    @PostMapping("personnelDormitory")
+    @PostMapping("personnelDormitory/add")
     @ResponseBody
     @RequiresPermissions("personnelDormitory:add")
-    public FebsResponse addPersonnelDormitory(@Valid PersonnelDormitory personnelDormitory) {
+    public FebsResponse addPersonnelDormitory(@Valid PersonnelDormitory personnelDormitory) throws ParseException {
         this.personnelDormitoryService.createPersonnelDormitory(personnelDormitory);
         return new FebsResponse().success();
     }
 
     @ControllerEndpoint(operation = "删除PersonnelDormitory", exceptionMessage = "删除PersonnelDormitory失败")
-    @GetMapping("personnelDormitory/delete")
+    @GetMapping("personnelDormitory/delete/{ids}")
     @ResponseBody
     @RequiresPermissions("personnelDormitory:delete")
-    public FebsResponse deletePersonnelDormitory(PersonnelDormitory personnelDormitory) {
-        this.personnelDormitoryService.deletePersonnelDormitory(personnelDormitory);
+    public FebsResponse deletePersonnelDormitory(@NotBlank(message = "{required}") @PathVariable String ids) {
+        this.personnelDormitoryService.deletePersonnelDormitory(StringUtils.split(ids, Strings.COMMA));
         return new FebsResponse().success();
     }
 

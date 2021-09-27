@@ -212,17 +212,31 @@ public class ViewController {
 
 
     /* 员工宿舍模块开始 */
+    //宿舍管理列表
     @GetMapping("personnelDormitory")
     @RequiresPermissions("personnelDormitory:list")
     public String personnelDormitoryIndex(){
         return FebsUtil.view("dormitory/dormitoryList");
     }
-
+    //添加宿舍管理列表
+    @GetMapping("personnelDormitory/add")
+    @RequiresPermissions("personnelDormitory:add")
+    public String personnelDormitoryAdd(){
+        return FebsUtil.view("dormitory/dormitoryAdd");
+    }
+    //宿舍入住人员列表
     @GetMapping("personnelDormitoryInformation")
     @RequiresPermissions("personnelDormitoryInformation:list")
     public String personnelDormitoryInformationIndex(){
         return FebsUtil.view("dormitoryInformation/dormitoryInformationList");
     }
+    //添加入住宿舍人员列表
+    @GetMapping("personnelDormitoryInformation/add")
+    @RequiresPermissions("personnelDormitoryInformation:add")
+    public String personnelDormitoryInformationAdd(){
+        return FebsUtil.view("dormitoryInformation/dormitoryInformationAdd");
+    }
+
     /* 员工宿舍模块结束 */
 
     /* 调岗记录模块开始 */
@@ -281,6 +295,15 @@ public class ViewController {
         return FebsUtil.view("mobility/employeeFile");
     }
     /* 员工档案结束 */
+
+    /* 员工档案开始 */
+    @GetMapping("dormitoryList")
+    public String dormitoryIndex(){
+        return FebsUtil.view("dormitoryInformation/dormitoryBackfillList");
+    }
+    /* 员工档案结束 */
+
+
 
 
 

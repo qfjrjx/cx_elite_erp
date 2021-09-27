@@ -21,18 +21,24 @@
                             <div class="layui-col-md9">
                                 <div class="layui-form-item">
                                     <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm">员工姓名</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="employeeName" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
                                         <label class="layui-form-label layui-form-label-sm">宿舍编号</label>
                                         <div class="layui-input-inline">
                                             <input type="text" name="dormitoryNo" autocomplete="off" class="layui-input">
                                         </div>
                                     </div>
                                     <div class="layui-inline">
-                                        <label class="layui-form-label layui-form-label-sm">状态</label>
+                                        <label class="layui-form-label layui-form-label-sm">宿舍地址</label>
                                         <div class="layui-input-inline">
-                                            <select name="state">
-                                                <option value=""></option>
-                                                <option value="1">启用</option>
-                                                <option value="2">禁用</option>
+                                            <select name="dormitoryLocation">
+                                                <option value="">请选择</option>
+                                                <option value="1">东宿舍</option>
+                                                <option value="2">西宿舍</option>
                                             </select>
                                         </div>
                                     </div>
@@ -68,14 +74,14 @@
         </div>
     </div>
 </div>
-<script type="text/html" id="contract_state">
+<script type="text/html" id="dormitory-location">
     {{#
-    let state = {
-    1: {title: '启用', color: 'green'},
-    2: {title: '禁用', color: 'red'}
-    }[d.state];
+    let dormitoryLocation = {
+    1: {title: '东宿舍'},
+    2: {title: '西宿舍'}
+    }[d.dormitoryLocation];
     }}
-    <span class="layui-badge febs-bg-{{state.color}}">{{ state.title }}</span>
+    <span>{{ dormitoryLocation.title }}</span>
 </script>
 <script type="text/html" id="parameter-option">
     <span shiro:lacksPermission="personnelDormitoryInformation:list,personnelDormitoryInformation:update,personnelDormitoryInformation:delete">
@@ -101,10 +107,6 @@
             $reset = $view.find('#reset'),
             $searchForm = $view.find('form'),
             sortObject = {field: 'createDate', type: null},
-            signedDateFrom,
-            signedDateTo,
-            expireDateFrom,
-            expireDateTo,
             tableIns;
 
         form.render();
@@ -124,7 +126,7 @@
                             layui.each(checkStatus.data, function (key, item) {
                                 ids.push(item.id)
                             });
-                            deletePersonnelDormitoryInformationInformation(ids.join(','));
+                            deletePersonnelDormitoryInformation(ids.join(','));
                         });
                     }
                 }
@@ -179,14 +181,10 @@
 
         $reset.on('click', function () {
             $searchForm[0].reset();
-            signedDateFrom = null;
-            expireDateFrom = null;
-            signedDateTo = null;
-            expireDateTo = null;
             tableIns.reload({where: getQueryParams(), page: {curr: 1}});
         });
         $addTo.on('click', function () {
-            febs.modal.open('新增员工合同', 'personnel/personnelDormitoryInformation/add', {
+            febs.modal.open('新增宿舍入住人员信息', 'personnel/personnelDormitoryInformation/add', {
                 type:1,
                 btn: ['提交', '重置'],
                 area: $(window).width() <= 750 ? '95%' : '35%',
@@ -231,7 +229,7 @@
                     {field:'number',title:'序列号',align:'center',width:100,templet:function (d) {
                                         return d.LAY_INDEX;}},
                     {field: 'dormitoryNo', title: '宿舍编号',align:'center',minWidth: 100},
-                    {field: 'dormitoryLocation', title: '宿舍地址',align:'center', minWidth: 100},
+                    {title: '宿舍地址', templet: '#dormitory-location',align:'center'},
                     {field: 'usedBeds', title: '已用床位',align:'center', minWidth: 100},
                     {field: 'employeeName', title: '员工姓名',align:'center', minWidth: 100},
                     {field: 'employeeTelephone', title: '员工电话',align:'center', minWidth: 100},
@@ -244,28 +242,14 @@
 
         function getQueryParams() {
             let params = $searchForm.serializeJson();
-            let signedTime = params.signedTime;
-            let expireTime = params.expireTime;
-            if (signedTime) {
-                signedDateFrom = signedTime.split(' - ')[0];
-                signedDateTo = signedTime.split(' - ')[1];
-            }
-            if (expireTime) {
-                expireDateFrom = expireTime.split(' - ')[0];
-                expireDateTo = expireTime.split(' - ')[1];
-            }
             params.invalidate_ie_cache = new Date();
-            params.signedDateFrom = signedDateFrom;
-            params.signedDateTo = signedDateTo;
-            params.expireDateFrom = expireDateFrom;
-            params.expireDateTo = expireDateTo;
             return params;
         }
 
 
         function deletePersonnelDormitoryInformation(ids) {
             febs.get(ctx + 'personnelDormitory/delete/' + ids, null, function () {
-                febs.alert.success('删除领取记录成功');
+                febs.alert.success('删除宿舍人员成功');
                 $query.click();
             });
         }

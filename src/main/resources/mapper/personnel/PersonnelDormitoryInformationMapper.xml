@@ -10,6 +10,15 @@
             jr_personnel_dormitory_information pdi
         WHERE
             1 = 1
+        <if test="personnelDormitoryInformation.dormitoryNo != null and personnelDormitoryInformation.dormitoryNo != ''">
+            AND pdi.dormitory_no = #{personnelDormitoryInformation.dormitoryNo}
+        </if>
+        <if test="personnelDormitoryInformation.dormitoryLocation != null and personnelDormitoryInformation.dormitoryLocation != ''">
+            AND pdi.dormitory_location = #{personnelDormitoryInformation.dormitoryLocation}
+        </if>
+        <if test="personnelDormitoryInformation.employeeName != null and personnelDormitoryInformation.employeeName != ''">
+            AND pdi.employee_name = #{personnelDormitoryInformation.employeeName}
+        </if>
     </sql>
     <sql id="findPersonnelDormitoryInformationsPageSql" >
         SELECT
@@ -25,6 +34,15 @@
             jr_personnel_dormitory_information pdi
         WHERE
             1 = 1
+        <if test="personnelDormitoryInformation.dormitoryNo != null and personnelDormitoryInformation.dormitoryNo != ''">
+            AND pdi.dormitory_no = #{personnelDormitoryInformation.dormitoryNo}
+        </if>
+        <if test="personnelDormitoryInformation.dormitoryLocation != null and personnelDormitoryInformation.dormitoryLocation != ''">
+            AND pdi.dormitory_location = #{personnelDormitoryInformation.dormitoryLocation}
+        </if>
+        <if test="personnelDormitoryInformation.employeeName != null and personnelDormitoryInformation.employeeName != ''">
+            AND pdi.employee_name = #{personnelDormitoryInformation.employeeName}
+        </if>
     </sql>
 
     <select id="countPersonnelDormitoryInformations" parameterType="com.erp.personnel.entity.PersonnelDormitoryInformation" resultType="long">
@@ -34,4 +52,76 @@
     <select id="findPersonnelDormitoryInformationsPage" parameterType="com.erp.personnel.entity.PersonnelDormitoryInformation" resultType="com.erp.personnel.entity.PersonnelDormitoryInformation">
         <include refid="findPersonnelDormitoryInformationsPageSql"/>
     </select>
+
+  <!--根据宿舍编号和宿舍地址查询出当前宿舍已入住人数-->
+    <select id="countNormitoryNoDormitoryPlace" parameterType="String" resultType="int">
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_personnel_dormitory_information pdi
+        WHERE
+            pdi.dormitory_no = #{dormitoryNo}
+          AND
+            pdi.dormitory_location = #{dormitoryPlace}
+    </select>
+
+
+
+
+
+
+
+
+
+    <sql id="countPersonnelDormitorysSql" >
+        SELECT
+        COUNT( 1 )
+        FROM
+        jr_personnel_dormitory pd
+        WHERE
+        pd.dormitory_state = 1
+        <if test="personnelDormitory.dormitoryNo != null and personnelDormitory.dormitoryNo != ''">
+            AND pd.dormitory_no = #{personnelDormitory.dormitoryNo}
+        </if>
+        <if test="personnelDormitory.dormitoryPlace != null and personnelDormitory.dormitoryPlace != ''">
+            AND pd.dormitory_place = #{personnelDormitory.dormitoryPlace}
+        </if>
+        <if test="personnelDormitory.dormitoryState != null and personnelDormitory.dormitoryState != ''">
+            AND pd.dormitory_state = #{personnelDormitory.dormitoryState}
+        </if>
+    </sql>
+    <sql id="findPersonnelDormitorysSql" >
+        SELECT
+        pd.id,
+        pd.dormitory_no dormitoryNo,
+        pd.dormitory_place dormitoryPlace,
+        pd.reside_nnt resideNnt,
+        pd.present_nnt presentNnt,
+        pd.dormitory_administrators dormitoryAdministrators,
+        pd.create_date createDate,
+        pd.dormitory_state dormitoryState
+        FROM
+        jr_personnel_dormitory pd
+        WHERE
+        pd.dormitory_state = 1
+        <if test="personnelDormitory.dormitoryNo != null and personnelDormitory.dormitoryNo != ''">
+            AND pd.dormitory_no = #{personnelDormitory.dormitoryNo}
+        </if>
+        <if test="personnelDormitory.dormitoryPlace != null and personnelDormitory.dormitoryPlace != ''">
+            AND pd.dormitory_place = #{personnelDormitory.dormitoryPlace}
+        </if>
+        <if test="personnelDormitory.dormitoryState != null and personnelDormitory.dormitoryState != ''">
+            AND pd.dormitory_state = #{personnelDormitory.dormitoryState}
+        </if>
+        GROUP BY pd.dormitory_place,pd.dormitory_no
+    </sql>
+
+    <select id="countPersonnelDormitorys" parameterType="com.erp.personnel.entity.PersonnelDormitory" resultType="long">
+        <include refid="countPersonnelDormitorysSql"/>
+    </select>
+
+    <select id="findPersonnelDormitorysPage" parameterType="com.erp.personnel.entity.PersonnelDormitory" resultType="com.erp.personnel.entity.PersonnelDormitory">
+        <include refid="findPersonnelDormitorysSql"/>
+    </select>
+
 </mapper>

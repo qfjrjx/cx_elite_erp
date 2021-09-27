@@ -30,4 +30,8 @@ public interface PersonnelMobilityMapper extends BaseMapper<PersonnelMobility> {
     long countPersonnelMobilityUser(@Param("userId")String userId);
 
     IPage<PersonnelMobility> findPersonnelMobilityUserPage(Page<PersonnelMobility> page,@Param("userId") String userId);
+    /*查询所有调岗记录，根据生效时间生成定时任务。*/
+    List<PersonnelMobility> queryPersonnelMobilityList();
+
+    void updatePersonnelArchives(@Param("personnelArchives") PersonnelArchives personnelArchives);
 }

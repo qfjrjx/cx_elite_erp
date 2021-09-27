@@ -3,6 +3,7 @@ package com.erp.personnel.service.impl;
 import com.erp.common.entity.QueryRequest;
 import com.erp.personnel.entity.PersonnelContract;
 import com.erp.personnel.entity.PersonnelDormitory;
+import com.erp.personnel.mapper.PersonnelDormitoryInformationMapper;
 import com.erp.personnel.mapper.PersonnelDormitoryMapper;
 import com.erp.personnel.service.IPersonnelDormitoryService;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -29,6 +34,8 @@ import java.util.List;
 public class PersonnelDormitoryServiceImpl extends ServiceImpl<PersonnelDormitoryMapper, PersonnelDormitory> implements IPersonnelDormitoryService {
 
     private final PersonnelDormitoryMapper personnelDormitoryMapper;
+
+    private final PersonnelDormitoryInformationMapper personnelDormitoryInformationMapper;
 
     @Override
     public IPage<PersonnelDormitory> findPersonnelDormitorys(QueryRequest request, PersonnelDormitory personnelDormitory) {
@@ -47,7 +54,16 @@ public class PersonnelDormitoryServiceImpl extends ServiceImpl<PersonnelDormitor
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void createPersonnelDormitory(PersonnelDormitory personnelDormitory) {
+    public void createPersonnelDormitory(PersonnelDormitory personnelDormitory) throws ParseException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
+        String date = simpleDateFormat.format(new Date());//系统当前时间
+        Date today = simpleDateFormat.parse(date);
+        personnelDormitory.setCreateDate(today);
+        String dormitoryNo =  personnelDormitory.getDormitoryNo();
+        String dormitoryPlace = personnelDormitory.getDormitoryPlace();
+        //根据宿舍编号和宿舍地址查询出当前宿舍已入住人数。
+       /* int dormitoryCount = personnelDormitoryInformationMapper.countNormitoryNoDormitoryPlace(dormitoryNo,dormitoryPlace);
+        personnelDormitory.setPresentNnt(dormitoryCount);*/
         this.save(personnelDormitory);
     }
 
@@ -59,9 +75,8 @@ public class PersonnelDormitoryServiceImpl extends ServiceImpl<PersonnelDormitor
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deletePersonnelDormitory(PersonnelDormitory personnelDormitory) {
-        LambdaQueryWrapper<PersonnelDormitory> wrapper = new LambdaQueryWrapper<>();
-	    // TODO 设置删除条件
-	    this.remove(wrapper);
+    public void deletePersonnelDormitory(String[] ids) {
+        List<String> list = Arrays.asList(ids);
+        baseMapper.deleteBatchIds(list);
 	}
 }

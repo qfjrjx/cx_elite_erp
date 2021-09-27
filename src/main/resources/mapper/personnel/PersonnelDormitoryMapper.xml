@@ -10,21 +10,40 @@
         jr_personnel_dormitory pd
         WHERE
         1 = 1
+        <if test="personnelDormitory.dormitoryNo != null and personnelDormitory.dormitoryNo != ''">
+            AND pd.dormitory_no = #{personnelDormitory.dormitoryNo}
+        </if>
+        <if test="personnelDormitory.dormitoryPlace != null and personnelDormitory.dormitoryPlace != ''">
+            AND pd.dormitory_place = #{personnelDormitory.dormitoryPlace}
+        </if>
+        <if test="personnelDormitory.dormitoryState != null and personnelDormitory.dormitoryState != ''">
+            AND pd.dormitory_state = #{personnelDormitory.dormitoryState}
+        </if>
     </sql>
     <sql id="findPersonnelDormitorysSql" >
         SELECT
             pd.id,
-            pd.dormitoryNo,
-            pd.place,
+            pd.dormitory_no dormitoryNo,
+            pd.dormitory_place dormitoryPlace,
             pd.reside_nnt resideNnt,
             pd.present_nnt presentNnt,
-            pd.administrators,
+            pd.dormitory_administrators dormitoryAdministrators,
             pd.create_date createDate,
-            pd.state
+            pd.dormitory_state dormitoryState
         FROM
             jr_personnel_dormitory pd
         WHERE
             1 = 1
+        <if test="personnelDormitory.dormitoryNo != null and personnelDormitory.dormitoryNo != ''">
+            AND pd.dormitory_no = #{personnelDormitory.dormitoryNo}
+        </if>
+        <if test="personnelDormitory.dormitoryPlace != null and personnelDormitory.dormitoryPlace != ''">
+            AND pd.dormitory_place = #{personnelDormitory.dormitoryPlace}
+        </if>
+        <if test="personnelDormitory.dormitoryState != null and personnelDormitory.dormitoryState != ''">
+            AND pd.dormitory_state = #{personnelDormitory.dormitoryState}
+        </if>
+        GROUP BY pd.dormitory_place,pd.dormitory_no
     </sql>
 
     <select id="countPersonnelDormitorys" parameterType="com.erp.personnel.entity.PersonnelDormitory" resultType="long">

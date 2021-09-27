@@ -91,6 +91,18 @@ public class PersonnelMobilityServiceImpl extends ServiceImpl<PersonnelMobilityM
         page.setTotal(baseMapper.countPersonnelMobilityUser(userId));
         return baseMapper.findPersonnelMobilityUserPage(page,userId);
     }
+    /*查询所有调岗记录，根据生效时间生成定时任务。*/
+    @Override
+    public List<PersonnelMobility> queryPersonnelMobilityList() {
+        return baseMapper.queryPersonnelMobilityList();
+    }
+    /*根据生效时间,修改部门或者岗位或者职务*/
+    @Override
+    public void updatePersonnelArchives(PersonnelArchives personnelArchives) {
+
+        baseMapper.updatePersonnelArchives(personnelArchives);
+
+    }
 
 
 }

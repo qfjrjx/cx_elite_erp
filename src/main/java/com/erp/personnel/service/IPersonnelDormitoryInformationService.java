@@ -3,6 +3,7 @@ package com.erp.personnel.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.erp.common.entity.QueryRequest;
+import com.erp.personnel.entity.PersonnelDormitory;
 import com.erp.personnel.entity.PersonnelDormitoryInformation;
 
 import java.util.List;
@@ -51,4 +52,6 @@ public interface IPersonnelDormitoryInformationService extends IService<Personne
      * @param personnelDormitoryInformation personnelDormitoryInformation
      */
     void deletePersonnelDormitoryInformation(PersonnelDormitoryInformation personnelDormitoryInformation);
+
+    IPage<PersonnelDormitory> findPersonnelDormitorys(QueryRequest request, PersonnelDormitory personnelDormitory);
 }

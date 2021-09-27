@@ -48,6 +48,15 @@ public class PersonnelDormitoryInformationServiceImpl extends ServiceImpl<Person
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void createPersonnelDormitoryInformation(PersonnelDormitoryInformation personnelDormitoryInformation) {
+
+        personnelDormitoryInformation.setUsedBeds(personnelDormitoryInformation.getUsedBeds()+1);
+        String dormitoryLocation = personnelDormitoryInformation.getDormitoryLocation();
+        if (dormitoryLocation.equals("东宿舍")){
+            personnelDormitoryInformation.setDormitoryLocation("1");
+        }if (dormitoryLocation.equals("西宿舍")){
+            personnelDormitoryInformation.setDormitoryLocation("2");
+        }
+
         this.save(personnelDormitoryInformation);
     }
 
@@ -64,4 +73,12 @@ public class PersonnelDormitoryInformationServiceImpl extends ServiceImpl<Person
 	    // TODO 设置删除条件
 	    this.remove(wrapper);
 	}
+
+    @Override
+    public IPage<PersonnelDormitory> findPersonnelDormitorys(QueryRequest request, PersonnelDormitory personnelDormitory) {
+        Page<PersonnelDormitory> page = new Page<>(request.getPageNum(), request.getPageSize());
+        page.setSearchCount(false);
+        page.setTotal(baseMapper.countPersonnelDormitorys(personnelDormitory));
+        return baseMapper.findPersonnelDormitorysPage(page,personnelDormitory);
+    }
 }

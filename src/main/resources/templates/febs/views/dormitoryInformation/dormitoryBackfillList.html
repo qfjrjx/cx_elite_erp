@@ -1,0 +1,170 @@
+<style>
+    #dormitoryBackfill xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #dormitoryBackfill xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="dormitoryBackfill" lay-title="员工档案">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="parameter-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md11">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm">宿舍编号</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="dormitoryNo" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label layui-form-label-sm">宿舍地址</label>
+                                        <div class="layui-input-inline">
+                                            <select name="dormitoryPlace">
+                                                <option value="">请选择</option>
+                                                <option value="1">东宿舍</option>
+                                                <option value="2">西宿舍</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md1 layui-col-sm12 layui-col-xs12 table-action-area">
+                                <!--搜索按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                                    <i class="layui-icon">&#xe848;</i>搜索
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="dormitoryBackfillTable" lay-data="{id: 'dormitoryBackfillTable'}"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/html" id="parameter-option">
+    <span shiro:lacksPermission="personnelDormitory:list">
+        <span class="layui-badge-dot febs-bg-orange"></span> 无权限
+    </span>
+</script>
+<script type="text/html" id="dormitory_place">
+    {{#
+    let dormitoryPlace = {
+    1: {title: '东宿舍'},
+    2: {title: '西宿舍'}
+    }[d.dormitoryPlace];
+    }}
+    <span>{{ dormitoryPlace.title }}</span>
+</script>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['dropdownMenu', 'jquery', 'form', 'table', 'febs'], function () {
+        let $ = layui.jquery,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            dropdownMenu = layui.dropdownMenu,
+            $view = $('#dormitoryBackfill'),
+            $query = $view.find('#query'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'createTime', type: null},
+            tableIns;
+
+        form.render();
+
+        initTable();
+
+
+        dropdownMenu.render({
+            elem: $view.find('.action-more'),
+            click: function (name, elem, event) {
+                let checkStatus = table.checkStatus('dormitoryBackfillTable');
+            },
+            options: []
+        });
+        table.on('sort(dormitoryBackfillTable)', function (obj) {
+            sortObject = obj;
+            tableIns.reload({
+                initSort: obj,
+                where: $.extend(getQueryParams(), {
+                    field: obj.field,
+                    order: obj.type
+                })
+            });
+        });
+        table.on('toolbar(dormitoryBackfillTable)', function(obj){
+            var checkStatus = table.checkStatus(obj.config.id); //获取选中行状态
+            alert(checkStatus)
+            switch(obj.event){
+                case 'getCheckData':
+                    var data = checkStatus.data; //获取选中行数据
+                    layer.alert(JSON.stringify(data));
+                    break;
+            };
+        });
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        function initTable() {
+            tableIns = febs.table.init({
+                elem: $view.find('table'),
+                id: 'dormitoryTable',
+                url: ctx + 'personneldormitoryBackfill/list',
+                cols: [[
+                    {type: 'checkbox'},
+                    {field:'number',title:'序列号',align:'center',width:100,templet:function (d) {
+                            return d.LAY_INDEX;}},
+                    {field: 'dormitoryNo', title: '宿舍编号',align:'center',minWidth: 100},
+                    {title: '宿舍地址', templet: '#dormitory_place',align:'center'},
+                    {field: 'resideNnt', title: '床位总数',align:'center', minWidth: 100},
+                    {field: 'presentNnt', title: '已用床位',align:'center', minWidth: 100},
+                    {field: 'dormitoryAdministrators', title: '管理员',align:'center', minWidth: 100}
+                ]],done: function(res, curr, count){
+                    $('#dormitoryBackfill').find('.layui-table-body').find("table" ).find("tbody").children("tr").on('dblclick',function(){
+                        var id = JSON.stringify($('#dormitoryBackfill').find('.layui-table-body').find("table" ).find("tbody").find(".layui-table-hover").data('index'));
+                        var obj = res.data[id];
+                        var dormitoryNoDormitory = $("#dormitoryNoDormitory").val();
+                        var dormitoryLocationDormitory = $("#dormitoryLocationDormitory").val();
+                        var usedBeds = $("#usedBeds").val();
+                        if (dormitoryNoDormitory!=null && dormitoryNoDormitory!=""){
+                            $("#dormitoryNoDormitory").attr("value","");
+                        }if (dormitoryLocationDormitory!=null && dormitoryLocationDormitory!=""){
+                            $("#dormitoryLocationDormitory").attr("value","");
+                        }if (usedBeds!=null && usedBeds!=""){
+                            $("#usedBeds").attr("value","");
+                        }
+                        let dormitoryPlace;
+                        if (obj.dormitoryPlace == 1){
+                             dormitoryPlace = "东宿舍";
+                        }if (obj.dormitoryPlace == 2){
+                             dormitoryPlace = "西宿舍";
+                        }
+                        $("#dormitoryNoDormitory").attr("value",obj.dormitoryNo);
+                        $("#dormitoryLocationDormitory").attr("value",dormitoryPlace);
+                        $("#usedBeds").attr("value",obj.presentNnt);
+
+                        parent.layer.close(layer.index)
+
+                    })
+
+                }
+
+            });
+        }
+
+        function getQueryParams(flag) {
+            let params = $searchForm.serializeJson();
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+    })
+</script>

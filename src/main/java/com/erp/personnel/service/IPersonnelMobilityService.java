@@ -57,4 +57,9 @@ public interface IPersonnelMobilityService extends IService<PersonnelMobility> {
     IPage<PersonnelArchives> findReceiveArchivesMobilityList(PersonnelArchives personnelArchives, QueryRequest request);
 
     IPage<PersonnelMobility> personnelMobilityUserList(QueryRequest request, String userId);
+
+    /*查询所有调岗记录，根据生效时间生成定时任务。*/
+    List<PersonnelMobility> queryPersonnelMobilityList();
+    /*根据生效时间,修改部门或者岗位或者职务*/
+    void updatePersonnelArchives(PersonnelArchives personnelArchives);
 }
