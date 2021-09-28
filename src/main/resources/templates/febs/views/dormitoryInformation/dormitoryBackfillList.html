@@ -120,7 +120,6 @@
                 id: 'dormitoryTable',
                 url: ctx + 'personneldormitoryBackfill/list',
                 cols: [[
-                    {type: 'checkbox'},
                     {field:'number',title:'序列号',align:'center',width:100,templet:function (d) {
                             return d.LAY_INDEX;}},
                     {field: 'dormitoryNo', title: '宿舍编号',align:'center',minWidth: 100},
@@ -135,12 +134,18 @@
                         var dormitoryNoDormitory = $("#dormitoryNoDormitory").val();
                         var dormitoryLocationDormitory = $("#dormitoryLocationDormitory").val();
                         var usedBeds = $("#usedBeds").val();
+                        var resideNnt = $("#resideNnt").val();
+                        var dormitoryId = $("#dormitoryId").val();
                         if (dormitoryNoDormitory!=null && dormitoryNoDormitory!=""){
                             $("#dormitoryNoDormitory").attr("value","");
                         }if (dormitoryLocationDormitory!=null && dormitoryLocationDormitory!=""){
                             $("#dormitoryLocationDormitory").attr("value","");
                         }if (usedBeds!=null && usedBeds!=""){
                             $("#usedBeds").attr("value","");
+                        }if (resideNnt!=null && resideNnt!=""){
+                            $("#resideNnt").attr("value","");
+                        }if (dormitoryId!=null && dormitoryId!=""){
+                            $("#dormitoryId").attr("value","");
                         }
                         let dormitoryPlace;
                         if (obj.dormitoryPlace == 1){
@@ -151,6 +156,8 @@
                         $("#dormitoryNoDormitory").attr("value",obj.dormitoryNo);
                         $("#dormitoryLocationDormitory").attr("value",dormitoryPlace);
                         $("#usedBeds").attr("value",obj.presentNnt);
+                        $("#resideNnt").attr("value",obj.resideNnt);
+                        $("#dormitoryId").attr("value",obj.id);
 
                         parent.layer.close(layer.index)
 

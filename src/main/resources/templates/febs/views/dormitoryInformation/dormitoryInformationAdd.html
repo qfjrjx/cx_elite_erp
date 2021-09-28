@@ -7,6 +7,10 @@
     <form class="layui-form" action="" lay-filter="personnelDormitoryInformation-add-form">
         <input type="hidden" name="usedBeds" id="usedBeds"
                autocomplete="off" class="layui-input" readonly>
+        <input type="hidden" name="resideNnt" id="resideNnt"
+               autocomplete="off" class="layui-input" readonly>
+        <input type="hidden" name="dormitoryId" id="dormitoryId"
+               autocomplete="off" class="layui-input" readonly>
         <div class="layui-form-item">
             <label class="layui-form-label febs-form-item-require" >员工姓名:</label>
             <div class="layui-input-inline">
@@ -68,13 +72,30 @@
 
 
         form.on('submit(personnelDormitoryInformation-add-form-submit)', function (data) {
+            if (data.field.usedBeds == data.field.resideNnt) {
+
+                layer.msg('选择该宿舍已住满是否继续添加？', {
+                    time: 0 //不自动关闭
+                    ,btn: ['确定', '取消']
+                    ,yes: function(index){
+                        layer.close(index);
+                        febs.post(ctx + 'personnelDormitoryInformation/add', data.field, function () {
+                            layer.closeAll();
+                            febs.alert.success('新增宿舍入住人员成功');
+                            $('#febs-personnelDormitoryInformation').find('#query').click();
+                        });
+                        return false;
+                    }
+                });
+
+            }else {
             febs.post(ctx + 'personnelDormitoryInformation/add', data.field, function () {
                 layer.closeAll();
                 febs.alert.success('新增宿舍入住人员成功');
                 $('#febs-personnelDormitoryInformation').find('#query').click();
             });
             return false;
-
+            }
         });
         //日期同时绑定多个
         lay('.createDate').each(function(){

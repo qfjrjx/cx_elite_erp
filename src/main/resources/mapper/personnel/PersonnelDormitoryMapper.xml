@@ -53,4 +53,17 @@
     <select id="findPersonnelDormitorysPage" parameterType="com.erp.personnel.entity.PersonnelDormitory" resultType="com.erp.personnel.entity.PersonnelDormitory">
         <include refid="findPersonnelDormitorysSql"/>
     </select>
+
+    <update id = "updateDormitory">
+        UPDATE jr_personnel_dormitory pd
+        SET pd.present_nnt = #{usedBeds}
+        WHERE pd.id = #{dormitoryId}
+    </update>
+
+
+    <update id = "updateDormitoryPresentNnt">
+        UPDATE jr_personnel_dormitory pd
+        SET pd.present_nnt = #{usedBedsCount}
+        WHERE pd.dormitory_no = #{dormitoryNo} and pd.dormitory_place = #{dormitoryPlace}
+    </update>
 </mapper>

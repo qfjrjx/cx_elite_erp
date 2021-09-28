@@ -54,9 +54,16 @@
     </select>
 
   <!--根据宿舍编号和宿舍地址查询出当前宿舍已入住人数-->
-    <select id="countNormitoryNoDormitoryPlace" parameterType="String" resultType="int">
+    <select id="countNormitoryNoDormitoryPlace" parameterType="String" resultType="com.erp.personnel.entity.PersonnelDormitoryInformation">
         SELECT
-            COUNT( 1 )
+            pdi.id,
+            pdi.dormitory_no dormitoryNo,
+            pdi.dormitory_location dormitoryLocation,
+            pdi.used_beds usedBeds,
+            pdi.employee_name employeeName,
+            pdi.employee_telephone employeeTelephone,
+            pdi.employee_dept employeeDept,
+            pdi.check_in_time checkInTime
         FROM
             jr_personnel_dormitory_information pdi
         WHERE
@@ -64,13 +71,6 @@
           AND
             pdi.dormitory_location = #{dormitoryPlace}
     </select>
-
-
-
-
-
-
-
 
 
     <sql id="countPersonnelDormitorysSql" >
@@ -123,5 +123,64 @@
     <select id="findPersonnelDormitorysPage" parameterType="com.erp.personnel.entity.PersonnelDormitory" resultType="com.erp.personnel.entity.PersonnelDormitory">
         <include refid="findPersonnelDormitorysSql"/>
     </select>
+
+    <insert id="saveDormitoryInformation" parameterType="com.erp.personnel.entity.PersonnelDormitoryInformation">
+        INSERT INTO jr_personnel_dormitory_information (
+                    dormitory_no, dormitory_location, used_beds,
+                    employee_name, employee_telephone, employee_dept, check_in_time )
+        VALUES
+            (#{personnelDormitoryInformation.dormitoryNo},
+             #{personnelDormitoryInformation.dormitoryLocation},
+             #{personnelDormitoryInformation.usedBeds},
+             #{personnelDormitoryInformation.employeeName},
+             #{personnelDormitoryInformation.employeeTelephone},
+             #{personnelDormitoryInformation.employeeDept},
+             #{personnelDormitoryInformation.checkInTime}
+
+            )
+    </insert>
+
+    <update id = "updateDormitoryUsedBeds">
+        UPDATE jr_personnel_dormitory_information pdi
+        SET pdi.used_beds = #{usedBedsCount}
+        WHERE pdi.id = #{id}
+    </update>
+
+
+    <select id="queryDormitoryInformationId" parameterType="String" resultType="com.erp.personnel.entity.PersonnelDormitoryInformation">
+        SELECT
+            pdi.id,
+            pdi.dormitory_no dormitoryNo,
+            pdi.dormitory_location dormitoryLocation,
+            pdi.used_beds usedBeds,
+            pdi.employee_name employeeName,
+            pdi.employee_telephone employeeTelephone,
+            pdi.employee_dept employeeDept,
+            pdi.check_in_time checkInTime
+        FROM
+            jr_personnel_dormitory_information pdi
+        WHERE pdi.id = #{id}
+
+    </select>
+
+    <select id="queryDormitoryInformationCount" parameterType="String" resultType="int">
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_personnel_dormitory_information pdi
+        WHERE
+            pdi.dormitory_no = #{dormitoryNo}
+          AND
+            pdi.dormitory_location = #{dormitoryPlace}
+    </select>
+
+    <update id = "updateDormitoryusedBedsCount">
+        UPDATE jr_personnel_dormitory_information pdi
+        SET pdi.used_beds = #{usedBedsCount}
+          WHERE
+            pdi.dormitory_no = #{dormitoryNo}
+          AND
+            pdi.dormitory_location = #{dormitoryPlace}
+    </update>
 
 </mapper>

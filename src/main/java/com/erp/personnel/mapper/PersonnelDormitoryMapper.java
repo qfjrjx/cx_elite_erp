@@ -19,4 +19,8 @@ public interface PersonnelDormitoryMapper extends BaseMapper<PersonnelDormitory>
     long countPersonnelDormitorys(@Param("personnelDormitory") PersonnelDormitory personnelDormitory);
 
     IPage<PersonnelDormitory> findPersonnelDormitorysPage(Page<PersonnelDormitory> page,@Param("personnelDormitory") PersonnelDormitory personnelDormitory);
+    //修改员工宿舍已用数量
+    void updateDormitory(@Param("dormitoryId") Long dormitoryId, @Param("usedBeds") Integer usedBeds);
+    //删除时修改员工管理表宿舍已用数量
+    void updateDormitoryPresentNnt(@Param("dormitoryNo") String dormitoryNo,@Param("dormitoryPlace") String dormitoryPlace,@Param("usedBedsCount") int usedBedsCount);
 }

@@ -5,6 +5,7 @@ import com.erp.common.controller.BaseController;
 import com.erp.common.entity.FebsConstant;
 import com.erp.common.entity.FebsResponse;
 import com.erp.common.entity.QueryRequest;
+import com.erp.common.entity.Strings;
 import com.erp.common.utils.FebsUtil;
 import com.erp.personnel.entity.PersonnelDormitory;
 import com.erp.personnel.entity.PersonnelDormitoryInformation;
@@ -13,15 +14,18 @@ import com.wuwenze.poi.ExcelKit;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.Map;
 
@@ -69,11 +73,11 @@ public class PersonnelDormitoryInformationController extends BaseController {
     }
 
     @ControllerEndpoint(operation = "删除PersonnelDormitoryInformation", exceptionMessage = "删除PersonnelDormitoryInformation失败")
-    @GetMapping("personnelDormitoryInformation/delete")
+    @GetMapping("personnelDormitoryInformation/delete/{ids}")
     @ResponseBody
     @RequiresPermissions("personnelDormitoryInformation:delete")
-    public FebsResponse deletePersonnelDormitoryInformation(PersonnelDormitoryInformation personnelDormitoryInformation) {
-        this.personnelDormitoryInformationService.deletePersonnelDormitoryInformation(personnelDormitoryInformation);
+    public FebsResponse deletePersonnelDormitoryInformation(@NotBlank(message = "{required}") @PathVariable String ids) {
+        this.personnelDormitoryInformationService.deletePersonnelDormitoryInformation(StringUtils.split(ids, Strings.COMMA));
         return new FebsResponse().success();
     }
 

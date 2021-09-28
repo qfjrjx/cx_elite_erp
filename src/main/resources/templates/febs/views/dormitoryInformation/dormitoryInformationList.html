@@ -145,12 +145,12 @@
             let data = obj.data,
                 layEvent = obj.event;
             if (layEvent === 'del') {
-                febs.modal.confirm('删除领取记录信息', '确定删除？', function () {
-                   deletePersonnelDormitoryInformation(data.contractId);
+                febs.modal.confirm('删除宿舍人员信息', '确定删除？', function () {
+                   deletePersonnelDormitoryInformation(data.id);
                 });
             }
             if (layEvent === 'edit') {
-                febs.modal.open('修改领取记录信息', 'personnel/personnelDormitoryInformation/update/' + data.contractId, {
+                febs.modal.open('修改宿舍人员信息', 'personnel/personnelDormitoryInformation/update/' + data.id, {
                     area: $(window).width() <= 750 ? '90%' : '30%',
                     btn: ['提交', '取消'],
                     yes: function (index, layero) {
@@ -204,10 +204,10 @@
             if (!checkStatus.data.length) {
                 febs.alert.warn('请选择需要删除的数据');
             } else {
-                febs.modal.confirm('删除参数信息', '确定删除？', function () {
+                febs.modal.confirm('删除宿舍人员信息', '确定删除？', function () {
                     let ids = [];
                     layui.each(checkStatus.data, function (key, item) {
-                        ids.push(item.contractId)
+                        ids.push(item.id)
                     });
                     deletePersonnelDormitoryInformation(ids.join(','));
                 });
@@ -248,7 +248,7 @@
 
 
         function deletePersonnelDormitoryInformation(ids) {
-            febs.get(ctx + 'personnelDormitory/delete/' + ids, null, function () {
+            febs.get(ctx + 'personnelDormitoryInformation/delete/' + ids, null, function () {
                 febs.alert.success('删除宿舍人员成功');
                 $query.click();
             });

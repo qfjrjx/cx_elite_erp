@@ -29,7 +29,7 @@ public class PersonnelDormitoryInformation {
      * 宿舍编号
      */
     @TableField("dormitory_no")
-    private Integer dormitoryNo;
+    private String dormitoryNo;
 
     /**
      * 宿舍位置
@@ -67,5 +67,10 @@ public class PersonnelDormitoryInformation {
     @TableField("check_in_time")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date checkInTime;
+
+    /**
+     * 宿舍管理列表id
+     */
+    private Long dormitoryId;
 
 }

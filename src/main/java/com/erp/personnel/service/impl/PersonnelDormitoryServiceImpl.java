@@ -59,11 +59,6 @@ public class PersonnelDormitoryServiceImpl extends ServiceImpl<PersonnelDormitor
         String date = simpleDateFormat.format(new Date());//系统当前时间
         Date today = simpleDateFormat.parse(date);
         personnelDormitory.setCreateDate(today);
-        String dormitoryNo =  personnelDormitory.getDormitoryNo();
-        String dormitoryPlace = personnelDormitory.getDormitoryPlace();
-        //根据宿舍编号和宿舍地址查询出当前宿舍已入住人数。
-       /* int dormitoryCount = personnelDormitoryInformationMapper.countNormitoryNoDormitoryPlace(dormitoryNo,dormitoryPlace);
-        personnelDormitory.setPresentNnt(dormitoryCount);*/
         this.save(personnelDormitory);
     }
 
