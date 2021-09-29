@@ -4,14 +4,9 @@ import com.erp.common.entity.FebsConstant;
 import com.erp.common.utils.DateUtil;
 import com.erp.common.utils.FebsUtil;
 import com.erp.monitor.helper.FebsActuatorHelper;
-import com.erp.personnel.entity.PersonnelArchives;
-import com.erp.personnel.entity.PersonnelContract;
-import com.erp.personnel.entity.PersonnelParameters;
-import com.erp.personnel.entity.PersonnelReceive;
-import com.erp.personnel.service.IPersonnelArchivesService;
-import com.erp.personnel.service.IPersonnelContractService;
-import com.erp.personnel.service.IPersonnelParametersService;
-import com.erp.personnel.service.IPersonnelReceiveService;
+import com.erp.personnel.entity.*;
+import com.erp.personnel.service.*;
+import com.erp.system.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.stereotype.Controller;
@@ -32,15 +27,18 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ViewController {
 
-    private final FebsActuatorHelper actuatorHelper;
-
+    //人事参数表 Service接口
     private final IPersonnelParametersService personnelParametersService;
-
+    //用户表 Service接口
     private final IPersonnelArchivesService personnelArchivesService;
-
+    //领取记录表 Service接口
     private final IPersonnelReceiveService personnelReceiveService;
-
+    //员工合同表 Service接口
     private final IPersonnelContractService personnelContractService;
+    //宿舍管理表 Service接口
+    private final IPersonnelDormitoryService personnelDormitoryService;
+    //宿舍人员入住信息表 Service接口
+    private final IPersonnelDormitoryInformationService personnelDormitoryInformationService;
 
     /* 人事参数模块开始 */
     @GetMapping("personnelParameters")
@@ -48,20 +46,20 @@ public class ViewController {
     public String personnelParametersIndex(){
         return FebsUtil.view("personnel/parameters");
     }
-
+    //人事参数添加
     @GetMapping("personnelParameters/add")
     @RequiresPermissions("personnelParameters:add")
     public String systemUserAdd() {
         return FebsUtil.view("personnel/parametersAdd");
     }
-
+    //人事参数修改
     @GetMapping("personnelParameters/update/{id}")
     @RequiresPermissions("personnelParameters:update")
     public String systemUserUpdate(@PathVariable Long id, Model model) {
         resolvePersonnelParametersModel(id, model, false);
         return FebsUtil.view("personnel/parametersUpdate");
     }
-
+    //人事参数修改回填
     private void resolvePersonnelParametersModel(Long id, Model model, Boolean transform) {
         PersonnelParameters parameters = personnelParametersService.findById(id);
         model.addAttribute("parameters", parameters);
@@ -224,6 +222,19 @@ public class ViewController {
     public String personnelDormitoryAdd(){
         return FebsUtil.view("dormitory/dormitoryAdd");
     }
+    //宿舍管理列表修改
+    @GetMapping("personnelDormitory/update/{id}")
+    @RequiresPermissions("personnelDormitory:update")
+    public String personnelDormitoryUpdate(@PathVariable Long id, Model model) {
+        personnelDormitoryModel(id, model, false);
+        return FebsUtil.view("dormitory/dormitoryUpdate");
+    }
+    //宿舍管理列表修改回填
+    private void personnelDormitoryModel(Long id, Model model, Boolean transform) {
+        PersonnelDormitory dormitory = personnelDormitoryService.findDormitoryById(id);
+        model.addAttribute("dormitory", dormitory);
+    }
+
     //宿舍入住人员列表
     @GetMapping("personnelDormitoryInformation")
     @RequiresPermissions("personnelDormitoryInformation:list")
@@ -236,7 +247,32 @@ public class ViewController {
     public String personnelDormitoryInformationAdd(){
         return FebsUtil.view("dormitoryInformation/dormitoryInformationAdd");
     }
-
+    //宿舍人员管理列表修改
+    @GetMapping("personnelDormitoryInformation/update/{id}")
+    @RequiresPermissions("personnelDormitoryInformation:update")
+    public String personnelDormitoryInformationUpdate(@PathVariable Long id, Model model) {
+        personnelDormitoryInformationModel(id, model, false);
+        return FebsUtil.view("dormitoryInformation/dormitoryInformationUpdate");
+    }
+    //宿舍人员管理列表修改回填
+    private void personnelDormitoryInformationModel(Long id, Model model, Boolean transform) {
+        PersonnelDormitoryInformation dormitoryInformation = personnelDormitoryInformationService.findDormitoryInformationById(id);
+        String dormitoryLocation = dormitoryInformation.getDormitoryLocation();
+        switch (dormitoryLocation) {
+            case PersonnelDormitoryInformation.DORMITORYLOCATION_MALE:
+                dormitoryInformation.setDormitoryLocation("东宿舍");
+                break;
+            case PersonnelDormitoryInformation.DORMITORYLOCATION_FEMALE:
+                dormitoryInformation.setDormitoryLocation("西宿舍");
+                break;
+            default:
+                break;
+        }
+        model.addAttribute("dormitoryInformation", dormitoryInformation);
+        if (dormitoryInformation.getCheckInTime() != null) {
+            model.addAttribute("checkInTime", DateUtil.getDateFormat(dormitoryInformation.getCheckInTime(), DateUtil.FULL_TIME_SPLIT_PATTERN));
+        }
+    }
     /* 员工宿舍模块结束 */
 
     /* 调岗记录模块开始 */
@@ -254,6 +290,8 @@ public class ViewController {
     }
 
     /* 调岗记录模块结束 */
+
+
 
     /* 调薪记录模块开始 */
     @GetMapping("personnelSalaryChange")
@@ -296,12 +334,12 @@ public class ViewController {
     }
     /* 员工档案结束 */
 
-    /* 员工档案开始 */
+    /* 员工宿舍列表开始 */
     @GetMapping("dormitoryList")
     public String dormitoryIndex(){
         return FebsUtil.view("dormitoryInformation/dormitoryBackfillList");
     }
-    /* 员工档案结束 */
+    /* 员工宿舍列表结束 */
 
 
 

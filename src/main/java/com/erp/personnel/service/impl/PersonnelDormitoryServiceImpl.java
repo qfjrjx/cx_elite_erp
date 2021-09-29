@@ -64,7 +64,11 @@ public class PersonnelDormitoryServiceImpl extends ServiceImpl<PersonnelDormitor
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void updatePersonnelDormitory(PersonnelDormitory personnelDormitory) {
+    public void updatePersonnelDormitory(PersonnelDormitory personnelDormitory) throws ParseException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
+        String date = simpleDateFormat.format(new Date());//系统当前时间
+        Date today = simpleDateFormat.parse(date);
+        personnelDormitory.setCreateDate(today);
         this.saveOrUpdate(personnelDormitory);
     }
 
@@ -74,4 +78,9 @@ public class PersonnelDormitoryServiceImpl extends ServiceImpl<PersonnelDormitor
         List<String> list = Arrays.asList(ids);
         baseMapper.deleteBatchIds(list);
 	}
+
+    @Override
+    public PersonnelDormitory findDormitoryById(Long id) {
+        return baseMapper.findDormitoryById(id);
+    }
 }

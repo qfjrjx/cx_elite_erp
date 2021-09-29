@@ -84,7 +84,47 @@ public class PersonnelDormitoryInformationServiceImpl extends ServiceImpl<Person
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updatePersonnelDormitoryInformation(PersonnelDormitoryInformation personnelDormitoryInformation) {
-        this.saveOrUpdate(personnelDormitoryInformation);
+
+        String dormitoryLocation = personnelDormitoryInformation.getDormitoryLocation();
+        if (dormitoryLocation.equals("东宿舍")){
+            personnelDormitoryInformation.setDormitoryLocation("1");
+        }if (dormitoryLocation.equals("西宿舍")){
+            personnelDormitoryInformation.setDormitoryLocation("2");
+        }
+        Long dormitoryId = personnelDormitoryInformation.getDormitoryId();
+        Long informationId = personnelDormitoryInformation.getId();
+        PersonnelDormitoryInformation dormitoryInformation = baseMapper.findDormitoryInformationById(informationId);
+        String dormitoryNo = dormitoryInformation.getDormitoryNo();
+        String dormitoryPlace = dormitoryInformation.getDormitoryLocation();
+        int usedBedsCounts = baseMapper.queryDormitoryInformationCount(dormitoryNo,dormitoryPlace);
+        List<PersonnelDormitoryInformation> dormitoryCount = personnelDormitoryInformationMapper.countNormitoryNoDormitoryPlace(dormitoryNo,dormitoryPlace);
+        int userBedsCount = 0;
+        if (dormitoryCount.size()>0){
+            for (PersonnelDormitoryInformation personnelDormitoryCount: dormitoryCount) {
+                Long id = personnelDormitoryCount.getId();
+                userBedsCount = usedBedsCounts-1;
+                //循环修改员工信息表已住宿舍人数
+                personnelDormitoryInformationMapper.updateDormitoryUsedBeds(id,userBedsCount);
+            }
+            personnelDormitoryMapper.updateDormitoryPresentNnt(dormitoryNo,dormitoryPlace,userBedsCount);
+        }
+
+        baseMapper.saveOrUpdate(personnelDormitoryInformation);
+        String dormitoryNos = personnelDormitoryInformation.getDormitoryNo();
+        String locations = personnelDormitoryInformation.getDormitoryLocation();
+        List<PersonnelDormitoryInformation> dormitoryCountOne = personnelDormitoryInformationMapper.countNormitoryNoDormitoryPlace(dormitoryNos,locations);
+        int usedBedsCount = 0;
+        if (dormitoryCountOne.size()>0){
+            for (PersonnelDormitoryInformation personnelDormitoryInformationCount: dormitoryCountOne) {
+                Long id = personnelDormitoryInformationCount.getId();
+                int dormitoryInformationCount = baseMapper.queryDormitoryInformationCount(personnelDormitoryInformationCount.getDormitoryNo(),personnelDormitoryInformationCount.getDormitoryLocation());
+                usedBedsCount = dormitoryInformationCount;
+                //循环修改员工信息表已住宿舍人数
+                personnelDormitoryInformationMapper.updateDormitoryUsedBeds(id,usedBedsCount);
+            }
+        }
+        personnelDormitoryMapper.updateDormitory(dormitoryId,usedBedsCount);
+
     }
 
     @Override
@@ -122,5 +162,11 @@ public class PersonnelDormitoryInformationServiceImpl extends ServiceImpl<Person
         page.setSearchCount(false);
         page.setTotal(baseMapper.countPersonnelDormitorys(personnelDormitory));
         return baseMapper.findPersonnelDormitorysPage(page,personnelDormitory);
+    }
+
+    @Override
+    public PersonnelDormitoryInformation findDormitoryInformationById(Long id) {
+
+        return baseMapper.findDormitoryInformationById(id);
     }
 }

@@ -183,4 +183,36 @@
             pdi.dormitory_location = #{dormitoryPlace}
     </update>
 
+    <select id="findDormitoryInformationById" parameterType="long" resultType="com.erp.personnel.entity.PersonnelDormitoryInformation">
+        SELECT
+            pdi.id,
+            pdi.dormitory_no dormitoryNo,
+            pdi.dormitory_location dormitoryLocation,
+            pdi.used_beds usedBeds,
+            pdi.employee_name employeeName,
+            pdi.employee_telephone employeeTelephone,
+            pdi.employee_dept employeeDept,
+            pdi.check_in_time checkInTime
+        FROM
+            jr_personnel_dormitory_information pdi
+        WHERE pdi.id = #{id}
+
+    </select>
+
+
+    <update id = "saveOrUpdate" parameterType="com.erp.personnel.entity.PersonnelDormitoryInformation">
+        UPDATE
+            jr_personnel_dormitory_information pdi
+        SET
+            pdi.dormitory_no = #{personnelDormitoryInformation.dormitoryNo},
+            pdi.dormitory_location = #{personnelDormitoryInformation.dormitoryLocation},
+            pdi.used_beds = #{personnelDormitoryInformation.usedBeds},
+            pdi.employee_name = #{personnelDormitoryInformation.employeeName},
+            pdi.employee_telephone = #{personnelDormitoryInformation.employeeTelephone},
+            pdi.employee_dept = #{personnelDormitoryInformation.employeeDept},
+            pdi.check_in_time = #{personnelDormitoryInformation.checkInTime}
+        WHERE
+            pdi.id = #{personnelDormitoryInformation.id}
+    </update>
+
 </mapper>

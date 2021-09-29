@@ -19,6 +19,15 @@ import org.springframework.format.annotation.DateTimeFormat;
 @TableName("jr_personnel_dormitory_information")
 public class PersonnelDormitoryInformation {
 
+
+    /**
+     * 宿舍位置 东宿舍
+     */
+    public static final String DORMITORYLOCATION_MALE = "1";
+    /**
+     * 宿舍位置 西宿舍
+     */
+    public static final String DORMITORYLOCATION_FEMALE = "2";
     /**
      * 主键
      */

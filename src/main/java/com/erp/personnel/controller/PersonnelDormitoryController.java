@@ -85,7 +85,7 @@ public class PersonnelDormitoryController extends BaseController {
     @PostMapping("personnelDormitory/update")
     @ResponseBody
     @RequiresPermissions("personnelDormitory:update")
-    public FebsResponse updatePersonnelDormitory(PersonnelDormitory personnelDormitory) {
+    public FebsResponse updatePersonnelDormitory(PersonnelDormitory personnelDormitory) throws ParseException {
         this.personnelDormitoryService.updatePersonnelDormitory(personnelDormitory);
         return new FebsResponse().success();
     }

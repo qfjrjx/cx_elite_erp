@@ -1,46 +1,60 @@
 <style>
-    #personnelContract-update {
+    #personnelDormitoryInformation-update {
         padding: 20px 25px 25px 0;
     }
 </style>
-<div class="layui-fluid" id="personnelContract-update">
-    <form class="layui-form" action="" lay-filter="personnelContract-update-form">
+<div class="layui-fluid" id="personnelDormitoryInformation-update">
+    <form class="layui-form" action="" lay-filter="personnelDormitoryInformation-update-form">
         <div class="layui-form-item febs-hide">
-            <label class="layui-form-label febs-form-item-require">参数id：</label>
+            <label class="layui-form-label febs-form-item-require">宿舍人员id：</label>
             <div class="layui-input-block">
-                <input type="text" name="contractId" data-th-value="${contracts.contractId}">
-                <input type="text" name="contractState" data-th-value="${contracts.contractState}">
-                <input type="text" name="contractTipsState" data-th-value="${contracts.contractTipsState}">
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label febs-form-item-require" >员工工号:</label>
-            <div class="layui-input-block">
-                <input type="text" name="staffWno" id="receiveWno" ondblclick="dblclickt()"
-                       autocomplete="off" class="layui-input" placeholder="请输入员工工号" readonly>
+                <input type="text" name="id" data-th-value="${dormitoryInformation.id}">
+                <input type="hidden" name="dormitoryId" id="dormitoryId"
+                       autocomplete="off" class="layui-input" readonly>
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label febs-form-item-require" >员工姓名:</label>
-            <div class="layui-input-block">
-                <input type="text" name="staffName" id="receiveName"
-                       autocomplete="off" class="layui-input" placeholder="请输入员工姓名" readonly>
+            <div class="layui-input-inline">
+                <input type="text" name="employeeName" id="mobilityUserName"
+                       autocomplete="off" class="layui-input" placeholder="员工姓名" readonly>
+            </div>
+            <label class="layui-form-label febs-form-item-require" >员工电话:</label>
+            <div class="layui-input-inline">
+                <input type="text" name="employeeTelephone" id="mobilityPhone"
+                       autocomplete="off" class="layui-input" placeholder="员工电话" readonly>
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label febs-form-item-require">签订时间</label>
+            <label class="layui-form-label febs-form-item-require" >员工部门:</label>
             <div class="layui-input-inline">
-                <input type="text" name="signedDate" id="signedDate" class="layui-input start-Time">
+                <input type="text" name="employeeDept" id="mobilityDepartmentName"
+                       autocomplete="off" class="layui-input" placeholder="员工部门" readonly>
             </div>
         </div>
+        <br>
         <div class="layui-form-item">
-            <label class="layui-form-label febs-form-item-require">到期时间</label>
+            <label class="layui-form-label febs-form-item-require" >宿舍编号:</label>
             <div class="layui-input-inline">
-                <input type="text" name="expireDate" id="expireDate" class="layui-input start-Time">
+                <input type="text" name="dormitoryNo" id="dormitoryNoDormitoryInformation"
+                       autocomplete="off" class="layui-input" placeholder="宿舍编号" ondblclick="dblclicktDormitoryNo()">
+            </div>
+            <label class="layui-form-label febs-form-item-require" >宿舍地址:</label>
+            <div class="layui-input-inline">
+                <input type="text" name="dormitoryLocation" id="dormitoryLocationDormitoryInformation"
+                       autocomplete="off" class="layui-input" placeholder="宿舍地址" >
+            </div>
+
+        </div>
+        <br>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require">入住时间</label>
+            <div class="layui-input-inline">
+                <input type="text" name="checkInTime" id="checkInTime" class="layui-input createDate">
             </div>
         </div>
         <div class="layui-form-item febs-hide">
-            <button class="layui-btn" lay-submit="" lay-filter="personnelContract-update-form-submit" id="submit"></button>
+            <button class="layui-btn" lay-submit="" lay-filter="personnelDormitoryInformation-update-form-submit" id="submit"></button>
         </div>
     </form>
 </div>
@@ -52,50 +66,69 @@
             layer = layui.layer,
             form = layui.form,
             laydate = layui.laydate,
-            contracts = [[${contracts}]],
-            signedDates = [[${signedDate}]],
-            expireDates = [[${expireDate}]],
+            dormitoryInformation = [[${dormitoryInformation}]],
+            checkInTime = [[${checkInTime}]],
             validate = layui.validate;
 
         form.verify(validate);
         form.render();
 
-        initPersonnelContractValue();
+        initPersonnelDormitoryInformationValue();
 
-        function initPersonnelContractValue() {
-            form.val("personnelContract-update-form", {
-                "staffWno": contracts.staffWno,
-                "staffName": contracts.staffName,
-                "signedDate": signedDates,
-                "expireDate": expireDates
+        function initPersonnelDormitoryInformationValue() {
+            form.val("personnelDormitoryInformation-update-form", {
+                "employeeName": dormitoryInformation.employeeName,
+                "employeeTelephone": dormitoryInformation.employeeTelephone,
+                "employeeDept": dormitoryInformation.employeeDept,
+                "dormitoryNo": dormitoryInformation.dormitoryNo,
+                "dormitoryLocation": dormitoryInformation.dormitoryLocation,
+                "checkInTime": checkInTime
             });
         }
         //日期同时绑定多个
-        lay('.start-Time').each(function(){
+        lay('.createDate').each(function(){
             laydate.render({
                 elem: this
+                ,type: 'datetime'
                 ,trigger: 'click'
             });
         })
-
-
-        form.on('submit(personnelContract-update-form-submit)', function (data) {
-            var signedDate = data.field.signedDate //签订日期
-            var expireDate = data.field.expireDate //到期时间
-            var signedArr = signedDate.split(/[-]/);//签订日期
-            var expireArr = expireDate.split(/[-]/);//到期时间
-            var signedDateM = (new Date(signedArr)).getTime(); //得到签订日期毫秒数
-            var expireDateM = (new Date(expireArr)).getTime(); //得到到期时间毫秒数
-            if (signedDateM > expireDateM) {
-                febs.alert.warn('到期时间不能小于签订时间');
-                return false;
-            }
-            febs.post(ctx + 'personnelContract/update', data.field, function () {
+        form.on('submit(personnelDormitoryInformation-update-form-submit)', function (data) {
+            febs.post(ctx + 'personnelDormitoryInformation/update', data.field, function () {
                 layer.closeAll();
                 febs.alert.success('数据修改成功');
-                $('#febs-personnelContract').find('#query').click();
+                $('#febs-personnelDormitoryInformation').find('#query').click();
             });
             return false;
         });
     });
+
+    function dblclickt(){
+        layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
+            let $ = layui.$,
+                febs = layui.febs;
+
+            febs.modal.open('员工档案', 'personnel/employeeFile', {
+                area:["75%","90%"],
+                yes: function (index, layero) {
+
+                }
+
+            });
+        });
+    }
+    function dblclicktDormitoryNo(){
+        layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
+            let $ = layui.$,
+                febs = layui.febs;
+
+            febs.modal.open('宿舍列表', 'personnel/dormitoryList', {
+                area:["65%","70%"],
+                yes: function (index, layero) {
+
+                }
+
+            });
+        });
+    }
 </script>

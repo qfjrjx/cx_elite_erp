@@ -54,4 +54,6 @@ public interface IPersonnelDormitoryInformationService extends IService<Personne
     void deletePersonnelDormitoryInformation(String[] ids);
 
     IPage<PersonnelDormitory> findPersonnelDormitorys(QueryRequest request, PersonnelDormitory personnelDormitory);
+
+    PersonnelDormitoryInformation findDormitoryInformationById(Long id);
 }

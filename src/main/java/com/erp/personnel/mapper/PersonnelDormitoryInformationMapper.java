@@ -38,4 +38,8 @@ public interface PersonnelDormitoryInformationMapper extends BaseMapper<Personne
     int queryDormitoryInformationCount(@Param("dormitoryNo") String dormitoryNo,@Param("dormitoryPlace") String dormitoryPlace);
 
     void updateDormitoryusedBedsCount(@Param("dormitoryNo") String dormitoryNo,@Param("dormitoryPlace") String dormitoryPlace,@Param("usedBedsCount") int usedBedsCount);
+
+    PersonnelDormitoryInformation findDormitoryInformationById(@Param("id") Long informationId);
+
+    void saveOrUpdate(@Param("personnelDormitoryInformation") PersonnelDormitoryInformation personnelDormitoryInformation);
 }

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.erp.common.entity.QueryRequest;
 import com.erp.personnel.entity.PersonnelDormitory;
+import com.erp.personnel.entity.PersonnelDormitoryInformation;
 
 import java.text.ParseException;
 import java.util.List;
@@ -44,13 +45,14 @@ public interface IPersonnelDormitoryService extends IService<PersonnelDormitory>
      *
      * @param personnelDormitory personnelDormitory
      */
-    void updatePersonnelDormitory(PersonnelDormitory personnelDormitory);
-
-    void deletePersonnelDormitory(String[] ids);
-
+    void updatePersonnelDormitory(PersonnelDormitory personnelDormitory) throws ParseException;
     /**
      * 删除
      *
-     * @param personnelDormitory personnelDormitory
+     * @param ids ids
      */
+    void deletePersonnelDormitory(String[] ids);
+
+    PersonnelDormitory findDormitoryById(Long id);
+
 }

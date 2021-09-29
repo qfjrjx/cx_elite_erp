@@ -66,4 +66,21 @@
         SET pd.present_nnt = #{usedBedsCount}
         WHERE pd.dormitory_no = #{dormitoryNo} and pd.dormitory_place = #{dormitoryPlace}
     </update>
+
+
+    <select id="findDormitoryById" parameterType="long" resultType="com.erp.personnel.entity.PersonnelDormitory">
+        SELECT
+            pd.id,
+            pd.dormitory_no dormitoryNo,
+            pd.dormitory_place dormitoryPlace,
+            pd.reside_nnt resideNnt,
+            pd.present_nnt presentNnt,
+            pd.dormitory_administrators dormitoryAdministrators,
+            pd.create_date createDate,
+            pd.dormitory_state dormitoryState
+        FROM
+            jr_personnel_dormitory pd
+        WHERE
+            pd.id = #{id}
+    </select>
 </mapper>
