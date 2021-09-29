@@ -104,5 +104,11 @@ public class PersonnelMobilityServiceImpl extends ServiceImpl<PersonnelMobilityM
 
     }
 
+    @Override
+    public PersonnelMobility personnelMobilityTransfer(Long id) {
+
+        return baseMapper.personnelMobilityTransfer(id);
+    }
+
 
 }

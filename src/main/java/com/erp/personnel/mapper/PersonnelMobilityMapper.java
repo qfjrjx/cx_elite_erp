@@ -34,4 +34,6 @@ public interface PersonnelMobilityMapper extends BaseMapper<PersonnelMobility> {
     List<PersonnelMobility> queryPersonnelMobilityList();
 
     void updatePersonnelArchives(@Param("personnelArchives") PersonnelArchives personnelArchives);
+
+    PersonnelMobility personnelMobilityTransfer(@Param("id")Long id);
 }

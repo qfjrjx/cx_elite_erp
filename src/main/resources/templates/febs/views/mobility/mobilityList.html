@@ -62,10 +62,10 @@
                                 <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "shiro:hasAnyPermissions="personnelMobility:delete" id="deleteTo">
                                     <i class="layui-icon">&#xe8a1;</i>批量删除
                                 </div>
-                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action action-more"
+                               <!-- <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action action-more"
                                      shiro:hasAnyPermissions="personnelMobility:export" id="exportTo">
                                     <i class="layui-icon">&#xe7a8;</i>导出
-                                </div>
+                                </div>-->
                             </div>
                         </div>
                     </form>
@@ -98,9 +98,11 @@
     <span shiro:lacksPermission="personnelMobility:list,personnelMobility:update,personnelMobility:delete">
         <span class="layui-badge-dot febs-bg-orange"></span> 无权限
     </span>
-    <a lay-event="edit" shiro:hasPermission="personnelMobility:update"><i
-            class="layui-icon febs-edit-area febs-blue">&#xe7a4;</i></a>
-    <a lay-event="del" shiro:hasPermission="personnelMobility:delete"><i class="layui-icon febs-edit-area febs-red">&#xe7f9;</i></a>
+   <!-- <a lay-event="edit" shiro:hasPermission="personnelMobility:update"><i
+            class="layui-icon febs-edit-area febs-blue">&#xe7a4;</i></a>-->
+    <a lay-event="del" shiro:hasPermission="personnelMobility:delete"><i class="layui-icon febs-del-area febs-red">&#xe7f9;</i></a>
+    <a lay-event="export" shiro:hasPermission="personnelMobility:export"><i
+            class="layui-icon febs-export-area febs-blue">&#xe67d;</i></a>
 </script>
 <script data-th-inline="none" type="text/javascript">
     layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
@@ -163,8 +165,11 @@
         table.on('tool(mobilityTable)', function (obj) {
             let data = obj.data,
                 layEvent = obj.event;
+            if (layEvent === 'export') {
+                exportPersonnelMobility(data.id);
+            }
             if (layEvent === 'del') {
-                febs.modal.confirm('删除领取记录信息', '确定删除？', function () {
+                febs.modal.confirm('删除调岗记录信息', '确定删除？', function () {
                    deletePersonnelMobility(data.id);
                 });
             }
@@ -256,19 +261,20 @@
                     {field:'number',title:'序列号',align:'center',width:80,templet:function (d) {
                                         return d.LAY_INDEX;}},
                     {field: 'id', title: '编号',hide:true,sort: true},
-                    {field: 'jobNumber', title: '工号',align:'center', minWidth: 100},
+                    {field: 'jobNumber', title: '工号',align:'center', minWidth: 90},
                     {field: 'userName', title: '姓名',align:'center', minWidth: 80},
                     {title: '性别', templet: '#mobility-gender',align:'center', minWidth: 60},
-                    {field: 'phone', title: '联系方式', minWidth: 100},
+                    {field: 'phone', title: '联系方式', minWidth: 80},
                     {field: 'identityArd', title: '身份证号', minWidth: 90},
-                    {field: 'departmentName', title: '原部门',align:'center', minWidth: 80},
+                    {field: 'departmentName', title: '原部门', minWidth: 80},
                     {field: 'positionName', title: '原岗位', minWidth: 100},
-                    {field: 'groupingName', title: '原职务', minWidth: 100},
+                    {field: 'groupingName', title: '原职务', minWidth: 80},
                     {field: 'toDepartmentName', title: '调至部门',align:'center', minWidth: 90},
                     {field: 'toPositionName', title: '调至岗位', minWidth: 100},
-                    {field: 'toGroupingName', title: '调至职务', minWidth: 100},
+                    {field: 'toGroupingName', title: '调至职务', minWidth: 90},
                     {field: 'transferData', title: '生效日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.transferData, "yyyy-MM-dd") }}</div>', minWidth: 110, sort: true},
-                    {title: '类型', templet: '#mobility_transferStatus',align:'center', minWidth: 100}
+                    {title: '类型', templet: '#mobility_transferStatus',align:'center', minWidth: 100},
+                    {title: '操作', toolbar: '#parameter-option', minWidth: 90}
                 ]]
             });
         }
@@ -285,6 +291,9 @@
                 febs.alert.success('删除调岗记录成功');
                 $query.click();
             });
+        }
+        function exportPersonnelMobility(id) {
+            location.href = "personnelMobility/export/"+ id
         }
 
     })

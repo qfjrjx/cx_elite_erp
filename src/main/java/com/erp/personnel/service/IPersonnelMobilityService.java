@@ -62,4 +62,8 @@ public interface IPersonnelMobilityService extends IService<PersonnelMobility> {
     List<PersonnelMobility> queryPersonnelMobilityList();
     /*根据生效时间,修改部门或者岗位或者职务*/
     void updatePersonnelArchives(PersonnelArchives personnelArchives);
+    //查询位置调动记录
+    PersonnelMobility personnelMobilityTransfer(Long id);
+
+
 }

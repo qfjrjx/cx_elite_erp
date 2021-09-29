@@ -184,4 +184,32 @@
         </trim>
         where pa.user_id = #{personnelArchives.userId}
     </update>
+
+
+    <!-- 查询调动记录-->
+    <select id="personnelMobilityTransfer" parameterType="long" resultType="com.erp.personnel.entity.PersonnelMobility">
+        SELECT
+            pm.id,
+            pm.user_id userId,
+            pm.job_number jobNumber,
+            pm.user_name userName,
+            pm.gender,
+            pm.birthdate,
+            pm.phone,
+            pm.identity_ard identityArd,
+            pm.department_name departmentName,
+            pm.position_name positionName,
+            pm.grouping_name groupingName,
+            d.DEPT_NAME toDepartmentName,
+            pa.parameter_name toPositionName,
+            par.parameter_name toGroupingName,
+            pm.transfer_data transferData,
+            pm.transfer_status transferStatus
+        FROM
+            jr_personnel_mobility pm
+                LEFT JOIN t_dept d ON ( pm.dept_id = d.dept_id )
+                LEFT JOIN jr_personnel_parameters pa ON ( pm.to_position_id = pa.id )
+                LEFT JOIN jr_personnel_parameters par ON (pm.to_grouping_id = par.id)
+        where pm.id = #{id}
+    </select>
 </mapper>

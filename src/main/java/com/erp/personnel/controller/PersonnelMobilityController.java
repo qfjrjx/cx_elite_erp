@@ -10,6 +10,8 @@ import com.erp.common.utils.FebsUtil;
 import com.erp.personnel.entity.PersonnelArchives;
 import com.erp.personnel.entity.PersonnelMobility;
 import com.erp.personnel.service.IPersonnelMobilityService;
+import com.erp.personnel.util.Jwutil;
+import com.erp.personnel.util.WordUtils;
 import com.wuwenze.poi.ExcelKit;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
@@ -18,15 +20,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -113,5 +114,50 @@ public class PersonnelMobilityController extends BaseController {
     public FebsResponse personnelMobilityUserList(QueryRequest request,@PathVariable String userId) {
         Map<String, Object> dataTable = getDataTable(this.personnelMobilityService.personnelMobilityUserList(request, userId));
         return new FebsResponse().success().data(dataTable);
+    }
+
+    //岗位移动导出文档
+    @GetMapping(value = "personnelMobility/export/{id}")
+    public void downloadWord(@PathVariable Long id,HttpServletResponse response) {
+        String strDateFormat = "yyyy年MM月dd";
+        SimpleDateFormat sdf = new SimpleDateFormat(strDateFormat);
+
+        PersonnelMobility mobility=  personnelMobilityService.personnelMobilityTransfer(id);
+        Map<String, Object> dataMap =  new HashMap<String, Object>();
+        dataMap.put("userName", mobility.getUserName());
+        String gender = mobility.getGender();
+        if (gender.equals("1")){
+           gender= "男";
+        }else {
+            gender= "女";
+        }
+        dataMap.put("gender",gender);
+        dataMap.put("birthdate",sdf.format(mobility.getBirthdate()).toString());
+        dataMap.put("phone", mobility.getPhone());
+        dataMap.put("identityArd", mobility.getIdentityArd());
+        dataMap.put("departmentName", mobility.getDepartmentName());
+        dataMap.put("positionName", mobility.getPositionName());
+        dataMap.put("groupingName", mobility.getGroupingName());
+        String departmentName = mobility.getToDepartmentName();
+        if(departmentName==null){
+            departmentName = "暂无调动";
+        }
+        dataMap.put("toDepartmentName",departmentName);
+        String toPositionName = mobility.getToPositionName();
+        if(toPositionName==null){
+            toPositionName = "暂无调动";
+        }
+        dataMap.put("toPositionName",toPositionName);
+        String toGroupingName = mobility.getToGroupingName();
+        if(toGroupingName==null){
+            toGroupingName = "暂无调动";
+        }
+        dataMap.put("toGroupingName",toGroupingName);
+        dataMap.put("transferData",  sdf.format(mobility.getTransferData()).toString());
+
+
+        String fileName=mobility.getUserName()+ Jwutil.getStringDate().toString()+".doc";
+        WordUtils.get(response,dataMap,fileName);
+
     }
 }
