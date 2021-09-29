@@ -91,8 +91,7 @@ public class PersonnelDormitoryInformationController extends BaseController {
     }
 
     @ControllerEndpoint(operation = "修改PersonnelDormitoryInformation", exceptionMessage = "导出Excel失败")
-    @PostMapping("personnelDormitoryInformation/excel")
-    @ResponseBody
+    @GetMapping("personnelDormitoryInformation/excel")
     @RequiresPermissions("personnelDormitoryInformation:export")
     public void export(QueryRequest queryRequest, PersonnelDormitoryInformation personnelDormitoryInformation, HttpServletResponse response) {
         List<PersonnelDormitoryInformation> personnelDormitoryInformations = this.personnelDormitoryInformationService.findPersonnelDormitoryInformations(queryRequest, personnelDormitoryInformation).getRecords();

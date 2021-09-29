@@ -61,7 +61,7 @@
                                 <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "shiro:hasAnyPermissions="personnelDormitoryInformation:delete" id="deleteTo">
                                     <i class="layui-icon">&#xe8a1;</i>批量删除
                                 </div>
-                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action action-more"
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action"
                                      shiro:hasAnyPermissions="personnelDormitoryInformation:export" id="exportTo">
                                     <i class="layui-icon">&#xe7a8;</i>导出
                                 </div>
@@ -217,7 +217,7 @@
             let params = getQueryParams();
             params.pageSize = $view.find(".layui-laypage-limits option:selected").val();
             params.pageNum = $view.find(".layui-laypage-em").next().html();
-            febs.download(ctx + 'personnelDormitoryInformation/excel', params, '员工合同表.xlsx');
+            febs.download(ctx + 'personnelDormitoryInformation/excel', params, '员工宿舍入住人员表.xlsx');
         });
         function initTable() {
             tableIns = febs.table.init({
