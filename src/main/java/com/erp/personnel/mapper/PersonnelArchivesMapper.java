@@ -28,4 +28,6 @@ public interface PersonnelArchivesMapper extends BaseMapper<PersonnelArchives> {
     void saveOrUpdate(PersonnelArchives personnelArchives);
 
     IPage<PersonnelArchives> findPersonnelArchives(Page<PersonnelArchives> page,@Param("personnelArchives") PersonnelArchives personnelArchives);
+
+    void savePersonnelArchives(@Param("personnelArchives") PersonnelArchives personnelArchives);
 }

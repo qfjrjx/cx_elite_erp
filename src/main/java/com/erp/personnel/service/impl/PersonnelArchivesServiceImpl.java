@@ -63,10 +63,11 @@ public class PersonnelArchivesServiceImpl extends ServiceImpl<PersonnelArchivesM
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void createPersonnelArchives(PersonnelArchives personnelArchives) {
-
+        //baseMapper.savePersonnelArchives(personnelArchives);
         save(personnelArchives);
         // 保存社保信息
         String[] socialSecurity = personnelArchives.getId().split(Strings.COMMA);
+       //调用社保添加方法
         setSocialSecurity(personnelArchives, socialSecurity);
     }
 
