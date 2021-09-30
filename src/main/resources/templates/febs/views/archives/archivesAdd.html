@@ -14,7 +14,7 @@
                         员工姓名:
                     </label>
                     <div class="layui-input-inline">
-                        <input type="text" id="userName" name="userName" placeholder="请输入姓名" lay-verify="required"
+                        <input type="text" id="userName" name="userName" placeholder="请输入姓名" lay-verify="required" lay-reqtext="员工姓名是必填项，岂能为空？"
                                autocomplete="off" class="layui-input">
                     </div>
                 </div>
@@ -24,7 +24,7 @@
                         手机号码:
                     </label>
                     <div class="layui-input-inline">
-                        <input type="text" id="phone" name="phone" placeholder="请输入手机号码" lay-verify="required"
+                        <input type="text" id="phone" name="phone" placeholder="请输入手机号码" lay-verify="required|phone"
                                autocomplete="off" class="layui-input">
                     </div>
                 </div>
@@ -34,7 +34,7 @@
                         固定电话:
                     </label>
                     <div class="layui-input-inline">
-                        <input type="text" id="L_email" name="fixedTelephone" placeholder="请输入固定电话" lay-verify="required"
+                        <input type="text" id="L_email" name="fixedTelephone" placeholder="请输入固定电话" lay-verify="required|phone"
                                autocomplete="off" class="layui-input">
                     </div>
                 </div>
@@ -67,7 +67,7 @@
                 身份证号:
             </label>
             <div class="layui-input-inline">
-                <input type="text" name="identityArd" placeholder="请输入18位有效身份证号码" lay-verify="required"
+                <input type="text" name="identityArd" placeholder="请输入18位有效身份证号码" lay-verify="identity"
                        autocomplete="off" class="layui-input">
             </div>
         </div>
@@ -282,7 +282,7 @@
                 紧急联系人电话:
             </label>
             <div class="layui-input-inline">
-                <input type="text" name="emergencyPhone" lay-verify="required" placeholder="请输入紧急联系人电话"
+                <input type="text" name="emergencyPhone" lay-verify="required|phone" placeholder="请输入紧急联系人电话"
                        autocomplete="off" class="layui-input">
             </div>
         </div>

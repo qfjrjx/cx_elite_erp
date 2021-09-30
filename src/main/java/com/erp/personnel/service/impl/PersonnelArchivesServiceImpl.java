@@ -23,9 +23,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * 用户表 Service实现
@@ -62,13 +62,72 @@ public class PersonnelArchivesServiceImpl extends ServiceImpl<PersonnelArchivesM
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void createPersonnelArchives(PersonnelArchives personnelArchives) {
-        //baseMapper.savePersonnelArchives(personnelArchives);
+    public void createPersonnelArchives(PersonnelArchives personnelArchives) throws ParseException {
+        //获取当前年
+        String yearLast = new SimpleDateFormat("yy", Locale.CHINESE).format(Calendar.getInstance().getTime());Date d = new Date();
+        Date date = new Date();
+        //获取当月
+        SimpleDateFormat sdf = new SimpleDateFormat("MM");
+        //格式化当前月
+        String month = sdf.format(date);
+        //打印当前月
+        System.out.println(month);
+        //查询出最后一个员工信息
+        PersonnelArchives personnelArchivesOne = personnelArchivesMapper.queryPersonnelArchives();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM");
+        String createTimeMonth = simpleDateFormat.format(personnelArchivesOne.getCreateDate());
+        //打印创建当前月
+        System.out.println(createTimeMonth);
+         if(month.equals(createTimeMonth)){
+             String jobNumberOne = personnelArchivesOne.getJobNumber();
+             String jobNumber = jobNumberOne.substring(4,6);
+             int ss = Integer.parseInt(jobNumber);
+                for (int i = ss; i < 100; ++i) {
+                    String n = "";
+                    // 满足条件1
+                    if (i < 10) {
+                        n = "0" + i;
+                    } else {
+                        n = i + "";
+                    }
+                    if ((i + 1) % 10 != 0){
+                        personnelArchives.setJobNumber(yearLast+month+n);
+                        break;
+                    }else{
+                        personnelArchives.setJobNumber(yearLast+month+n);
+                        break;
+                    }
+                }
+         }else if(!month.equals(createTimeMonth)){
+             String n = "";
+             int i = 0;
+             // 满足条件1
+             if (i < 10){
+                 n = "0" + i;
+             }  else{
+                 n = i + "";
+             }
+             if ((i + 1) % 10 != 0){
+                 personnelArchives.setJobNumber(yearLast+month+n);
+             }else{
+                 personnelArchives.setJobNumber(yearLast+month+n);
+             }
+         }
+        SimpleDateFormat simpleDateFormatOne = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
+        String dates = simpleDateFormatOne.format(new Date());//系统当前时间
+        Date today = simpleDateFormatOne.parse(dates);//格式化系统当前时间
+        personnelArchives.setCreateDate(today);//把获取系统当前时间赋值给实体对象
+
+        //添加员工档案信息
         save(personnelArchives);
         // 保存社保信息
         String[] socialSecurity = personnelArchives.getId().split(Strings.COMMA);
        //调用社保添加方法
         setSocialSecurity(personnelArchives, socialSecurity);
+
+        /*SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        simpleDateFormat.format(personnelArchives.getEntryDate());*/
+        //baseMapper.savePersonnelArchives(personnelArchives);
     }
 
     private void setSocialSecurity(PersonnelArchives personnelArchives, String[] socialSecurity) {

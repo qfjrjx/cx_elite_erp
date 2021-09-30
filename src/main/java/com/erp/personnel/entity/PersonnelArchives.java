@@ -286,6 +286,12 @@ public class PersonnelArchives implements Serializable, Cloneable{
     private String filialityFineBank;
 
     /**
+     * 创建日期
+     */
+    @TableField("create_date")
+    private Date createDate;
+
+    /**
      * 部门名称
      */
     @ExcelField(value = "员工部门")

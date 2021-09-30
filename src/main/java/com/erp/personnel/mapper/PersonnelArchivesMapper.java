@@ -30,4 +30,6 @@ public interface PersonnelArchivesMapper extends BaseMapper<PersonnelArchives> {
     IPage<PersonnelArchives> findPersonnelArchives(Page<PersonnelArchives> page,@Param("personnelArchives") PersonnelArchives personnelArchives);
 
     void savePersonnelArchives(@Param("personnelArchives") PersonnelArchives personnelArchives);
+    //查询出最后一个员工信息
+    PersonnelArchives queryPersonnelArchives();
 }

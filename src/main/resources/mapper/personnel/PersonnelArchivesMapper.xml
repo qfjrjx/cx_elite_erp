@@ -271,4 +271,21 @@
         pe.filiality_fine_bank = #{filialityFineBank}
         where pe.user_id = #{userId}
     </update>
+
+    <select id="queryPersonnelArchives" resultType="com.erp.personnel.entity.PersonnelArchives">
+        SELECT
+            pe.user_id userId,
+            pe.job_number jobNumber,
+            pe.user_name userName,
+            pe.create_date createDate
+        FROM
+            jr_personnel_archives pe
+        GROUP BY
+            pe.create_date
+        ORDER BY
+            pe.create_date DESC
+            LIMIT 1;
+    </select>
+
+
 </mapper>

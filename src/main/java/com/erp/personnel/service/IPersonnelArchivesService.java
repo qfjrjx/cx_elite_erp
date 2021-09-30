@@ -6,6 +6,7 @@ import com.erp.common.entity.QueryRequest;
 import com.erp.personnel.entity.ArchivesParameters;
 import com.erp.personnel.entity.PersonnelArchives;
 
+import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -36,7 +37,7 @@ public interface IPersonnelArchivesService extends IService<PersonnelArchives> {
      *
      * @param personnelArchives personnelArchives
      */
-    void createPersonnelArchives(PersonnelArchives personnelArchives);
+    void createPersonnelArchives(PersonnelArchives personnelArchives) throws ParseException;
 
     /**
      * 修改

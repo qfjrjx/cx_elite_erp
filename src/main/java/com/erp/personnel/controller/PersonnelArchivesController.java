@@ -26,6 +26,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -54,17 +55,7 @@ public class PersonnelArchivesController extends BaseController {
     @PostMapping("personnelArchives")
     @ResponseBody
     @RequiresPermissions("personnelArchives:add")
-    public FebsResponse addPersonnelArchives(@Valid PersonnelArchives personnelArchives) {
-                 String yearLast = new SimpleDateFormat("yy", Locale.CHINESE).format(Calendar.getInstance().getTime());Date d = new Date();
-                 Date date = new Date();
-                 SimpleDateFormat sdf = new SimpleDateFormat("MM-dd");
-                 String dateNowStr = sdf.format(date);
-                 String month = dateNowStr.substring(0,2);
-                 String day = dateNowStr.substring(3,5);
-                 personnelArchives.setJobNumber(yearLast+month+day);
-                 personnelArchives.getEntryDate();
-                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                  simpleDateFormat.format( personnelArchives.getEntryDate());
+    public FebsResponse addPersonnelArchives(@Valid PersonnelArchives personnelArchives) throws ParseException {
         this.personnelArchivesService.createPersonnelArchives(personnelArchives);
         return new FebsResponse().success();
     }
