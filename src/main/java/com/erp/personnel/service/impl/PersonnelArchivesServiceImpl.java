@@ -71,45 +71,42 @@ public class PersonnelArchivesServiceImpl extends ServiceImpl<PersonnelArchivesM
         //格式化当前月
         String month = sdf.format(date);
         //打印当前月
-        System.out.println(month);
+        //System.out.println(month);
         //查询出最后一个员工信息
         PersonnelArchives personnelArchivesOne = personnelArchivesMapper.queryPersonnelArchives();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM");
         String createTimeMonth = simpleDateFormat.format(personnelArchivesOne.getCreateDate());
         //打印创建当前月
-        System.out.println(createTimeMonth);
+        //System.out.println(createTimeMonth);
          if(month.equals(createTimeMonth)){
              String jobNumberOne = personnelArchivesOne.getJobNumber();
              String jobNumber = jobNumberOne.substring(4,6);
              int ss = Integer.parseInt(jobNumber);
-                for (int i = ss; i < 100; ++i) {
-                    String n = "";
-                    // 满足条件1
-                    if (i < 10) {
-                        n = "0" + i;
-                    } else {
-                        n = i + "";
-                    }
-                    if ((i + 1) % 10 != 0){
-                        personnelArchives.setJobNumber(yearLast+month+n);
-                        break;
-                    }else{
-                        personnelArchives.setJobNumber(yearLast+month+n);
-                        break;
-                    }
-                }
+               if (ss<9){
+                   for (int i = ss; i < 100; i++) {
+                       String n = "";
+                       // 满足条件1
+                       if (i < 10) {
+                           n = "0" + (i+1);
+                       }if ((i + 1) % 10 != 0){
+                           personnelArchives.setJobNumber(yearLast+month+n);
+                           break;
+                       }
+                   }
+               }else{
+                   int ff = ss+1;
+                   if(ff < 100){
+                       personnelArchives.setJobNumber(yearLast+month+ff);
+                   }
+               }
          }else if(!month.equals(createTimeMonth)){
              String n = "";
              int i = 0;
              // 满足条件1
              if (i < 10){
                  n = "0" + i;
-             }  else{
-                 n = i + "";
              }
              if ((i + 1) % 10 != 0){
-                 personnelArchives.setJobNumber(yearLast+month+n);
-             }else{
                  personnelArchives.setJobNumber(yearLast+month+n);
              }
          }
@@ -129,7 +126,6 @@ public class PersonnelArchivesServiceImpl extends ServiceImpl<PersonnelArchivesM
         simpleDateFormat.format(personnelArchives.getEntryDate());*/
         //baseMapper.savePersonnelArchives(personnelArchives);
     }
-
     private void setSocialSecurity(PersonnelArchives personnelArchives, String[] socialSecurity) {
         List<ArchivesParameters> archivesParameters = new ArrayList<>();
         Arrays.stream(socialSecurity).forEach(parametersId -> {
