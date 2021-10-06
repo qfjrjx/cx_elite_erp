@@ -14,19 +14,19 @@
         <div class="layui-form-item">
             <label class="layui-form-label febs-form-item-require" >员工姓名:</label>
             <div class="layui-input-inline">
-                <input type="text" name="employeeName" id="mobilityUserName"
+                <input type="text" name="employeeName" id="mobilityUserName" lay-verify="required"
                        autocomplete="off" class="layui-input" placeholder="员工姓名" ondblclick="dblclickt()" readonly>
             </div>
             <label class="layui-form-label febs-form-item-require" >员工电话:</label>
             <div class="layui-input-inline">
-                <input type="text" name="employeeTelephone" id="mobilityPhone"
+                <input type="text" name="employeeTelephone" id="mobilityPhone" lay-verify="required"
                        autocomplete="off" class="layui-input" placeholder="员工电话" readonly>
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label febs-form-item-require" >员工部门:</label>
             <div class="layui-input-inline">
-                <input type="text" name="employeeDept" id="mobilityDepartmentName"
+                <input type="text" name="employeeDept" id="mobilityDepartmentName" lay-verify="required"
                        autocomplete="off" class="layui-input" placeholder="员工部门" readonly>
             </div>
         </div>
@@ -34,12 +34,12 @@
         <div class="layui-form-item">
             <label class="layui-form-label febs-form-item-require" >宿舍编号:</label>
             <div class="layui-input-inline">
-                <input type="text" name="dormitoryNo" id="dormitoryNoDormitory"
+                <input type="text" name="dormitoryNo" id="dormitoryNoDormitory" lay-verify="required"
                        autocomplete="off" class="layui-input" placeholder="宿舍编号" ondblclick="dblclicktDormitoryNo()" readonly>
             </div>
             <label class="layui-form-label febs-form-item-require" >宿舍地址:</label>
             <div class="layui-input-inline">
-                <input type="text" name="dormitoryLocation" id="dormitoryLocationDormitory"
+                <input type="text" name="dormitoryLocation" id="dormitoryLocationDormitory" lay-verify="required"
                        autocomplete="off" class="layui-input" placeholder="宿舍地址" readonly>
             </div>
 
@@ -73,8 +73,7 @@
 
         form.on('submit(personnelDormitoryInformation-add-form-submit)', function (data) {
             if (data.field.usedBeds == data.field.resideNnt) {
-
-                layer.msg('选择该宿舍已住满是否继续添加？', {
+                layer.confirm("选择该宿舍已住满是否继续添加?",{
                     time: 0 //不自动关闭
                     ,btn: ['确定', '取消']
                     ,yes: function(index){
@@ -87,7 +86,6 @@
                         return false;
                     }
                 });
-
             }else {
             febs.post(ctx + 'personnelDormitoryInformation/add', data.field, function () {
                 layer.closeAll();

@@ -10,27 +10,27 @@
         <div class="layui-form-item">
             <label class="layui-form-label febs-form-item-require" >员工工号:</label>
             <div class="layui-input-block">
-                <input type="text" name="staffWno" id="receiveWno" ondblclick="dblclickt()"
+                <input type="text" name="staffWno" id="receiveWno" ondblclick="dblclickt()" lay-verify="required"
                        autocomplete="off" class="layui-input" placeholder="请输入员工工号" readonly>
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label febs-form-item-require" >员工姓名:</label>
             <div class="layui-input-block">
-                <input type="text" name="staffName" id="receiveName"
+                <input type="text" name="staffName" id="receiveName" lay-verify="required"
                        autocomplete="off" class="layui-input" placeholder="请输入员工姓名" readonly>
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label febs-form-item-require">签订时间</label>
             <div class="layui-input-inline">
-                <input type="text" name="signedDate" id="signedDate" class="layui-input createDate">
+                <input type="text" name="signedDate" id="signedDate" lay-verify="required" class="layui-input createDate">
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label febs-form-item-require">到期时间</label>
             <div class="layui-input-inline">
-                <input type="text" name="expireDate" id="expireDate" class="layui-input createDate">
+                <input type="text" name="expireDate" id="expireDate" lay-verify="required" class="layui-input createDate">
             </div>
         </div>
         <div class="layui-form-item febs-hide">

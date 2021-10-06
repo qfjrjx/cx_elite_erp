@@ -10,21 +10,21 @@
         <div class="layui-form-item">
             <label class="layui-form-label febs-form-item-require" >员工工号:</label>
             <div class="layui-input-block">
-                <input type="text" name="receiveWno" id="receiveWno" ondblclick="dblclickt()"
+                <input type="text" name="receiveWno" id="receiveWno" ondblclick="dblclickt()" lay-verify="required"
                        autocomplete="off" class="layui-input" placeholder="请输入员工工号" readonly>
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label febs-form-item-require" >员工姓名:</label>
             <div class="layui-input-block">
-                <input type="text" name="receiveName" id="receiveName"
+                <input type="text" name="receiveName" id="receiveName" lay-verify="required"
                        autocomplete="off" class="layui-input" placeholder="请输入员工姓名" readonly>
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label febs-form-item-require">领取物品:</label>
             <div class="layui-input-block">
-                <input type="text" name="receiveGoods"
+                <input type="text" name="receiveGoods" lay-verify="required"
                        autocomplete="off" class="layui-input" placeholder="请输入领取的物品">
             </div>
         </div>
@@ -33,7 +33,7 @@
                 领取日期:
             </label>
             <div class="layui-input-inline">
-                <input type="text" id="createDate" name="createDate" required="" placeholder="请选择日期"
+                <input type="text" id="createDate" name="createDate" lay-verify="required" placeholder="请选择日期"
                        autocomplete="off" class="layui-input receiveTime">
             </div>
         </div>

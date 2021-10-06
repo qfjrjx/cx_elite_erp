@@ -10,24 +10,24 @@
         <div class="layui-form-item">
             <label class="layui-form-label febs-form-item-require" >员工工号:</label>
             <div class="layui-input-inline">
-                <input type="text" name="jobNumber" id="mobilityJobNumber" ondblclick="dblclickt()"
+                <input type="text" name="jobNumber" id="mobilityJobNumber" lay-verify="required" ondblclick="dblclickt()"
                        autocomplete="off" class="layui-input" placeholder="请输入员工工号" readonly>
             </div>
 
             <label class="layui-form-label febs-form-item-require" >员工姓名:</label>
             <div class="layui-input-inline">
-                <input type="text" name="userName" id="mobilityUserName"
+                <input type="text" name="userName" id="mobilityUserName" lay-verify="required"
                        autocomplete="off" class="layui-input" placeholder="员工姓名" readonly>
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label febs-form-item-require">入职日期</label>
             <div class="layui-input-inline">
-                <input type="text" name="entryTime" readonly id="mobilityEntryTime" placeholder="入职日期" class="layui-input">
+                <input type="text" name="entryTime" readonly id="mobilityEntryTime" lay-verify="required" placeholder="入职日期" class="layui-input">
             </div>
             <label class="layui-form-label febs-form-item-require" >员工部门:</label>
             <div class="layui-input-inline">
-                <input type="text" name="departmentName" id="mobilityDepartmentName"
+                <input type="text" name="departmentName" id="mobilityDepartmentName" lay-verify="required"
                        autocomplete="off" class="layui-input" placeholder="员工部门" readonly>
             </div>
         </div>
@@ -35,12 +35,12 @@
 
             <label class="layui-form-label febs-form-item-require" >员工岗位:</label>
             <div class="layui-input-inline">
-                <input type="text" name="positionName" id="mobilityPositionName"
+                <input type="text" name="positionName" id="mobilityPositionName" lay-verify="required"
                        autocomplete="off" class="layui-input" placeholder="员工岗位" readonly>
             </div>
             <label class="layui-form-label febs-form-item-require" >员工职务:</label>
             <div class="layui-input-inline">
-                <input type="text" name="groupingName" id="mobilityGroupingName"
+                <input type="text" name="groupingName" id="mobilityGroupingName" lay-verify="required"
                        autocomplete="off" class="layui-input" placeholder="员工职务" readonly>
             </div>
         </div>
@@ -48,12 +48,12 @@
         <div class="layui-form-item">
             <label class="layui-form-label febs-form-item-require" >奖罚日期:</label>
             <div class="layui-input-inline">
-                <input type="text" name="rewardPunishDate" id="rewardPunishDate"
+                <input type="text" name="rewardPunishDate" id="rewardPunishDate" lay-verify="required"
                        autocomplete="off" class="layui-input createDate" placeholder="奖罚日期" readonly>
             </div>
             <label class="layui-form-label febs-form-item-require" >类型:</label>
             <div class="layui-input-inline">
-                <select id="rewardPunishType" lay-filter="" name="rewardPunishType">
+                <select id="rewardPunishType" lay-filter="" name="rewardPunishType" lay-verify="required" >
                     <option value="">请选择</option>
                     <option value="1">奖励</option>
                     <option value="2">惩罚</option>
@@ -63,7 +63,7 @@
         <div class="layui-form-item">
             <label class="layui-form-label febs-form-item-require" >奖罚金额:</label>
             <div class="layui-input-inline">
-                <input type="text" name="magnitude" id="magnitude"
+                <input type="text" name="magnitude" id="magnitude" lay-verify="required"
                        autocomplete="off" class="layui-input" placeholder="￥" >
             </div>
             <div class="layui-form-mid layui-word-aux">元</div>
@@ -71,7 +71,7 @@
         <div class="layui-form-item">
             <label class="layui-form-label febs-form-item-require" >奖罚原因:</label>
             <div class="layui-input-inline">
-                <textarea rows="10" cols="60" name="rewardPunishExplain" placeholder="建议格式：姓名+部门+职位+时间+地点+内容"></textarea>
+                <textarea rows="10" cols="60" name="rewardPunishExplain" placeholder="建议格式：姓名+部门+职位+时间+地点+内容" lay-verify="required"></textarea>
             </div>
 
         </div>

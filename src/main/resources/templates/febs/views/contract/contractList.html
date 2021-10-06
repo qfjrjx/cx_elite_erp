@@ -140,7 +140,7 @@
                     if (!checkStatus.data.length) {
                         febs.alert.warn('请选择需要删除的数据');
                     } else {
-                        febs.modal.confirm('删除领取记录信息', '确定删除？', function () {
+                        febs.modal.confirm('删除合同记录信息', '确定删除？', function () {
                             let ids = [];
                             layui.each(checkStatus.data, function (key, item) {
                                 ids.push(item.id)
@@ -164,12 +164,12 @@
             let data = obj.data,
                 layEvent = obj.event;
             if (layEvent === 'del') {
-                febs.modal.confirm('删除领取记录信息', '确定删除？', function () {
+                febs.modal.confirm('删除合同记录信息', '确定删除？', function () {
                    deletePersonnelContract(data.contractId);
                 });
             }
             if (layEvent === 'edit') {
-                febs.modal.open('修改领取记录信息', 'personnel/personnelContract/update/' + data.contractId, {
+                febs.modal.open('修改合同记录信息', 'personnel/personnelContract/update/' + data.contractId, {
                     area: $(window).width() <= 750 ? '90%' : '30%',
                     btn: ['提交', '取消'],
                     yes: function (index, layero) {
@@ -285,7 +285,7 @@
 
         function deletePersonnelContract(ids) {
             febs.get(ctx + 'personnelContract/delete/' + ids, null, function () {
-                febs.alert.success('删除领取记录成功');
+                febs.alert.success('删除合同记录成功');
                 $query.click();
             });
         }

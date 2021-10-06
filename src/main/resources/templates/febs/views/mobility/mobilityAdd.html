@@ -13,57 +13,57 @@
             <label class="layui-form-label febs-form-item-require" >员工工号:</label>
             <div class="layui-input-inline">
                 <input type="text" name="jobNumber" id="mobilityJobNumber" ondblclick="dblclickt()"
-                       autocomplete="off" class="layui-input" placeholder="请输入员工工号" readonly>
+                       autocomplete="off" class="layui-input" lay-verify="required" placeholder="请输入员工工号" readonly>
             </div>
 
             <label class="layui-form-label febs-form-item-require" >员工姓名:</label>
             <div class="layui-input-inline">
-                <input type="text" name="userName" id="mobilityUserName"
+                <input type="text" name="userName" id="mobilityUserName" lay-verify="required"
                        autocomplete="off" class="layui-input" placeholder="员工姓名" readonly>
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label febs-form-item-require">出生日期</label>
             <div class="layui-input-inline">
-                <input type="text" name="birthdate" readonly id="mobilityBirthdate" placeholder="出生日期" class="layui-input">
+                <input type="text" name="birthdate" readonly id="mobilityBirthdate" placeholder="出生日期" class="layui-input" lay-verify="required">
             </div>
             <label class="layui-form-label febs-form-item-require" >联系人电话:</label>
             <div class="layui-input-inline">
-                <input type="text" name="phone" id="mobilityPhone"
+                <input type="text" name="phone" id="mobilityPhone" lay-verify="required"
                        autocomplete="off" class="layui-input" placeholder="联系人电话" readonly>
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label febs-form-item-require" >原部门:</label>
             <div class="layui-input-inline">
-                <input type="text" name="departmentName" id="mobilityDepartmentName"
+                <input type="text" name="departmentName" id="mobilityDepartmentName" lay-verify="required"
                        autocomplete="off" class="layui-input" placeholder="原部门" readonly>
             </div>
             <label class="layui-form-label febs-form-item-require" >原岗位:</label>
             <div class="layui-input-inline">
-                <input type="text" name="positionName" id="mobilityPositionName"
+                <input type="text" name="positionName" id="mobilityPositionName" lay-verify="required"
                        autocomplete="off" class="layui-input" placeholder="原职位" readonly>
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label febs-form-item-require" >原职务:</label>
             <div class="layui-input-inline">
-                <input type="text" name="groupingName" id="mobilityGroupingName"
+                <input type="text" name="groupingName" id="mobilityGroupingName" lay-verify="required"
                        autocomplete="off" class="layui-input" placeholder="原职务" readonly>
             </div>
             <label class="layui-form-label febs-form-item-require" >身份证号:</label>
             <div class="layui-input-inline">
-                <input type="text" name="identityArd" id="mobilityIdentityArd"
+                <input type="text" name="identityArd" id="mobilityIdentityArd" lay-verify="required"
                        autocomplete="off" class="layui-input" placeholder="身份证号" readonly>
             </div>
         </div>
             <br>
         <div class="layui-form-item">
-            <label class="layui-form-label febs-form-item-require" >调至部门:</label>
+            <label class="layui-form-label" >调至部门:</label>
             <div class="layui-input-inline" id="mobility-add-dept">
 
             </div>
-            <label class="layui-form-label febs-form-item-require" >调至岗位:</label>
+            <label class="layui-form-label " >调至岗位:</label>
             <div class="layui-input-inline">
                 <select name="toPositionId"  id="toPositionId" lay-filter="toPositionId">
                     <option value="">请选择调至岗位</option>
@@ -71,7 +71,7 @@
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label febs-form-item-require" >调至职务:</label>
+            <label class="layui-form-label" >调至职务:</label>
             <div class="layui-input-inline">
                 <select name="toGroupingId"  id="toGroupingId" lay-filter="toGroupingId">
                     <option value="">请选择调至职务</option>
@@ -79,14 +79,14 @@
             </div>
             <label class="layui-form-label febs-form-item-require" >生效日期:</label>
             <div class="layui-input-inline">
-                <input type="text" name="transferData" id="transferData"
+                <input type="text" name="transferData" id="transferData" lay-verify="required"
                        autocomplete="off" class="layui-input createDate" placeholder="生效日期" readonly>
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label febs-form-item-require" >类型:</label>
             <div class="layui-input-inline">
-                <select id="transferStatus" lay-filter="" name="transferStatus">
+                <select id="transferStatus" lay-filter="" name="transferStatus" lay-verify="required">
                     <option value="">请选择</option>
                     <option value="1">晋升</option>
                     <option value="2">降级</option>
