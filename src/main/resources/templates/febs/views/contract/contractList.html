@@ -18,7 +18,7 @@
                 <div class="layui-card-body febs-table-full">
                     <form class="layui-form layui-table-form" lay-filter="parameter-table-form">
                         <div class="layui-row">
-                            <div class="layui-col-md9">
+                            <div class="layui-col-md8">
                                 <div class="layui-form-item">
                                     <div class="layui-inline" >
                                         <label class="layui-form-label layui-form-label-sm">姓名</label>
@@ -51,7 +51,7 @@
 
                                 </div>
                             </div>
-                            <div class="layui-col-md3 layui-col-sm12 layui-col-xs12 table-action-area">
+                            <div class="layui-col-md4 layui-col-sm12 layui-col-xs12 table-action-area">
                                 <!--搜索按钮-->
                                 <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
                                     <i class="layui-icon">&#xe848;</i>
@@ -66,7 +66,12 @@
                                 </div>
                                 <!--删除按钮-->
                                 <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "shiro:hasAnyPermissions="personnelContract:delete" id="deleteTo">
-                                    <i class="layui-icon">&#xe8a1;</i>批量删除
+                                    <i class="layui-icon">&#xe8a1;</i>删除
+                                </div>
+                                <!--修改按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                                     shiro:hasAnyPermissions="personnelContract:update" id="updateTo">
+                                    <i class="layui-icon">&#xe642;</i>修改
                                 </div>
                                 <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action"
                                      shiro:hasAnyPermissions="personnelContract:export" id="exportTo">
@@ -110,6 +115,7 @@
             $query = $view.find('#query'),
             $addTo = $view.find('#addTo'),
             $deleteTo = $view.find('#deleteTo'),
+            $updateTo = $view.find('#updateTo'),
             $exportTo = $view.find('#exportTo'),
             $reset = $view.find('#reset'),
             $searchForm = $view.find('form'),
@@ -222,6 +228,27 @@
                 }
             });
         });
+        $updateTo.on('click', function () {
+            let checkStatus = table.checkStatus('contractTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要修改的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要修改的数据');
+            }else{
+                layui.each(checkStatus.data, function (key, item) {
+                    febs.modal.open('修改合同记录信息', 'personnel/personnelContract/update/' + item.contractId, {
+                        area: $(window).width() <= 750 ? '90%' : '30%',
+                        btn: ['提交', '取消'],
+                        yes: function (index, layero) {
+                            $('#personnelContract-update').find('#submit').trigger('click');
+                        },
+                        btn2: function () {
+                            layer.closeAll();
+                        }
+                    });
+                });
+            }
+        });
         $deleteTo.on('click', function () {
             let checkStatus = table.checkStatus('contractTable');
             if (!checkStatus.data.length) {
@@ -256,8 +283,7 @@
                     {field: 'staffName', title: '姓名',align:'center', minWidth: 100},
                     {field: 'signedDate', title: '签订日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.signedDate, "yyyy-MM-dd") }}</div>', minWidth: 180, sort: true},
                     {field: 'expireDate', title: '到期时间',align:'center',templet:'<div>{{ layui.util.toDateString(d.expireDate, "yyyy-MM-dd") }}</div>', minWidth: 180, sort: true},
-                    {title: '状态', templet: '#contract_state',align:'center'},
-                    {title: '操作', toolbar: '#parameter-option', minWidth: 140}
+                    {title: '状态', templet: '#contract_state',align:'center'}
                 ]]
             });
         }

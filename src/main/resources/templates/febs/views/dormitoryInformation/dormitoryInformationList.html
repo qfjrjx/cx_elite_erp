@@ -18,7 +18,7 @@
                 <div class="layui-card-body febs-table-full">
                     <form class="layui-form layui-table-form" lay-filter="parameter-table-form">
                         <div class="layui-row">
-                            <div class="layui-col-md9">
+                            <div class="layui-col-md8">
                                 <div class="layui-form-item">
                                     <div class="layui-inline" >
                                         <label class="layui-form-label layui-form-label-sm">员工姓名</label>
@@ -44,14 +44,14 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="layui-col-md3 layui-col-sm12 layui-col-xs12 table-action-area">
+                            <div class="layui-col-md4 layui-col-sm12 layui-col-xs12 table-action-area">
                                 <!--搜索按钮-->
                                 <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
-                                    <i class="layui-icon">&#xe848;</i>
+                                    <i class="layui-icon">&#xe848;</i>搜索
                                 </div>
                                <!-- 刷新表格按钮-->
                                 <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain table-action" id="reset">
-                                    <i class="layui-icon">&#xe79b;</i>
+                                    <i class="layui-icon">&#xe79b;</i>刷新
                                 </div>
                                 <!--添加按钮-->
                                 <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "shiro:hasAnyPermissions="personnelDormitoryInformation:add" id="addTo">
@@ -59,7 +59,12 @@
                                 </div>
                                 <!--删除按钮-->
                                 <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "shiro:hasAnyPermissions="personnelDormitoryInformation:delete" id="deleteTo">
-                                    <i class="layui-icon">&#xe8a1;</i>批量删除
+                                    <i class="layui-icon">&#xe8a1;</i>删除
+                                </div>
+                                <!--修改按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                                     shiro:hasAnyPermissions="personnelDormitoryInformation:update" id="updateTo">
+                                    <i class="layui-icon">&#xe642;</i>修改
                                 </div>
                                 <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action"
                                      shiro:hasAnyPermissions="personnelDormitoryInformation:export" id="exportTo">
@@ -103,6 +108,7 @@
             $query = $view.find('#query'),
             $addTo = $view.find('#addTo'),
             $deleteTo = $view.find('#deleteTo'),
+            $updateTo = $view.find('#updateTo'),
             $exportTo = $view.find('#exportTo'),
             $reset = $view.find('#reset'),
             $searchForm = $view.find('form'),
@@ -199,6 +205,27 @@
                 }
             });
         });
+        $updateTo.on('click', function () {
+            let checkStatus = table.checkStatus('dormitoryInformationTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要修改的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要修改的数据');
+            }else{
+                layui.each(checkStatus.data, function (key, item) {
+                    febs.modal.open('修改宿舍人员信息', 'personnel/personnelDormitoryInformation/update/' + item.id, {
+                        area: $(window).width() <= 750 ? '90%' : '40%',
+                        btn: ['提交', '取消'],
+                        yes: function (index, layero) {
+                            $('#personnelDormitoryInformation-update').find('#submit').trigger('click');
+                        },
+                        btn2: function () {
+                            layer.closeAll();
+                        }
+                    });
+                });
+            }
+        });
         $deleteTo.on('click', function () {
             let checkStatus = table.checkStatus('dormitoryInformationTable');
             if (!checkStatus.data.length) {
@@ -234,8 +261,7 @@
                     {field: 'employeeName', title: '员工姓名',align:'center', minWidth: 100},
                     {field: 'employeeTelephone', title: '员工电话',align:'center', minWidth: 100},
                     {field: 'employeeDept', title: '员工部门',align:'center', minWidth: 100},
-                    {field: 'checkInTime', title: '入住时间',align:'center',minWidth: 180},
-                    {title: '操作', toolbar: '#parameter-option', minWidth: 140}
+                    {field: 'checkInTime', title: '入住时间',align:'center',minWidth: 180}
                 ]]
             });
         }

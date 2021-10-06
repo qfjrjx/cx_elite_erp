@@ -70,9 +70,9 @@
                                     <i class="layui-icon">&#xe848;</i>查询
                                 </div>
                                 <!--查看按钮-->
-                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="detailTo">
+                                <!--<div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="detailTo">
                                     <i class="layui-icon">&#xe848;</i>查阅
-                                </div>
+                                </div>-->
                                <!-- 刷新表格按钮-->
                                 <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain table-action" id="reset">
                                     <i class="layui-icon">&#xe79b;</i>刷新
@@ -336,13 +336,13 @@
                     {field: 'dutiesName', title: '职务',align:'center', minWidth: 90},
                     {field: 'positionName', title: '岗位',align:'center', minWidth: 100},
                     {field: 'educationName', title: '学历',align:'center', minWidth: 50},
-                    {field: 'identityArd', title: '身份证号', minWidth: 90},
+                    {field: 'identityArd', title: '身份证号', minWidth: 100},
                     {field: 'entryDate', title: '入职日期',align:'center', minWidth: 110,templet:'<div>{{ layui.util.toDateString(d.entryDate, "yyyy-MM-dd") }}</div>', sort: true},
                     {field: 'quitDate', title: '离职日期',align:'center', minWidth: 110, templet:'<div>{{ layui.util.toDateString(d.quitDate, "yyyy-MM-dd") }}</div>',sort: true},
                     {title: '状态', templet: '#user-status',align:'center',minWidth: 80},
-                    {field: 'address', title: '家庭住址', minWidth: 90},
-                    {field: 'parameterName', title: '社保缴纳', minWidth: 100},
-                    {title: '操作', toolbar: '#parameter-option', minWidth: 100}
+                    {field: 'address', title: '家庭住址', minWidth: 100},
+                    {field: 'parameterName', title: '社保缴纳', minWidth: 110},
+                    {title: '操作', toolbar: '#parameter-option', minWidth: 50}
                 ]]
             });
         }

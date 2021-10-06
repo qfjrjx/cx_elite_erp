@@ -33,11 +33,11 @@
                             <div class="layui-col-md4 layui-col-sm12 layui-col-xs12 table-action-area">
                                 <!--搜索按钮-->
                                 <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
-                                    <i class="layui-icon">&#xe848;</i>
+                                    <i class="layui-icon">&#xe848;</i>搜索
                                 </div>
                                <!-- 刷新表格按钮-->
                                 <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain table-action" id="reset">
-                                    <i class="layui-icon">&#xe79b;</i>
+                                    <i class="layui-icon">&#xe79b;</i>刷新
                                 </div>
                                 <!--添加按钮-->
                                 <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "shiro:hasAnyPermissions="personnelReceive:add" id="addTo">
@@ -45,7 +45,12 @@
                                 </div>
                                 <!--删除按钮-->
                                 <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "shiro:hasAnyPermissions="personnelReceive:delete" id="deleteTo">
-                                    <i class="layui-icon">&#xe8a1;</i>批量删除
+                                    <i class="layui-icon">&#xe8a1;</i>删除
+                                </div>
+                                <!--修改按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                                     shiro:hasAnyPermissions="personnelReceive:update" id="updateTo">
+                                    <i class="layui-icon">&#xe642;</i>修改
                                 </div>
                                <!-- <div class="layui-btn layui-btn-sm layui-btn-primary table-action action-more"
                                      shiro:hasAnyPermissions="personnelReceive:add,personnelReceive:update">
@@ -88,6 +93,7 @@
             $view = $('#febs-personnelReceive'),
             $query = $view.find('#query'),
             $addTo = $view.find('#addTo'),
+            $updateTo = $view.find('#updateTo'),
             $deleteTo = $view.find('#deleteTo'),
             $reset = $view.find('#reset'),
             $searchForm = $view.find('form'),
@@ -217,6 +223,27 @@
                 }
             });
         });
+        $updateTo.on('click', function () {
+            let checkStatus = table.checkStatus('receiveTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要修改的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要修改的数据');
+            }else{
+                layui.each(checkStatus.data, function (key, item) {
+                    febs.modal.open('修改领取记录信息', 'personnel/personnelReceive/update/' + item.id, {
+                        area: $(window).width() <= 750 ? '90%' : '30%',
+                        btn: ['提交', '取消'],
+                        yes: function (index, layero) {
+                            $('#personnelReceive-update').find('#submit').trigger('click');
+                        },
+                        btn2: function () {
+                            layer.closeAll();
+                        }
+                    });
+                });
+            }
+        });
         $deleteTo.on('click', function () {
             let checkStatus = table.checkStatus('receiveTable');
             if (!checkStatus.data.length) {
@@ -247,8 +274,7 @@
                     {field: 'positionName', title: '岗位',align:'center'},
                     {field: 'receiveGoods', title: '物品',align:'center'},
                     {field: 'createDate', title: '领取时间',align:'center', minWidth: 180, sort: true},
-                    {title: '状态', templet: '#receive_state',align:'center'},
-                    {title: '操作', toolbar: '#parameter-option', minWidth: 140}
+                    {title: '状态', templet: '#receive_state',align:'center'}
                 ]]
             });
         }
