@@ -67,11 +67,15 @@
                             <div class="layui-col-md4 layui-col-sm12 layui-col-xs12 table-action-area">
                                 <!--搜索按钮-->
                                 <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
-                                    <i class="layui-icon">&#xe848;</i>
+                                    <i class="layui-icon">&#xe848;</i>查询
+                                </div>
+                                <!--查看按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="detailTo">
+                                    <i class="layui-icon">&#xe848;</i>查阅
                                 </div>
                                <!-- 刷新表格按钮-->
                                 <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain table-action" id="reset">
-                                    <i class="layui-icon">&#xe79b;</i>
+                                    <i class="layui-icon">&#xe79b;</i>刷新
                                 </div>
                                 <!--添加按钮-->
                                 <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
@@ -81,7 +85,12 @@
                                 <!--删除按钮-->
                                 <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
                                         shiro:hasAnyPermissions="personnelArchives:delete" id="deleteTo">
-                                    <i class="layui-icon">&#xe8a1;</i>批量删除
+                                    <i class="layui-icon">&#xe8a1;</i>删除
+                                </div>
+                                <!--修改按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                                     shiro:hasAnyPermissions="personnelArchives:update" id="updateTo">
+                                    <i class="layui-icon">&#xe642;</i>修改
                                 </div>
                                 <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action"
                                      shiro:hasAnyPermissions="personnelArchives:export" id="exportTo">
@@ -121,8 +130,8 @@
     </span>
     <a lay-event="detail" shiro:hasPermission="personnelArchives:view"><i
             class="layui-icon febs-edit-area febs-green">&#xe7a5;</i></a>
-    <a lay-event="edit" shiro:hasPermission="personnelArchives:update"><i
-            class="layui-icon febs-edit-area febs-blue">&#xe7a4;</i></a>
+   <!-- <a lay-event="edit" shiro:hasPermission="personnelArchives:update"><i
+            class="layui-icon febs-edit-area febs-blue">&#xe7a4;</i></a>-->
 </script>
 <script data-th-inline="none" type="text/javascript">
     layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
@@ -280,6 +289,28 @@
                         ids.push(item.userId)
                     });
                     deletePersonnelArchives(ids.join(','));
+                });
+            }
+        });
+        $updateTo.on('click', function () {
+            let checkStatus = table.checkStatus('personnelArchivesTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要修改的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要修改的数据');
+            }else{
+                layui.each(checkStatus.data, function (key, item) {
+                      febs.modal.open('修改员工档案', 'personnel/personnelArchives/update/' + item.userId, {
+                          area: $(window).width() <= 750 ? '90%' : '50%',
+                          content: $('#uploadPic'), // 可以添加另外的页面 通过 div
+                          btn: ['提交', '取消'],
+                          yes: function (index, layero) {
+                              $('#personnelArchives-update').find('#submit').trigger('click');
+                          },
+                          btn2: function () {
+                              layer.closeAll();
+                          }
+                      });
                 });
             }
         });

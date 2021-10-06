@@ -127,7 +127,13 @@ public class ViewController {
 
     private void personnelArchivesParametersModel(Long userId, Model model, Boolean transform) {
         PersonnelArchives archives = personnelArchivesService.findArchivesById(userId);
+        String sex = archives.getGender();
 
+        if (sex.equals("1")) {
+            archives.setGender("男");
+        } if (sex.equals("2")) {
+            archives.setGender("女");
+        }
         model.addAttribute("archives", archives);
         if (archives.getEntryDate() != null) {
             model.addAttribute("entryDate", DateUtil.getDateFormat(archives.getEntryDate(), DateUtil.FULL_TIME_SPLIT));
@@ -327,7 +333,7 @@ public class ViewController {
 
     /* 奖罚记录模块结束 */
 
-    /* 员工档案开始 */
+    /* 员工档案查询开始 */
     @GetMapping("employeeFile")
     public String employeeFileIndex(){
         return FebsUtil.view("mobility/employeeFile");

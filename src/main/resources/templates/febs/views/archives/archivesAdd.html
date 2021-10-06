@@ -67,8 +67,8 @@
                 身份证号:
             </label>
             <div class="layui-input-inline">
-                <input type="text" name="identityArd" placeholder="请输入18位有效身份证号码" lay-verify="identity"
-                       autocomplete="off" class="layui-input">
+                <input type="text" name="identityArd"  id="identityArd" placeholder="请输入18位有效身份证号码" onblur ="identityArdTo()"
+                       lay-verify="identity" autocomplete="off" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
@@ -216,10 +216,12 @@
                 员工性别:
             </label>
             <div class="layui-input-inline">
-                <select id="gender" lay-filter="" name="gender">
-                    <option value="1" selected="selected">男</option>
+                <input type="text" id="gender"  name="gender" lay-verify="required" placeholder="请输入员工性别"
+                       class="layui-input">
+               <!-- <select id="gender" lay-filter="" name="gender">
+                    <option value="1">男</option>
                     <option value="2">女</option>
-                </select>
+                </select>-->
             </div>
             <label class="layui-form-label febs-form-item-require" >
                 婚姻状况:
@@ -237,7 +239,7 @@
                 员工年龄:
             </label>
             <div class="layui-input-inline">
-                <input type="text" name="age" placeholder="请输入年龄"
+                <input type="text" name="age" id="age" placeholder="请输入年龄"
                        autocomplete="off" class="layui-input">
             </div>
             <label class="layui-form-label febs-form-item-require" >
@@ -515,5 +517,36 @@
             }
         });
     });
-
+    function identityArdTo() {
+        let UUserCard = document.getElementById("identityArd").value;
+        // 身份证号码为15位或者18位，15位时全为数字，18位前17位为数字，最后一位是校验位，可能为数字或字符X
+        var reg = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
+        if (reg.test(UUserCard) === false)
+        {
+            alert("身份证号输入不合法");
+            return false;
+        }
+        let date = new Date();
+        let yearFull = date.getFullYear();
+        //获取出生日期
+        let birth =UUserCard.substring(6, 10) + "-" + UUserCard.substring(10, 12) + "-" + UUserCard.substring(12, 14);
+        if(UUserCard.length == 18) {
+            let birthyear = UUserCard.substring(6, 10);
+            let age = yearFull - birthyear;
+            sexStr = parseInt(UUserCard.substring(17, 1), 10) % 2 ? "男" : "女";
+            document.getElementById("gender").value=sexStr;
+            document.getElementById("age").value=age;
+            document.getElementById("birthdate").value=birth;
+        }else if(UUserCard.length == 15){
+            let birthDay = "";
+            birthDay = UUserCard.substring(6, 12);
+            birthDay = "19" + birthDay;
+            birthDay = birthDay.substring(0, 4);// + "-" + birthDay.substring(4, 6) + "-" + birthDay.substring(6)
+            let age = yearFull - birthDay;//年龄
+            let sex = parseInt(birthDay.substring(14, 1), 10) % 2 ? "男" : "女";//性别
+            document.getElementById("gender").value=sex;
+            document.getElementById("age").value=age;
+            document.getElementById("birthdate").value=birth;
+        }
+    }
 </script>

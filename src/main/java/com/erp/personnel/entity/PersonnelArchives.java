@@ -27,6 +27,15 @@ import javax.validation.constraints.NotBlank;
 public class PersonnelArchives implements Serializable, Cloneable{
 
     /**
+     * 1
+     */
+    public static final String SEX_MALE = "男";
+    /**
+     * 2
+     */
+    public static final String SEX_FEMALE = "女";
+
+    /**
      * 编号
      */
     @TableId(value = "user_id", type = IdType.AUTO)

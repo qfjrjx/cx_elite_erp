@@ -114,7 +114,12 @@ public class PersonnelArchivesServiceImpl extends ServiceImpl<PersonnelArchivesM
         String dates = simpleDateFormatOne.format(new Date());//系统当前时间
         Date today = simpleDateFormatOne.parse(dates);//格式化系统当前时间
         personnelArchives.setCreateDate(today);//把获取系统当前时间赋值给实体对象
-
+        String gender = personnelArchives.getGender();
+        if (gender.equals("男")){
+            personnelArchives.setGender("1");
+        }else if (gender.equals("女")){
+            personnelArchives.setGender("2");
+        }
         //添加员工档案信息
         save(personnelArchives);
         // 保存社保信息
@@ -145,7 +150,12 @@ public class PersonnelArchivesServiceImpl extends ServiceImpl<PersonnelArchivesM
         archivesParametersService.deleteArchivesParameter(Arrays.asList(archivesId));
         String[] socialSecurity = StringUtils.splitByWholeSeparatorPreserveAllTokens(personnelArchives.getId(), Strings.COMMA);
         setSocialSecurity(personnelArchives, socialSecurity);
-
+        String gender = personnelArchives.getGender();
+        if (gender.equals("男")){
+            personnelArchives.setGender("1");
+        }else if (gender.equals("女")){
+            personnelArchives.setGender("2");
+        }
         baseMapper.saveOrUpdate(personnelArchives);
     }
 
