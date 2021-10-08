@@ -2,6 +2,7 @@ package com.erp.sale.service.impl;
 
 import com.erp.common.entity.QueryRequest;
 import com.erp.personnel.entity.PersonnelDormitory;
+import com.erp.sale.entity.SaleBusinessPersonnel;
 import com.erp.sale.entity.SaleParameters;
 import com.erp.sale.mapper.SaleParametersMapper;
 import com.erp.sale.service.ISaleParametersService;
@@ -73,5 +74,11 @@ public class SaleParametersServiceImpl extends ServiceImpl<SaleParametersMapper,
     public SaleParameters findSaleParametersById(Long id) {
 
         return baseMapper.findSaleParametersById(id);
+    }
+
+    @Override
+    public List<SaleBusinessPersonnel> querySaleBusinessPersonnel() {
+
+        return baseMapper.querySaleBusinessPersonnel();
     }
 }

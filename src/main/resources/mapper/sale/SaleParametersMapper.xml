@@ -65,4 +65,21 @@
         WHERE
             sp.id = #{id}
     </select>
+    <!-- 查询区域人员信息 -->
+    <select id="querySaleBusinessPersonnel" parameterType="com.erp.sale.entity.SaleParameters" resultType="com.erp.sale.entity.SaleParameters">
+        SELECT
+            sp.id,
+            sp.parameter_category parameterCategory,
+            sp.parameter_value parameterValue,
+            sp.parameter_name parameterName,
+            sp.parameter_sort parameterSort,
+            sp.parameter_state parameterState,
+            sp.parameter_remarks parameterRemarks
+        FROM
+            jr_sale_parameters sp
+        WHERE
+            sp.parameter_category = 3
+        AND
+            sp.parameter_state = 1
+    </select>
 </mapper>

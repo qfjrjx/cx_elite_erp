@@ -1,6 +1,7 @@
 package com.erp.sale.service;
 
 import com.erp.common.entity.QueryRequest;
+import com.erp.sale.entity.SaleBusinessPersonnel;
 import com.erp.sale.entity.SaleParameters;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -58,4 +59,6 @@ public interface ISaleParametersService extends IService<SaleParameters> {
     void deleteSaleParameters(String[] ids);
     //销售参数修改回填
     SaleParameters findSaleParametersById(Long id);
+
+    List<SaleBusinessPersonnel> querySaleBusinessPersonnel();
 }

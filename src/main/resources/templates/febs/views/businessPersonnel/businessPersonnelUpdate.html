@@ -1,0 +1,103 @@
+<style>
+    #saleBusinessPersonnel-update {
+        padding: 20px 25px 25px 0;
+    }
+</style>
+<div class="layui-fluid" id="saleBusinessPersonnel-update">
+    <form class="layui-form" action="" lay-filter="saleBusinessPersonnel-update-form">
+        <div class="layui-form-item febs-hide">
+            <label class="layui-form-label febs-form-item-require">业务人员id：</label>
+            <div class="layui-input-block">
+                <input type="text" name="id" data-th-value="${saleBusinessPersonnel.id}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require" >员工工号:</label>
+            <div class="layui-input-inline">
+                <input type="text" name="personnelNumber" id="mobilityJobNumber"
+                       autocomplete="off" class="layui-input" lay-verify="required" placeholder="请输入员工工号" readonly>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require" >员工姓名:</label>
+            <div class="layui-input-inline">
+                <input type="text" name="personnelName" id="mobilityUserName" lay-verify="required"
+                       autocomplete="off" class="layui-input" placeholder="员工姓名" readonly>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require" >
+                区&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;域:
+            </label>
+            <div class="layui-input-inline">
+                <select id="personnelRegion"  name="personnelRegion" lay-verify="required">
+                    <option value="" >请选择区域</option>
+                    <option th:each="saleBusiness:${saleBusiness}" th:value="${saleBusiness.id}">[[${saleBusiness.parameterName}]]</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">状&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;态:</label>
+            <div class="layui-input-inline">
+                <select name="personnelState">
+                    <option value="1">启用</option>
+                    <option value="2">禁用</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注:</label>
+            <div class="layui-input-inline">
+                <textarea name="personnelRemarks" maxlength="100" class="layui-textarea" placeholder="请输入备注"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item febs-hide">
+            <button class="layui-btn" lay-submit="" lay-filter="saleBusinessPersonnel-update-form-submit" id="submit"></button>
+        </div>
+    </form>
+</div>
+
+<script data-th-inline="javascript">
+    layui.use(['febs', 'form', 'xmSelect', 'validate'], function () {
+        let $ = layui.$,
+            febs = layui.febs,
+            layer = layui.layer,
+            form = layui.form,
+            xmSelect = layui.xmSelect,
+            saleBusinessPersonnel = [[${saleBusinessPersonnel}]],
+            validate = layui.validate;
+
+        form.verify(validate);
+        form.render();
+
+        initSaleBusinessPersonnelValue();
+
+        function initSaleBusinessPersonnelValue() {
+            form.val("saleBusinessPersonnel-update-form", {
+                "personnelNumber": saleBusinessPersonnel.personnelNumber,
+                "personnelName": saleBusinessPersonnel.personnelName,
+                "personnelRegion": saleBusinessPersonnel.personnelRegion,
+                "personnelState": saleBusinessPersonnel.personnelState,
+                "personnelRemarks": saleBusinessPersonnel.personnelRemarks,
+                "personnelState": saleBusinessPersonnel.personnelState
+            });
+        }
+
+        form.on('submit(saleBusinessPersonnel-update-form-submit)', function (data) {
+
+            const b = true;
+            if (febs.nativeEqual(data.field, saleBusinessPersonnel)) {
+                febs.alert.warn('数据未作任何修改！');
+                return true;
+            }
+            febs.post(ctx + 'saleBusinessPersonnel/update', data.field, function () {
+                layer.closeAll();
+                febs.alert.success('数据修改成功');
+                $('#febs-saleBusinessPersonnel').find('#query').click();
+            });
+            return false;
+        });
+    });
+
+</script>

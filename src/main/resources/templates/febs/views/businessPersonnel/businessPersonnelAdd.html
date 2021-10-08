@@ -1,0 +1,97 @@
+<style>
+    #saleBusinessPersonnel-add {
+        padding: 20px 25px 25px 0;
+    }
+</style>
+<div class="layui-fluid" id="saleBusinessPersonnel-add">
+    <form class="layui-form" action="" lay-filter="saleBusinessPersonnel-add-form">
+        <input type="hidden" name="userId" id="mobilityUserId"
+               autocomplete="off" class="layui-input" readonly>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require" >员工工号:</label>
+            <div class="layui-input-inline">
+                <input type="text" name="personnelNumber" id="mobilityJobNumber" ondblclick="dblclickt()"
+                       autocomplete="off" class="layui-input" lay-verify="required" placeholder="请输入员工工号" readonly>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require" >员工姓名:</label>
+            <div class="layui-input-inline">
+                <input type="text" name="personnelName" id="mobilityUserName" lay-verify="required"
+                       autocomplete="off" class="layui-input" placeholder="员工姓名" readonly>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require" >
+                区&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;域:
+            </label>
+            <div class="layui-input-inline">
+                <select id="personnelRegion"  name="personnelRegion" lay-verify="required">
+                    <option value="" >请选择区域</option>
+                    <option th:each="saleBusinessPersonnel:${saleBusinessPersonnel}" th:value="${saleBusinessPersonnel.id}">[[${saleBusinessPersonnel.parameterName}]]</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">状&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;态:</label>
+            <div class="layui-input-inline">
+                <select name="personnelState">
+                    <option value="1">启用</option>
+                    <option value="2">禁用</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注:</label>
+            <div class="layui-input-inline">
+                <textarea name="personnelRemarks" maxlength="100" class="layui-textarea" placeholder="请输入备注"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item febs-hide">
+            <button class="layui-btn" lay-submit="" lay-filter="saleBusinessPersonnel-add-form-submit" id="submit"></button>
+            <button type="reset" class="layui-btn" id="reset"></button>
+        </div>
+    </form>
+</div>
+
+<script>
+    layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
+        let $ = layui.$,
+            febs = layui.febs,
+            layer = layui.layer,
+            form = layui.form,
+            validate = layui.validate;
+
+        form.verify(validate);
+        form.render();
+
+
+        form.on('submit(saleBusinessPersonnel-add-form-submit)', function (data) {
+
+            febs.post(ctx + 'saleBusinessPersonnel/add', data.field, function () {
+                layer.closeAll();
+                febs.alert.success('新增业务人员成功');
+                $('#febs-saleBusinessPersonnel').find('#query').click();
+            });
+            return false;
+
+        });
+
+    });
+
+    function dblclickt(){
+        layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
+            let $ = layui.$,
+                febs = layui.febs;
+
+            febs.modal.open('员工档案', 'personnel/employeeFile', {
+                area:["75%","90%"],
+                yes: function (index, layero) {
+
+                }
+
+            });
+        });
+    }
+</script>

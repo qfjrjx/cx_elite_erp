@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.sale.mapper.SaleBusinessPersonnelMapper">
+
+    <sql id="countSaleBusinessPersonnelsSql" >
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_sale_business_personnel sbp
+        WHERE
+            1 = 1
+        <if test="saleBusinessPersonnel.personnelNumber != null and saleBusinessPersonnel.personnelNumber != ''">
+            AND sbp.personnel_number = #{saleBusinessPersonnel.personnelNumber}
+        </if>
+        <if test="saleBusinessPersonnel.personnelName != null and saleBusinessPersonnel.personnelName != ''">
+            AND sbp.personnel_name = #{saleBusinessPersonnel.personnelName}
+        </if>
+        <if test="saleBusinessPersonnel.personnelState != null and saleBusinessPersonnel.personnelState != ''">
+            AND sbp.personnel_state = #{saleBusinessPersonnel.personnelState}
+        </if>
+    </sql>
+    <sql id="findSaleBusinessPersonnelsSql" >
+        SELECT
+            sbp.id,
+            sbp.user_id userId,
+            sbp.personnel_number personnelNumber,
+            sbp.personnel_name personnelName,
+            sp.parameter_name parameterName,
+            sbp.personnel_state personnelState,
+            sbp.personnel_remarks personnelRemarks
+        FROM
+            jr_sale_business_personnel sbp
+            LEFT JOIN jr_sale_parameters sp ON ( sbp.personnel_region = sp.id )
+        WHERE
+            1 = 1
+        <if test="saleBusinessPersonnel.personnelNumber != null and saleBusinessPersonnel.personnelNumber != ''">
+            AND sbp.personnel_number = #{saleBusinessPersonnel.personnelNumber}
+        </if>
+        <if test="saleBusinessPersonnel.personnelName != null and saleBusinessPersonnel.personnelName != ''">
+            AND sbp.personnel_name = #{saleBusinessPersonnel.personnelName}
+        </if>
+        <if test="saleBusinessPersonnel.personnelState != null and saleBusinessPersonnel.personnelState != ''">
+            AND sbp.personnel_state = #{saleBusinessPersonnel.personnelState}
+        </if>
+    </sql>
+    <select id="countSaleBusinessPersonnels" parameterType="com.erp.sale.entity.SaleBusinessPersonnel" resultType="long">
+        <include refid="countSaleBusinessPersonnelsSql"/>
+    </select>
+
+    <select id="findSaleBusinessPersonnelsPage" parameterType="com.erp.sale.entity.SaleBusinessPersonnel" resultType="com.erp.sale.entity.SaleBusinessPersonnel">
+        <include refid="findSaleBusinessPersonnelsSql"/>
+    </select>
+
+    <select id="findSaleBusinessPersonnelById" parameterType="com.erp.sale.entity.SaleBusinessPersonnel" resultType="com.erp.sale.entity.SaleBusinessPersonnel">
+
+        SELECT
+            sbp.id,
+            sbp.user_id userId,
+            sbp.personnel_number personnelNumber,
+            sbp.personnel_name personnelName,
+            sbp.personnel_region personnelRegion,
+            sbp.personnel_state personnelState,
+            sbp.personnel_remarks personnelRemarks
+        FROM
+            jr_sale_business_personnel sbp
+        WHERE
+            sbp.id = #{id}
+
+    </select>
+
+
+    <update id = "saveOrUpdate" parameterType = "com.erp.sale.entity.SaleBusinessPersonnel" >
+        UPDATE jr_sale_business_personnel sbp
+        SET
+            sbp.personnel_number = #{saleBusinessPersonnel.personnelNumber},
+            sbp.personnel_name = #{saleBusinessPersonnel.personnelName},
+            sbp.personnel_region =  #{saleBusinessPersonnel.personnelRegion},
+            sbp.personnel_state = #{saleBusinessPersonnel.personnelState},
+            sbp.personnel_remarks = #{saleBusinessPersonnel.personnelRemarks}
+        where
+            sbp.id = #{saleBusinessPersonnel.id}
+    </update>
+
+
+</mapper>

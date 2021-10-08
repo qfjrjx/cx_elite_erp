@@ -3,10 +3,13 @@ package com.erp.sale.mapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.erp.personnel.entity.PersonnelDormitory;
+import com.erp.sale.entity.SaleBusinessPersonnel;
 import com.erp.sale.entity.SaleParameters;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * 销售参数表
@@ -26,4 +29,6 @@ public interface SaleParametersMapper extends BaseMapper<SaleParameters> {
     IPage<SaleParameters> findSaleParameterssPage(@Param("saleParameters") Page<PersonnelDormitory> page, SaleParameters saleParameters);
     //销售参数修改回填
     SaleParameters findSaleParametersById(@Param("id") Long id);
+
+    List<SaleBusinessPersonnel> querySaleBusinessPersonnel();
 }
