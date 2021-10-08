@@ -1,0 +1,98 @@
+<style>
+    #saleParameters-add {
+        padding: 20px 25px 25px 0;
+    }
+</style>
+<div class="layui-fluid" id="saleParameters-add">
+    <form class="layui-form" action="" lay-filter="saleParameters-add-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label">参数类别：</label>
+            <div class="layui-input-block">
+                <select name="parameterCategory">
+                    <option value="">请选择</option>
+                    <option value="1">付款方式</option>
+                    <option value="2">结算方式</option>
+                    <option value="3">业务区域</option>
+                    <option value="4">运输费用</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require" >参&nbsp;数&nbsp;值：</label>
+            <div class="layui-input-block">
+                <input type="text" name="parameterValue"
+                       autocomplete="off" class="layui-input" placeholder="请输入参数值">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require">参数名称：</label>
+            <div class="layui-input-block">
+                <input type="text" name="parameterName"
+                       autocomplete="off" class="layui-input" placeholder="请输参数名称">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">排&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;序：</label>
+            <div class="layui-input-block">
+                <input type="text" name="parameterSort"
+                       autocomplete="off" class="layui-input" placeholder="请输入排序值">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注：</label>
+            <div class="layui-input-block">
+                <textarea name="parameterRemarks" maxlength="100" class="layui-textarea" placeholder="请输入备注"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">状&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;态：</label>
+            <div class="layui-input-block">
+                <select name="parameterState">
+                    <option value="1">启用</option>
+                    <option value="2">禁用</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item febs-hide">
+            <button class="layui-btn" lay-submit="" lay-filter="saleParameters-add-form-submit" id="submit"></button>
+            <button type="reset" class="layui-btn" id="reset"></button>
+        </div>
+    </form>
+</div>
+
+<script>
+    layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
+        let $ = layui.$,
+            febs = layui.febs,
+            layer = layui.layer,
+            form = layui.form,
+            validate = layui.validate;
+
+        form.verify(validate);
+        form.render();
+
+
+        form.on('submit(saleParameters-add-form-submit)', function (data) {
+            if (!data.field.parameterCategory) {
+                febs.alert.warn('请选择参数类别');
+                return false;
+            }
+            if (!data.field.parameterValue) {
+                febs.alert.warn('请输入参数值');
+                return false;
+            }
+            if (!data.field.parameterName) {
+                febs.alert.warn('请输入参数名称');
+                return false;
+            }
+            febs.post(ctx + 'saleParameters/add', data.field, function () {
+                layer.closeAll();
+                febs.alert.success('新增参数成功');
+                $('#febs-saleParameters').find('#query').click();
+            });
+            return false;
+
+        });
+
+    });
+</script>

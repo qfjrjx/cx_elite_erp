@@ -1,0 +1,306 @@
+<style>
+    #febs-saleParameters xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #febs-saleParameters xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="febs-saleParameters" lay-title="人事参数">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="parameter-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md8">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm">参数名称</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="parameterName" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label layui-form-label-sm">参数类别</label>
+                                        <div class="layui-input-inline">
+                                            <select name="parameterCategory">
+                                                <option value="">全部</option>
+                                                <option value="1">付款方式</option>
+                                                <option value="2">结算方式</option>
+                                                <option value="3">业务区域</option>
+                                                <option value="4">运输费用</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label layui-form-label-sm">状态</label>
+                                        <div class="layui-input-inline">
+                                            <select name="parameterState">
+                                                <option value="">全部</option>
+                                                <option value="1">启用</option>
+                                                <option value="2">禁用</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="layui-col-md4 layui-col-sm12 layui-col-xs12 table-action-area">
+                                <!--搜索按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                                    <i class="layui-icon">&#xe848;</i>搜索
+                                </div>
+                               <!-- 刷新表格按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain table-action" id="reset">
+                                    <i class="layui-icon">&#xe79b;</i>刷新
+                                </div>
+                                <!--添加按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "shiro:hasAnyPermissions="saleParameters:add" id="addTo">
+                                    <i class="layui-icon">&#xe78a;</i>新增
+                                </div>
+                                <!--删除按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "shiro:hasAnyPermissions="saleParameters:delete" id="deleteTo">
+                                    <i class="layui-icon">&#xe8a1;</i>删除
+                                </div>
+                                <!--修改按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                                     shiro:hasAnyPermissions="saleParameters:update" id="updateTo">
+                                    <i class="layui-icon">&#xe642;</i>修改
+                                </div>
+                               <!-- <div class="layui-btn layui-btn-sm layui-btn-primary table-action action-more"
+                                     shiro:hasAnyPermissions="saleParameters:add,saleParameters:update">
+                                    <i class="layui-icon">&#xe875;</i>
+                                </div>-->
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="saleParametersTable" lay-data="{id: 'saleParametersTable'}"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="parameter-status">
+    {{#
+    let parameterState = {
+    1: {title: '启用', color: 'green'},
+    2: {title: '禁用', color: 'volcano'}
+    }[d.parameterState];
+    }}
+    <span class="layui-badge febs-bg-{{parameterState.color}}">{{ parameterState.title }}</span>
+</script>
+<script type="text/html" id="saleParameters-parameterCategory">
+    {{#
+    let parameterCategory = {
+    1: {title: '付款方式'},
+    2: {title: '结算方式'},
+    3: {title: '业务区域'},
+    4: {title: '运输费用'}
+    }[d.parameterCategory];
+    }}
+    <span>{{ parameterCategory.title }}</span>
+</script>
+<script type="text/html" id="parameter-option">
+    <span shiro:lacksPermission="saleParameters:view,saleParameters:update,saleParameters:delete">
+        <span class="layui-badge-dot febs-bg-orange"></span> 无权限
+    </span>
+    <a lay-event="edit" shiro:hasPermission="saleParameters:update"><i
+            class="layui-icon febs-edit-area febs-blue">&#xe7a4;</i></a>
+    <a lay-event="del" shiro:hasPermission="saleParameters:delete"><i class="layui-icon febs-edit-area febs-red">&#xe7f9;</i></a>
+</script>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+            laydate = layui.laydate,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            dropdownMenu = layui.dropdownMenu,
+            $view = $('#febs-saleParameters'),
+            $query = $view.find('#query'),
+            $addTo = $view.find('#addTo'),
+            $updateTo = $view.find('#updateTo'),
+            $deleteTo = $view.find('#deleteTo'),
+            $reset = $view.find('#reset'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'createTime', type: null},
+            tableIns;
+
+        form.render();
+
+        initTable();
+
+
+
+        dropdownMenu.render({
+            elem: $view.find('.action-more'),
+            click: function (name, elem, event) {
+                let checkStatus = table.checkStatus('saleParametersTable');
+                if (name === 'add') {
+                    febs.modal.open('新增人事参数', 'personnel/saleParameters/add', {
+                        btn: ['提交', '重置'],
+                        area: $(window).width() <= 750 ? '95%' : '50%',
+                        yes: function (index, layero) {
+                            $('#saleParameters-add').find('#submit').trigger('click');
+                        },
+                        btn2: function () {
+                            $('#saleParameters-add').find('#reset').trigger('click');
+                            return false;
+                        }
+                    });
+                }
+                if (name === 'delete') {
+                    if (!checkStatus.data.length) {
+                        let checkStatus = table.checkStatus('loginLogTable');
+                        febs.alert.warn('请选择需要删除的数据');
+                    } else {
+                        febs.modal.confirm('删除参数信息', '确定删除？', function () {
+                            let ids = [];
+                            layui.each(checkStatus.data, function (key, item) {
+                                ids.push(item.id)
+                            });
+                            deleteSaleParameters(ids.join(','));
+                        });
+                    }
+                }
+            },
+            options: [{
+                name: 'add',
+                title: '新增',
+                perms: 'saleParameters:add'
+            }, {
+                name: 'delete',
+                title: '删除',
+                perms: 'saleParameters:delete'
+            }]
+        });
+
+        table.on('tool(saleParametersTable)', function (obj) {
+            let data = obj.data,
+                layEvent = obj.event;
+            if (layEvent === 'del') {
+                febs.modal.confirm('删除参数信息', '确定删除？', function () {
+                    deleteSaleParameters(data.id);
+                });
+            }
+            if (layEvent === 'edit') {
+                febs.modal.open('修改参数', 'personnel/saleParameters/update/' + data.id, {
+                    area: $(window).width() <= 750 ? '90%' : '50%',
+                    btn: ['提交', '取消'],
+                    yes: function (index, layero) {
+                        $('#saleParameters-update').find('#submit').trigger('click');
+                    },
+                    btn2: function () {
+                        layer.closeAll();
+                    }
+                });
+            }
+        });
+
+        table.on('sort(saleParametersTable)', function (obj) {
+            sortObject = obj;
+            tableIns.reload({
+                initSort: obj,
+                where: $.extend(getQueryParams(), {
+                    field: obj.field,
+                    order: obj.type
+                })
+            });
+        });
+
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        $reset.on('click', function () {
+            $searchForm[0].reset();
+            tableIns.reload({where: getQueryParams(), page: {curr: 1}});
+        });
+        $addTo.on('click', function () {
+            febs.modal.open('新增销售参数', 'sale/saleParameters/add', {
+                btn: ['提交', '重置'],
+                area: $(window).width() <= 750 ? '95%' : '30%',
+                yes: function (index, layero) {
+                    $('#saleParameters-add').find('#submit').trigger('click');
+                },
+                btn2: function () {
+                    $('#saleParameters-add').find('#reset').trigger('click');
+                    return false;
+                }
+            });
+        });
+        $updateTo.on('click', function () {
+            let checkStatus = table.checkStatus('saleParametersTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要修改的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要修改的数据');
+            }else{
+                layui.each(checkStatus.data, function (key, item) {
+                    febs.modal.open('修改参数', 'sale/saleParameters/update/' + item.id, {
+                        area: $(window).width() <= 750 ? '90%' : '50%',
+                        btn: ['提交', '取消'],
+                        yes: function (index, layero) {
+                            $('#saleParameters-update').find('#submit').trigger('click');
+                        },
+                        btn2: function () {
+                            layer.closeAll();
+                        }
+                    });
+                });
+            }
+        });
+        $deleteTo.on('click', function () {
+            let checkStatus = table.checkStatus('saleParametersTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要删除的数据');
+            } else {
+                febs.modal.confirm('删除参数信息', '确定删除？', function () {
+                    let ids = [];
+                    layui.each(checkStatus.data, function (key, item) {
+                        ids.push(item.id)
+                    });
+                    deleteSaleParameters(ids.join(','));
+                });
+            }
+        });
+
+        function initTable() {
+            tableIns = febs.table.init({
+                elem: $view.find('table'),
+                id: 'saleParametersTable',
+                url: ctx + 'saleParameters/list',
+                cols: [[
+                    {type: 'checkbox'},
+                    {field:'number',title:'序列号',align:'center',width:100,templet:function (d) {
+                                        return d.LAY_INDEX;}},
+                    {title: '参数类别', templet: '#saleParameters-parameterCategory'},
+                    {field: 'parameterValue', title: '参数值', minWidth: 100},
+                    {field: 'parameterName', title: '参数名称', minWidth: 100},
+                    {field: 'parameterSort', title: '排序'},
+                    {title: '状态', templet: '#parameter-status'},
+                    {field: 'parameterRemarks', title: '备注'}
+                ]]
+            });
+        }
+
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+
+        function deleteSaleParameters(ids) {
+            febs.get(ctx + 'saleParameters/delete/' + ids, null, function () {
+                febs.alert.success('删除参数成功');
+                $query.click();
+            });
+        }
+
+    })
+
+</script>
