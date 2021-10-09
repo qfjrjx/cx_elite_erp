@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.sale.mapper.SaleCustomerProfileMapper">
+     <!--统计业务人员数量sql-->
+    <sql id="countSaleCustomerProfilesSql" >
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_sale_customer_profile scp
+        WHERE
+            1 = 1
+        <if test="saleCustomerProfile.personnelName != null and saleCustomerProfile.personnelName != ''">
+            AND scp.personnel_name = #{saleCustomerProfile.personnelName}
+        </if>
+        <if test="saleCustomerProfile.customerFullName != null and saleCustomerProfile.customerFullName != ''">
+            AND scp.customer_full_name = #{saleCustomerProfile.customerFullName}
+        </if>
+        <if test="saleCustomerProfile.customerAbbreviation != null and saleCustomerProfile.customerAbbreviation != ''">
+            AND scp.customer_abbreviation = #{saleCustomerProfile.customerAbbreviation}
+        </if>
+        <if test="saleCustomerProfile.customerCode != null and saleCustomerProfile.customerCode != ''">
+            AND scp.customer_code = #{saleCustomerProfile.customerCode}
+        </if>
+        <if test="saleCustomerProfile.customerContacts != null and saleCustomerProfile.customerContacts != ''">
+            AND scp.customer_contacts = #{saleCustomerProfile.customerContacts}
+        </if>
+        <if test="saleCustomerProfile.contactNumber != null and saleCustomerProfile.contactNumber != ''">
+            AND scp.contact_number = #{saleCustomerProfile.contactNumber}
+        </if>
+        <if test="saleCustomerProfile.customerState != null and saleCustomerProfile.customerState != ''">
+            AND scp.customer_state = #{saleCustomerProfile.customerState}
+        </if>
+        <if test="saleCustomerProfile.createdDateFrom != null and saleCustomerProfile.createdDateFrom !=''">
+            And scp.created_date &gt; #{saleCustomerProfile.createdDateFrom}
+        </if>
+        <if test="saleCustomerProfile.createdDateTo!= null and saleCustomerProfile.createdDateTo !=''">
+            And scp.created_date &lt; #{saleCustomerProfile.createdDateTo}
+        </if>
+        <if test="saleCustomerProfile.abbreviationOfFullName!= null and saleCustomerProfile.abbreviationOfFullName !=''">
+            And getPY(scp.customer_full_name) like CONCAT('%',#{saleCustomerProfile.abbreviationOfFullName,jdbcType=VARCHAR},'%')
+        </if>
+    </sql>
+    <!--分页查询业务人员sql-->
+    <sql id="findSaleCustomerProfilesSql" >
+        SELECT
+            scp.id,
+            scp.personnel_id personnelId,
+            scp.personnel_name personnelName,
+            scp.customer_full_name customerFullName,
+            scp.customer_abbreviation customerAbbreviation,
+            scp.work_telephone workTelephone,
+            scp.unit_fax unitFax,
+            scp.customer_contacts customerContacts,
+            scp.contact_number contactNumber,
+            scp.customer_mail customerMail,
+            scp.unit_address unitAddress,
+            scp.customer_state customerState,
+            scp.customer_remarks customerRemarks,
+            scp.bank_of_deposit bankOfDeposit,
+            scp.bank_account bankAccount,
+            scp.unit_tax_no unitTaxNo,
+            scp.billing_telephone billingTelephone,
+            scp.billing_address billingAddress,
+            scp.customer_consignee customerConsignee,
+            scp.receiving_telephone receivingTelephone,
+            scp.postal_code postalCode,
+            scp.receiving_address receivingAddress,
+            scp.created_date createdDate,
+            scp.customer_code customerCode
+        FROM
+            jr_sale_customer_profile scp
+        WHERE
+            1 = 1
+        <if test="saleCustomerProfile.personnelName != null and saleCustomerProfile.personnelName != ''">
+            AND scp.personnel_name = #{saleCustomerProfile.personnelName}
+        </if>
+        <if test="saleCustomerProfile.customerFullName != null and saleCustomerProfile.customerFullName != ''">
+            AND scp.customer_full_name = #{saleCustomerProfile.customerFullName}
+        </if>
+        <if test="saleCustomerProfile.customerAbbreviation != null and saleCustomerProfile.customerAbbreviation != ''">
+            AND scp.customer_abbreviation = #{saleCustomerProfile.customerAbbreviation}
+        </if>
+        <if test="saleCustomerProfile.customerCode != null and saleCustomerProfile.customerCode != ''">
+            AND scp.customer_code = #{saleCustomerProfile.customerCode}
+        </if>
+        <if test="saleCustomerProfile.customerContacts != null and saleCustomerProfile.customerContacts != ''">
+            AND scp.customer_contacts = #{saleCustomerProfile.customerContacts}
+        </if>
+        <if test="saleCustomerProfile.contactNumber != null and saleCustomerProfile.contactNumber != ''">
+            AND scp.contact_number = #{saleCustomerProfile.contactNumber}
+        </if>
+        <if test="saleCustomerProfile.customerState != null and saleCustomerProfile.customerState != ''">
+            AND scp.customer_state = #{saleCustomerProfile.customerState}
+        </if>
+        <if test="saleCustomerProfile.createdDateFrom != null and saleCustomerProfile.createdDateFrom !=''">
+            And scp.created_date &gt; #{saleCustomerProfile.createdDateFrom}
+        </if>
+        <if test="saleCustomerProfile.createdDateTo!= null and saleCustomerProfile.createdDateTo !=''">
+            And scp.created_date &lt; #{saleCustomerProfile.createdDateTo}
+        </if>
+        <if test="saleCustomerProfile.abbreviationOfFullName!= null and saleCustomerProfile.abbreviationOfFullName !=''">
+            And getPY(scp.customer_full_name) like CONCAT('%',#{saleCustomerProfile.abbreviationOfFullName,jdbcType=VARCHAR},'%')
+        </if>
+    </sql>
+    <!--统计业务人员数量-->
+    <select id="countSaleCustomerProfiles" parameterType="com.erp.sale.entity.SaleCustomerProfile" resultType="long">
+        <include refid="countSaleCustomerProfilesSql"/>
+    </select>
+    <!--分页查询业务人员-->
+    <select id="findSaleCustomerProfilesPage" parameterType="com.erp.sale.entity.SaleCustomerProfile" resultType="com.erp.sale.entity.SaleCustomerProfile">
+        <include refid="findSaleCustomerProfilesSql"/>
+    </select>
+    <!--回显查询业务人员名称-->
+    <select id="querySaleCustomerProfile" resultType="com.erp.sale.entity.SaleCustomerProfile">
+        SELECT
+            scp.id,
+            scp.personnel_id personnelId,
+            scp.personnel_name personnelName,
+            scp.customer_full_name customerFullName,
+            scp.customer_abbreviation customerAbbreviation,
+            scp.work_telephone workTelephone,
+            scp.unit_fax unitFax,
+            scp.customer_contacts customerContacts,
+            scp.contact_number contactNumber,
+            scp.customer_mail customerMail,
+            scp.unit_address unitAddress,
+            scp.customer_state customerState,
+            scp.customer_remarks customerRemarks,
+            scp.bank_of_deposit bankOfDeposit,
+            scp.bank_account bankAccount,
+            scp.unit_tax_no unitTaxNo,
+            scp.billing_telephone billingTelephone,
+            scp.billing_address billingAddress,
+            scp.customer_consignee customerConsignee,
+            scp.receiving_telephone receivingTelephone,
+            scp.postal_code postalCode,
+            scp.receiving_address receivingAddress,
+            scp.created_date createdDate,
+            scp.customer_code customerCode
+        FROM
+            jr_sale_customer_profile scp
+        ORDER BY
+            scp.created_date DESC
+            LIMIT 1;
+    </select>
+  <!-- 修改回显查询-->
+    <select id="findSaleCustomerProfileById" parameterType="long" resultType="com.erp.sale.entity.SaleCustomerProfile">
+        SELECT
+            scp.id,
+            scp.personnel_id personnelId,
+            scp.personnel_name personnelName,
+            scp.customer_full_name customerFullName,
+            scp.customer_abbreviation customerAbbreviation,
+            scp.work_telephone workTelephone,
+            scp.unit_fax unitFax,
+            scp.customer_contacts customerContacts,
+            scp.contact_number contactNumber,
+            scp.customer_mail customerMail,
+            scp.unit_address unitAddress,
+            scp.customer_state customerState,
+            scp.customer_remarks customerRemarks,
+            scp.bank_of_deposit bankOfDeposit,
+            scp.bank_account bankAccount,
+            scp.unit_tax_no unitTaxNo,
+            scp.billing_telephone billingTelephone,
+            scp.billing_address billingAddress,
+            scp.customer_consignee customerConsignee,
+            scp.receiving_telephone receivingTelephone,
+            scp.postal_code postalCode,
+            scp.receiving_address receivingAddress,
+            scp.created_date createdDate,
+            scp.customer_code customerCode
+        FROM
+            jr_sale_customer_profile scp
+        WHERE
+            scp.id = #{id}
+    </select>
+
+</mapper>

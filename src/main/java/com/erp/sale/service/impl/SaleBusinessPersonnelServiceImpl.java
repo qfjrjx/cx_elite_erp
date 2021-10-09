@@ -74,4 +74,10 @@ public class SaleBusinessPersonnelServiceImpl extends ServiceImpl<SaleBusinessPe
 
         return baseMapper.findSaleBusinessPersonnelById(id);
     }
+
+    @Override
+    public List<SaleBusinessPersonnel> queryBusinessPersonnel() {
+
+        return baseMapper.queryBusinessPersonnel();
+    }
 }

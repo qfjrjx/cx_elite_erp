@@ -8,6 +8,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * 业务人员表
 
@@ -28,4 +30,6 @@ public interface SaleBusinessPersonnelMapper extends BaseMapper<SaleBusinessPers
     SaleBusinessPersonnel findSaleBusinessPersonnelById(@Param("id") Long id);
 
     void saveOrUpdate(@Param("saleBusinessPersonnel") SaleBusinessPersonnel saleBusinessPersonnel);
+
+    List<SaleBusinessPersonnel> queryBusinessPersonnel();
 }

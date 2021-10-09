@@ -1,0 +1,368 @@
+<style>
+    #febs-saleCustomerProfile xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #febs-saleCustomerProfile xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+
+/*    .layui-form-item .layui-input-inline {
+        width: 100px;
+    }*/
+
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="febs-saleCustomerProfile" lay-title="客户档案">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="parameter-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md8">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm">业&nbsp;&nbsp;务&nbsp;员</label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <select id="personnelName"  name="personnelName" lay-verify="required" class="layui-form-select" >
+                                                <option value="" >全部</option>
+                                                <option th:each="saleBusiness:${saleBusiness}" th:value="${saleBusiness.personnelName}">[[${saleBusiness.personnelName}]]</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm" >客户全称</label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <input type="text" name="customerFullName" autocomplete="off" style="width: 120px" class="layui-input" >
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm" >客户简称</label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <input type="text" name="customerAbbreviation" autocomplete="off" style="width: 110px" class="layui-input" >
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm" >全称简拼</label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <input type="text" name="abbreviationOfFullName" autocomplete="off" style="width: 110px" class="layui-input" >
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm" >客户编码</label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <input type="text" name="customerCode" autocomplete="off" style="width: 110px" class="layui-input" >
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm" >联&nbsp;&nbsp;系&nbsp;人</label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <input type="text" name="customerContacts" autocomplete="off" style="width: 120px" class="layui-input" >
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm" >联系电话</label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <input type="text" name="contactNumber" autocomplete="off" style="width: 110px" class="layui-input" >
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label layui-form-label-sm">状&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;态</label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <select name="customerState">
+                                                <option value="">全部</option>
+                                                <option value="1">启用</option>
+                                                <option value="2">禁用</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label layui-form-label-sm">建档日期</label>
+                                        <div class="layui-input-block">
+                                            <input type="text" name="signedTime" id="signedTime" class="layui-input createTime">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md4 layui-col-sm12 layui-col-xs12 table-action-area">
+                                <!--搜索按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                                    <i class="layui-icon">&#xe848;</i>搜索
+                                </div>
+                               <!-- 刷新表格按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain table-action" id="reset">
+                                    <i class="layui-icon">&#xe79b;</i>刷新
+                                </div>
+                                <!--添加按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "shiro:hasAnyPermissions="saleCustomerProfile:add" id="addTo">
+                                    <i class="layui-icon">&#xe78a;</i>新增
+                                </div>
+                                <!--删除按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "shiro:hasAnyPermissions="saleCustomerProfile:delete" id="deleteTo">
+                                    <i class="layui-icon">&#xe8a1;</i>删除
+                                </div>
+                                <!--修改按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                                     shiro:hasAnyPermissions="saleCustomerProfile:update" id="updateTo">
+                                    <i class="layui-icon">&#xe642;</i>修改
+                                </div>
+                                <!--修改按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action"
+                                     shiro:hasAnyPermissions="saleCustomerProfile:export" id="exportTo">
+                                    <i class="layui-icon">&#xe7a8;</i>导出
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="saleCustomerProfileTable" lay-data="{id: 'saleCustomerProfileTable'}"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="customer-state">
+    {{#
+    let customerState = {
+    1: {title: '启用', color: 'green'},
+    2: {title: '禁用', color: 'volcano'}
+    }[d.customerState];
+    }}
+    <span class="layui-badge febs-bg-{{customerState.color}}">{{ customerState.title }}</span>
+</script>
+<script type="text/html" id="saleCustomerProfile-parameterCategory">
+    {{#
+    let parameterCategory = {
+    1: {title: '付款方式'},
+    2: {title: '结算方式'},
+    3: {title: '业务区域'},
+    4: {title: '运输费用'}
+    }[d.parameterCategory];
+    }}
+    <span>{{ parameterCategory.title }}</span>
+</script>
+<script type="text/html" id="parameter-option">
+    <span shiro:lacksPermission="saleCustomerProfile:view,saleCustomerProfile:update,saleCustomerProfile:delete">
+        <span class="layui-badge-dot febs-bg-orange"></span> 无权限
+    </span>
+    <a lay-event="detail" shiro:hasPermission="saleCustomerProfile:view"><i
+            class="layui-icon febs-edit-area febs-green">&#xe7a5;<font size="3px"></font></i>
+    </a>
+</script>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+            laydate = layui.laydate,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            dropdownMenu = layui.dropdownMenu,
+            $view = $('#febs-saleCustomerProfile'),
+            $query = $view.find('#query'),
+            $addTo = $view.find('#addTo'),
+            $updateTo = $view.find('#updateTo'),
+            $deleteTo = $view.find('#deleteTo'),
+            $reset = $view.find('#reset'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'createTime', type: null},
+            createdDateFrom,
+            createdDateTo,
+            tableIns;
+
+        form.render();
+
+        initTable();
+
+
+//日期同时绑定多个
+        lay('.createTime').each(function(){
+            laydate.render({
+                elem: this,
+                range: true,
+                trigger: 'click'
+            });
+        })
+        dropdownMenu.render({
+            elem: $view.find('.action-more'),
+            click: function (name, elem, event) {
+                let checkStatus = table.checkStatus('saleCustomerProfileTable');
+                if (name === 'add') {
+                    febs.modal.open('新增销售参数', 'personnel/saleCustomerProfile/add', {
+                        btn: ['提交', '重置'],
+                        area: $(window).width() <= 750 ? '95%' : '50%',
+                        yes: function (index, layero) {
+                            $('#saleCustomerProfile-add').find('#submit').trigger('click');
+                        },
+                        btn2: function () {
+                            $('#saleCustomerProfile-add').find('#reset').trigger('click');
+                            return false;
+                        }
+                    });
+                }
+                if (name === 'delete') {
+                    if (!checkStatus.data.length) {
+                        let checkStatus = table.checkStatus('loginLogTable');
+                        febs.alert.warn('请选择需要删除的数据');
+                    } else {
+                        febs.modal.confirm('删除参数信息', '确定删除？', function () {
+                            let ids = [];
+                            layui.each(checkStatus.data, function (key, item) {
+                                ids.push(item.id)
+                            });
+                            deleteSaleCustomerProfile(ids.join(','));
+                        });
+                    }
+                }
+            },
+            options: [{
+                name: 'add',
+                title: '新增',
+                perms: 'saleCustomerProfile:add'
+            }, {
+                name: 'delete',
+                title: '删除',
+                perms: 'saleCustomerProfile:delete'
+            }]
+        });
+
+        table.on('tool(saleCustomerProfileTable)', function (obj) {
+            let data = obj.data,
+                layEvent = obj.event;
+            if (layEvent === 'detail') {
+                febs.modal.view('客户档案信息', 'personnel/personnelArchives/detail/' + data.userId, {
+                    area: $(window).width() <= 750 ? '95%' : '50%'
+                });
+            }
+            if (layEvent === 'edit') {
+                febs.modal.open('修改参数', 'personnel/saleCustomerProfile/update/' + data.id, {
+                    area: $(window).width() <= 750 ? '90%' : '50%',
+                    btn: ['提交', '取消'],
+                    yes: function (index, layero) {
+                        $('#saleCustomerProfile-update').find('#submit').trigger('click');
+                    },
+                    btn2: function () {
+                        layer.closeAll();
+                    }
+                });
+            }
+        });
+
+        table.on('sort(saleCustomerProfileTable)', function (obj) {
+            sortObject = obj;
+            tableIns.reload({
+                initSort: obj,
+                where: $.extend(getQueryParams(), {
+                    field: obj.field,
+                    order: obj.type
+                })
+            });
+        });
+
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        $reset.on('click', function () {
+            $searchForm[0].reset();
+            createdDateFrom = null;
+            createdDateTo = null;
+            tableIns.reload({where: getQueryParams(), page: {curr: 1}});
+        });
+        $addTo.on('click', function () {
+            febs.modal.open('新增客户档案', 'sale/saleCustomerProfile/add', {
+                btn: ['提交', '重置'],
+                area: $(window).width() <= 750 ? '95%' : '40%',
+                yes: function (index, layero) {
+                    $('#saleCustomerProfile-add').find('#submit').trigger('click');
+                },
+                btn2: function () {
+                    $('#saleCustomerProfile-add').find('#reset').trigger('click');
+                    return false;
+                }
+            });
+        });
+        $updateTo.on('click', function () {
+            let checkStatus = table.checkStatus('saleCustomerProfileTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要修改的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要修改的数据');
+            }else{
+                layui.each(checkStatus.data, function (key, item) {
+                    febs.modal.open('修改参数', 'sale/saleCustomerProfile/update/' + item.id, {
+                        area: $(window).width() <= 750 ? '90%' : '50%',
+                        btn: ['提交', '取消'],
+                        yes: function (index, layero) {
+                            $('#saleCustomerProfile-update').find('#submit').trigger('click');
+                        },
+                        btn2: function () {
+                            layer.closeAll();
+                        }
+                    });
+                });
+            }
+        });
+        $deleteTo.on('click', function () {
+            let checkStatus = table.checkStatus('saleCustomerProfileTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要删除的数据');
+            } else {
+                febs.modal.confirm('删除参数信息', '确定删除？', function () {
+                    let ids = [];
+                    layui.each(checkStatus.data, function (key, item) {
+                        ids.push(item.id)
+                    });
+                    deleteSaleCustomerProfile(ids.join(','));
+                });
+            }
+        });
+
+        function initTable() {
+            tableIns = febs.table.init({
+                elem: $view.find('table'),
+                id: 'saleCustomerProfileTable',
+                url: ctx + 'saleCustomerProfile/list',
+                cols: [[
+                    {type: 'checkbox'},
+                    {field:'number',title:'序列号',align:'center',width:100,templet:function (d) {
+                                        return d.LAY_INDEX;}},
+                    {field: 'personnelName', title: '业务员', align:'center',minWidth: 100},
+                    {field: 'customerAbbreviation', title: '客户简称',align:'center', minWidth: 100},
+                    {field: 'customerFullName', title: '客户全称',align:'center', minWidth: 100},
+                    {field: 'customerContacts', title: '联系人',align:'center', minWidth: 100},
+                    {field: 'contactNumber', title: '联系电话', minWidth: 100},
+                    {field: 'customerMail', title: '电子邮箱', minWidth: 130},
+                    {title: '状态', templet: '#customer-state',align:'center', minWidth: 100},
+                    {field: 'createdDate', title: '建档日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.createdDate, "yyyy-MM-dd") }}</div>', minWidth: 110, sort: true},
+                    {field: 'customerRemarks', title: '备注', minWidth: 100},
+                    {field: 'customerCode', title: '客户编码',align:'center', minWidth: 90},
+                    {field: 'unitAddress', title: '客户地址', minWidth: 100},
+                    {title: '操作', toolbar: '#parameter-option', minWidth: 50}
+                ]]
+            });
+        }
+
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            let signedTime = params.signedTime;
+            if (signedTime) {
+                createdDateFrom = signedTime.split(' - ')[0];
+                createdDateTo = signedTime.split(' - ')[1];
+            }
+            params.createdDateFrom = createdDateFrom;
+            params.createdDateTo = createdDateTo;
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+
+        function deleteSaleCustomerProfile(ids) {
+            febs.get(ctx + 'saleCustomerProfile/delete/' + ids, null, function () {
+                febs.alert.success('删除信息成功');
+                $query.click();
+            });
+        }
+
+    })
+
+</script>

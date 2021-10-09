@@ -53,7 +53,7 @@ public interface ISaleBusinessPersonnelService extends IService<SaleBusinessPers
     /**
      * 删除
      *
-     * @param saleBusinessPersonnel saleBusinessPersonnel
+     * @param ids ids
      */
     void deleteSaleBusinessPersonnel(String[] ids);
     /**
@@ -62,4 +62,6 @@ public interface ISaleBusinessPersonnelService extends IService<SaleBusinessPers
      * @param id id
      */
     SaleBusinessPersonnel findSaleBusinessPersonnelById(Long id);
+
+    List<SaleBusinessPersonnel> queryBusinessPersonnel();
 }

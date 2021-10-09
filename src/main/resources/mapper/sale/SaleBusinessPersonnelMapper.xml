@@ -80,6 +80,17 @@
         where
             sbp.id = #{saleBusinessPersonnel.id}
     </update>
-
+    <select id="queryBusinessPersonnel" parameterType="com.erp.sale.entity.SaleBusinessPersonnel" resultType="com.erp.sale.entity.SaleBusinessPersonnel">
+        SELECT
+            sbp.id,
+            sbp.user_id userId,
+            sbp.personnel_number personnelNumber,
+            sbp.personnel_name personnelName,
+            sbp.personnel_region personnelRegion,
+            sbp.personnel_state personnelState,
+            sbp.personnel_remarks personnelRemarks
+        FROM
+            jr_sale_business_personnel sbp
+    </select>
 
 </mapper>

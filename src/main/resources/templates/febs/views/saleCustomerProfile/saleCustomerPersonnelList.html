@@ -1,0 +1,167 @@
+<style>
+    #febs-saleCustomerPersonnel xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #febs-saleCustomerPersonnel xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="febs-saleCustomerPersonnel" lay-title="业务人员">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="parameter-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md10">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm">工号</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="personnelNumber" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm">姓名</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="personnelName" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label layui-form-label-sm">状态</label>
+                                        <div class="layui-input-inline">
+                                            <select name="personnelState">
+                                                <option value="">全部</option>
+                                                <option value="1">启用</option>
+                                                <option value="2">禁用</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="layui-col-md2 layui-col-sm12 layui-col-xs12 table-action-area">
+                                <!--搜索按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                                    <i class="layui-icon">&#xe848;</i>搜索
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="saleCustomerPersonnelTable" lay-data="{id: 'saleCustomerPersonnelTable'}"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="personnel-state">
+    {{#
+    let personnelState = {
+    1: {title: '启用', color: 'green'},
+    2: {title: '禁用', color: 'volcano'}
+    }[d.personnelState];
+    }}
+    <span class="layui-badge febs-bg-{{personnelState.color}}">{{ personnelState.title }}</span>
+</script>
+<script type="text/html" id="parameter-option">
+    <span shiro:lacksPermission="saleCustomerPersonnel:view">
+        <span class="layui-badge-dot febs-bg-orange"></span> 无权限
+    </span>
+</script>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+            laydate = layui.laydate,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            dropdownMenu = layui.dropdownMenu,
+            $view = $('#febs-saleCustomerPersonnel'),
+            $query = $view.find('#query'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'createTime', type: null},
+            tableIns;
+
+        form.render();
+
+        initTable();
+
+
+
+        dropdownMenu.render({
+            elem: $view.find('.action-more'),
+            click: function (name, elem, event) {
+                let checkStatus = table.checkStatus('saleCustomerPersonnelTable');
+            },
+            options: []
+        });
+
+        table.on('tool(saleCustomerPersonnelTable)', function (obj) {
+            let data = obj.data,
+                layEvent = obj.event;
+        });
+
+        table.on('sort(saleCustomerPersonnelTable)', function (obj) {
+            sortObject = obj;
+            tableIns.reload({
+                initSort: obj,
+                where: $.extend(getQueryParams(), {
+                    field: obj.field,
+                    order: obj.type
+                })
+            });
+        });
+
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+        function initTable() {
+            tableIns = febs.table.init({
+                elem: $view.find('table'),
+                id: 'saleCustomerPersonnelTable',
+                url: ctx + 'saleBusinessPersonnel/list',
+                cols: [[
+                    {type: 'checkbox'},
+                    {field:'number',title:'序列号',align:'center',width:100,templet:function (d) {
+                                        return d.LAY_INDEX;}},
+                    {field: 'personnelNumber', title: '工号',align:'center', minWidth: 100},
+                    {field: 'personnelName', title: '姓名',align:'center', minWidth: 100},
+                    {field: 'parameterName',align:'center', title: '业务区域'},
+                    {title: '状态', templet: '#personnel-state',align:'center'},
+                    {field: 'personnelRemarks',align:'center', title: '备注'}
+                ]],done: function(res, curr, count){
+                    $('#febs-saleCustomerPersonnel').find('.layui-table-body').find("table" ).find("tbody").children("tr").on('dblclick',function(){
+                        var id = JSON.stringify($('#febs-saleCustomerPersonnel').find('.layui-table-body').find("table" ).find("tbody").find(".layui-table-hover").data('index'));
+                        var obj = res.data[id];
+                        var salePersonnelName = $("#salePersonnelName").val();
+                        var personnelId = $("#personnelId").val();
+                        if (personnelId!=null && personnelId!=""){
+                            $("#personnelId").attr("value","");
+                        }if (salePersonnelName!=null && salePersonnelName!=""){
+                            $("#salePersonnelName").attr("value","");
+                        }
+                        $("#salePersonnelName").attr("value",obj.personnelName);
+                        $("#personnelId").attr("value",obj.id);
+
+                       /* var entryDate = layui.util.toDateString(obj.entryDate, "yyyy-MM-dd")
+                        $("#mobilityEntryTime").attr("value",entryDate);*/
+
+                        parent.layer.close(layer.index)
+
+                    })
+
+                }
+            });
+        }
+
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+    })
+
+</script>
