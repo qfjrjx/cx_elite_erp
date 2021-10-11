@@ -137,14 +137,20 @@
                         var id = JSON.stringify($('#febs-saleCustomerPersonnel').find('.layui-table-body').find("table" ).find("tbody").find(".layui-table-hover").data('index'));
                         var obj = res.data[id];
                         var salePersonnelName = $("#salePersonnelName").val();
+                        var salePersonnelNames = $("#salePersonnelNames").val();
                         var personnelId = $("#personnelId").val();
                         if (personnelId!=null && personnelId!=""){
                             $("#personnelId").attr("value","");
                         }if (salePersonnelName!=null && salePersonnelName!=""){
                             $("#salePersonnelName").attr("value","");
+                        }if (salePersonnelNames!=null && salePersonnelNames!=""){
+                            $("#salePersonnelNames").attr("value","");
                         }
+                        /*业务人员名称添加回填*/
                         $("#salePersonnelName").attr("value",obj.personnelName);
                         $("#personnelId").attr("value",obj.id);
+                        /*业务人员名称修改回填*/
+                        $("#salePersonnelNames").val(obj.personnelName);
 
                        /* var entryDate = layui.util.toDateString(obj.entryDate, "yyyy-MM-dd")
                         $("#mobilityEntryTime").attr("value",entryDate);*/

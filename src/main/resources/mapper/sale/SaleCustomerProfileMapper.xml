@@ -175,5 +175,78 @@
         WHERE
             scp.id = #{id}
     </select>
+   <!--修改-->
+    <update id="saveOrUpdate" parameterType="com.erp.sale.entity.SaleCustomerProfile" >
+        update jr_sale_customer_profile scp
+        <set >
+            <if test="saleCustomerProfile.personnelName != null" >
+                scp.personnel_name = #{saleCustomerProfile.personnelName},
+            </if>
+            <if test="saleCustomerProfile.customerState != null" >
+                scp.customer_state = #{saleCustomerProfile.customerState},
+            </if>
+            <if test="saleCustomerProfile.customerFullName != null" >
+                scp.customer_full_name = #{saleCustomerProfile.customerFullName},
+            </if>
+            <if test="saleCustomerProfile.customerAbbreviation != null" >
+                scp.customer_abbreviation = #{saleCustomerProfile.customerAbbreviation},
+            </if>
+            <if test="saleCustomerProfile.workTelephone != null" >
+                scp.work_telephone = #{saleCustomerProfile.workTelephone},
+            </if>
+            <if test="saleCustomerProfile.unitFax != null" >
+                scp.unit_fax = #{saleCustomerProfile.unitFax},
+            </if>
+            <if test="saleCustomerProfile.customerContacts != null" >
+                scp.customer_contacts = #{saleCustomerProfile.customerContacts},
+            </if>
+            <if test="saleCustomerProfile.contactNumber != null" >
+                scp.contact_number = #{saleCustomerProfile.contactNumber},
+            </if>
+            <if test="saleCustomerProfile.customerMail != null" >
+                scp.customer_mail = #{saleCustomerProfile.customerMail},
+            </if>
+            <if test="saleCustomerProfile.unitAddress != null" >
+                scp.unit_address = #{saleCustomerProfile.unitAddress},
+            </if>
+            <if test="saleCustomerProfile.customerRemarks != null" >
+                scp.customer_remarks = #{saleCustomerProfile.customerRemarks},
+            </if>
+            <if test="saleCustomerProfile.bankOfDeposit != null" >
+                scp.bank_of_deposit = #{saleCustomerProfile.bankOfDeposit},
+            </if>
+            <if test="saleCustomerProfile.bankAccount != null" >
+                scp.bank_account = #{saleCustomerProfile.bankAccount},
+            </if>
+            <if test="saleCustomerProfile.unitTaxNo != null" >
+                scp.unit_tax_no = #{saleCustomerProfile.unitTaxNo},
+            </if>
+            <if test="saleCustomerProfile.billingTelephone != null" >
+                scp.billing_telephone = #{saleCustomerProfile.billingTelephone},
+            </if>
+            <if test="saleCustomerProfile.billingAddress != null" >
+                scp.billing_address = #{saleCustomerProfile.billingAddress},
+            </if>
+            <if test="saleCustomerProfile.customerConsignee != null" >
+                scp.customer_consignee = #{saleCustomerProfile.customerConsignee},
+            </if>
+            <if test="saleCustomerProfile.receivingTelephone != null" >
+                scp.receiving_telephone = #{saleCustomerProfile.receivingTelephone},
+            </if>
+            <if test="saleCustomerProfile.postalCode != null" >
+                scp.postal_code = #{saleCustomerProfile.postalCode},
+            </if>
+            <if test="saleCustomerProfile.receivingAddress != null" >
+                scp.receiving_address = #{saleCustomerProfile.receivingAddress},
+            </if>
+            <if test="saleCustomerProfile.receivingAddress != null" >
+                scp.receiving_address = #{saleCustomerProfile.receivingAddress},
+            </if>
+            <if test="saleCustomerProfile.updateCreatedDate != null" >
+                scp.update_created_date = #{saleCustomerProfile.updateCreatedDate},
+            </if>
+        </set>
+        where scp.id = #{saleCustomerProfile.id}
+    </update>
 
 </mapper>

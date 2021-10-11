@@ -16,6 +16,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -118,7 +120,17 @@ public class SaleCustomerProfileServiceImpl extends ServiceImpl<SaleCustomerProf
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateSaleCustomerProfile(SaleCustomerProfile saleCustomerProfile) {
-        this.saveOrUpdate(saleCustomerProfile);
+        Date date = null;
+        Date createTime = new Date();
+        DateFormat format=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String str = format.format(createTime);
+        try {
+            date = format.parse(str);
+            saleCustomerProfile.setUpdateCreatedDate(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        baseMapper.saveOrUpdate(saleCustomerProfile);
     }
 
     @Override

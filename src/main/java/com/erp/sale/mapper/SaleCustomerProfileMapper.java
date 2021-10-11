@@ -28,4 +28,6 @@ public interface SaleCustomerProfileMapper extends BaseMapper<SaleCustomerProfil
     SaleCustomerProfile querySaleCustomerProfile();
 
     SaleCustomerProfile findSaleCustomerProfileById(@Param("id") Long id);
+
+    void saveOrUpdate(@Param("saleCustomerProfile")SaleCustomerProfile saleCustomerProfile);
 }

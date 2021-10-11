@@ -130,7 +130,19 @@ public class ViewController {
         SaleCustomerProfile saleCustomerProfile = saleCustomerProfileService.findSaleCustomerProfileById(id);
         model.addAttribute("saleCustomerProfile", saleCustomerProfile);
     }
+    //业务人员查阅
+    @GetMapping("saleCustomerProfileConsult/detail/{id}")
+    @RequiresPermissions("saleCustomerProfile:view")
+    public String saleCustomerProfileConsult(@PathVariable Long id, Model model) {
+        saleCustomerProfileConsultModel(id, model, false);
+        return FebsUtil.view("saleCustomerProfile/saleCustomerProfileConsult");
+    }
+    //业务人员查阅回填
+    private void saleCustomerProfileConsultModel(Long id, Model model, Boolean transform) {
 
+        SaleCustomerProfile saleCustomerProfile = saleCustomerProfileService.findSaleCustomerProfileById(id);
+        model.addAttribute("saleCustomerProfile", saleCustomerProfile);
+    }
     /* 客户档案模块结束 */
     //双击跳到客户档案页面
     @GetMapping("saleCustomerPersonnelList")

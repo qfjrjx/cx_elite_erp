@@ -162,6 +162,7 @@
             $addTo = $view.find('#addTo'),
             $updateTo = $view.find('#updateTo'),
             $deleteTo = $view.find('#deleteTo'),
+            $exportTo = $view.find('#exportTo'),
             $reset = $view.find('#reset'),
             $searchForm = $view.find('form'),
             sortObject = {field: 'createTime', type: null},
@@ -229,20 +230,8 @@
             let data = obj.data,
                 layEvent = obj.event;
             if (layEvent === 'detail') {
-                febs.modal.view('客户档案信息', 'personnel/personnelArchives/detail/' + data.userId, {
+                febs.modal.view('客户档案信息', 'sale/saleCustomerProfileConsult/detail/' + data.id, {
                     area: $(window).width() <= 750 ? '95%' : '50%'
-                });
-            }
-            if (layEvent === 'edit') {
-                febs.modal.open('修改参数', 'personnel/saleCustomerProfile/update/' + data.id, {
-                    area: $(window).width() <= 750 ? '90%' : '50%',
-                    btn: ['提交', '取消'],
-                    yes: function (index, layero) {
-                        $('#saleCustomerProfile-update').find('#submit').trigger('click');
-                    },
-                    btn2: function () {
-                        layer.closeAll();
-                    }
                 });
             }
         });
@@ -303,6 +292,12 @@
                 });
             }
         });
+        $exportTo.on('click', function () {
+            let params = getQueryParams();
+            params.pageSize = $view.find(".layui-laypage-limits option:selected").val();
+            params.pageNum = $view.find(".layui-laypage-em").next().html();
+            febs.download(ctx + 'saleCustomerProfile/excel', params, '客户档案表.xlsx');
+        });
         $deleteTo.on('click', function () {
             let checkStatus = table.checkStatus('saleCustomerProfileTable');
             if (!checkStatus.data.length) {
@@ -335,7 +330,7 @@
                     {field: 'customerMail', title: '电子邮箱', minWidth: 130},
                     {title: '状态', templet: '#customer-state',align:'center', minWidth: 100},
                     {field: 'createdDate', title: '建档日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.createdDate, "yyyy-MM-dd") }}</div>', minWidth: 110, sort: true},
-                    {field: 'customerRemarks', title: '备注', minWidth: 100},
+                    {field: 'customerRemarks', title: '备注', minWidth: 110},
                     {field: 'customerCode', title: '客户编码',align:'center', minWidth: 90},
                     {field: 'unitAddress', title: '客户地址', minWidth: 100},
                     {title: '操作', toolbar: '#parameter-option', minWidth: 50}

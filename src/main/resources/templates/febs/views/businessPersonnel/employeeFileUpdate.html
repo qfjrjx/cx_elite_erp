@@ -1,0 +1,271 @@
+<style>
+    #febs-employeeFileUpdate xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #febs-employeeFileUpdate xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="febs-employeeFileUpdate" lay-title="员工档案">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="parameter-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md11">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm">工号</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="jobNumber" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm">姓名</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="userName" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label layui-form-label-sm">部门</label>
+                                        <div class="layui-input-inline" id="receive-add-dept" name="departmentName">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label layui-form-label-sm">状态</label>
+                                        <div class="layui-input-inline">
+                                            <select name="userState">
+                                                <option value=""></option>
+                                                <option value="1">在职</option>
+                                                <option value="2">离职</option>
+                                                <option value="3">休假</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="layui-col-md1 layui-col-sm12 layui-col-xs12 table-action-area">
+                                <!--搜索按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                                    <i class="layui-icon">&#xe848;</i>搜索
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="personnelArchivesTable" lay-data="{id: 'personnelArchivesTable'}"></table>
+                    <input id="uName" class="form-control" name="uName" type="hidden" value="">
+                    <input id="uNumber" class="form-control" name="uNumber" type="hidden" value="">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="user-status">
+    {{#
+    let userState = {
+    1: {title: '在职', color: 'green'},
+    2: {title: '离职', color: '#cc0066'},
+    3: {title: '休假', color: 'volcano'}
+    }[d.userState];
+    }}
+    <span class="layui-badge febs-bg-{{userState.color}}">{{ userState.title }}</span>
+</script>
+<script type="text/html" id="mobility-gender">
+    {{#
+    let gender = {
+    1: {title: '男'},
+    2: {title: '女'}
+    }[d.gender];
+    }}
+    <span>{{ gender.title }}</span>
+</script>
+<script type="text/html" id="parameter-option">
+    <span shiro:lacksPermission="personnelMobility:list">
+        <span class="layui-badge-dot febs-bg-orange"></span> 无权限
+    </span>
+</script>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+            laydate = layui.laydate,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            dropdownMenu = layui.dropdownMenu,
+            $view = $('#febs-employeeFileUpdate'),
+            $query = $view.find('#query'),
+            $reset = $view.find('#reset'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'createTime', type: null},
+            tableIns,
+            deptXmlSelect;
+
+        form.render();
+
+        initTable();
+
+
+        dropdownMenu.render({
+            elem: $view.find('.action-more'),
+            click: function (name, elem, event) {
+                let checkStatus = table.checkStatus('personnelArchivesTable');
+            },
+            options: []
+        });deptXmlSelect = xmSelect.render({
+            el: '#receive-add-dept',
+            model: {label: {type: 'text'}},
+            tree: {
+                show: true,
+                strict: false,
+                showLine: false,
+                clickCheck: true,
+                expandedKeys: [-1],
+            },
+            name: 'deptId',
+            theme: {
+                color: '#52c41a',
+            },
+            prop: {
+                value: 'id'
+            },
+            height: 'auto',
+            on: function(data){
+                if(data.isAdd){
+                    return data.change.slice(0, 1)
+                }
+            }
+        });
+        febs.get(ctx + 'dept/select/tree', null, function (data) {
+            deptXmlSelect.update(
+                data
+            )
+        });
+
+        table.on('sort(personnelArchivesTable)', function (obj) {
+            sortObject = obj;
+            tableIns.reload({
+                initSort: obj,
+                where: $.extend(getQueryParams(), {
+                    field: obj.field,
+                    order: obj.type
+                })
+            });
+        });
+        table.on('toolbar(personnelArchivesTable)', function(obj){
+            var checkStatus = table.checkStatus(obj.config.id); //获取选中行状态
+            alert(checkStatus)
+            switch(obj.event){
+                case 'getCheckData':
+                    var data = checkStatus.data; //获取选中行数据
+                    layer.alert(JSON.stringify(data));
+                    break;
+            };
+        });
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        $reset.on('click', function () {
+            $searchForm[0].reset();
+            sortObject.type = 'null';
+            deptXmlSelect.setValue(['']);
+            tableIns.reload({where: getQueryParams(true), page: {curr: 1}, initSort: sortObject});
+        });
+        function initTable() {
+            tableIns = febs.table.init({
+                elem: $view.find('table'),
+                id: 'personnelArchivesTable',
+                url: ctx + 'personnelReceiveArchivesMobility/list',
+                cols: [[
+                    {type: 'checkbox'},
+                    {field:'number',title:'序列号',align:'center',width:80,templet:function (d) {
+                                        return d.LAY_INDEX;}},
+                    {field: 'jobNumber', title: '工号',align:'center', minWidth: 50},
+                    {field: 'userName', title: '姓名',align:'center', minWidth: 50},
+                    {title: '性别', templet: '#mobility-gender',align:'center', minWidth: 50},
+                    {field: 'phone', title: '手机号',align:'center', minWidth: 100},
+                    {field: 'deptName', title: '部门',align:'center', minWidth: 70},
+                    {field: 'dutiesName', title: '职务',align:'center', minWidth: 70},
+                    {field: 'positionName', title: '岗位',align:'center', minWidth: 80},
+                    {field: 'identityArd', title: '身份证号', minWidth: 90},
+                    {field: 'birthdate', title: '出生日期',align:'center', minWidth: 120,templet:'<div>{{ layui.util.toDateString(d.birthdate, "yyyy-MM-dd") }}</div>', sort: true},
+                    {field: 'entryDate', title: '入职日期',align:'center', minWidth: 120,templet:'<div>{{ layui.util.toDateString(d.entryDate, "yyyy-MM-dd") }}</div>', sort: true},
+                    {title: '状态', templet: '#user-status',align:'center',minWidth: 50}
+                ]],done: function(res, curr, count){
+                    $('#febs-employeeFileUpdate').find('.layui-table-body').find("table" ).find("tbody").children("tr").on('dblclick',function(){
+                        var id = JSON.stringify($('#febs-employeeFileUpdate').find('.layui-table-body').find("table" ).find("tbody").find(".layui-table-hover").data('index'));
+                        var obj = res.data[id];
+                        var mobilityUserId = $("#mobilityUserId").val();
+                        var mobilityJobNumber = $("#mobilityJobNumber").val();
+                        var mobilityUserName = $("#mobilityUserName").val();
+                        var mobilityBirthdate = $("#mobilityBirthdate").val();
+                        var mobilityPhone = $("#mobilityPhone").val();
+                        var mobilityDepartmentName = $("#mobilityDepartmentName").val();
+                        var mobilityPositionName = $("#mobilityPositionName").val();
+                        var mobilityGroupingName = $("#mobilityGroupingName").val();
+                        var mobilityIdentityArd = $("#mobilityIdentityArd").val();
+                        var mobilityGender = $("#mobilityGender").val();
+                        var mobilityEntryTime = $("#mobilityEntryTime").val();
+                        if (mobilityUserId!=null && mobilityUserId!=""){
+                            $("#mobilityUserId").attr("value","");
+                        }if (mobilityJobNumber!=null && mobilityJobNumber!=""){
+                            $("#mobilityJobNumber").attr("value","");
+                        }if (mobilityUserName!=null && mobilityUserName!=""){
+                            $("#mobilityUserName").attr("value","");
+                        }if (mobilityBirthdate!=null && mobilityBirthdate!=""){
+                            $("#mobilityBirthdate").attr("value","");
+                        }if (mobilityPhone!=null && mobilityPhone!=""){
+                            $("#mobilityPhone").attr("value","");
+                        }if (mobilityDepartmentName!=null && mobilityDepartmentName!=""){
+                            $("#mobilityDepartmentName").attr("value","");
+                        }if (mobilityPositionName!=null && mobilityPositionName!=""){
+                            $("#mobilityPositionName").attr("value","");
+                        }if (mobilityGroupingName!=null && mobilityGroupingName!=""){
+                            $("#mobilityGroupingName").attr("value","");
+                        }if (mobilityIdentityArd!=null && mobilityIdentityArd!=""){
+                            $("#mobilityIdentityArd").attr("value","");
+                        }if (mobilityGender!=null && mobilityGender!=""){
+                            $("#mobilityGender").attr("value","");
+                        }if (mobilityEntryTime!=null && mobilityEntryTime!=""){
+                            $("#mobilityEntryTime").attr("value","");
+                        }
+                        $("#mobilityUserId").attr("value",obj.userId);
+                        $("#mobilityJobNumber").attr("value",obj.jobNumber);
+                        $("#mobilityUserName").attr("value",obj.userName);
+                        var birthdate = layui.util.toDateString(obj.birthdate, "yyyy-MM-dd")
+                        $("#mobilityBirthdate").attr("value",birthdate);
+                        $("#mobilityPhone").attr("value",obj.phone);
+                        $("#mobilityDepartmentName").attr("value",obj.deptName);
+                        $("#mobilityPositionName").attr("value",obj.positionName);
+                        $("#mobilityGroupingName").attr("value",obj.dutiesName);
+                        $("#mobilityIdentityArd").attr("value",obj.identityArd);
+                        $("#mobilityGender").attr("value",obj.gender);
+                        var entryDate = layui.util.toDateString(obj.entryDate, "yyyy-MM-dd")
+                        $("#mobilityEntryTime").attr("value",entryDate);
+
+                        parent.layer.close(layer.index)
+
+                    })
+
+                }
+
+            });
+        }
+
+        function getQueryParams(flag) {
+            deptId = deptXmlSelect.getValue('valueStr');
+            if (flag) {
+                deptId = '';
+            }
+            let params = $searchForm.serializeJson();
+            params.deptId = deptId;
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+    })
+</script>

@@ -107,9 +107,8 @@ public class SaleCustomerProfileController extends BaseController {
         return new FebsResponse().success();
     }
 
-    @ControllerEndpoint(operation = "修改SaleCustomerProfile", exceptionMessage = "导出Excel失败")
-    @PostMapping("saleCustomerProfile/excel")
-    @ResponseBody
+    @ControllerEndpoint(operation = "导出SaleCustomerProfile", exceptionMessage = "导出Excel失败")
+    @GetMapping("saleCustomerProfile/excel")
     @RequiresPermissions("saleCustomerProfile:export")
     public void export(QueryRequest queryRequest, SaleCustomerProfile saleCustomerProfile, HttpServletResponse response) {
         List<SaleCustomerProfile> saleCustomerProfiles = this.saleCustomerProfileService.findSaleCustomerProfiles(queryRequest, saleCustomerProfile).getRecords();
