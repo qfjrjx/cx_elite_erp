@@ -22,14 +22,14 @@
                                 <div class="layui-form-item">
                                     <div class="layui-inline" >
                                         <label class="layui-form-label layui-form-label-sm">姓名</label>
-                                        <div class="layui-input-inline">
-                                            <input type="text" name="staffName" autocomplete="off" class="layui-input">
+                                        <div class="layui-input-inline" style="width: 60px">
+                                            <input type="text" name="staffName" style="width: 100px" autocomplete="off" class="layui-input">
                                         </div>
                                     </div>
                                     <div class="layui-inline">
                                         <label class="layui-form-label layui-form-label-sm">状态</label>
-                                        <div class="layui-input-inline">
-                                            <select name="contractState">
+                                        <div class="layui-input-inline" style="width: 100px">
+                                            <select name="contractState" style="width: 110px">
                                                 <option value=""></option>
                                                 <option value="1">未到期</option>
                                                 <option value="2">已到期</option>
@@ -39,13 +39,13 @@
                                    <div class="layui-inline">
                                         <label class="layui-form-label layui-form-label-sm">签订时间</label>
                                         <div class="layui-input-inline">
-                                            <input type="text" name="signedTime" id="signedTime" class="layui-input createTime">
+                                            <input type="text" name="signedTime" style="width: 180px" id="signedTime" class="layui-input createTime">
                                         </div>
                                     </div>
                                     <div class="layui-inline">
                                        <label class="layui-form-label layui-form-label-sm">到期时间</label>
                                        <div class="layui-input-inline">
-                                           <input type="text" name="expireTime" id="expireTime" class="layui-input createTime">
+                                           <input type="text" name="expireTime" style="width: 180px" id="expireTime" class="layui-input createTime">
                                        </div>
                                    </div>
 
@@ -54,11 +54,11 @@
                             <div class="layui-col-md4 layui-col-sm12 layui-col-xs12 table-action-area">
                                 <!--搜索按钮-->
                                 <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
-                                    <i class="layui-icon">&#xe848;</i>
+                                    <i class="layui-icon">&#xe848;</i>搜索
                                 </div>
                                <!-- 刷新表格按钮-->
                                 <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain table-action" id="reset">
-                                    <i class="layui-icon">&#xe79b;</i>
+                                    <i class="layui-icon">&#xe79b;</i>刷新
                                 </div>
                                 <!--添加按钮-->
                                 <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "shiro:hasAnyPermissions="personnelContract:add" id="addTo">
