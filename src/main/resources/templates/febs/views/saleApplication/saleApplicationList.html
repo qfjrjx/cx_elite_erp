@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<style>
+    #febs-saleApplication xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #febs-saleApplication xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+</style>
+<body>
+<div class="layui-fluid layui-anim febs-anim" id="febs-saleApplication" lay-title="客户档案">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="parameter-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md12">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label ">申请交货日期</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="signedTime" id="signedTime" class="layui-input createTime">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label layui-form-label-sm">销售客户</label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                        <input type="text" name="customerName" id="customerName" lay-verify="required" ondblclick="dblclickCustomerName()"
+                                               autocomplete="off" class="layui-input" style="width: 110px" >
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm">业&nbsp;&nbsp;务&nbsp;员</label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <select id="salesmanName"  name="salesmanName" lay-verify="required" class="layui-form-select" >
+                                                <option value="" >全部</option>
+                                                <option th:each="saleBusiness:${saleBusiness}" th:value="${saleBusiness.personnelName}">[[${saleBusiness.personnelName}]]</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm" >单号</label>
+                                        <div class="layui-input-inline" style="width: 80px">
+                                            <input type="text" name="applicationNo" autocomplete="off" style="width: 110px" class="layui-input" >
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm" >产品名称</label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <input type="text" name="productName" autocomplete="off" style="width: 110px" class="layui-input" >
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm" >规格型号</label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <input type="text" name="specificationModel" autocomplete="off" style="width: 110px" class="layui-input" >
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="saleApplicationTable" lay-data="{id: 'saleApplicationTable'}"></table>
+
+                    <div><span style="margin-left: 845px;color: #f5222d" data-th-text="${quantityNameCount}"></span></div>
+                             <div class="layui-col-md6">
+                                <div class="layui-form-item"></div>
+                             </div>
+                            <div class="layui-col-md6 layui-col-sm12 layui-col-xs12 table-action-area">
+                                <!--搜索按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                                    <i class="layui-icon">&#xe848;</i>搜索
+                                </div>
+                                <!-- 刷新表格按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain table-action" id="reset">
+                                    <i class="layui-icon">&#xe79b;</i>刷新
+                                </div>
+                                <!--添加按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "shiro:hasAnyPermissions="saleApplication:add" id="addTo">
+                                    <i class="layui-icon">&#xe78a;</i>新增
+                                </div>
+                                <!--修改按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                                     shiro:hasAnyPermissions="saleApplication:update" id="updateTo">
+                                    <i class="layui-icon">&#xe642;</i>修改
+                                </div>
+                                <!--设计回复按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                                     shiro:hasAnyPermissions="saleApplication:design" id="designReply">
+                                    <i class="layui-icon layui-icon-chart-screen"></i>设计回复
+                                </div>
+                                <!--采购回复按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                                     shiro:hasAnyPermissions="saleApplication:purchase" id="purchaseReply">
+                                    <i class="layui-icon layui-icon-form"></i>采购回复
+                                </div>
+                                <!--生产回复按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                                     shiro:hasAnyPermissions="saleApplication:production" id="productionReply">
+                                    <i class="layui-icon layui-icon-component"></i>生产回复
+                                </div>
+                                <!--装配回复按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                                     shiro:hasAnyPermissions="saleApplication:assembling" id="assemblingReply">
+                                    <i class="layui-icon layui-icon-util"></i>装配回复
+                                </div>
+
+                            </div>
+                </div>
+            </div>
+         </div>
+     </div>
+</div>
+<script type="text/html" id="customer-state">
+    {{#
+    let customerState = {
+    1: {title: '启用', color: 'green'},
+    2: {title: '禁用', color: 'volcano'}
+    }[d.customerState];
+    }}
+    <span class="layui-badge febs-bg-{{customerState.color}}">{{ customerState.title }}</span>
+</script>
+<script type="text/html" id="saleApplication-parameterCategory">
+    {{#
+    let parameterCategory = {
+    1: {title: '付款方式'},
+    2: {title: '结算方式'},
+    3: {title: '业务区域'},
+    4: {title: '运输费用'}
+    }[d.parameterCategory];
+    }}
+    <span>{{ parameterCategory.title }}</span>
+</script>
+<script type="text/html" id="parameter-option">
+    {{# if(d.configureName != null){ }}
+    <a lay-event="see" shiro:hasPermission="saleApplication:dispose">查看</a>
+    {{# } }}
+</script>
+<script type="text/html" id="enclosure-name">
+    {{# if(d.enclosureName != null){ }}
+    <a lay-event="browse" shiro:hasPermission="saleApplication:browse">浏览</a>
+    <a lay-event="download" shiro:hasPermission="saleApplication:download">下载</a>
+    {{# } }}
+</script>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+            laydate = layui.laydate,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            dropdownMenu = layui.dropdownMenu,
+            $view = $('#febs-saleApplication'),
+            $query = $view.find('#query'),
+            $addTo = $view.find('#addTo'),//添加
+            $updateTo = $view.find('#updateTo'),//修改
+            $designReply = $view.find('#designReply'),//设计回复
+            $purchaseReply = $view.find('#purchaseReply'),//采购回复
+            $productionReply = $view.find('#productionReply'),//生产回复
+            $assemblingReply = $view.find('#assemblingReply'),//装配回复
+            $reset = $view.find('#reset'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'createTime', type: null},
+            signedDateFrom,
+            signedDateTo,
+            tableIns;
+
+        form.render();
+
+        initTable();
+
+
+
+//日期同时绑定多个
+        lay('.createTime').each(function(){
+            laydate.render({
+                elem: this,
+                range: true,
+                trigger: 'click'
+            });
+        })
+        dropdownMenu.render({
+            elem: $view.find('.action-more'),
+            click: function (name, elem, event) {
+                let checkStatus = table.checkStatus('saleApplicationTable');
+                if (name === 'delete') {
+                    if (!checkStatus.data.length) {
+                        let checkStatus = table.checkStatus('loginLogTable');
+                        febs.alert.warn('请选择需要删除的数据');
+                    } else {
+                        febs.modal.confirm('删除参数信息', '确定删除？', function () {
+                            let ids = [];
+                            layui.each(checkStatus.data, function (key, item) {
+                                ids.push(item.id)
+                            });
+                            deleteSaleApplication(ids.join(','));
+                        });
+                    }
+                }
+            },
+            options: [{
+                name: 'add',
+                title: '新增',
+                perms: 'saleApplication:add'
+            }, {
+                name: 'delete',
+                title: '删除',
+                perms: 'saleApplication:delete'
+            }]
+        });
+        table.on('tool(saleApplicationTable)', function (obj) {
+            let data = obj.data,
+                layEvent = obj.event;
+            let fileName = data.enclosureName;
+               if (layEvent === 'see') {
+                  febs.modal.view('信息', 'sale/saleApplicationAllocation/detail/' + data.id, {
+                      btn: ['关闭'],
+                      area: $(window).width() <= 750 ? '95%' : '50%',
+                      yes: function (index, layero) {
+                          layer.closeAll();
+                      }
+                 });
+               }
+               if (layEvent === 'download') {
+                   window.location.href = encodeURI("saleDocumentFile/down/?fileName="+fileName);
+               }
+               if (layEvent === 'browse') {
+                 alert(1)
+               }
+        });
+
+        table.on('sort(saleApplicationTable)', function (obj) {
+            sortObject = obj;
+            tableIns.reload({
+                initSort: obj,
+                where: $.extend(getQueryParams(), {
+                    field: obj.field,
+                    order: obj.type
+                })
+            });
+        });
+
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        $reset.on('click', function () {
+            $searchForm[0].reset();
+            signedDateFrom = null;
+            signedDateTo = null;
+            $("#customerName").attr("value","");
+            tableIns.reload({where: getQueryParams(), page: {curr: 1}});
+        });
+        var dataTwo = new Array();
+        form.on('select(salesmanName)', function(data){
+            dataTwo.push(data.value)
+        });
+        $addTo.on('click', function () {
+            febs.modal.open('【销售申请】新增', 'sale/saleApplication/add', {
+                btn: ['增加行','删除行','全部删除','保存', '关闭'],
+                area: ["80%","60%"],
+                //closeBtn: 0, //不显示关闭按钮
+                yes: function (index, layero) {
+                    $('#saleApplication-add').find('#submit').trigger('click');
+                },
+                btn2: function () {
+                    let checkStatus = table.checkStatus('deviceweihu-table');
+                    if (checkStatus.data.length < 1) {
+                        layer.alert("请选择一条数据操作");
+                        return false;
+                    }else {
+                        layui.each(checkStatus.data, function (key, item) {
+                            alert(item.id)
+                        });
+                    }
+                    $('#saleApplication-add').find('#reset').trigger('click');
+                    return false;
+                },
+                btn3: function () {
+                    var dataBak = [];
+                    layui.table.reload('deviceweihu-table',{
+                        data:dataBak
+                    });
+                  return false;
+                },
+                btn4: function () {
+                    var contImg = document.getElementById("span-img").innerText;
+                    var dataThree = new Array();
+                    var transferData = document.getElementById("transferData");
+                    var customerNameTwo = document.getElementById("customerNameTwo");
+                    var deviceweihuTable =  table.cache["deviceweihu-table"];
+                    for (i=0;i<deviceweihuTable.length;i++){
+                        var dataOne1={"productName":deviceweihuTable[i].productName,"specificationModel":deviceweihuTable[i].specificationModel,"parameterOption":deviceweihuTable[i].parameterOption,"companyName":deviceweihuTable[i].companyName,"quantityName":deviceweihuTable[i].quantityName,"explainName":deviceweihuTable[i].explainName};
+                        dataThree.push(dataOne1);
+                    }
+                    $.ajax({
+                        url: '/saleApplication/add',
+                        type:"post",
+                        data: {requestedDeliveryDate: transferData.value,customerName:customerNameTwo.value,salesmanName:JSON.stringify(dataTwo),dataTable:JSON.stringify(dataThree),contImg:contImg},
+                        success : function(res) {
+                            //$query.click();
+                            parent.location.reload();
+                        }
+                    });
+                    layer.closeAll();
+                },
+                btn5: function () {
+                    layer.closeAll();
+                }
+            });
+        });
+        $updateTo.on('click', function () {
+            let checkStatus = table.checkStatus('saleApplicationTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要修改的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要修改的数据');
+            }else{
+                layui.each(checkStatus.data, function (key, item) {
+                    febs.modal.open('【销售申请】修改', 'sale/saleApplication/update/' + item.applicationNo, {
+                        area: ["80%","60%"],
+                        btn: ['增加行','删除行','全部删除','保存', '关闭'],
+                        yes: function (index, layero) {
+                            var dataBak = [];   //定义一个空数组,用来存储之前编辑过的数据已经存放新数据
+                            var tableBak =  table.cache["saleApplication-table"]; //获取之前编辑过的全部数据，前提是编辑数据是要更新缓存，stock_add_table 为表格的id
+                            for (var i = 0; i < tableBak.length; i++) {
+                                dataBak.push(tableBak[i]);      //将之前的数组备份
+                            }
+                            //在尾部新增一行空数据，实现增行效果
+                            dataBak.push({
+                                "productName":"",
+                                "specificationModel":"",
+                                "configureName":"",
+                                "companyName":"",
+                                "quantityName":"",
+                                "explainName":""
+                            });
+                            table.reload("saleApplication-table",{
+                                data:dataBak   // 将新数据重新载入表格
+                            })
+                            return false;
+                        },
+                        btn2: function () {
+                            layer.closeAll();
+                        }
+                    });
+                });
+            }
+        });
+        //设计回复
+        $designReply.on('click', function () {
+            let checkStatus = table.checkStatus('saleApplicationTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要回复的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要回复的数据');
+            }else{
+                layui.each(checkStatus.data, function (key, item) {
+                    febs.modal.open('【销售申请】设计回复', 'sale/saleApplication/designReply/' + item.applicationNo, {
+                        area: ["80%","60%"],
+                        btn: ['保存', '关闭'],
+                        yes: function (index, layero) {
+
+                        },
+                        btn2: function () {
+                            layer.closeAll();
+                        }
+                    });
+                });
+            }
+        });
+        //采购回复
+        $purchaseReply.on('click', function () {
+            let checkStatus = table.checkStatus('saleApplicationTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要回复的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要回复的数据');
+            }else{
+                layui.each(checkStatus.data, function (key, item) {
+                    febs.modal.open('【销售申请】采购回复', 'sale/saleApplication/purchaseReply/' + item.applicationNo, {
+                        area: ["80%","60%"],
+                        btn: ['保存', '关闭'],
+                        yes: function (index, layero) {
+
+                        },
+                        btn2: function () {
+                            layer.closeAll();
+                        }
+                    });
+                });
+            }
+        });
+        //生产回复
+        $productionReply.on('click', function () {
+            let checkStatus = table.checkStatus('saleApplicationTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要回复的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要回复的数据');
+            }else{
+                layui.each(checkStatus.data, function (key, item) {
+                    febs.modal.open('【销售申请】生产回复', 'sale/saleApplication/productionReply/' + item.applicationNo, {
+                        area: ["80%","60%"],
+                        btn: ['保存', '关闭'],
+                        yes: function (index, layero) {
+
+                        },
+                        btn2: function () {
+                            layer.closeAll();
+                        }
+                    });
+                });
+            }
+        });
+        //装配回复
+        $assemblingReply.on('click', function () {
+            let checkStatus = table.checkStatus('saleApplicationTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要回复的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要回复的数据');
+            }else{
+                layui.each(checkStatus.data, function (key, item) {
+                    febs.modal.open('【销售申请】装配回复', 'sale/saleApplication/assemblingReply/' + item.applicationNo, {
+                        area: ["80%","60%"],
+                        btn: ['保存', '关闭'],
+                        yes: function (index, layero) {
+
+                        },
+                        btn2: function () {
+                            layer.closeAll();
+                        }
+                    });
+                });
+            }
+        });
+       /* $exportTo.on('click', function () {
+            let params = getQueryParams();
+            params.pageSize = $view.find(".layui-laypage-limits option:selected").val();
+            params.pageNum = $view.find(".layui-laypage-em").next().html();
+            febs.download(ctx + 'saleApplication/excel', params, '客户档案表.xlsx');
+        });*/
+        /*$deleteTo.on('click', function () {
+            let checkStatus = table.checkStatus('saleApplicationTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要删除的数据');
+            } else {
+                febs.modal.confirm('删除参数信息', '确定删除？', function () {
+                    let ids = [];
+                    layui.each(checkStatus.data, function (key, item) {
+                        ids.push(item.id)
+                    });
+                    deleteSaleApplication(ids.join(','));
+                });
+            }
+        });*/
+
+        function initTable() {
+            tableIns = febs.table.init({
+                elem: $view.find('table'),
+                id: 'saleApplicationTable',
+                url: ctx + 'saleApplication/list',
+                cols: [[
+                    {type: 'checkbox'},
+                    {field:'number',title:'', minWidth: 30,align:'center',templet:function (d) {
+                            return d.LAY_INDEX;}},
+                    {field: 'id', title: '编号',hide:true,sort: true},
+                    {field: 'requestedDeliveryDate', title: '申请交货日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.requestedDeliveryDate, "yyyy-MM-dd") }}</div>', minWidth: 115},
+                    {field: 'applicationNo', title: '申请单号',align:'center', minWidth: 105},
+                    {field: 'customerName', title: '客户',align:'center', minWidth: 90},
+                    {field: 'salesmanName', title: '业务员',align:'center', minWidth: 75},
+                    {field: 'productName', title: '产品名称', minWidth: 95},
+                    {field: 'specificationModel', title: '规格型号', minWidth: 90},
+                    {field: 'configureName', title: '配置', minWidth: 90,hide:true},
+                    {title: '配置', minWidth: 60,align:'center',toolbar: '#parameter-option'},
+                    {field: 'companyName', title: '单位', minWidth: 60,align:'center'},
+                    {field: 'quantityName', title: '数量', minWidth: 60,align:'center'},
+                    {title: '附件', minWidth: 90,align:'center',toolbar: '#enclosure-name'},
+                    {field: 'designReply', title: '设计回复', minWidth: 88,align:'center'},
+                    {field: 'purchaseReply', title: '采购回复', minWidth: 88,align:'center'},
+                    {field: 'productionReply', title: '生产回复', minWidth: 88,align:'center'},
+                    {field: 'assemblingReply', title: '装配回复', minWidth: 88,align:'center'},
+                    {field: 'explainName', title: '说明', minWidth: 72}
+                ]]
+            });
+        }
+
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            let signedTime = params.signedTime;
+            if (signedTime) {
+                signedDateFrom = signedTime.split(' - ')[0];
+                signedDateTo = signedTime.split(' - ')[1];
+            }
+            params.signedDateFrom = signedDateFrom;
+            params.signedDateTo = signedDateTo;
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+
+        function deleteSaleApplication(ids) {
+            febs.get(ctx + 'saleApplication/delete/' + ids, null, function () {
+                febs.alert.success('删除信息成功');
+                $query.click();
+            });
+        }
+    })
+    function dblclickCustomerName(){
+        layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
+            let $ = layui.$,
+                febs = layui.febs;
+
+            febs.modal.open('客户选择列表', 'sale/jumpSaleCustomerProfile', {
+                area:["75%","90%"],
+                yes: function (index, layero) {
+
+                }
+
+            });
+        });
+    }
+
+</script>
+</body>
+</html>

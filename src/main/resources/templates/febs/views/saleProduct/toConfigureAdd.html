@@ -1,0 +1,139 @@
+<style>
+    #toConfigure-add {
+        padding: 20px 25px 25px 0;
+    }
+</style>
+<div class="layui-fluid" id="toConfigure-add">
+    <form class="layui-form" action="" lay-filter="toConfigure-add-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require" >机器要求:</label>
+            <div class="layui-input-block">
+                <input type="text" name="machineRequirements" id="machineRequirements"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require">电脑配置:</label>
+            <div class="layui-input-block">
+                <input type="text" name="computerConfiguration" id="computerConfiguration"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">刀具大小:</label>
+            <div class="layui-input-block">
+                <input type="text" name="toolSize" id="toolSize"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">每小时产量:</label>
+            <div class="layui-input-block">
+                <input type="text" name="hourlyProduction" id="hourlyProduction"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">加工工序:</label>
+            <div class="layui-input-block">
+                <input type="text" name="processingProcedure"  id="processingProcedure"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">夹具要求:</label>
+            <div class="layui-input-block">
+                <input type="text" name="fixtureRequirements" id="fixtureRequirements"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">产品形状:</label>
+            <div class="layui-input-block">
+                <input type="text" name="productShape" id="productShape"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">产品尺寸:</label>
+            <div class="layui-input-block">
+                <input type="text" name="productSize" id="productSize"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">其他要求:</label>
+            <div class="layui-input-block">
+                <input type="text" name="otherRequirements" id="otherRequirements"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item febs-hide">
+            <button class="layui-btn" lay-submit="" lay-filter="toConfigure-add-form-submit" id="submit"></button>
+            <button type="reset" class="layui-btn" id="reset"></button>
+        </div>
+    </form>
+</div>
+
+<script>
+    layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
+        let $ = layui.$,
+            febs = layui.febs,
+            layer = layui.layer,
+            form = layui.form,
+            validate = layui.validate,
+            machineRequirementsOne = POPUP_DATA.machineRequirementsOne,
+            computerConfigurationOne = POPUP_DATA.computerConfigurationOne,
+            toolSizeOne = POPUP_DATA.toolSizeOne,
+            hourlyProductionOne = POPUP_DATA.hourlyProductionOne,
+            processingProcedureOne = POPUP_DATA.processingProcedureOne,
+            fixtureRequirementsOne = POPUP_DATA.fixtureRequirementsOne,
+            productShapeOne = POPUP_DATA.productShapeOne,
+            productSizeOne = POPUP_DATA.productSizeOne,
+            otherRequirementsOne = POPUP_DATA.otherRequirementsOne;
+
+        form.verify(validate);
+        form.render();
+        if(machineRequirementsOne != ""){
+            $('#machineRequirements').val(machineRequirementsOne);
+        }if(computerConfigurationOne != ""){
+            $('#computerConfiguration').val(computerConfigurationOne);
+        }if(toolSizeOne != ""){
+            $('#toolSize').val(toolSizeOne);
+        }if(hourlyProductionOne != ""){
+            $('#hourlyProduction').val(hourlyProductionOne);
+        }if(processingProcedureOne != ""){
+            $('#processingProcedure').val(processingProcedureOne);
+        }if(fixtureRequirementsOne != ""){
+            $('#fixtureRequirements').val(fixtureRequirementsOne);
+        }if(productShapeOne != ""){
+            $('#productShape').val(productShapeOne);
+        }if(productSizeOne != ""){
+            $('#productSize').val(productSizeOne);
+        }if(otherRequirementsOne != ""){
+            $('#otherRequirements').val(otherRequirementsOne);
+        }
+        form.on('submit(toConfigure-add-form-submit)', function (data) {
+            parent.layer.close(layer.index)
+           /* if (!data.field.parameterCategory) {
+                febs.alert.warn('请选择参数类别');
+                return false;
+            }
+            if (!data.field.parameterValue) {
+                febs.alert.warn('请输入参数值');
+                return false;
+            }
+            if (!data.field.parameterName) {
+                febs.alert.warn('请输入参数名称');
+                return false;
+            }
+            febs.post(ctx + 'toConfigure/add', data.field, function () {
+                layer.closeAll();
+                febs.alert.success('新增参数成功');
+                $('#febs-toConfigure').find('#query').click();
+            });*/
+
+        });
+
+    });
+</script>

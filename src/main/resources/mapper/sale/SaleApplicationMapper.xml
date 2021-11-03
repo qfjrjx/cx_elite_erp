@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.sale.mapper.SaleApplicationMapper">
+    <sql id="countSaleApplicationSql" >
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_sale_application sa
+        WHERE
+            1 = 1
+        <if test="saleApplication.signedDateFrom != null and saleApplication.signedDateFrom !=''">
+            And sa.requested_delivery_date &gt; #{saleApplication.signedDateFrom}
+        </if>
+        <if test="saleApplication.signedDateTo != null and saleApplication.signedDateTo !=''">
+            And sa.requested_delivery_date &lt; #{saleApplication.signedDateTo}
+        </if>
+        <if test="saleApplication.customerName != null and saleApplication.customerName !=''">
+            And sa.customer_name = #{saleApplication.customerName}
+        </if>
+        <if test="saleApplication.salesmanName != null and saleApplication.salesmanName !=''">
+            And sa.salesman_name = #{saleApplication.salesmanName}
+        </if>
+        <if test="saleApplication.applicationNo != null and saleApplication.applicationNo !=''">
+            And sa.application_no = #{saleApplication.applicationNo}
+        </if>
+        <if test="saleApplication.productName != null and saleApplication.productName !=''">
+            And sa.product_name = #{saleApplication.productName}
+        </if>
+        <if test="saleApplication.specificationModel != null and saleApplication.specificationModel !=''">
+            And sa.specification_model = #{saleApplication.specificationModel}
+        </if>
+    </sql>
+    <sql id="findSaleApplicationSql" >
+        SELECT
+            sa.id,
+            sa.requested_delivery_date requestedDeliveryDate,
+            sa.application_no applicationNo,
+            sa.customer_id customerId,
+            sa.customer_name customerName,
+            sa.salesman_name salesmanName,
+            sa.product_name productName,
+            sa.specification_model specificationModel,
+            sa.configure_name configureName,
+            sa.company_name companyName,
+            sa.quantity_name quantityName,
+            sa.enclosure_name enclosureName,
+            sa.design_date designDate,
+            sa.design_reply designReply,
+            sa.purchase_date purchaseDate,
+            sa.purchase_reply purchaseReply,
+            sa.production_date productionDate,
+            sa.production_reply productionReply,
+            sa.assembling_date assemblingDate,
+            sa.assembling_reply assemblingReply,
+            sa.explain_name explainName,
+            sa.machine_requirements machineRequirements,
+            sa.computer_configuration computerConfiguration,
+            sa.tool_size toolSize,
+            sa.hourly_production hourlyProduction,
+            sa.processing_procedure processingProcedure,
+            sa.fixture_requirements fixtureRequirements,
+            sa.product_shape productShape,
+            sa.product_size productSize,
+            sa.other_requirements otherRequirements
+        FROM
+            jr_sale_application sa
+        WHERE
+            1 = 1
+        <if test="saleApplication.signedDateFrom != null and saleApplication.signedDateFrom !=''">
+            And sa.requested_delivery_date &gt; #{saleApplication.signedDateFrom}
+        </if>
+        <if test="saleApplication.signedDateTo != null and saleApplication.signedDateTo !=''">
+            And sa.requested_delivery_date &lt; #{saleApplication.signedDateTo}
+        </if>
+        <if test="saleApplication.customerName != null and saleApplication.customerName !=''">
+            And sa.customer_name = #{saleApplication.customerName}
+        </if>
+        <if test="saleApplication.salesmanName != null and saleApplication.salesmanName !=''">
+            And sa.salesman_name = #{saleApplication.salesmanName}
+        </if>
+        <if test="saleApplication.applicationNo != null and saleApplication.applicationNo !=''">
+            And sa.application_no = #{saleApplication.applicationNo}
+        </if>
+        <if test="saleApplication.productName != null and saleApplication.productName !=''">
+            And sa.product_name = #{saleApplication.productName}
+        </if>
+        <if test="saleApplication.specificationModel != null and saleApplication.specificationModel !=''">
+            And sa.specification_model = #{saleApplication.specificationModel}
+        </if>
+    </sql>
+    <select id="countSaleApplication" parameterType="com.erp.sale.entity.SaleApplication" resultType="long">
+        <include refid="countSaleApplicationSql"/>
+    </select>
+
+    <select id="findSaleApplicationPage" parameterType="com.erp.sale.entity.SaleApplication" resultType="com.erp.sale.entity.SaleApplication">
+        <include refid="findSaleApplicationSql"/>
+    </select>
+    <insert id="addSaleApplication" parameterType="com.erp.sale.entity.SaleApplication">
+        INSERT INTO jr_sale_application (
+            requested_delivery_date, application_no, customer_name,salesman_name,product_name,specification_model,configure_name
+            ,company_name, quantity_name,enclosure_name, explain_name,machine_requirements,computer_configuration,
+            tool_size,hourly_production,processing_procedure,fixture_requirements,product_shape,product_size,other_requirements)
+        VALUES
+            (#{requestedDeliveryDate},
+             #{applicationNo},
+             #{customerName},
+             #{salesmanName},
+             #{productName},
+             #{specificationModel},
+             #{configureName},
+             #{companyName},
+             #{quantityName},
+             #{enclosureName},
+             #{explainName},
+             #{machineRequirements},
+             #{computerConfiguration},
+             #{toolSize},
+             #{hourlyProduction},
+             #{processingProcedure},
+             #{fixtureRequirements},
+             #{productShape},
+             #{productSize},
+             #{otherRequirements}
+            )
+    </insert>
+
+    <select id="quantityNameStatistics" resultType="int">
+        select sum(jsa.quantity_name) from jr_sale_application jsa
+    </select>
+
+    <!-- 配置回显查询-->
+    <select id="findSaleApplicationConfigureViewById" parameterType="long" resultType="com.erp.sale.entity.SaleApplication">
+        SELECT
+            sa.machine_requirements machineRequirements,
+            sa.computer_configuration computerConfiguration,
+            sa.tool_size toolSize,
+            sa.hourly_production hourlyProduction,
+            sa.processing_procedure processingProcedure,
+            sa.fixture_requirements fixtureRequirements,
+            sa.product_shape productShape,
+            sa.product_size productSize,
+            sa.other_requirements otherRequirements
+        FROM
+            jr_sale_application sa
+        WHERE
+            sa.id = #{id}
+    </select>
+
+
+    <!-- 修改回显查询-->
+    <select id="findSaleApplicationById" parameterType="String" resultType="com.erp.sale.entity.SaleApplication">
+        SELECT
+            sa.id,
+            sa.requested_delivery_date requestedDeliveryDate,
+            sa.application_no applicationNo,
+            sa.customer_id customerId,
+            sa.customer_name customerName,
+            sa.salesman_name salesmanName,
+            sa.product_name productName,
+            sa.specification_model specificationModel,
+            sa.configure_name configureName,
+            sa.company_name companyName,
+            sa.quantity_name quantityName,
+            sa.enclosure_name enclosureName,
+            sa.design_date designDate,
+            sa.design_reply designReply,
+            sa.purchase_date purchaseDate,
+            sa.purchase_reply purchaseReply,
+            sa.production_date productionDate,
+            sa.production_reply productionReply,
+            sa.assembling_date assemblingDate,
+            sa.assembling_reply assemblingReply,
+            sa.explain_name explainName,
+            sa.machine_requirements machineRequirements,
+            sa.computer_configuration computerConfiguration,
+            sa.tool_size toolSize,
+            sa.hourly_production hourlyProduction,
+            sa.processing_procedure processingProcedure,
+            sa.fixture_requirements fixtureRequirements,
+            sa.product_shape productShape,
+            sa.product_size productSize,
+            sa.other_requirements otherRequirements
+        FROM
+            jr_sale_application sa
+        WHERE
+            sa.application_no =  #{applicationNo}
+    </select>
+
+    <select id="countSaleApplicationsList" parameterType="String" resultType="long">
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_sale_application sa
+        WHERE
+            sa.application_no =  #{applicationNoTwo}
+    </select>
+
+    <select id="findSaleApplicationsPage" parameterType="String" resultType="com.erp.sale.entity.SaleApplication">
+        SELECT
+            sa.application_no applicationNo,
+            sa.product_name productName,
+            sa.configure_name configureName,
+            sa.specification_model specificationModel,
+            sa.company_name companyName,
+            sa.quantity_name quantityName,
+            sa.explain_name explainName
+        FROM
+            jr_sale_application sa
+        WHERE
+            sa.application_no =  #{applicationNoTwo}
+    </select>
+
+</mapper>

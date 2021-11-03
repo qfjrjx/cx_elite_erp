@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.sale.mapper.SaleProductMapper">
+
+    <sql id="countSaleProductsSql" >
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_sale_product spt
+        WHERE
+            1 = 1
+    </sql>
+    <sql id="findSaleProductsSql">
+        SELECT
+            spt.id,
+            spt.product_name productName,
+            spt.specification_model specificationModel,
+            spt.product_remarks productRemarks,
+            spt.product_state productState
+        FROM
+            jr_sale_product spt
+        WHERE
+            spt.product_state = 1
+    </sql>
+    <select id="countSaleProducts" parameterType="com.erp.sale.entity.SaleProduct" resultType="long">
+        <include refid="countSaleProductsSql"/>
+    </select>
+
+    <select id="findSaleProductsPage" parameterType="com.erp.sale.entity.SaleProduct" resultType="com.erp.sale.entity.SaleProduct">
+        <include refid="findSaleProductsSql"/>
+    </select>
+
+
+
+
+    <sql id="countSaleProductSql" >
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_sale_product spt
+        WHERE
+            1 = 1
+    </sql>
+    <sql id="findSaleProductSql">
+        SELECT
+            spt.id,
+            spt.product_name productNames,
+            spt.specification_model specificationModels,
+            spt.product_remarks productRemark,
+            spt.product_state productStates
+        FROM
+            jr_sale_product spt
+        WHERE
+            spt.product_state = 2
+    </sql>
+    <select id="countSaleProduct" parameterType="com.erp.sale.entity.SaleProducts" resultType="long">
+        <include refid="countSaleProductSql"/>
+    </select>
+
+    <select id="findSaleProductsPages" parameterType="com.erp.sale.entity.SaleProducts" resultType="com.erp.sale.entity.SaleProducts">
+        <include refid="findSaleProductSql"/>
+    </select>
+
+    <update id="updateSaleProductState" parameterType="long">
+        update jr_sale_product  set product_state = 2 where id = #{id}
+    </update>
+
+    <update id="updateSaleProductStates" parameterType="long">
+        update jr_sale_product  set product_state = 1 where id = #{id}
+    </update>
+
+</mapper>

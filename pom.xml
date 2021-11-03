@@ -226,6 +226,12 @@
             <artifactId>xml-apis</artifactId>
             <version>${xml-apis.version}</version>
         </dependency>
+        <!-- 引入json处理包 -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.15</version>
+        </dependency>
     </dependencies>
 
     <build>

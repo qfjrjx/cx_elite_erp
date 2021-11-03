@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.sale.mapper.SaleOrderMapper">
+    <sql id="countSaleOrderSql" >
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_sale_order so
+        WHERE
+            1 = 1
+    </sql>
+    <sql id="findSaleOrderSql" >
+        SELECT
+            so.id,
+            so.odd_numbers oddNumbers,
+            so.order_date orderDate,
+            so.customer_name customerName,
+            so.salesman_name salesmanName,
+            so.currency_name currencyName,
+            so.tax_rate taxRate,
+            so.payment_method paymentMethod,
+            so.deposit_money depositMoney,
+            so.invoice_not invoiceNot,
+            so.contacts_name contactsName,
+            so.mobile_phone mobilePhone,
+            so.enclosure_name enclosureName,
+            so.order_type orderType,
+            so.after_sales_clerk afterSalesClerk,
+            so.product_name productName,
+            so.specification_model specificationModel,
+            so.configure_name configureName,
+            so.company_name companyName,
+            so.quantity_name quantityName,
+            so.unit_price unitPrice,
+            so.amount_money amountMoney,
+            so.delivery_date deliveryDate,
+            so.order_remarks orderRemarks,
+            so.machine_requirements machineRequirements,
+            so.computer_configuration computerConfiguration,
+            so.tool_size toolSize,
+            so.processing_procedure processingProcedure,
+            so.fixture_requirements fixtureRequirements,
+            so.product_shape productShape,
+            so.product_size productSize,
+            so.other_requirements otherRequirements
+        FROM
+            jr_sale_order so
+    </sql>
+
+    <select id="countSaleOrder" parameterType="com.erp.sale.entity.SaleOrder" resultType="long">
+        <include refid="countSaleOrderSql"/>
+    </select>
+
+    <select id="findSaleOrderPage" parameterType="com.erp.sale.entity.SaleOrder" resultType="com.erp.sale.entity.SaleOrder">
+        <include refid="findSaleOrderSql"/>
+    </select>
+
+</mapper>

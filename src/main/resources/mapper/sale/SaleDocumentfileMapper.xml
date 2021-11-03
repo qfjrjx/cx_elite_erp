@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.sale.mapper.SaleDocumentfileMapper">
+    <select id="findSaleDocumentFileByName" parameterType="String" resultType="com.erp.sale.entity.SaleDocumentfile">
+        SELECT
+            sd.`name`,
+            sd.file_name fileName,
+            sd.path,
+            sd.suffix
+        FROM
+            jr_sale_documentfile sd
+        WHERE
+            sd.`name` =  #{fileName}
+    </select>
+
+    <delete id="deleteSaleDocumentFile">
+        delete from jr_sale_documentfile where name = #{contFile}
+    </delete>
+</mapper>

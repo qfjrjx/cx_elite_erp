@@ -1,0 +1,290 @@
+<style>
+    #febs-saleApplication xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #febs-saleApplication xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+    .layui-form-item .layui-input-inline {
+        width: 160px;
+    }
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="febs-saleApplication" lay-title="销售申请">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="parameter-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md9">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm">工号</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="jobNumber" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm">姓名</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="userName" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label layui-form-label-sm">状态</label>
+                                        <div class="layui-input-inline">
+                                            <select name="salaryState">
+                                                <option value=""></option>
+                                                <option value="1">上调</option>
+                                                <option value="2">下调</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md3 layui-col-sm12 layui-col-xs12 table-action-area">
+                                <!--搜索按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                                    <i class="layui-icon">&#xe848;</i>搜索
+                                </div>
+                               <!-- 刷新表格按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain table-action" id="reset">
+                                    <i class="layui-icon">&#xe79b;</i>刷新
+                                </div>
+                                <!--添加按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "shiro:hasAnyPermissions="saleApplication:add" id="addTo">
+                                    <i class="layui-icon">&#xe78a;</i>添加
+                                </div>
+                                <!--删除按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "shiro:hasAnyPermissions="saleApplication:delete" id="deleteTo">
+                                    <i class="layui-icon">&#xe8a1;</i>删除
+                                </div>
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action action-more"
+                                     shiro:hasAnyPermissions="saleApplication:export" id="exportTo">
+                                    <i class="layui-icon">&#xe7a8;</i>导出
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="saleApplicationTable" lay-data="{id: 'saleApplicationTable'}"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="salary-gender">
+    {{#
+    let gender = {
+    1: {title: '男'},
+    2: {title: '女'}
+    }[d.gender];
+    }}
+    <span>{{ gender.title }}</span>
+</script>
+<script type="text/html" id="salary_salaryState">
+    {{#
+    let salaryState = {
+    1: {title: '上调', color: 'green'},
+    2: {title: '下调', color: 'red'}
+    }[d.salaryState];
+    }}
+    <span class="layui-badge febs-bg-{{salaryState.color}}">{{ salaryState.title }}</span>
+</script>
+<script type="text/html" id="parameter-option">
+    <span shiro:lacksPermission="saleApplication:list,saleApplication:update,saleApplication:delete">
+        <span class="layui-badge-dot febs-bg-orange"></span> 无权限
+    </span>
+    <a lay-event="edit" shiro:hasPermission="saleApplication:update"><i
+            class="layui-icon febs-edit-area febs-blue">&#xe7a4;</i></a>
+    <a lay-event="del" shiro:hasPermission="saleApplication:delete"><i class="layui-icon febs-edit-area febs-red">&#xe7f9;</i></a>
+</script>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+            laydate = layui.laydate,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            dropdownMenu = layui.dropdownMenu,
+            $view = $('#febs-saleApplication'),
+            $query = $view.find('#query'),
+            $addTo = $view.find('#addTo'),
+            $deleteTo = $view.find('#deleteTo'),
+            $exportTo = $view.find('#exportTo'),
+            $reset = $view.find('#reset'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'createDate', type: null},
+            tableIns;
+
+        form.render();
+
+        initTable();
+
+        //日期同时绑定多个
+        lay('.createTime').each(function(){
+            laydate.render({
+                elem: this,
+                range: true,
+                trigger: 'click'
+            });
+        })
+        dropdownMenu.render({
+            elem: $view.find('.action-more'),
+            click: function (name, elem, event) {
+                let checkStatus = table.checkStatus('saleApplicationTable');
+                if (name === 'delete') {
+                    if (!checkStatus.data.length) {
+                        febs.alert.warn('请选择需要删除的数据');
+                    } else {
+                        febs.modal.confirm('删除领取记录信息', '确定删除？', function () {
+                            let ids = [];
+                            layui.each(checkStatus.data, function (key, item) {
+                                ids.push(item.id)
+                            });
+                            deleteSaleApplication(ids.join(','));
+                        });
+                    }
+                }
+            },
+            options: [{
+                name: 'add',
+                title: '新增',
+                perms: 'saleApplication:add'
+            }, {
+                name: 'delete',
+                title: '删除',
+                perms: 'saleApplication:delete'
+            }]
+        });
+        table.on('tool(saleApplicationTable)', function (obj) {
+            let data = obj.data,
+                layEvent = obj.event;
+            if (layEvent === 'del') {
+                febs.modal.confirm('删除领取记录信息', '确定删除？', function () {
+                   deleteSaleApplication(data.id);
+                });
+            }
+            if (layEvent === 'edit') {
+                febs.modal.open('修改领取记录信息', 'personnel/saleApplication/update/' + data.contractId, {
+                    area: $(window).width() <= 750 ? '90%' : '30%',
+                    btn: ['提交', '取消'],
+                    yes: function (index, layero) {
+                        $('#saleApplication-update').find('#submit').trigger('click');
+                    },
+                    btn2: function () {
+                        layer.closeAll();
+                    }
+                });
+            }
+        });
+
+        table.on('sort(saleApplicationTable)', function (obj) {
+            sortObject = obj;
+            tableIns.reload({
+                initSort: obj,
+                where: $.extend(getQueryParams(), {
+                    field: obj.field,
+                    order: obj.type
+                })
+            });
+        });
+
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        $reset.on('click', function () {
+            $searchForm[0].reset();
+            tableIns.reload({where: getQueryParams(), page: {curr: 1}});
+        });
+        $addTo.on('click', function () {
+            febs.modal.open('新增员工调薪记录', 'personnel/saleApplication/add', {
+                type:1,
+                btn: ['提交', '重置'],
+                area: $(window).width() <= 750 ? '95%' : '40%',
+                yes: function (index, layero) {
+                    $('#saleApplication-add').find('#submit').trigger('click');
+                },
+                btn2: function () {
+                    $('#saleApplication-add').find('#reset').trigger('click');
+                    $("#mobilityUserId").attr("value","");
+                    $("#mobilityGender").attr("value","");
+                    $("#mobilityJobNumber").attr("value","");
+                    $("#mobilityUserName").attr("value","");
+                    $("#mobilityEntryTime").attr("value","");
+                    $("#mobilityDepartmentName").attr("value","");
+                    $("#mobilityPositionName").attr("value","");
+                    $("#mobilityGroupingName").attr("value","");
+                    return false;
+                }
+            });
+        });
+        $deleteTo.on('click', function () {
+            let checkStatus = table.checkStatus('saleApplicationTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要删除的数据');
+            } else {
+                febs.modal.confirm('删除参数信息', '确定删除？', function () {
+                    let ids = [];
+                    layui.each(checkStatus.data, function (key, item) {
+                        ids.push(item.id)
+                    });
+                    deleteSaleApplication(ids.join(','));
+                });
+            }
+        });
+        $exportTo.on('click', function () {
+            let params = getQueryParams();
+            params.pageSize = $view.find(".layui-laypage-limits option:selected").val();
+            params.pageNum = $view.find(".layui-laypage-em").next().html();
+            febs.download(ctx + 'saleApplication/excel', params, '员工合同表.xlsx');
+        });
+        function initTable() {
+            tableIns = febs.table.init({
+                elem: $view.find('table'),
+                id: 'saleApplicationTable',
+                url: ctx + 'saleApplication/list',
+                cols: [[
+                    {type: 'checkbox'},
+                    {field:'number',title:'序列号',align:'center',width:80,templet:function (d) {
+                                        return d.LAY_INDEX;}},
+                    {field: 'id', title: '编号',hide:true,sort: true},
+                    {field: 'requestedDeliveryDate', title: '申请交货日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.requestedDeliveryDate, "yyyy-MM-dd") }}</div>', minWidth: 110, sort: true},
+                    {field: 'applicationNo', title: '申请单号',align:'center', minWidth: 100},
+                    {field: 'customerName', title: '客户',align:'center', minWidth: 100},
+                    {field: 'salesmanName', title: '业务员',align:'center', minWidth: 80},
+                    {field: 'productName', title: '产品名称', minWidth: 100},
+                    {field: 'specificationModel', title: '规格型号', minWidth: 100},
+                    {field: 'configureName', title: '配置', minWidth: 100,align:'center'},
+                    {field: 'companyName', title: '单位', minWidth: 100,align:'center'},
+                    {field: 'quantityName', title: '数量', minWidth: 100,align:'center'},
+                    {field: 'enclosureName', title: '附件', minWidth: 100,align:'center'},
+                    {field: 'designReply', title: '设计回复', minWidth: 100,align:'center'},
+                    {field: 'purchaseReply', title: '采购回复', minWidth: 100,align:'center'},
+                    {field: 'productionReply', title: '生产回复', minWidth: 100,align:'center'},
+                    {field: 'assemblingReply', title: '装配回复', minWidth: 100,align:'center'},
+                    {field: 'explainName', title: '说明', minWidth: 100}
+                ]]
+            });
+        }
+
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+
+
+        function deleteSaleApplication(ids) {
+            febs.get(ctx + 'saleApplication/delete/' + ids, null, function () {
+                febs.alert.success('删除调薪记录成功');
+                $query.click();
+            });
+        }
+
+    })
+
+</script>

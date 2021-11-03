@@ -1,0 +1,225 @@
+package com.erp.sale.entity;
+
+import java.util.Date;
+import java.math.BigDecimal;
+
+import lombok.Data;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+
+/**
+ * 销售订单表 Entity
+ *
+ * @author qiufeng
+ * @date 2021-10-14 09:39:45
+ */
+@Data
+@TableName("jr_sale_order")
+public class SaleOrder {
+
+    /**
+     * 主键
+     */
+    @TableId(value = "id", type = IdType.AUTO)
+    private Long id;
+
+    /**
+     * 单号
+     */
+    @TableField("odd_numbers")
+    private String oddNumbers;
+
+    /**
+     * 日期
+     */
+    @TableField("order_date")
+    private Date orderDate;
+
+    /**
+     * 关联客户档案id
+     */
+    @TableField("customer_id")
+    private Long customerId;
+
+    /**
+     * 客户
+     */
+    @TableField("customer_name")
+    private String customerName;
+
+    /**
+     * 业务员
+     */
+    @TableField("salesman_name")
+    private String salesmanName;
+
+    /**
+     * 币种           1-人民币，2-美元，3-欧元
+     */
+    @TableField("currency_name")
+    private Integer currencyName;
+
+    /**
+     * 税率           13%,9%,6%,3%,0%
+     */
+    @TableField("tax_rate")
+    private String taxRate;
+
+    /**
+     * 付款方式       1-中行，2-农行，3-汇票，4-现金，5-支票，6-电汇，7-承兑，8-其他
+     */
+    @TableField("payment_method")
+    private Integer paymentMethod;
+
+    /**
+     * 定金
+     */
+    @TableField("deposit_money")
+    private BigDecimal depositMoney;
+    /**
+     * 是否开票       1-是，2-否
+     */
+    @TableField("invoice_not")
+    private Integer invoiceNot;
+
+    /**
+     * 联系人
+     */
+    @TableField("contacts_name")
+    private String contactsName;
+
+    /**
+     * 手机
+     */
+    @TableField("mobile_phone")
+    private String mobilePhone;
+
+    /**
+     * 附件
+     */
+    @TableField("enclosure_name")
+    private String enclosureName;
+
+    /**
+     * 订单类型          1-配件，2-整机
+     */
+    @TableField("order_type")
+    private Integer orderType;
+
+    /**
+     * 
+
+售后员
+     */
+    @TableField("after_sales_clerk")
+    private String afterSalesClerk;
+
+    /**
+     * 
+
+产品名称
+     */
+    @TableField("product_name")
+    private String productName;
+
+    /**
+     * 规格型号
+     */
+    @TableField("specification_model")
+    private String specificationModel;
+
+    /**
+     * 配置
+     */
+    @TableField("configure_name")
+    private String configureName;
+
+    /**
+     * 单位
+     */
+    @TableField("company_name")
+    private String companyName;
+
+    /**
+     * 数量
+     */
+    @TableField("quantity_name")
+    private String quantityName;
+
+    /**
+     * 单价
+     */
+    @TableField("unit_price")
+    private BigDecimal unitPrice;
+    /**
+     * 
+
+金额
+     */
+    @TableField("amount_money")
+    private BigDecimal amountMoney;
+    /**
+     * 交货日期
+     */
+    @TableField("delivery_date")
+    private Date deliveryDate;
+
+    /**
+     * 备注
+     */
+    @TableField("order_remarks")
+    private String orderRemarks;
+
+    /**
+     * 机器要求
+     */
+    @TableField("machine_requirements")
+    private String machineRequirements;
+
+    /**
+     * 
+
+电脑配置
+     */
+    @TableField("computer_configuration")
+    private String computerConfiguration;
+
+    /**
+     * 刀具大小
+     */
+    @TableField("tool_size")
+    private String toolSize;
+
+    /**
+     * 加工工序
+     */
+    @TableField("processing_procedure")
+    private String processingProcedure;
+
+    /**
+     * 夹具要求
+     */
+    @TableField("fixture_requirements")
+    private String fixtureRequirements;
+
+    /**
+     * 产品形状
+     */
+    @TableField("product_shape")
+    private String productShape;
+
+    /**
+     * 产品尺寸
+     */
+    @TableField("product_size")
+    private String productSize;
+
+    /**
+     * 其他要求
+     */
+    @TableField("other_requirements")
+    private String otherRequirements;
+
+}
