@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.technology.mapper.TechnologyProductCategoryMapper">
+
+    <sql id="countTechnologyProductCategorySql" >
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_technology_product_category tpc
+        WHERE
+            1 = 1
+    </sql>
+    <sql id="findTechnologyProductCategorySql" >
+        SELECT
+            tpc.id,
+            tpc.product_category ,
+            tpc.product_belonging_category,
+            tpc.product_category_name,
+            tpc.product_category_sort,
+            tpc.product_category_state,
+            tpc.product_category_remarks
+        FROM
+            jr_technology_product_category tpc
+        WHERE
+            1 = 1
+    </sql>
+
+    <select id="countTechnologyProductCategory" parameterType="com.erp.technology.entity.TechnologyProductCategory" resultType="long">
+        <include refid="countTechnologyProductCategorySql"/>
+    </select>
+
+    <select id="findTechnologyProductCategoryPage" parameterType="com.erp.technology.entity.TechnologyProductCategory" resultType="com.erp.technology.entity.TechnologyProductCategory">
+        <include refid="findTechnologyProductCategorySql"/>
+    </select>
+
+</mapper>

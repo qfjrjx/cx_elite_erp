@@ -1,0 +1,298 @@
+<style>
+    #technology-productCategory xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #technology-productCategory xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="technology-productCategory" lay-title="产品类别">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="parameter-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md8">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm">类别名称</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="parameterName" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label layui-form-label-sm">产品类别</label>
+                                        <div class="layui-input-inline">
+                                            <select name="parameterCategory">
+                                                <option value=""></option>
+                                                <option value="1">大类</option>
+                                                <option value="2">小类</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label layui-form-label-sm">状态</label>
+                                        <div class="layui-input-inline">
+                                            <select name="productCategoryState">
+                                                <option value=""></option>
+                                                <option value="1">启用</option>
+                                                <option value="2">禁用</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="layui-col-md4 layui-col-sm12 layui-col-xs12 table-action-area">
+                                <!--搜索按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                                    <i class="layui-icon">&#xe848;</i>查询
+                                </div>
+                               <!-- 刷新表格按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain table-action" id="reset">
+                                    <i class="layui-icon">&#xe79b;</i>刷新
+                                </div>
+                                <!--添加按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "shiro:hasAnyPermissions="personnelParameters:add" id="addTo">
+                                    <i class="layui-icon">&#xe78a;</i>新增
+                                </div>
+                                <!--修改按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                                     shiro:hasAnyPermissions="personnelParameters:update" id="updateTo">
+                                    <i class="layui-icon">&#xe642;</i>修改
+                                </div>
+                                <!--删除按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "shiro:hasAnyPermissions="personnelParameters:delete" id="deleteTo">
+                                    <i class="layui-icon">&#xe8a1;</i>删除
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="productCategoryTable" lay-data="{id: 'productCategoryTable'}"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="productCategory-state">
+    {{#
+    let productCategoryState = {
+    1: {title: '启用', color: 'green'},
+    2: {title: '禁用', color: 'volcano'}
+    }[d.productCategoryState];
+    }}
+    <span class="layui-badge febs-bg-{{productCategoryState.color}}">{{ productCategoryState.title }}</span>
+</script>
+<script type="text/html" id="product-category">
+    {{#
+    let productCategory = {
+    1: {title: '大类'},
+    2: {title: '小类'}
+    }[d.productCategory];
+    }}
+    <span>{{ productCategory.title }}</span>
+</script>
+<script type="text/html" id="parameter-option">
+    <span shiro:lacksPermission="personnelParameters:view,personnelParameters:update,personnelParameters:delete">
+        <span class="layui-badge-dot febs-bg-orange"></span> 无权限
+    </span>
+    <a lay-event="edit" shiro:hasPermission="personnelParameters:update"><i
+            class="layui-icon febs-edit-area febs-blue">&#xe7a4;</i></a>
+    <a lay-event="del" shiro:hasPermission="personnelParameters:delete"><i class="layui-icon febs-edit-area febs-red">&#xe7f9;</i></a>
+</script>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+            laydate = layui.laydate,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            dropdownMenu = layui.dropdownMenu,
+            $view = $('#technology-productCategory'),
+            $query = $view.find('#query'),
+            $addTo = $view.find('#addTo'),
+            $updateTo = $view.find('#updateTo'),
+            $deleteTo = $view.find('#deleteTo'),
+            $reset = $view.find('#reset'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'createTime', type: null},
+            tableIns;
+
+        form.render();
+
+        initProductCategoryTable();
+
+
+
+        dropdownMenu.render({
+            elem: $view.find('.action-more'),
+            click: function (name, elem, event) {
+                let checkStatus = table.checkStatus('productCategoryTable');
+                if (name === 'add') {
+                    febs.modal.open('新增人事参数', 'personnel/personnelParameters/add', {
+                        btn: ['提交', '重置'],
+                        area: $(window).width() <= 750 ? '95%' : '50%',
+                        yes: function (index, layero) {
+                            $('#personnelParameters-add').find('#submit').trigger('click');
+                        },
+                        btn2: function () {
+                            $('#personnelParameters-add').find('#reset').trigger('click');
+                            return false;
+                        }
+                    });
+                }
+                if (name === 'delete') {
+                    if (!checkStatus.data.length) {
+                        let checkStatus = table.checkStatus('loginLogTable');
+                        febs.alert.warn('请选择需要删除的数据');
+                    } else {
+                        febs.modal.confirm('删除参数信息', '确定删除？', function () {
+                            let ids = [];
+                            layui.each(checkStatus.data, function (key, item) {
+                                ids.push(item.id)
+                            });
+                            deletePersonnelParameters(ids.join(','));
+                        });
+                    }
+                }
+            },
+            options: [{
+                name: 'add',
+                title: '新增',
+                perms: 'personnelParameters:add'
+            }, {
+                name: 'delete',
+                title: '删除',
+                perms: 'personnelParameters:delete'
+            }]
+        });
+
+        table.on('tool(productCategoryTable)', function (obj) {
+            let data = obj.data,
+                layEvent = obj.event;
+            if (layEvent === 'del') {
+                febs.modal.confirm('删除参数信息', '确定删除？', function () {
+                    deletePersonnelParameters(data.id);
+                });
+            }
+            if (layEvent === 'edit') {
+                febs.modal.open('修改参数', 'personnel/personnelParameters/update/' + data.id, {
+                    area: $(window).width() <= 750 ? '90%' : '50%',
+                    btn: ['提交', '取消'],
+                    yes: function (index, layero) {
+                        $('#personnelParameters-update').find('#submit').trigger('click');
+                    },
+                    btn2: function () {
+                        layer.closeAll();
+                    }
+                });
+            }
+        });
+
+        table.on('sort(productCategoryTable)', function (obj) {
+            sortObject = obj;
+            tableIns.reload({
+                initSort: obj,
+                where: $.extend(getQueryParams(), {
+                    field: obj.field,
+                    order: obj.type
+                })
+            });
+        });
+
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        $reset.on('click', function () {
+            $searchForm[0].reset();
+            tableIns.reload({where: getQueryParams(), page: {curr: 1}});
+        });
+        $addTo.on('click', function () {
+            febs.modal.open('新增人事参数', 'personnel/personnelParameters/add', {
+                btn: ['提交', '重置'],
+                area: $(window).width() <= 750 ? '95%' : '50%',
+                yes: function (index, layero) {
+                    $('#personnelParameters-add').find('#submit').trigger('click');
+                },
+                btn2: function () {
+                    $('#personnelParameters-add').find('#reset').trigger('click');
+                    return false;
+                }
+            });
+        });
+        $updateTo.on('click', function () {
+            let checkStatus = table.checkStatus('productCategoryTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要修改的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要修改的数据');
+            }else{
+                layui.each(checkStatus.data, function (key, item) {
+                    febs.modal.open('修改参数', 'personnel/personnelParameters/update/' + item.id, {
+                        area: $(window).width() <= 750 ? '90%' : '50%',
+                        btn: ['提交', '取消'],
+                        yes: function (index, layero) {
+                            $('#personnelParameters-update').find('#submit').trigger('click');
+                        },
+                        btn2: function () {
+                            layer.closeAll();
+                        }
+                    });
+                });
+            }
+        });
+        $deleteTo.on('click', function () {
+            let checkStatus = table.checkStatus('productCategoryTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要删除的数据');
+            } else {
+                febs.modal.confirm('删除参数信息', '确定删除？', function () {
+                    let ids = [];
+                    layui.each(checkStatus.data, function (key, item) {
+                        ids.push(item.id)
+                    });
+                    deletePersonnelParameters(ids.join(','));
+                });
+            }
+        });
+
+        function initProductCategoryTable() {
+            tableIns = febs.table.init({
+                elem: $view.find('table'),
+                id: 'productCategoryTable',
+                url: ctx + 'technologyProductCategory/list',
+                cols: [[
+                    {type: 'checkbox'},
+                    {field:'number',title:'序列号',align:'center',width:100,templet:function (d) {
+                                        return d.LAY_INDEX;}},
+                    {title: '状态', templet: '#productCategory-state'},
+                    {title: '产品类别', templet: '#product-category'},
+                    {field: 'productBelongingCategory', title: '所属大类', minWidth: 100},
+                    {field: 'productCategoryName', title: '类别名称', minWidth: 100},
+                    {field: 'productCategorySort', title: '排序'},
+                    {field: 'productCategoryRemarks', title: '备注'}
+                ]]
+            });
+        }
+
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+
+        function deletePersonnelParameters(ids) {
+            febs.get(ctx + 'personnelParameters/delete/' + ids, null, function () {
+                febs.alert.success('删除参数成功');
+                $query.click();
+            });
+        }
+
+    })
+
+</script>
