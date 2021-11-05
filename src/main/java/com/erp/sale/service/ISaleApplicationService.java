@@ -5,6 +5,7 @@ import com.erp.sale.entity.SaleApplication;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.erp.sale.entity.SaleApplicationReply;
 
 import java.text.ParseException;
 import java.util.List;
@@ -60,7 +61,19 @@ public interface ISaleApplicationService extends IService<SaleApplication> {
 
     SaleApplication findSaleApplicationConfigureViewById(Long id);
 
-    SaleApplication findSaleApplicationById(String applicationNo);
+    SaleApplication findSaleApplicationById(Long id);
 
     IPage<SaleApplication> saleApplicationsList(QueryRequest request, String applicationNoTwo);
+
+    SaleApplicationReply findSaleApplicationDesignViewById(Long id,String replyDepartment);
+
+    void designReplySaleApplication(String designReplyParam,String userName) throws ParseException;
+
+    void saleApplicationPurchaseReply(String purchaseReplyParam, String userName) throws ParseException;
+
+    void saleApplicationProductionReply(String productionReplyParam, String userName) throws ParseException;
+
+    void saleApplicationAssemblingReply(String assemblingReplyParam, String userName) throws ParseException;
+
+
 }

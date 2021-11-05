@@ -13,7 +13,7 @@
     }
 </style>
 <body>
-<div class="layui-fluid layui-anim febs-anim" id="febs-saleApplication" lay-title="客户档案">
+<div class="layui-fluid layui-anim febs-anim" id="febs-saleApplication" lay-title="销售申请">
     <div class="layui-row febs-container">
         <div class="layui-col-md12">
             <div class="layui-card">
@@ -118,26 +118,6 @@
          </div>
      </div>
 </div>
-<script type="text/html" id="customer-state">
-    {{#
-    let customerState = {
-    1: {title: '启用', color: 'green'},
-    2: {title: '禁用', color: 'volcano'}
-    }[d.customerState];
-    }}
-    <span class="layui-badge febs-bg-{{customerState.color}}">{{ customerState.title }}</span>
-</script>
-<script type="text/html" id="saleApplication-parameterCategory">
-    {{#
-    let parameterCategory = {
-    1: {title: '付款方式'},
-    2: {title: '结算方式'},
-    3: {title: '业务区域'},
-    4: {title: '运输费用'}
-    }[d.parameterCategory];
-    }}
-    <span>{{ parameterCategory.title }}</span>
-</script>
 <script type="text/html" id="parameter-option">
     {{# if(d.configureName != null){ }}
     <a lay-event="see" shiro:hasPermission="saleApplication:dispose">查看</a>
@@ -147,6 +127,30 @@
     {{# if(d.enclosureName != null){ }}
     <a lay-event="browse" shiro:hasPermission="saleApplication:browse">浏览</a>
     <a lay-event="download" shiro:hasPermission="saleApplication:download">下载</a>
+    {{# } }}
+</script>
+<!--设计回复-->
+<script type="text/html" id="design-reply">
+    {{# if(d.designReply != null){ }}
+    <a lay-event="design" shiro:hasPermission="saleApplication:design">已回复</a>
+    {{# } }}
+</script>
+<!--采购回复-->
+<script type="text/html" id="purchase-reply">
+    {{# if(d.purchaseReply != null){ }}
+    <a lay-event="purchaseReply" shiro:hasPermission="saleApplication:purchase">已回复</a>
+    {{# } }}
+</script>
+<!--生产回复-->
+<script type="text/html" id="production-reply">
+    {{# if(d.productionReply != null){ }}
+    <a lay-event="productionReply" shiro:hasPermission="saleApplication:production">已回复</a>
+    {{# } }}
+</script>
+<!--装配回复-->
+<script type="text/html" id="assembling-reply">
+    {{# if(d.assemblingReply != null){ }}
+    <a lay-event="assemblingReply" shiro:hasPermission="saleApplication:assembling">已回复</a>
     {{# } }}
 </script>
 <script data-th-inline="none" type="text/javascript">
@@ -220,7 +224,7 @@
                 layEvent = obj.event;
             let fileName = data.enclosureName;
                if (layEvent === 'see') {
-                  febs.modal.view('信息', 'sale/saleApplicationAllocation/detail/' + data.id, {
+                  febs.modal.view('信息', 'sale/saleApplication/detail/' + data.id, {
                       btn: ['关闭'],
                       area: $(window).width() <= 750 ? '95%' : '50%',
                       yes: function (index, layero) {
@@ -233,6 +237,42 @@
                }
                if (layEvent === 'browse') {
                  alert(1)
+               }
+               if (layEvent === 'design') {
+                   febs.modal.view('【销售申请】设计回复', 'sale/saleApplication/design/' + data.id, {
+                       btn: ['关闭'],
+                       area: $(window).width() <= 750 ? '95%' : '30%',
+                       yes: function (index, layero) {
+                           layer.closeAll();
+                       }
+                   });
+               }
+               if (layEvent === 'purchaseReply') {
+                   febs.modal.view('【销售申请】采购回复', 'sale/saleApplication/purchase/' + data.id, {
+                       btn: ['关闭'],
+                       area: $(window).width() <= 750 ? '95%' : '30%',
+                       yes: function (index, layero) {
+                           layer.closeAll();
+                       }
+                   });
+               }
+               if (layEvent === 'productionReply') {
+                   febs.modal.view('【销售申请】生产回复', 'sale/saleApplication/production/' + data.id, {
+                       btn: ['关闭'],
+                       area: $(window).width() <= 750 ? '95%' : '30%',
+                       yes: function (index, layero) {
+                           layer.closeAll();
+                       }
+                   });
+               }
+               if (layEvent === 'assemblingReply') {
+                   febs.modal.view('【销售申请】装配回复', 'sale/saleApplication/assembling/' + data.id, {
+                       btn: ['关闭'],
+                       area: $(window).width() <= 750 ? '95%' : '30%',
+                       yes: function (index, layero) {
+                           layer.closeAll();
+                       }
+                   });
                }
         });
 
@@ -298,8 +338,8 @@
                     var customerNameTwo = document.getElementById("customerNameTwo");
                     var deviceweihuTable =  table.cache["deviceweihu-table"];
                     for (i=0;i<deviceweihuTable.length;i++){
-                        var dataOne1={"productName":deviceweihuTable[i].productName,"specificationModel":deviceweihuTable[i].specificationModel,"parameterOption":deviceweihuTable[i].parameterOption,"companyName":deviceweihuTable[i].companyName,"quantityName":deviceweihuTable[i].quantityName,"explainName":deviceweihuTable[i].explainName};
-                        dataThree.push(dataOne1);
+                        var dataOne={"productName":deviceweihuTable[i].productName,"specificationModel":deviceweihuTable[i].specificationModel,"parameterOption":deviceweihuTable[i].parameterOption,"companyName":deviceweihuTable[i].companyName,"quantityName":deviceweihuTable[i].quantityName,"explainName":deviceweihuTable[i].explainName};
+                        dataThree.push(dataOne);
                     }
                     $.ajax({
                         url: '/saleApplication/add',
@@ -325,7 +365,7 @@
                 febs.alert.warn('请选择一条需要修改的数据');
             }else{
                 layui.each(checkStatus.data, function (key, item) {
-                    febs.modal.open('【销售申请】修改', 'sale/saleApplication/update/' + item.applicationNo, {
+                    febs.modal.open('【销售申请】修改', 'sale/saleApplication/update/' + item.id, {
                         area: ["80%","60%"],
                         btn: ['增加行','删除行','全部删除','保存', '关闭'],
                         yes: function (index, layero) {
@@ -355,6 +395,7 @@
                 });
             }
         });
+        let userName = currentUser.username;
         //设计回复
         $designReply.on('click', function () {
             let checkStatus = table.checkStatus('saleApplicationTable');
@@ -364,11 +405,25 @@
                 febs.alert.warn('请选择一条需要回复的数据');
             }else{
                 layui.each(checkStatus.data, function (key, item) {
-                    febs.modal.open('【销售申请】设计回复', 'sale/saleApplication/designReply/' + item.applicationNo, {
+                    febs.modal.open('【销售申请】设计回复', 'sale/saleApplication/designReply/' + item.id, {
                         area: ["80%","60%"],
                         btn: ['保存', '关闭'],
                         yes: function (index, layero) {
-
+                            var designReply = new Array();
+                             let designReplyTables =  table.cache["designReplyTables"];
+                            for (i=0;i<designReplyTables.length;i++){
+                                var dataFour={"id":designReplyTables[i].id,"designDate":designReplyTables[i].designDate,"designReply":designReplyTables[i].designReply};
+                                designReply.push(dataFour);
+                            }
+                            $.ajax({
+                                url: '/saleApplication/designReply',
+                                type:"post",
+                                data: {designReplyParam:JSON.stringify(designReply),userName:userName},
+                                success : function(res) {
+                                    parent.location.reload();
+                                }
+                            });
+                            layer.closeAll();
                         },
                         btn2: function () {
                             layer.closeAll();
@@ -386,11 +441,25 @@
                 febs.alert.warn('请选择一条需要回复的数据');
             }else{
                 layui.each(checkStatus.data, function (key, item) {
-                    febs.modal.open('【销售申请】采购回复', 'sale/saleApplication/purchaseReply/' + item.applicationNo, {
+                    febs.modal.open('【销售申请】采购回复', 'sale/saleApplication/purchaseReply/' + item.id, {
                         area: ["80%","60%"],
                         btn: ['保存', '关闭'],
                         yes: function (index, layero) {
-
+                            var purchaseReply = new Array();
+                            let purchaseReplyTables =  table.cache["purchaseReplyTables"];
+                            for (i=0;i<purchaseReplyTables.length;i++){
+                                var dataFour={"id":purchaseReplyTables[i].id,"purchaseDate":purchaseReplyTables[i].purchaseDate,"purchaseReply":purchaseReplyTables[i].purchaseReply};
+                                purchaseReply.push(dataFour);
+                            }
+                            $.ajax({
+                                url: '/saleApplication/purchaseReply',
+                                type:"post",
+                                data: {purchaseReplyParam:JSON.stringify(purchaseReply),userName:userName},
+                                success : function(res) {
+                                    parent.location.reload();
+                                }
+                            });
+                            layer.closeAll();
                         },
                         btn2: function () {
                             layer.closeAll();
@@ -408,11 +477,25 @@
                 febs.alert.warn('请选择一条需要回复的数据');
             }else{
                 layui.each(checkStatus.data, function (key, item) {
-                    febs.modal.open('【销售申请】生产回复', 'sale/saleApplication/productionReply/' + item.applicationNo, {
+                    febs.modal.open('【销售申请】生产回复', 'sale/saleApplication/productionReply/' + item.id, {
                         area: ["80%","60%"],
                         btn: ['保存', '关闭'],
                         yes: function (index, layero) {
-
+                            var productionReply = new Array();
+                            let productionReplyTables =  table.cache["productionReplyTables"];
+                            for (i=0;i<productionReplyTables.length;i++){
+                                var dataSeven={"id":productionReplyTables[i].id,"productionDate":productionReplyTables[i].productionDate,"productionReply":productionReplyTables[i].productionReply};
+                                productionReply.push(dataSeven);
+                            }
+                            $.ajax({
+                                url: '/saleApplication/productionReply',
+                                type:"post",
+                                data: {productionReplyParam:JSON.stringify(productionReply),userName:userName},
+                                success : function(res) {
+                                    parent.location.reload();
+                                }
+                            });
+                            layer.closeAll();
                         },
                         btn2: function () {
                             layer.closeAll();
@@ -430,11 +513,25 @@
                 febs.alert.warn('请选择一条需要回复的数据');
             }else{
                 layui.each(checkStatus.data, function (key, item) {
-                    febs.modal.open('【销售申请】装配回复', 'sale/saleApplication/assemblingReply/' + item.applicationNo, {
+                    febs.modal.open('【销售申请】装配回复', 'sale/saleApplication/assemblingReply/' + item.id, {
                         area: ["80%","60%"],
                         btn: ['保存', '关闭'],
                         yes: function (index, layero) {
-
+                            var assemblingReply = new Array();
+                            let assemblingReplyTables =  table.cache["assemblingReplyTables"];
+                            for (i=0;i<assemblingReplyTables.length;i++){
+                                var dataSix={"id":assemblingReplyTables[i].id,"assemblingDate":assemblingReplyTables[i].assemblingDate,"assemblingReply":assemblingReplyTables[i].assemblingReply};
+                                assemblingReply.push(dataSix);
+                            }
+                            $.ajax({
+                                url: '/saleApplication/assemblingReply',
+                                type:"post",
+                                data: {assemblingReplyParam:JSON.stringify(assemblingReply),userName:userName},
+                                success : function(res) {
+                                    parent.location.reload();
+                                }
+                            });
+                            layer.closeAll();
                         },
                         btn2: function () {
                             layer.closeAll();
@@ -443,27 +540,6 @@
                 });
             }
         });
-       /* $exportTo.on('click', function () {
-            let params = getQueryParams();
-            params.pageSize = $view.find(".layui-laypage-limits option:selected").val();
-            params.pageNum = $view.find(".layui-laypage-em").next().html();
-            febs.download(ctx + 'saleApplication/excel', params, '客户档案表.xlsx');
-        });*/
-        /*$deleteTo.on('click', function () {
-            let checkStatus = table.checkStatus('saleApplicationTable');
-            if (!checkStatus.data.length) {
-                febs.alert.warn('请选择需要删除的数据');
-            } else {
-                febs.modal.confirm('删除参数信息', '确定删除？', function () {
-                    let ids = [];
-                    layui.each(checkStatus.data, function (key, item) {
-                        ids.push(item.id)
-                    });
-                    deleteSaleApplication(ids.join(','));
-                });
-            }
-        });*/
-
         function initTable() {
             tableIns = febs.table.init({
                 elem: $view.find('table'),
@@ -485,10 +561,10 @@
                     {field: 'companyName', title: '单位', minWidth: 60,align:'center'},
                     {field: 'quantityName', title: '数量', minWidth: 60,align:'center'},
                     {title: '附件', minWidth: 90,align:'center',toolbar: '#enclosure-name'},
-                    {field: 'designReply', title: '设计回复', minWidth: 88,align:'center'},
-                    {field: 'purchaseReply', title: '采购回复', minWidth: 88,align:'center'},
-                    {field: 'productionReply', title: '生产回复', minWidth: 88,align:'center'},
-                    {field: 'assemblingReply', title: '装配回复', minWidth: 88,align:'center'},
+                    {title: '设计回复', minWidth: 88,align:'center',toolbar: '#design-reply'},
+                    {title: '采购回复', minWidth: 88,align:'center',toolbar: '#purchase-reply'},
+                    {title: '生产回复', minWidth: 88,align:'center',toolbar: '#production-reply'},
+                    {title: '装配回复', minWidth: 88,align:'center',toolbar: '#assembling-reply'},
                     {field: 'explainName', title: '说明', minWidth: 72}
                 ]]
             });

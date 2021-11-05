@@ -1,0 +1,63 @@
+<style>
+    #purchaseResponse-details {
+        padding: 20px 25px 25px 0;
+    }
+</style>
+<div class="layui-fluid" id="purchaseResponse-details">
+    <form class="layui-form" action="" lay-filter="purchaseResponse-details-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label">回复人：</label>
+            <div class="layui-input-block">
+                <input type="text" name="respondent" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">回复日期：</label>
+            <div class="layui-input-block">
+                <input type="text" name="replyDate" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">回复交期：</label>
+            <div class="layui-input-block">
+                <input type="text" name="replyDeliveryDate" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">备注：</label>
+            <div class="layui-input-block">
+                <input type="text" name="replyContent" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item febs-hide">
+            <button class="layui-btn" lay-submit="" lay-filter="purchaseResponse-details-form-submit" id="submit"></button>
+        </div>
+    </form>
+</div>
+
+<script data-th-inline="javascript">
+    layui.use(['febs', 'form', 'xmSelect', 'validate'], function () {
+        let $ = layui.$,
+            form = layui.form,
+            saleApplicationPurchase = [[${saleApplicationPurchase}]],
+            replyDate = [[${replyDate}]],
+            replyDeliveryDate = [[${replyDeliveryDate}]],
+            validate = layui.validate;
+
+        form.verify(validate);
+        form.render();
+
+        initSaleApplicationPurchaseValue();
+
+        function initSaleApplicationPurchaseValue() {
+            form.val("purchaseResponse-details-form", {
+                "respondent": saleApplicationPurchase.respondent,
+                "replyDate": replyDate,
+                "replyDeliveryDate": replyDeliveryDate,
+                "replyContent": saleApplicationPurchase.replyContent
+            });
+        }
+
+
+    });
+</script>

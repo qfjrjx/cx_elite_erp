@@ -17,6 +17,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
@@ -96,4 +97,34 @@ public class SaleApplicationController extends BaseController {
         Map<String, Object> dataTable = getDataTable(this.saleApplicationService.saleApplicationsList(request, applicationNoTwo));
         return new FebsResponse().success().data(dataTable);
     }
+
+    @ControllerEndpoint(operation = "设计回复SaleApplication", exceptionMessage = "设计回复SaleApplication失败")
+    @PostMapping("saleApplication/designReply")
+    @ResponseBody
+    public FebsResponse designReplySaleApplication (@RequestParam String designReplyParam,@RequestParam String userName) throws ParseException {
+        this.saleApplicationService.designReplySaleApplication(designReplyParam,userName);
+        return new FebsResponse().success();
+    }
+    @ControllerEndpoint(operation = "采购回复SaleApplication", exceptionMessage = "采购回复SaleApplication失败")
+    @PostMapping("saleApplication/purchaseReply")
+    @ResponseBody
+    public FebsResponse saleApplicationPurchaseReply (@RequestParam String purchaseReplyParam,@RequestParam String userName) throws ParseException {
+        this.saleApplicationService.saleApplicationPurchaseReply(purchaseReplyParam,userName);
+        return new FebsResponse().success();
+    }
+    @ControllerEndpoint(operation = "生产回复SaleApplication", exceptionMessage = "生产回复SaleApplication失败")
+    @PostMapping("saleApplication/productionReply")
+    @ResponseBody
+    public FebsResponse saleApplicationProductionReply (@RequestParam String productionReplyParam,@RequestParam String userName) throws ParseException {
+        this.saleApplicationService.saleApplicationProductionReply(productionReplyParam,userName);
+        return new FebsResponse().success();
+    }
+    @ControllerEndpoint(operation = "装配回复SaleApplication", exceptionMessage = "装配回复SaleApplication失败")
+    @PostMapping("saleApplication/assemblingReply")
+    @ResponseBody
+    public FebsResponse saleApplicationAssemblingReply (@RequestParam String assemblingReplyParam,@RequestParam String userName) throws ParseException {
+        this.saleApplicationService.saleApplicationAssemblingReply(assemblingReplyParam,userName);
+        return new FebsResponse().success();
+    }
+
 }

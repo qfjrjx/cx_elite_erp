@@ -4,10 +4,7 @@ import com.erp.common.entity.FebsConstant;
 import com.erp.common.utils.DateUtil;
 import com.erp.common.utils.FebsUtil;
 import com.erp.personnel.entity.PersonnelParameters;
-import com.erp.sale.entity.SaleApplication;
-import com.erp.sale.entity.SaleBusinessPersonnel;
-import com.erp.sale.entity.SaleCustomerProfile;
-import com.erp.sale.entity.SaleParameters;
+import com.erp.sale.entity.*;
 import com.erp.sale.service.ISaleApplicationService;
 import com.erp.sale.service.ISaleBusinessPersonnelService;
 import com.erp.sale.service.ISaleCustomerProfileService;
@@ -215,7 +212,7 @@ public class ViewController {
         return FebsUtil.view("saleProduct/toConfigureAdd");
     }
     //配置查看
-    @GetMapping("saleApplicationAllocation/detail/{id}")
+    @GetMapping("saleApplication/detail/{id}")
     @RequiresPermissions("saleApplication:dispose")
     public String saleApplicationConfigureView(@PathVariable Long id, Model model) {
         saleApplicationConfigureViewModel(id, model, false);
@@ -239,18 +236,18 @@ public class ViewController {
     }
 
     //销售申请修改
-    @GetMapping("saleApplication/update/{applicationNo}")
+    @GetMapping("saleApplication/update/{id}")
     @RequiresPermissions("saleApplication:update")
-    public String saleApplicationUpdate(@PathVariable String applicationNo, Model model) {
+    public String saleApplicationUpdate(@PathVariable Long id, Model model) {
         //查询业务员信息
         List<SaleBusinessPersonnel> saleBusinessOne  = saleBusinessPersonnelService.queryBusinessPersonnel();
         model.addAttribute("saleBusinessOne",saleBusinessOne);
-        saleApplicationModel(applicationNo, model, false);
+        saleApplicationModel(id, model, false);
         return FebsUtil.view("saleApplication/saleApplicationUpdate");
     }
     //销售申请修改回填
-    private void saleApplicationModel(String applicationNo, Model model, Boolean transform) {
-        SaleApplication saleApplicationOne = saleApplicationService.findSaleApplicationById(applicationNo);
+    private void saleApplicationModel(Long id, Model model, Boolean transform) {
+        SaleApplication saleApplicationOne = saleApplicationService.findSaleApplicationById(id);
         model.addAttribute("saleApplicationOne", saleApplicationOne);
         if (saleApplicationOne.getRequestedDeliveryDate() != null) {
             model.addAttribute("deliveryDate", DateUtil.getDateFormat(saleApplicationOne.getRequestedDeliveryDate(), DateUtil.FULL_TIME_SPLIT));
@@ -258,75 +255,145 @@ public class ViewController {
     }
 
     //销售申请设计回复
-    @GetMapping("saleApplication/designReply/{applicationNo}")
+    @GetMapping("saleApplication/designReply/{id}")
     @RequiresPermissions("saleApplication:update")
-    public String saleApplicationDesignReply(@PathVariable String applicationNo, Model model) {
+    public String saleApplicationDesignReply(@PathVariable Long id, Model model) {
         //查询业务员信息
         List<SaleBusinessPersonnel> saleBusinessOne  = saleBusinessPersonnelService.queryBusinessPersonnel();
         model.addAttribute("saleBusinessOne",saleBusinessOne);
-        saleApplicationDesignReplyModel(applicationNo, model, false);
+        saleApplicationDesignReplyModel(id, model, false);
         return FebsUtil.view("saleApplication/designReply");
     }
     //销售申请设计回复回填
-    private void saleApplicationDesignReplyModel(String applicationNo, Model model, Boolean transform) {
-        SaleApplication designReply = saleApplicationService.findSaleApplicationById(applicationNo);
+    private void saleApplicationDesignReplyModel(Long id, Model model, Boolean transform) {
+        SaleApplication designReply = saleApplicationService.findSaleApplicationById(id);
         model.addAttribute("designReply", designReply);
         if (designReply.getRequestedDeliveryDate() != null) {
             model.addAttribute("deliveryDate", DateUtil.getDateFormat(designReply.getRequestedDeliveryDate(), DateUtil.FULL_TIME_SPLIT));
         }
     }
     //销售申请采购回复
-    @GetMapping("saleApplication/purchaseReply/{applicationNo}")
+    @GetMapping("saleApplication/purchaseReply/{id}")
     @RequiresPermissions("saleApplication:update")
-    public String saleApplicationPurchaseReply(@PathVariable String applicationNo, Model model) {
+    public String saleApplicationPurchaseReply(@PathVariable Long id, Model model) {
         //查询业务员信息
         List<SaleBusinessPersonnel> saleBusinessOne  = saleBusinessPersonnelService.queryBusinessPersonnel();
         model.addAttribute("saleBusinessOne",saleBusinessOne);
-        saleApplicationPurchaseReplyModel(applicationNo, model, false);
+        saleApplicationPurchaseReplyModel(id, model, false);
         return FebsUtil.view("saleApplication/purchaseReply");
     }
     //销售申请采购回复回填
-    private void saleApplicationPurchaseReplyModel(String applicationNo, Model model, Boolean transform) {
-        SaleApplication purchaseReply = saleApplicationService.findSaleApplicationById(applicationNo);
+    private void saleApplicationPurchaseReplyModel(Long id, Model model, Boolean transform) {
+        SaleApplication purchaseReply = saleApplicationService.findSaleApplicationById(id);
         model.addAttribute("purchaseReply", purchaseReply);
         if (purchaseReply.getRequestedDeliveryDate() != null) {
             model.addAttribute("deliveryDate", DateUtil.getDateFormat(purchaseReply.getRequestedDeliveryDate(), DateUtil.FULL_TIME_SPLIT));
         }
     }
     //销售申请生产回复
-    @GetMapping("saleApplication/productionReply/{applicationNo}")
+    @GetMapping("saleApplication/productionReply/{id}")
     @RequiresPermissions("saleApplication:update")
-    public String saleApplicationProductionReply(@PathVariable String applicationNo, Model model) {
+    public String saleApplicationProductionReply(@PathVariable Long id, Model model) {
         //查询业务员信息
         List<SaleBusinessPersonnel> saleBusinessOne  = saleBusinessPersonnelService.queryBusinessPersonnel();
         model.addAttribute("saleBusinessOne",saleBusinessOne);
-        saleApplicationProductionReplyModel(applicationNo, model, false);
+        saleApplicationProductionReplyModel(id, model, false);
         return FebsUtil.view("saleApplication/productionReply");
     }
     //销售申请生产回复回填
-    private void saleApplicationProductionReplyModel(String applicationNo, Model model, Boolean transform) {
-        SaleApplication productionReply = saleApplicationService.findSaleApplicationById(applicationNo);
+    private void saleApplicationProductionReplyModel(Long id, Model model, Boolean transform) {
+        SaleApplication productionReply = saleApplicationService.findSaleApplicationById(id);
         model.addAttribute("productionReply", productionReply);
         if (productionReply.getRequestedDeliveryDate() != null) {
             model.addAttribute("deliveryDate", DateUtil.getDateFormat(productionReply.getRequestedDeliveryDate(), DateUtil.FULL_TIME_SPLIT));
         }
     }
     //销售申请装配回复
-    @GetMapping("saleApplication/assemblingReply/{applicationNo}")
+    @GetMapping("saleApplication/assemblingReply/{id}")
     @RequiresPermissions("saleApplication:update")
-    public String saleApplicationAssemblingReply(@PathVariable String applicationNo, Model model) {
+    public String saleApplicationAssemblingReply(@PathVariable Long id, Model model) {
         //查询业务员信息
         List<SaleBusinessPersonnel> saleBusinessOne  = saleBusinessPersonnelService.queryBusinessPersonnel();
         model.addAttribute("saleBusinessOne",saleBusinessOne);
-        saleApplicationAssemblingReplyModel(applicationNo, model, false);
+        saleApplicationAssemblingReplyModel(id, model, false);
         return FebsUtil.view("saleApplication/assemblingReply");
     }
     //销售申请装配回复回填
-    private void saleApplicationAssemblingReplyModel(String applicationNo, Model model, Boolean transform) {
-        SaleApplication assemblingReply = saleApplicationService.findSaleApplicationById(applicationNo);
+    private void saleApplicationAssemblingReplyModel(Long id, Model model, Boolean transform) {
+        SaleApplication assemblingReply = saleApplicationService.findSaleApplicationById(id);
         model.addAttribute("assemblingReply", assemblingReply);
         if (assemblingReply.getRequestedDeliveryDate() != null) {
             model.addAttribute("deliveryDate", DateUtil.getDateFormat(assemblingReply.getRequestedDeliveryDate(), DateUtil.FULL_TIME_SPLIT));
+        }
+    }
+
+    //设计回复详情
+    @GetMapping("saleApplication/design/{id}")
+    @RequiresPermissions("saleApplication:design")
+    public String saleApplicationDesignView(@PathVariable Long id, Model model) {
+        saleApplicationDesignModel(id, model, false);
+        return FebsUtil.view("saleApplication/designResponseDetails");
+    }
+    //设计回复详情回填
+    private void saleApplicationDesignModel(Long id, Model model, Boolean transform) {
+        SaleApplicationReply saleApplicationReply = saleApplicationService.findSaleApplicationDesignViewById(id,SaleApplicationReply.design_reply);
+        model.addAttribute("saleApplicationReply", saleApplicationReply);
+        if (saleApplicationReply.getReplyDate() != null) {
+            model.addAttribute("replyDate", DateUtil.getDateFormat(saleApplicationReply.getReplyDate(), DateUtil.FULL_TIME_SPLIT));
+        }if (saleApplicationReply.getReplyDeliveryDate() != null) {
+            model.addAttribute("replyDeliveryDate", DateUtil.getDateFormat(saleApplicationReply.getReplyDeliveryDate(), DateUtil.FULL_TIME_SPLIT));
+        }
+    }
+    //采购回复详情
+    @GetMapping("saleApplication/purchase/{id}")
+    @RequiresPermissions("saleApplication:purchase")
+    public String saleApplicationPurchaseView(@PathVariable Long id, Model model) {
+        saleApplicationPurchaseModel(id, model, false);
+        return FebsUtil.view("saleApplication/purchaseResponseDetails");
+    }
+    //采购回复详情回填
+    private void saleApplicationPurchaseModel(Long id, Model model, Boolean transform) {
+        SaleApplicationReply saleApplicationPurchase = saleApplicationService.findSaleApplicationDesignViewById(id,SaleApplicationReply.purchase_reply);
+        model.addAttribute("saleApplicationPurchase", saleApplicationPurchase);
+        if (saleApplicationPurchase.getReplyDate() != null) {
+            model.addAttribute("replyDate", DateUtil.getDateFormat(saleApplicationPurchase.getReplyDate(), DateUtil.FULL_TIME_SPLIT));
+        }if (saleApplicationPurchase.getReplyDeliveryDate() != null) {
+            model.addAttribute("replyDeliveryDate", DateUtil.getDateFormat(saleApplicationPurchase.getReplyDeliveryDate(), DateUtil.FULL_TIME_SPLIT));
+        }
+    }
+
+    //生产回复详情
+    @GetMapping("saleApplication/production/{id}")
+    @RequiresPermissions("saleApplication:production")
+    public String saleApplicationProductionView(@PathVariable Long id, Model model) {
+        saleApplicationProductionModel(id, model, false);
+        return FebsUtil.view("saleApplication/productionResponseDetails");
+    }
+    //生产回复详情回填
+    private void saleApplicationProductionModel(Long id, Model model, Boolean transform) {
+        SaleApplicationReply saleApplicationProduction = saleApplicationService.findSaleApplicationDesignViewById(id,SaleApplicationReply.production_reply);
+        model.addAttribute("saleApplicationProduction", saleApplicationProduction);
+        if (saleApplicationProduction.getReplyDate() != null) {
+            model.addAttribute("replyDate", DateUtil.getDateFormat(saleApplicationProduction.getReplyDate(), DateUtil.FULL_TIME_SPLIT));
+        }if (saleApplicationProduction.getReplyDeliveryDate() != null) {
+            model.addAttribute("replyDeliveryDate", DateUtil.getDateFormat(saleApplicationProduction.getReplyDeliveryDate(), DateUtil.FULL_TIME_SPLIT));
+        }
+    }
+    //装配回复详情
+    @GetMapping("saleApplication/assembling/{id}")
+    @RequiresPermissions("saleApplication:assembling")
+    public String saleApplicationAssemblingView(@PathVariable Long id, Model model) {
+        saleApplicationAssemblingModel(id, model, false);
+        return FebsUtil.view("saleApplication/assemblingResponseDetails");
+    }
+    //装配回复详情回填
+    private void saleApplicationAssemblingModel(Long id, Model model, Boolean transform) {
+        SaleApplicationReply saleApplicationAssembling = saleApplicationService.findSaleApplicationDesignViewById(id,SaleApplicationReply.assembling_reply);
+        model.addAttribute("saleApplicationAssembling", saleApplicationAssembling);
+        if (saleApplicationAssembling.getReplyDate() != null) {
+            model.addAttribute("replyDate", DateUtil.getDateFormat(saleApplicationAssembling.getReplyDate(), DateUtil.FULL_TIME_SPLIT));
+        }if (saleApplicationAssembling.getReplyDeliveryDate() != null) {
+            model.addAttribute("replyDeliveryDate", DateUtil.getDateFormat(saleApplicationAssembling.getReplyDeliveryDate(), DateUtil.FULL_TIME_SPLIT));
         }
     }
 

@@ -38,7 +38,7 @@
                    <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" id="deletePicBtn"><i class="layui-icon layui-icon-close"></i>删除</button>
             　</div>
         </div>
-        <table class="layui-table layui-form" id="saleApplicationTables" lay-filter="saleApplicationTables"></table>
+        <table class="layui-table layui-form" id="purchaseReplyTables" lay-filter="purchaseReplyTables"></table>
         <div class="layui-form-item febs-hide">
             <button class="layui-btn" lay-submit="" lay-filter="saleApplication-purchaseReply-form-submit" id="submit"></button>
             <button type="reset" class="layui-btn" id="reset"></button>
@@ -107,8 +107,8 @@
             let applicationNoOne = document.getElementById("applicationNo");
             let applicationNoTwo = applicationNoOne.value;
             tableSaleApplication = febs.table.init({
-                elem: "#saleApplicationTables",
-                id:'saleApplicationTables',
+                elem: "#purchaseReplyTables",
+                id:'purchaseReplyTables',
                 url: ctx + 'saleApplications/list/'+applicationNoTwo,
                 even: true,
                 page:false,
@@ -121,13 +121,13 @@
                         {field: 'companyName', edit: true, title: '单位', minWidth: 55, align: 'center'},
                         {field: 'quantityName', edit: true, title: '数量', minWidth: 55, align: 'center'},
                         {field: 'explainName', edit: true, title: '说明', minWidth: 72},
-                        {field: 'purchaseDate',title: '采购交期', minWidth: 72,event: 'designDates'},
+                        {field: 'purchaseDate',title: '采购交期', minWidth: 72,event: 'designDates',templet:'<div>{{ layui.util.toDateString(d.purchaseDate, "yyyy-MM-dd") }}</div>'},
                         {field: 'purchaseReply', edit: true, title: '采购回复', minWidth: 72}
                     ]
                 ]
             });
         }
-        table.on('tool(saleApplicationTables)', function (obj) {
+        table.on('tool(purchaseReplyTables)', function (obj) {
             let data = obj.data,
                 layEvent = obj.event;
             if (layEvent === 'designDates') {
@@ -136,181 +136,13 @@
                     elem: this.firstChild
                     , show: true //直接显示
                     , closeStop: this  //这里代表的意思是：点击 this 所在元素阻止关闭事件冒泡。如果不设定，则无法弹出控件
-                    , done: function (value, res) {
+                    , done: function (value) {
                         data[field] = value; //修改后的值
-                        obj.update(res); //res的值：{"year":2020,"month":1,"date":7,"hours":0,"minutes":0,"seconds":0}
+                        obj.update(data);
                     }
                 });
             }
-            /*if (layEvent === 'choice') {
-                var tableData = layui.table.cache['saleApplicationTables'];
-                var rowIndex = $(obj.tr).attr('data-index');//当前行的索引
-                $("#parameterIndex").val(rowIndex);//获取索引
-                var parameterOptions  = tableData[rowIndex].parameterOption;
-                $("#parameterOne").val(parameterOptions);//配置
-                var companyName  = tableData[rowIndex].companyName;
-                $("#parameterTwo").val(companyName);//单位
-                var quantityName  = tableData[rowIndex].quantityName;
-                $("#parameterThree").val(quantityName);//数量
-                 var explainName  = tableData[rowIndex].explainName;
-                $("#parameterFour").val(explainName);//说明
-                tableData.splice(rowIndex,1); //删除缓存的行
-                febs.modal.view('产品编码选择列表', "sale/saleProductList", {
-                    area:["65%","80%"]
-                });
-            }*/
-            /*if (layEvent === 'specification') {
-                var tableData = layui.table.cache['saleApplicationTables'];
-                var rowIndex = $(obj.tr).attr('data-index');//当前行的索引
-                var productNameOne  = tableData[rowIndex].productName;
-                var parameterOptionOne  = tableData[rowIndex].parameterOption.toString();
-                var parameterOptionTwo = parameterOptionOne.split(",");
-                var machineRequirementsOne = "";
-                var computerConfigurationOne = "";
-                var toolSizeOne = "";
-                var hourlyProductionOne = "";
-                var processingProcedureOne = "";
-                var fixtureRequirementsOne = "";
-                var productShapeOne = "";
-                var productSizeOne = "";
-                var otherRequirementsOne = "";
-                for(var i=0;i<parameterOptionTwo.length;i++){
-                    var parameterOptionThree = parameterOptionTwo[i].split(":")[0];
-                    var parameterOptionFour = parameterOptionTwo[i].split(":")[1];
-                    if (parameterOptionThree=="机器要求"){
-                        machineRequirementsOne = parameterOptionFour;
-                    }if (parameterOptionThree=="电脑配置"){
-                        computerConfigurationOne = parameterOptionFour;
-                    }if (parameterOptionThree=="刀具大小"){
-                        toolSizeOne = parameterOptionFour;
-                    }if (parameterOptionThree=="每小时产量"){
-                        hourlyProductionOne = parameterOptionFour;
-                    }if (parameterOptionThree=="加工工序"){
-                        processingProcedureOne = parameterOptionFour;
-                    }if (parameterOptionThree=="夹具要求"){
-                        fixtureRequirementsOne = parameterOptionFour;
-                    }if (parameterOptionThree=="产品形状"){
-                        productShapeOne = parameterOptionFour;
-                    }if (parameterOptionThree=="产品尺寸"){
-                        productSizeOne = parameterOptionFour;
-                    }if (parameterOptionThree=="其他要求"){
-                        otherRequirementsOne = parameterOptionFour;
-                    }
-                }
-                if (productNameOne == "") {
-                    febs.alert.warn('请选择产品');
-                    return false;
-                }else {
-                febs.modal.open('订单配置选择列表', 'sale/specificationList/', {
-                    area:["30%","65%"],
-                    btn: ['保存', '关闭'],
-                    data:{
-                        machineRequirementsOne:machineRequirementsOne,
-                        computerConfigurationOne:computerConfigurationOne,
-                        toolSizeOne:toolSizeOne,
-                        hourlyProductionOne:hourlyProductionOne,
-                        processingProcedureOne:processingProcedureOne,
-                        fixtureRequirementsOne:fixtureRequirementsOne,
-                        productShapeOne:productShapeOne,
-                        productSizeOne:productSizeOne,
-                        otherRequirementsOne:otherRequirementsOne
-                    },
-                    yes: function (index, layero) {
-                        let dataOne = new Array();
-                        let dataBak = [];
-
-                        let tableDas = layui.table.cache["saleApplicationTables"];
-                        /!* 机器要求*!/
-                        let machineRequirements = document.getElementById("machineRequirements").value;
-                        /!*电脑配置*!/
-                        let computerConfiguration = document.getElementById("computerConfiguration").value;
-                        /!* 刀具大小*!/
-                        let toolSize = document.getElementById("toolSize").value;
-                        /!*每小时产量*!/
-                        var hourlyProduction = document.getElementById("hourlyProduction").value;
-                        /!* 加工工序*!/
-                        var processingProcedure = document.getElementById("processingProcedure").value;
-                       /!* 夹具要求*!/
-                        var fixtureRequirements = document.getElementById("fixtureRequirements").value;
-                        /!*产品形状*!/
-                        var productShape = document.getElementById("productShape").value;
-                        /!*产品尺寸*!/
-                        var productSize = document.getElementById("productSize").value;
-                        /!* 其他要求*!/
-                        var otherRequirements = document.getElementById("otherRequirements").value;
-                        if (machineRequirements !=""){
-                            dataOne.push("机器要求:"+machineRequirements);
-                        }if (computerConfiguration !=""){
-                        dataOne.push("电脑配置:"+computerConfiguration);
-                        }if (toolSize !=""){
-                            dataOne.push("刀具大小:"+toolSize);
-                        }if (hourlyProduction !=""){
-                            dataOne.push("每小时产量:"+hourlyProduction);
-                        }if (processingProcedure !=""){
-                            dataOne.push("加工工序:"+processingProcedure);
-                        }if (fixtureRequirements !=""){
-                            dataOne.push("夹具要求:"+fixtureRequirements);
-                        }if (productShape !=""){
-                            dataOne.push("产品形状:"+productShape);
-                        }if (productSize !=""){
-                            dataOne.push("产品尺寸:"+productSize);
-                        }if (otherRequirements !=""){
-                            dataOne.push("其他要求:"+otherRequirements);
-                        }
-                        var tableData;
-                        var rowIndex = $(obj.tr).attr('data-index');//当前行的索引
-                        for (i=0;i<tableDas.length;i++){
-                            if (tableDas[rowIndex].productName == tableDas[i].productName && tableDas[rowIndex].parameterOption==tableDas[i].parameterOption){
-                                tableData = {"id":tableDas[i].id,"productName":tableDas[i].productName,"specificationModel":tableDas[i].specificationModel,"parameterOption":dataOne,"companyName":tableDas[i].companyName,"quantityName":tableDas[i].quantityName,"explainName":tableDas[i].explainName};
-                            }else{
-                                tableData = {"id":tableDas[i].id,"productName":tableDas[i].productName,"specificationModel":tableDas[i].specificationModel,"parameterOption":tableDas[i].parameterOption,"companyName":tableDas[i].companyName,"quantityName":tableDas[i].quantityName,"explainName":tableDas[i].explainName};
-                            }
-                            dataBak.push(tableData);
-                        }
-                        layui.table.reload('saleApplicationTables',{
-                            data:dataBak
-                        });
-                        parent.layer.close(layer.index)
-                    },
-                    btn2: function () {
-                        parent.layer.close(layer.index)
-                    }
-                });
-                }
-            }*/
         });
-        form.on('submit(saleApplication-purchaseReply-form-submit)', function (data) {
-        /*    var oldData =  table.cache["saleApplicationTables"];
-            alert(oldData.productName)
-            var data1={"productName":"ID2","specificationModel":0,"configureName":"","companyName":"","quantityName":1,"explainName":""};
-            oldData.push(data1);
-            table.reload('saleApplicationTables',{
-                data : oldData
-            });*/
-
-
-        });
-        /*$("#deletePicBtn").click(function () {
-            var contFile = document.getElementById("span-img").innerText;
-            if(contFile == ""){
-                return layer.msg('您还没有上传文件！');
-            }else {
-                $.ajax({
-                    url: '/saleDocumentFile/deleteFile',
-                    data: {contFile: contFile},
-                    success : function(res) {
-                       if(res.code >0){
-                            return layer.msg('删除失败');
-                        }else {
-                           $('#span-img').html("");
-                            return layer.msg('删除成功');
-                        }
-                    }
-                });
-            }
-
-        });*/
-
     });
    function saleCustomerProfileSelection(){
         layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {

@@ -5,6 +5,7 @@ import com.erp.common.entity.QueryRequest;
 import com.erp.personnel.entity.PersonnelDormitory;
 import com.erp.personnel.entity.PersonnelMobility;
 import com.erp.sale.entity.SaleApplication;
+import com.erp.sale.entity.SaleApplicationReply;
 import com.erp.sale.mapper.SaleApplicationMapper;
 import com.erp.sale.service.ISaleApplicationService;
 import org.springframework.stereotype.Service;
@@ -180,9 +181,9 @@ public class SaleApplicationServiceImpl extends ServiceImpl<SaleApplicationMappe
     }
 
     @Override
-    public SaleApplication findSaleApplicationById(String applicationNo) {
+    public SaleApplication findSaleApplicationById(Long id) {
 
-        return baseMapper.findSaleApplicationById(applicationNo);
+        return baseMapper.findSaleApplicationById(id);
     }
 
     @Override
@@ -193,4 +194,156 @@ public class SaleApplicationServiceImpl extends ServiceImpl<SaleApplicationMappe
         page.setTotal(baseMapper.countSaleApplicationsList(applicationNoTwo));
         return baseMapper.findSaleApplicationsPage(page,applicationNoTwo);
     }
+    @Override
+    public SaleApplicationReply findSaleApplicationDesignViewById(Long id,String replyDepartment) {
+        return baseMapper.findSaleApplicationDesignViewById(id,replyDepartment);
+    }
+
+    //设计回复
+    @Override
+    public void designReplySaleApplication(String designReplyParam,String userName) throws ParseException {
+        //获取前台传过来的json
+        JSONArray jsonArrayThree = JSONArray.parseArray(designReplyParam);
+        //循环json得到所需要的参数
+        for(int i = 0; i < jsonArrayThree.size(); i++) {
+            String id = jsonArrayThree.getJSONObject(i).getString("id"); //获取参数id
+            String designDate = jsonArrayThree.getJSONObject(i).getString("designDate"); //获取参数交期
+            String designReply = jsonArrayThree.getJSONObject(i).getString("designReply"); //获取参数回复内容
+            baseMapper.designReplySaleApplication(id,designDate,designReply);//根据得到的参数修改数据库表
+            SaleApplicationReply saleApplicationReply = new SaleApplicationReply(); //定义销售申请：【设计回复】 Entity
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");//设置日期格式
+            String date = simpleDateFormat.format(new Date());//系统当前时间
+            Date today = simpleDateFormat.parse(date); //string类型的日期转换为date
+            saleApplicationReply.setSaleApplicationId(Long.parseLong(id));//给销售申请回复表，赋值销售申请表里的id，并将String类型的id转化为long类型
+            saleApplicationReply.setRespondent(userName);//给销售申请回复表赋值回复人
+            saleApplicationReply.setReplyDate(today);//给销售申请回复表，赋值系统当前时间
+            Date todayOne = simpleDateFormat.parse(designDate);//将String类型的设计交期转化为date类型
+            saleApplicationReply.setReplyDeliveryDate(todayOne);//给销售申请回复表，赋值销售申请表里的设计交期
+            saleApplicationReply.setReplyContent(designReply);//给销售申请回复表，赋值销售申请表里的回复内容
+            saleApplicationReply.setReplyDepartment(SaleApplicationReply.design_reply);//给销售申请回复表，赋值销售申请表里的回复部门
+            try {
+                //根据id查询消息回复情况，查看是否回复过。
+                int saleApplicationReplyOne = baseMapper.findSaleApplicationDesignById(Long.parseLong(id),SaleApplicationReply.design_reply);
+                //判断查出来的数据是否为空，不为空则修改，为空则添加。
+                if (saleApplicationReplyOne>0){
+                    baseMapper.updateSaleApplicationReply(saleApplicationReply);//进行修改新回复的数据
+                }else{
+                    baseMapper.addSaleApplicationReply(saleApplicationReply);//往数据库表添加销售申请回复数据
+                }
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+   //采购回复
+    @Override
+    public void saleApplicationPurchaseReply(String purchaseReplyParam, String userName) throws ParseException {
+        //获取前台传过来的json
+        JSONArray jsonArrayFour = JSONArray.parseArray(purchaseReplyParam);
+        //循环json得到所需要的参数
+        for(int i = 0; i < jsonArrayFour.size(); i++) {
+            String id = jsonArrayFour.getJSONObject(i).getString("id"); //获取参数id
+            String purchaseDate = jsonArrayFour.getJSONObject(i).getString("purchaseDate"); //获取参数交期
+            String purchaseReply = jsonArrayFour.getJSONObject(i).getString("purchaseReply"); //获取参数回复内容
+            baseMapper.saleApplicationPurchaseReply(id,purchaseDate,purchaseReply);//根据得到的参数修改数据库表
+            SaleApplicationReply salePurchaseReply = new SaleApplicationReply(); //定义销售申请：【采购回复】 Entity
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");//设置日期格式
+            String date = simpleDateFormat.format(new Date());//系统当前时间
+            Date today = simpleDateFormat.parse(date); //string类型的日期转换为date
+            salePurchaseReply.setSaleApplicationId(Long.parseLong(id));//给销售申请回复表，赋值销售申请表里的id，并将String类型的id转化为long类型
+            salePurchaseReply.setRespondent(userName);//给销售申请回复表赋值回复人
+            salePurchaseReply.setReplyDate(today);//给销售申请回复表，赋值系统当前时间
+            Date todayOne = simpleDateFormat.parse(purchaseDate);//将String类型的设计交期转化为date类型
+            salePurchaseReply.setReplyDeliveryDate(todayOne);//给销售申请回复表，赋值销售申请表里的设计交期
+            salePurchaseReply.setReplyContent(purchaseReply);//给销售申请回复表，赋值销售申请表里的回复内容
+            salePurchaseReply.setReplyDepartment(SaleApplicationReply.purchase_reply);//给销售申请回复表，赋值销售申请表里的回复部门
+            try {
+                //根据id查询消息回复情况，查看是否回复过。
+                int saleApplicationReplyTwos = baseMapper.findSaleApplicationDesignById(Long.parseLong(id),SaleApplicationReply.purchase_reply);
+                //判断查出来的数据是否为空，不为空则修改，为空则添加。
+                if (saleApplicationReplyTwos>0){
+                    baseMapper.updateSaleApplicationReply(salePurchaseReply);//进行修改新采购回复的数据
+                }else{
+                    baseMapper.addSaleApplicationReply(salePurchaseReply);//往数据库表添加销售申请采购回复数据
+                }
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    //生产回复
+    @Override
+    public void saleApplicationProductionReply(String productionReplyParam, String userName) throws ParseException {
+        //获取前台传过来的json
+        JSONArray jsonArraySix = JSONArray.parseArray(productionReplyParam);
+        //循环json得到所需要的参数
+        for(int i = 0; i < jsonArraySix.size(); i++) {
+            String id = jsonArraySix.getJSONObject(i).getString("id"); //获取参数id
+            String productionDate = jsonArraySix.getJSONObject(i).getString("productionDate"); //获取参数交期
+            String productionReply = jsonArraySix.getJSONObject(i).getString("productionReply"); //获取参数回复内容
+            baseMapper.saleApplicationProductionReply(id,productionDate,productionReply);//根据得到的参数修改数据库表
+            SaleApplicationReply saleProductionReply = new SaleApplicationReply(); //定义销售申请：【生产回复】 Entity
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");//设置日期格式
+            String date = simpleDateFormat.format(new Date());//系统当前时间
+            Date today = simpleDateFormat.parse(date); //string类型的日期转换为date
+            saleProductionReply.setSaleApplicationId(Long.parseLong(id));//给销售申请回复表，赋值销售申请表里的id，并将String类型的id转化为long类型
+            saleProductionReply.setRespondent(userName);//给销售申请回复表赋值回复人
+            saleProductionReply.setReplyDate(today);//给销售申请回复表，赋值系统当前时间
+            Date todayOne = simpleDateFormat.parse(productionDate);//将String类型的设计交期转化为date类型
+            saleProductionReply.setReplyDeliveryDate(todayOne);//给销售申请回复表，赋值销售申请表里的设计交期
+            saleProductionReply.setReplyContent(productionReply);//给销售申请回复表，赋值销售申请表里的回复内容
+            saleProductionReply.setReplyDepartment(SaleApplicationReply.production_reply);//给销售申请回复表，赋值销售申请表里的回复部门
+            try {
+                //根据id查询消息回复情况，查看是否回复过。
+                int saleProductionReplyOne = baseMapper.findSaleApplicationDesignById(Long.parseLong(id),SaleApplicationReply.production_reply);
+                //判断查出来的数据是否为空，不为空则修改，为空则添加。
+                if (saleProductionReplyOne>0){
+                    baseMapper.updateSaleApplicationReply(saleProductionReply);//进行修改新采购回复的数据
+                }else{
+                    baseMapper.addSaleApplicationReply(saleProductionReply);//往数据库表添加销售申请采购回复数据
+                }
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+   //装配回复
+    @Override
+    public void saleApplicationAssemblingReply(String assemblingReplyParam, String userName) throws ParseException {
+        //获取前台传过来的json
+        JSONArray jsonArraySeven = JSONArray.parseArray(assemblingReplyParam);
+        //循环json得到所需要的参数
+        for(int i = 0; i < jsonArraySeven.size(); i++) {
+            String id = jsonArraySeven.getJSONObject(i).getString("id"); //获取参数id
+            String assemblingDate = jsonArraySeven.getJSONObject(i).getString("assemblingDate"); //获取参数交期
+            String assemblingReply = jsonArraySeven.getJSONObject(i).getString("assemblingReply"); //获取参数回复内容
+            baseMapper.saleApplicationAssemblingReply(id,assemblingDate,assemblingReply);//根据得到的参数修改数据库表
+            SaleApplicationReply saleAssemblingReply = new SaleApplicationReply(); //定义销售申请：【装配回复】 Entity
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");//设置日期格式
+            String date = simpleDateFormat.format(new Date());//系统当前时间
+            Date today = simpleDateFormat.parse(date); //string类型的日期转换为date
+            saleAssemblingReply.setSaleApplicationId(Long.parseLong(id));//给销售申请回复表，赋值销售申请表里的id，并将String类型的id转化为long类型
+            saleAssemblingReply.setRespondent(userName);//给销售申请回复表赋值回复人
+            saleAssemblingReply.setReplyDate(today);//给销售申请回复表，赋值系统当前时间
+            Date todayOne = simpleDateFormat.parse(assemblingDate);//将String类型的设计交期转化为date类型
+            saleAssemblingReply.setReplyDeliveryDate(todayOne);//给销售申请回复表，赋值销售申请表里的设计交期
+            saleAssemblingReply.setReplyContent(assemblingReply);//给销售申请回复表，赋值销售申请表里的回复内容
+            saleAssemblingReply.setReplyDepartment(SaleApplicationReply.assembling_reply);//给销售申请回复表，赋值销售申请表里的回复部门
+            try {
+                //根据id查询消息回复情况，查看是否回复过。
+                int saleAssemblingReplyOne = baseMapper.findSaleApplicationDesignById(Long.parseLong(id),SaleApplicationReply.assembling_reply);
+                //判断查出来的数据是否为空，不为空则修改，为空则添加。
+                if (saleAssemblingReplyOne>0){
+                    baseMapper.updateSaleApplicationReply(saleAssemblingReply);//进行修改新采购回复的数据
+                }else{
+                    baseMapper.addSaleApplicationReply(saleAssemblingReply);//往数据库表添加销售申请采购回复数据
+                }
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }

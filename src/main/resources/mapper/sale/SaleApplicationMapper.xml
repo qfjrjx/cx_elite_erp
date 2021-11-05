@@ -148,7 +148,7 @@
 
 
     <!-- 修改回显查询-->
-    <select id="findSaleApplicationById" parameterType="String" resultType="com.erp.sale.entity.SaleApplication">
+    <select id="findSaleApplicationById" parameterType="long" resultType="com.erp.sale.entity.SaleApplication">
         SELECT
             sa.id,
             sa.requested_delivery_date requestedDeliveryDate,
@@ -183,7 +183,7 @@
         FROM
             jr_sale_application sa
         WHERE
-            sa.application_no =  #{applicationNo}
+            sa.id =  #{id}
     </select>
 
     <select id="countSaleApplicationsList" parameterType="String" resultType="long">
@@ -197,17 +197,108 @@
 
     <select id="findSaleApplicationsPage" parameterType="String" resultType="com.erp.sale.entity.SaleApplication">
         SELECT
+            sa.id,
             sa.application_no applicationNo,
             sa.product_name productName,
             sa.configure_name configureName,
             sa.specification_model specificationModel,
             sa.company_name companyName,
             sa.quantity_name quantityName,
-            sa.explain_name explainName
+            sa.explain_name explainName,
+            sa.design_date designDate,
+            sa.design_reply designReply,
+            sa.purchase_date purchaseDate,
+            sa.purchase_reply purchaseReply,
+            sa.production_date productionDate,
+            sa.production_reply productionReply,
+            sa.assembling_date assemblingDate,
+            sa.assembling_reply assemblingReply
         FROM
             jr_sale_application sa
         WHERE
             sa.application_no =  #{applicationNoTwo}
     </select>
+     <!--根据传过来的参数，回复销售申请表里的设计交期，备注内容-->
+    <update id = "designReplySaleApplication" parameterType = "String" >
+        UPDATE jr_sale_application sa
+        SET sa.design_date = #{designDate},
+            sa.design_reply = #{designReply}
+        WHERE sa.id = #{id}
+    </update>
+    <!--根据传过来的参数，回复销售申请表里的采购交期，备注内容-->
+    <update id = "saleApplicationPurchaseReply" parameterType = "String" >
+        UPDATE jr_sale_application sa
+        SET sa.purchase_date = #{purchaseDate},
+            sa.purchase_reply = #{purchaseReply}
+        WHERE sa.id = #{id}
+    </update>
+    <!--根据传过来的参数，回复销售申请表里的生产交期，备注内容-->
+    <update id = "saleApplicationProductionReply" parameterType = "String" >
+        UPDATE jr_sale_application sa
+        SET sa.production_date = #{productionDate},
+            sa.production_reply = #{productionReply}
+        WHERE sa.id = #{id}
+    </update>
+    <!--根据传过来的参数，回复销售申请表里的装配交期，备注内容-->
+    <update id = "saleApplicationAssemblingReply" parameterType = "String" >
+        UPDATE jr_sale_application sa
+        SET sa.assembling_date = #{assemblingDate},
+            sa.assembling_reply = #{assemblingReply}
+        WHERE sa.id = #{id}
+    </update>
+  <!--向数据库添加回复数据-->
+    <insert id="addSaleApplicationReply" parameterType="com.erp.sale.entity.SaleApplicationReply">
+        INSERT INTO
+            jr_sale_application_reply
+            (sale_application_id,
+             respondent,
+             reply_date,
+             reply_delivery_date,
+             reply_content,
+             reply_department
+             )
+        VALUES
+            (
+             #{saleApplicationId},
+             #{respondent},
+             #{replyDate},
+             #{replyDeliveryDate},
+             #{replyContent},
+             #{replyDepartment}
+            )
+    </insert>
+   <!--查看设计回复详情-->
+    <select id="findSaleApplicationDesignViewById" resultType="com.erp.sale.entity.SaleApplicationReply">
+        SELECT
+            sar.sale_application_id saleApplicationId,
+            sar.respondent,
+            sar.reply_date replyDate,
+            sar.reply_delivery_date replyDeliveryDate,
+            sar.reply_content replyContent
+        FROM
+            jr_sale_application_reply sar
+        WHERE
+            sar.sale_application_id =  #{id} and sar.reply_department  = #{replyDepartment}
+    </select>
+
+    <select id="findSaleApplicationDesignById" resultType="int">
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_sale_application_reply sar
+        WHERE
+            sar.sale_application_id =  #{id} and  sar.reply_department  = #{replyDepartment}
+    </select>
+
+    <!--进行修改新回复的数据-->
+    <update id = "updateSaleApplicationReply" parameterType = "com.erp.sale.entity.SaleApplicationReply" >
+        UPDATE jr_sale_application_reply sar
+        SET sar.respondent = #{respondent},
+            sar.reply_date = #{replyDate},
+            sar.reply_delivery_date = #{replyDeliveryDate},
+            sar.reply_content = #{replyContent},
+            sar.reply_department = #{replyDepartment}
+        WHERE sar.sale_application_id = #{saleApplicationId} and sar.reply_department  = #{replyDepartment}
+    </update>
 
 </mapper>
