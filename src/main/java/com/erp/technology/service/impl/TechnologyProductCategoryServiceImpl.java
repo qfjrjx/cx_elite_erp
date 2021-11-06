@@ -15,6 +15,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -58,10 +59,15 @@ public class TechnologyProductCategoryServiceImpl extends ServiceImpl<Technology
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void deleteTechnologyProductCategory(TechnologyProductCategory technologyProductCategory) {
-        LambdaQueryWrapper<TechnologyProductCategory> wrapper = new LambdaQueryWrapper<>();
-	    // TODO 设置删除条件
-	    this.remove(wrapper);
-	}
+    public void deleteTechnologyProductCategory(String[] ids) {
+        List<String> list = Arrays.asList(ids);
+        baseMapper.deleteBatchIds(list);
+    }
+
+
+    @Override
+    public TechnologyProductCategory findTechnologyById(Long id) {
+
+        return baseMapper.findTechnologyById(id);
+    }
 }

@@ -49,7 +49,11 @@ public interface ITechnologyProductCategoryService extends IService<TechnologyPr
     /**
      * 删除
      *
-     * @param technologyProductCategory technologyProductCategory
+     * @param ids ids
      */
-    void deleteTechnologyProductCategory(TechnologyProductCategory technologyProductCategory);
+    void deleteTechnologyProductCategory(String[] ids);
+
+    TechnologyProductCategory findTechnologyById(Long id);
+
+
 }

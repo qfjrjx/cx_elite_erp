@@ -19,4 +19,6 @@ public interface TechnologyProductCategoryMapper extends BaseMapper<TechnologyPr
     long countTechnologyProductCategory(@Param("technologyProductCategory") TechnologyProductCategory technologyProductCategory);
 
     IPage<TechnologyProductCategory> findTechnologyProductCategoryPage(Page<TechnologyProductCategory> page,@Param("technologyProductCategory") TechnologyProductCategory technologyProductCategory);
+
+    TechnologyProductCategory findTechnologyById(@Param("id") Long id);
 }

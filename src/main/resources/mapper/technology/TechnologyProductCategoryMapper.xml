@@ -9,6 +9,15 @@
             jr_technology_product_category tpc
         WHERE
             1 = 1
+        <if test="technologyProductCategory.productCategoryName != null and technologyProductCategory.productCategoryName != ''">
+            AND tpc.product_category_name = #{technologyProductCategory.productCategoryName}
+        </if>
+        <if test="technologyProductCategory.productCategory != null and technologyProductCategory.productCategory != ''">
+            AND tpc.product_category = #{technologyProductCategory.productCategory}
+        </if>
+        <if test="technologyProductCategory.productCategoryState != null and technologyProductCategory.productCategoryState != ''">
+            AND tpc.product_category_state = #{technologyProductCategory.productCategoryState}
+        </if>
     </sql>
     <sql id="findTechnologyProductCategorySql" >
         SELECT
@@ -23,6 +32,15 @@
             jr_technology_product_category tpc
         WHERE
             1 = 1
+        <if test="technologyProductCategory.productCategoryName != null and technologyProductCategory.productCategoryName != ''">
+            AND tpc.product_category_name = #{technologyProductCategory.productCategoryName}
+        </if>
+        <if test="technologyProductCategory.productCategory != null and technologyProductCategory.productCategory != ''">
+            AND tpc.product_category = #{technologyProductCategory.productCategory}
+        </if>
+        <if test="technologyProductCategory.productCategoryState != null and technologyProductCategory.productCategoryState != ''">
+            AND tpc.product_category_state = #{technologyProductCategory.productCategoryState}
+        </if>
     </sql>
 
     <select id="countTechnologyProductCategory" parameterType="com.erp.technology.entity.TechnologyProductCategory" resultType="long">
@@ -31,6 +49,21 @@
 
     <select id="findTechnologyProductCategoryPage" parameterType="com.erp.technology.entity.TechnologyProductCategory" resultType="com.erp.technology.entity.TechnologyProductCategory">
         <include refid="findTechnologyProductCategorySql"/>
+    </select>
+
+    <select id="findTechnologyById" parameterType="long" resultType="com.erp.technology.entity.TechnologyProductCategory">
+        SELECT
+            tpc.id,
+            tpc.product_category,
+            tpc.product_belonging_category,
+            tpc.product_category_name,
+            tpc.product_category_sort,
+            tpc.product_category_state,
+            tpc.product_category_remarks
+        FROM
+            jr_technology_product_category tpc
+        WHERE
+            tpc.id = #{id}
     </select>
 
 </mapper>
