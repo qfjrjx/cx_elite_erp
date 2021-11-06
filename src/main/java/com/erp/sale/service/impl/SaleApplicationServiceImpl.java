@@ -117,12 +117,6 @@ public class SaleApplicationServiceImpl extends ServiceImpl<SaleApplicationMappe
                  saleApplication.setApplicationNo("SQ"+yearLast+month+n);
              }
          }
-        //打印当前月
-        //System.out.println(month);
-       // String applicationNo = "SQ"+yearLast+month;
-
-
-        //System.out.println("申请交货日期:"+requestedDeliveryDate);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date requestedDeliveryDates = sdf.parse(requestedDeliveryDate);//格式化数据，取当前时间结果
         saleApplication.setRequestedDeliveryDate(requestedDeliveryDates);
