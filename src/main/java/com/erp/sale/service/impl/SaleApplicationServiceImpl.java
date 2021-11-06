@@ -2,6 +2,7 @@ package com.erp.sale.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.erp.common.entity.QueryRequest;
+import com.erp.personnel.entity.PersonnelArchives;
 import com.erp.personnel.entity.PersonnelDormitory;
 import com.erp.personnel.entity.PersonnelMobility;
 import com.erp.sale.entity.SaleApplication;
@@ -81,16 +82,56 @@ public class SaleApplicationServiceImpl extends ServiceImpl<SaleApplicationMappe
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM");
         //格式化当前月
         String month = simpleDateFormat.format(date);
+        //查询出最后一个销售申请单号
+        SaleApplication saleApplicationOne = baseMapper.querySaleApplication();
+        String createTimeMonth = simpleDateFormat.format(saleApplicationOne.getCreateDate());
+         if (month.equals(createTimeMonth)){
+             String applicationNo = saleApplicationOne.getApplicationNo();
+             String applicationNoOne = applicationNo.substring(7,9);
+             int oddNumbers = Integer.parseInt(applicationNoOne);
+             if (oddNumbers<9){
+                 for (int i = oddNumbers; i < 100; i++) {
+                     String n = "";
+                     // 满足条件1
+                     if (i < 10) {
+                         n = "00" + (i+1);
+                     }if ((i + 1) % 10 != 0){
+                         saleApplication.setApplicationNo("SQ"+yearLast+month+n);
+                         break;
+                     }
+                 }
+             }else{
+                 int ff = oddNumbers+1;
+                 if(ff < 100){
+                     saleApplication.setApplicationNo("SQ"+yearLast+month+"0"+ff);
+                 }
+             }
+         }else if(!month.equals(createTimeMonth)){
+             String n = "";
+             int i = 0;
+             // 满足条件1
+             if (i < 10){
+                 n = "00" + i;
+             }
+             if ((i + 1) % 10 != 0){
+                 saleApplication.setApplicationNo("SQ"+yearLast+month+n);
+             }
+         }
         //打印当前月
         //System.out.println(month);
-        String applicationNo = "SQ"+yearLast+month;
-        saleApplication.setApplicationNo(applicationNo);
+       // String applicationNo = "SQ"+yearLast+month;
+
+
         //System.out.println("申请交货日期:"+requestedDeliveryDate);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Date requestedDeliveryDates = sdf.parse(requestedDeliveryDate);//格式化数据，取当前时间结果为 2014-10-30
+        Date requestedDeliveryDates = sdf.parse(requestedDeliveryDate);//格式化数据，取当前时间结果
         saleApplication.setRequestedDeliveryDate(requestedDeliveryDates);
         //System.out.println("客 户:"+customerName);
         saleApplication.setCustomerName(customerName);
+        SimpleDateFormat simpleDateFormatOne = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
+        String dates = simpleDateFormatOne.format(new Date());//系统当前时间
+        Date today = simpleDateFormatOne.parse(dates);//格式化系统当前时间
+        saleApplication.setCreateDate(today);
         if (!contImg.equals("")){
             //截取：之前的字符串
             int contImgOne = contImg.indexOf(".");
@@ -98,12 +139,8 @@ public class SaleApplicationServiceImpl extends ServiceImpl<SaleApplicationMappe
             saleApplication.setEnclosureName(contImgTwo);
         }
         //System.out.println("列表数据:"+dataTable);
-        //将List集合转成json字符串
-        JSONArray jsonArray = JSONArray.parseArray(salesmanName);
-        for(int i = 0; i < jsonArray.size(); i++){
-            saleApplication.setSalesmanName(jsonArray.get(i).toString());
+            saleApplication.setSalesmanName(salesmanName);
            // System.out.println("业  务 员:"+jsonArray.get(i).toString());
-        }
         JSONArray jsonArrayOne = JSONArray.parseArray(dataTable);
         for(int i = 0; i < jsonArrayOne.size(); i++){
             String explainName = jsonArrayOne.getJSONObject(i).getString("explainName");
@@ -115,9 +152,9 @@ public class SaleApplicationServiceImpl extends ServiceImpl<SaleApplicationMappe
             saleApplication.setQuantityName(Integer.parseInt(quantityName));
             //将List集合转成json字符串
             JSONArray jsonArrayTwo = JSONArray.parseArray(parameterOption);
+            //StringBuilder拼接字符串方式
             StringBuilder strOne = new StringBuilder();
             for(int j = 0; j < jsonArrayTwo.size(); j++){
-                //StringBuilder拼接字符串方式
                 String parameterOne = jsonArrayTwo.get(j).toString();
                 //System.out.println("------------->>"+parameterOne);
                 //截取：之前的字符串

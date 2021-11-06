@@ -49,6 +49,6 @@ public interface SaleApplicationMapper extends BaseMapper<SaleApplication> {
     void saleApplicationProductionReply(@Param("id")String id,@Param("productionDate") String productionDate,@Param("productionReply") String productionReply);
     //根据得到的参数修改数据库表 装配回复
     void saleApplicationAssemblingReply(@Param("id")String id,@Param("assemblingDate") String assemblingDate,@Param("assemblingReply") String assemblingReply);
-
-
+    //查询出最后一个销售申请单号
+    SaleApplication querySaleApplication();
 }

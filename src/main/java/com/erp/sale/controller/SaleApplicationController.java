@@ -46,7 +46,7 @@ public class SaleApplicationController extends BaseController {
     public FebsResponse getAllSaleApplications(SaleApplication saleApplication) {
         return new FebsResponse().success().data(saleApplicationService.findSaleApplications(saleApplication));
     }
-
+    //列表查询
     @GetMapping("saleApplication/list")
     @ResponseBody
     @RequiresPermissions("saleApplication:view")

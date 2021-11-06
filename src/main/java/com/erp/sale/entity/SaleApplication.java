@@ -200,4 +200,10 @@ public class SaleApplication {
     @TableField("other_requirements")
     private String otherRequirements;
 
+    /**
+     * 创建日期
+     */
+    @TableField("create_date")
+    private Date createDate;
+
 }

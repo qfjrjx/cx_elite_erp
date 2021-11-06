@@ -299,10 +299,6 @@
             $("#customerName").attr("value","");
             tableIns.reload({where: getQueryParams(), page: {curr: 1}});
         });
-        var dataTwo = new Array();
-        form.on('select(salesmanName)', function(data){
-            dataTwo.push(data.value)
-        });
         $addTo.on('click', function () {
             febs.modal.open('【销售申请】新增', 'sale/saleApplication/add', {
                 btn: ['增加行','删除行','全部删除','保存', '关闭'],
@@ -332,6 +328,7 @@
                   return false;
                 },
                 btn4: function () {
+                    var salesmanNames = document.getElementById("personnelNameOne");
                     var contImg = document.getElementById("span-img").innerText;
                     var dataThree = new Array();
                     var transferData = document.getElementById("transferData");
@@ -344,7 +341,7 @@
                     $.ajax({
                         url: '/saleApplication/add',
                         type:"post",
-                        data: {requestedDeliveryDate: transferData.value,customerName:customerNameTwo.value,salesmanName:JSON.stringify(dataTwo),dataTable:JSON.stringify(dataThree),contImg:contImg},
+                        data: {requestedDeliveryDate: transferData.value,customerName:customerNameTwo.value,salesmanName:salesmanNames.value,dataTable:JSON.stringify(dataThree),contImg:contImg},
                         success : function(res) {
                             //$query.click();
                             parent.location.reload();

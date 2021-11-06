@@ -99,7 +99,7 @@
         INSERT INTO jr_sale_application (
             requested_delivery_date, application_no, customer_name,salesman_name,product_name,specification_model,configure_name
             ,company_name, quantity_name,enclosure_name, explain_name,machine_requirements,computer_configuration,
-            tool_size,hourly_production,processing_procedure,fixture_requirements,product_shape,product_size,other_requirements)
+            tool_size,hourly_production,processing_procedure,fixture_requirements,product_shape,product_size,other_requirements,create_date)
         VALUES
             (#{requestedDeliveryDate},
              #{applicationNo},
@@ -120,7 +120,8 @@
              #{fixtureRequirements},
              #{productShape},
              #{productSize},
-             #{otherRequirements}
+             #{otherRequirements},
+             #{createDate}
             )
     </insert>
 
@@ -300,5 +301,47 @@
             sar.reply_department = #{replyDepartment}
         WHERE sar.sale_application_id = #{saleApplicationId} and sar.reply_department  = #{replyDepartment}
     </update>
+     <!--查询出最后一个销售申请单号-->
+    <select id="querySaleApplication" resultType="com.erp.sale.entity.SaleApplication">
+        SELECT
+            sa.id,
+            sa.requested_delivery_date requestedDeliveryDate,
+            sa.application_no applicationNo,
+            sa.customer_id customerId,
+            sa.customer_name customerName,
+            sa.salesman_name salesmanName,
+            sa.product_name productName,
+            sa.specification_model specificationModel,
+            sa.configure_name configureName,
+            sa.company_name companyName,
+            sa.quantity_name quantityName,
+            sa.enclosure_name enclosureName,
+            sa.design_date designDate,
+            sa.design_reply designReply,
+            sa.purchase_date purchaseDate,
+            sa.purchase_reply purchaseReply,
+            sa.production_date productionDate,
+            sa.production_reply productionReply,
+            sa.assembling_date assemblingDate,
+            sa.assembling_reply assemblingReply,
+            sa.explain_name explainName,
+            sa.machine_requirements machineRequirements,
+            sa.computer_configuration computerConfiguration,
+            sa.tool_size toolSize,
+            sa.hourly_production hourlyProduction,
+            sa.processing_procedure processingProcedure,
+            sa.fixture_requirements fixtureRequirements,
+            sa.product_shape productShape,
+            sa.product_size productSize,
+            sa.other_requirements otherRequirements,
+            sa.create_date createDate
+        FROM
+            jr_sale_application sa
+        GROUP BY
+            sa.create_date
+        ORDER BY
+            sa.create_date DESC
+            LIMIT 1;
+    </select>
 
 </mapper>
