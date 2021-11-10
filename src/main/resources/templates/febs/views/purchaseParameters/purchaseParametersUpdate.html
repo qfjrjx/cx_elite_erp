@@ -1,0 +1,112 @@
+<style>
+    #purchaseParameters-update {
+        padding: 20px 25px 25px 0;
+    }
+</style>
+<div class="layui-fluid" id="purchaseParameters-update">
+    <form class="layui-form" action="" lay-filter="purchaseParameters-update-form">
+        <div class="layui-form-item febs-hide">
+            <label class="layui-form-label febs-form-item-require">参数id：</label>
+            <div class="layui-input-block">
+                <input type="text" name="id" data-th-value="${purchaseParameters.id}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">参数类别：</label>
+            <div class="layui-input-block">
+                <select name="purchaseParametersCategory">
+                    <option value=""></option>
+                    <option value="1">材质</option>
+                    <option value="2">订购类型</option>
+                    <option value="3">付款方式</option>
+                    <option value="4">计量单位</option>
+                    <option value="5">物料类别</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require" >参数值：</label>
+            <div class="layui-input-block">
+                <input type="text" name="purchaseParametersValue"
+                       autocomplete="off" class="layui-input" placeholder="请输入名称">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require" >参数名称：</label>
+            <div class="layui-input-block">
+                <input type="text" name="purchaseParametersName"
+                       autocomplete="off" class="layui-input" placeholder="请输入名称">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">排序：</label>
+            <div class="layui-input-block">
+                <input type="text" name="purchaseParametersSort"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">备注：</label>
+            <div class="layui-input-block">
+                <textarea name="purchaseParametersRemarks" maxlength="100" class="layui-textarea" placeholder=""></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">状态：</label>
+            <div class="layui-input-block">
+                <select name="purchaseParametersState">
+                    <option value="1">启用</option>
+                    <option value="2">禁用</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item febs-hide">
+            <button class="layui-btn" lay-submit="" lay-filter="purchaseParameters-update-form-submit" id="submit"></button>
+            <button type="reset" class="layui-btn" id="reset"></button>
+        </div>
+    </form>
+</div>
+
+<script data-th-inline="javascript">
+    layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
+        let $ = layui.$,
+            febs = layui.febs,
+            layer = layui.layer,
+            form = layui.form,
+            purchaseParameters = [[${purchaseParameters}]],
+            validate = layui.validate;
+
+        form.verify(validate);
+        form.render();
+       /* let userName = currentUser.username;
+        $('#purchaseParametersCreator').val(userName);*/
+
+        initPurchaseParametersValue();
+
+        function initPurchaseParametersValue() {
+            form.val("purchaseParameters-update-form", {
+                "purchaseParametersCategory": purchaseParameters.purchaseParametersCategory,
+                "purchaseParametersValue": purchaseParameters.purchaseParametersValue,
+                "purchaseParametersName": purchaseParameters.purchaseParametersName,
+                "purchaseParametersSort": purchaseParameters.purchaseParametersSort,
+                "purchaseParametersState": purchaseParameters.purchaseParametersState,
+                "purchaseParametersRemarks": purchaseParameters.purchaseParametersRemarks
+            });
+        }
+
+        form.on('submit(purchaseParameters-update-form-submit)', function (data) {
+            const b = true;
+            if (febs.nativeEqual(data.field, purchaseParameters)) {
+                febs.alert.warn('数据未作任何修改！');
+                return true;
+            }
+            febs.post(ctx + 'purchaseParameters/update', data.field, function () {
+                layer.closeAll();
+                febs.alert.success('数据修改成功');
+                $('#purchase-parameters').find('#query').click();
+            });
+            return false;
+        });
+
+    });
+</script>

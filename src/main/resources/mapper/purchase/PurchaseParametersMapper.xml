@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.purchase.mapper.PurchaseParametersMapper">
+
+    <sql id="countPurchaseParametersSql">
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_purchase_parameters pp
+        WHERE
+            1 = 1
+        <if test="purchaseParameters.purchaseParametersState != null and purchaseParameters.purchaseParametersState != ''">
+            AND pp.purchase_parameters_state = #{purchaseParameters.purchaseParametersState}
+        </if>
+        <if test="purchaseParameters.purchaseParametersCategory != null and purchaseParameters.purchaseParametersCategory != ''">
+            AND pp.purchase_parameters_category = #{purchaseParameters.purchaseParametersCategory}
+        </if>
+        <if test="purchaseParameters.purchaseParametersName != null and purchaseParameters.purchaseParametersName != ''">
+            AND pp.purchase_parameters_name = #{purchaseParameters.purchaseParametersName}
+        </if>
+    </sql>
+    <sql id="findPurchaseParametersSql">
+        SELECT
+            pp.id,
+            pp.purchase_parameters_state,
+            pp.purchase_parameters_category,
+            pp.purchase_parameters_value,
+            pp.purchase_parameters_name,
+            pp.purchase_parameters_sort,
+            pp.purchase_parameters_remarks,
+            pp.purchase_parameters_creator,
+            pp.creation_time
+        FROM
+            jr_purchase_parameters pp
+        WHERE
+            1 = 1
+        <if test="purchaseParameters.purchaseParametersState != null and purchaseParameters.purchaseParametersState != ''">
+            AND pp.purchase_parameters_state = #{purchaseParameters.purchaseParametersState}
+        </if>
+        <if test="purchaseParameters.purchaseParametersCategory != null and purchaseParameters.purchaseParametersCategory != ''">
+            AND pp.purchase_parameters_category = #{purchaseParameters.purchaseParametersCategory}
+        </if>
+        <if test="purchaseParameters.purchaseParametersName != null and purchaseParameters.purchaseParametersName != ''">
+            AND pp.purchase_parameters_name = #{purchaseParameters.purchaseParametersName}
+        </if>
+    </sql>
+
+    <select id="countPurchaseParameters" parameterType="com.erp.purchase.entity.PurchaseParameters" resultType="long">
+        <include refid="countPurchaseParametersSql"/>
+    </select>
+
+    <select id="findPurchaseParametersPage" parameterType="com.erp.purchase.entity.PurchaseParameters" resultType="com.erp.purchase.entity.PurchaseParameters">
+        <include refid="findPurchaseParametersSql"/>
+    </select>
+      <!--修改回显-->
+    <select id="findPurchaseParametersById" parameterType="long" resultType="com.erp.purchase.entity.PurchaseParameters">
+        SELECT
+            pp.id,
+            pp.purchase_parameters_state purchaseParametersState,
+            pp.purchase_parameters_category purchaseParametersCategory,
+            pp.purchase_parameters_value purchaseParametersValue,
+            pp.purchase_parameters_name purchaseParametersName,
+            pp.purchase_parameters_sort purchaseParametersSort,
+            pp.purchase_parameters_remarks purchaseParametersRemarks,
+            pp.purchase_parameters_creator purchaseParametersCreator,
+            pp.creation_time creationTime
+        FROM
+            jr_purchase_parameters pp
+        WHERE
+            pp.id = #{id}
+    </select>
+
+</mapper>
