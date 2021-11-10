@@ -49,7 +49,7 @@ public interface IPurchaseParametersService extends IService<PurchaseParameters>
     /**
      * 删除
      *
-     * @param purchaseParameters purchaseParameters
+     * @param ids purchaseParameters
      */
     void deletePurchaseParameters(String[] ids);
 
