@@ -18,6 +18,20 @@ import com.baomidou.mybatisplus.annotation.TableName;
 public class TechnologyProductCategory {
 
     /**
+     * 产品类别：1-大类
+     */
+    public static final String Product_general_category = "1";
+    /**
+     * 产品类别：2-小类
+     */
+    public static final String product_subclass = "2";
+
+    /**
+     * 状态: 1-启用
+     */
+    public static final String product_category_state = "1";
+
+    /**
      * 主键
      */
     @TableId(value = "id", type = IdType.AUTO)

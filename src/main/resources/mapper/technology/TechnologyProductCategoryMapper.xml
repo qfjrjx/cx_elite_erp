@@ -66,4 +66,34 @@
             tpc.id = #{id}
     </select>
 
+    <select id="queryProductGeneralCategory" parameterType="String" resultType="com.erp.technology.entity.TechnologyProductCategory">
+        SELECT
+            tpc.id,
+            tpc.product_category,
+            tpc.product_belonging_category,
+            tpc.product_category_name,
+            tpc.product_category_sort,
+            tpc.product_category_state,
+            tpc.product_category_remarks
+        FROM
+            jr_technology_product_category tpc
+        WHERE
+            tpc.product_category = #{productGeneralCategory} and tpc.product_category_state = #{productCategoryState}
+    </select>
+
+    <select id="queryProductSubclass" parameterType="String" resultType="com.erp.technology.entity.TechnologyProductCategory">
+        SELECT
+            tpc.id,
+            tpc.product_category,
+            tpc.product_belonging_category,
+            tpc.product_category_name,
+            tpc.product_category_sort,
+            tpc.product_category_state,
+            tpc.product_category_remarks
+        FROM
+            jr_technology_product_category tpc
+        WHERE
+            tpc.product_category = #{productSubclass} and tpc.product_category_state = #{productCategoryState}
+    </select>
+
 </mapper>

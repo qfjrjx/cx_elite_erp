@@ -1,0 +1,375 @@
+<style>
+    #technology-product xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #technology-product xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="technology-product" lay-title="产品档案">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="parameter-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md8">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm">类别名称</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="productCategoryName" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label layui-form-label-sm">产品类别</label>
+                                        <div class="layui-input-inline">
+                                            <select name="productCategory">
+                                                <option value=""></option>
+                                                <option value="1">大类</option>
+                                                <option value="2">小类</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label layui-form-label-sm">状态</label>
+                                        <div class="layui-input-inline">
+                                            <select name="productState">
+                                                <option value=""></option>
+                                                <option value="1">启用</option>
+                                                <option value="2">禁用</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="technologyProductTable"  lay-data="{id: 'technologyProductTable'}"></table>
+                    <div class="layui-col-md8">
+                        <div class="layui-form-item"></div>
+                    </div>
+                    <div class="layui-col-md4 layui-col-sm12 layui-col-xs12 table-action-area">
+                        <!--搜索按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                            <i class="layui-icon">&#xe848;</i>查询
+                        </div>
+                        <!-- 刷新表格按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain table-action" id="reset">
+                            <i class="layui-icon">&#xe79b;</i>刷新
+                        </div>
+                        <!--添加按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "shiro:hasAnyPermissions="technologyProduct:add" id="addTo">
+                            <i class="layui-icon">&#xe78a;</i>新增
+                        </div>
+                        <!--修改按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="technologyProduct:update" id="updateTo">
+                            <i class="layui-icon">&#xe642;</i>修改
+                        </div>
+                        <!--复制按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="technologyProduct:copy" id="copyTo">
+                            <i class="layui-icon">&#xe642;</i>复制
+                        </div>
+                        <!--删除按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "shiro:hasAnyPermissions="technologyProduct:delete" id="deleteTo">
+                            <i class="layui-icon">&#xe8a1;</i>删除
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="product-state">
+    {{#
+    let productState = {
+    1: {title: '启用', color: 'green'},
+    2: {title: '禁用', color: 'volcano'}
+    }[d.productState];
+    }}
+    <span class="layui-badge febs-bg-{{productState.color}}">{{ productState.title }}</span>
+</script>
+<script type="text/html" id="productProcess-status">
+    {{#
+    let productProcessStatus = {
+    1: {title: '未设置', color: 'blue'},
+    2: {title: '已设置', color: 'yellow'}
+    }[d.productProcessStatus];
+    }}
+    <span class="layui-badge febs-bg-{{productProcessStatus.color}}">{{ productProcessStatus.title }}</span>
+</script>
+<script type="text/html" id="parameter-option">
+    <span shiro:lacksPermission="technologyProduct:view,technologyProduct:update,technologyProduct:delete">
+        <span class="layui-badge-dot febs-bg-orange"></span> 无权限
+    </span>
+    <a lay-event="edit" shiro:hasPermission="technologyProduct:update"><i
+            class="layui-icon febs-edit-area febs-blue">&#xe7a4;</i></a>
+    <a lay-event="del" shiro:hasPermission="technologyProduct:delete"><i class="layui-icon febs-edit-area febs-red">&#xe7f9;</i></a>
+</script>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+            laydate = layui.laydate,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            dropdownMenu = layui.dropdownMenu,
+            $view = $('#technology-product'),
+            $query = $view.find('#query'),
+            $addTo = $view.find('#addTo'),
+            $updateTo = $view.find('#updateTo'),
+            $copyTo = $view.find('#copyTo'),
+            $deleteTo = $view.find('#deleteTo'),
+            $reset = $view.find('#reset'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'createTime', type: null},
+            tableIns;
+
+        form.render();
+
+        initTechnologyProductTable();
+
+
+
+        dropdownMenu.render({
+            elem: $view.find('.action-more'),
+            click: function (name, elem, event) {
+                let checkStatus = table.checkStatus('technologyProductTable');
+                if (name === 'add') {
+                    febs.modal.open('新增人事参数', 'personnel/technologyProduct/add', {
+                        btn: ['提交', '重置'],
+                        area: $(window).width() <= 750 ? '95%' : '50%',
+                        yes: function (index, layero) {
+                            $('#technology-add').find('#submit').trigger('click');
+                        },
+                        btn2: function () {
+                            $('#technology-add').find('#reset').trigger('click');
+                            return false;
+                        }
+                    });
+                }
+                if (name === 'delete') {
+                    if (!checkStatus.data.length) {
+                        let checkStatus = table.checkStatus('loginLogTable');
+                        febs.alert.warn('请选择需要删除的数据');
+                    } else {
+                        febs.modal.confirm('删除参数信息', '确定删除？', function () {
+                            let ids = [];
+                            layui.each(checkStatus.data, function (key, item) {
+                                ids.push(item.id)
+                            });
+                            deleteTechnologyProduct(ids.join(','));
+                        });
+                    }
+                }
+            },
+            options: [{
+                name: 'add',
+                title: '新增',
+                perms: 'technologyProduct:add'
+            }, {
+                name: 'delete',
+                title: '删除',
+                perms: 'technologyProduct:delete'
+            }]
+        });
+
+        table.on('tool(technologyProductTable)', function (obj) {
+            let data = obj.data,
+                layEvent = obj.event;
+            if (layEvent === 'del') {
+                febs.modal.confirm('删除参数信息', '确定删除？', function () {
+                    deleteTechnologyProduct(data.id);
+                });
+            }
+            if (layEvent === 'edit') {
+                febs.modal.open('修改参数', 'personnel/technologyProduct/update/' + data.id, {
+                    area: $(window).width() <= 750 ? '90%' : '50%',
+                    btn: ['提交', '取消'],
+                    yes: function (index, layero) {
+                        $('#technologyProduct-update').find('#submit').trigger('click');
+                    },
+                    btn2: function () {
+                        layer.closeAll();
+                    }
+                });
+            }
+        });
+
+        table.on('sort(technologyProductTable)', function (obj) {
+            sortObject = obj;
+            tableIns.reload({
+                initSort: obj,
+                where: $.extend(getQueryParams(), {
+                    field: obj.field,
+                    order: obj.type
+                })
+            });
+        });
+
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        $reset.on('click', function () {
+            $searchForm[0].reset();
+            tableIns.reload({where: getQueryParams(), page: {curr: 1}});
+        });
+        $addTo.on('click', function () {
+            febs.modal.open('【产品档案】 新增', 'technology/technologyProduct/add', {
+                btn: ['保存','保存并新增', '关闭'],
+                area: $(window).width() <= 750 ? '95%' : '40%',
+                yes: function (index, layero) {
+                    $('#productArchives-add').find('#submit').trigger('click');
+                },
+                btn2: function (index, layero) {
+                    $('#productArchives-add').find('#submitOne').trigger('click');
+                    return false;
+                },
+                btn3: function () {
+                    $('#productArchives-add').find('#reset').trigger('click');
+                }
+            });
+        });
+
+        $updateTo.on('click', function () {
+            let checkStatus = table.checkStatus('technologyProductTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要修改的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要修改的数据');
+            }else{
+                layui.each(checkStatus.data, function (key, item) {
+                    febs.modal.open('【产品档案】修改', 'technology/technologyProduct/update/' + item.id, {
+                        area: $(window).width() <= 750 ? '95%' : '40%',
+                        btn: ['保存', '关闭'],
+                        yes: function (index, layero) {
+                            $('#productArchives-update').find('#submit').trigger('click');
+                        },
+                        btn2: function () {
+                            layer.closeAll();
+                        }
+                    });
+                });
+            }
+        });
+        $copyTo.on('click', function () {
+            let checkStatus = table.checkStatus('technologyProductTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要复制的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要复制的数据');
+            }else{
+                layui.each(checkStatus.data, function (key, item) {
+                    febs.modal.open('【产品档案】复制', 'technology/technologyProduct/copy/' + item.id, {
+                        btn: ['保存','保存并新增', '关闭'],
+                        area: $(window).width() <= 750 ? '95%' : '40%',
+                        yes: function (index, layero) {
+                            $('#productArchives-copy').find('#submit').trigger('click');
+                        },
+                        btn2: function (index, layero) {
+                            $('#productArchives-copy').find('#submitOne').trigger('click');
+                            return false;
+                        },
+                        btn3: function () {
+                            $('#productArchives-copy').find('#reset').trigger('click');
+                        }
+                    });
+                });
+            }
+        });
+        $deleteTo.on('click', function () {
+            let checkStatus = table.checkStatus('technologyProductTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要删除的数据');
+            } else {
+                febs.modal.confirm('删除产品档案', '确定删除？', function () {
+                    let ids = [];
+                    layui.each(checkStatus.data, function (key, item) {
+                        ids.push(item.id)
+                    });
+                    deleteTechnologyProduct(ids.join(','));
+                });
+            }
+        });
+
+        function initTechnologyProductTable() {
+            tableIns = febs.table.init({
+                elem: $view.find('table'),
+                id: 'technologyProductTable',
+                url: ctx + 'technologyProduct/list',
+                width: "auto",//控制table的宽度,
+                cols: [[
+                    {type: 'checkbox'},
+                    {field:'number',title:'',align:'center',width:40,templet:function (d) {
+                                        return d.LAY_INDEX;}},
+                    {title: '工序状态', templet: '#productProcess-status', minWidth: 100,event:'balance'},
+                    {field: 'productCode', align:'center',title: '产品编码', minWidth: 105},
+                    {field: 'productName', title: '产品名称/图纸+工件名称', minWidth: 190},
+                    {field: 'productSpecificationModel', title: '规格型号', minWidth: 100},
+                    {field: 'productMaterial', align:'center',title: '材质', minWidth: 90},
+                    {field: 'productMeteringCompany',align:'center', title: '计量单位', minWidth: 90},
+                    {field: 'productTheoreticalWeight',align:'center', title: '理论重量', minWidth: 90},
+                    {field: 'productMinimumUnit', align:'center',title: '最小单位', minWidth: 90},
+                    {field: 'productProductionMonovalent',align:'center', title: '生产单价', minWidth: 90},
+                    {field: 'productSubclass', align:'center',title: '小类', minWidth: 80},
+                    {field: 'productInventoryQuantity', align:'center',title: '库存数量', minWidth: 90},
+                    {field: 'productRecentWarehousing',align:'center', title: '最近入库', minWidth: 90},
+                    {title: '状态', align:'center',templet: '#product-state'},
+                    {field: 'productViewPicture', title: '查看图片', minWidth: 100},
+                    {field: 'productRemarks', title: '备注'},
+                    {field: 'productFilingPerson', title: '建档人'},
+                    {field: 'productCreatedDate', title: '建档日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.productCreatedDate, "yyyy-MM-dd HH:mm:ss") }}</div>', minWidth: 170, sort: true}
+
+                  ]
+                ]
+            });
+        }
+
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+
+        function deleteTechnologyProduct(ids) {
+            febs.get(ctx + 'technologyProduct/delete/' + ids, null, function () {
+                febs.alert.success('删除产品档案成功');
+                $query.click();
+            });
+        }
+
+
+
+        //单击行勾选checkbox事件
+        $(document).on("click", ".layui-table-body table.layui-table tbody tr", function () {
+            var index = $(this).attr('data-index');
+            var tableBox = $(this).parents('.layui-table-box');
+            //存在固定列
+            if (tableBox.find(".layui-table-fixed.layui-table-fixed-l").length > 0) {
+                tableDiv = tableBox.find(".layui-table-fixed.layui-table-fixed-l");
+            } else {
+                tableDiv = tableBox.find(".layui-table-body.layui-table-main");
+            }
+            var CheckLength = tableDiv.find("tr[data-index=" + index + "]").find(
+                "td div.layui-form-checked").length;
+
+            var checkCell = tableDiv.find("tr[data-index=" + index + "]").find(
+                "td div.laytable-cell-checkbox div.layui-form-checkbox I");
+            if (checkCell.length > 0) {
+                checkCell.click();
+            }
+        });
+
+        $(document).on("click", "td div.laytable-cell-checkbox div.layui-form-checkbox", function (e) {
+            e.stopPropagation();
+        });
+
+    })
+
+</script>

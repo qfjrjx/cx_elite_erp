@@ -70,4 +70,11 @@ public class TechnologyProductCategoryServiceImpl extends ServiceImpl<Technology
 
         return baseMapper.findTechnologyById(id);
     }
+    //查询产品类别
+    @Override
+    public List<TechnologyProductCategory> queryProductGeneralCategory(String productGeneralCategory,String productCategoryState) {
+
+        return baseMapper.queryProductGeneralCategory(productGeneralCategory,productCategoryState);
+    }
+
 }

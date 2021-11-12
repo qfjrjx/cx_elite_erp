@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.technology.mapper.TechnologyProductMapper">
+    <sql id="countTechnologyProductSql">
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_technology_product tp
+        WHERE
+            1 = 1
+
+    </sql>
+    <sql id="findTechnologyProductSql">
+        SELECT
+            tp.id,
+            tp.product_process_status,
+            tp.product_name,
+            tp.product_code,
+            tp.product_specification_model,
+            tp.product_state,
+            tp.product_remarks,
+            tp.product_filing_person,
+            tp.product_created_date,
+            tp.product_view_picture,
+            ppa.purchase_parameters_name productMaterial,
+            ppb.purchase_parameters_name productMeteringCompany,
+            tp.product_theoretical_weight,
+            tp.product_minimum_unit,
+            tp.product_production_monovalent,
+            tpcb.product_category_name productGeneralCategory,
+            tpca.product_category_name productSubclass,
+            tp.product_inventory_quantity,
+            tp.product_recent_warehousing
+        FROM
+            jr_technology_product tp
+                LEFT JOIN jr_purchase_parameters ppa ON ( tp.product_material_id = ppa.id )
+                LEFT JOIN jr_purchase_parameters ppb ON ( tp.product_metering_company_id = ppb.id )
+                LEFT JOIN jr_technology_product_category tpca ON ( tp.product_subclass_id = tpca.id )
+                LEFT JOIN jr_technology_product_category tpcb ON ( tp.product_general_category_id = tpcb.id )
+        ORDER BY
+            tp.product_created_date DESC
+    </sql>
+
+    <select id="countTechnologyProduct" parameterType="com.erp.technology.entity.TechnologyProduct" resultType="long">
+        <include refid="countTechnologyProductSql"/>
+    </select>
+
+    <select id="findTechnologyProductPage" parameterType="com.erp.technology.entity.TechnologyProduct" resultType="com.erp.technology.entity.TechnologyProduct">
+        <include refid="findTechnologyProductSql"/>
+    </select>
+    <!--查询出最后一个产品档案编号-->
+    <select id="queryProductCode" resultType="com.erp.technology.entity.TechnologyProduct">
+        SELECT
+            tp.id,
+            tp.product_process_status,
+            tp.product_name,
+            tp.product_code,
+            tp.product_specification_model,
+            tp.product_state,
+            tp.product_remarks,
+            tp.product_filing_person,
+            tp.product_created_date,
+            tp.product_view_picture,
+            ppa.purchase_parameters_name productMaterial,
+            ppb.purchase_parameters_name productMeteringCompany,
+            tp.product_theoretical_weight,
+            tp.product_minimum_unit,
+            tp.product_production_monovalent,
+            tpcb.product_category_name productGeneralCategory,
+            tpca.product_category_name productSubclass,
+            tp.product_inventory_quantity,
+            tp.product_recent_warehousing
+        FROM
+            jr_technology_product tp
+                LEFT JOIN jr_purchase_parameters ppa ON ( tp.product_material_id = ppa.id )
+                LEFT JOIN jr_purchase_parameters ppb ON ( tp.product_metering_company_id = ppb.id )
+                LEFT JOIN jr_technology_product_category tpca ON ( tp.product_subclass_id = tpca.id )
+                LEFT JOIN jr_technology_product_category tpcb ON (tp.product_general_category_id = tpcb.id)
+        GROUP BY
+            tp.product_created_date
+        ORDER BY
+            tp.product_created_date DESC
+            LIMIT 1;
+    </select>
+
+    <insert id="saveTechnologyProduct" parameterType="com.erp.technology.entity.TechnologyProduct">
+        INSERT INTO jr_technology_product (
+            product_code, product_name, product_specification_model,
+            product_material_id, product_brand, product_general_category_id, product_subclass_id ,
+            product_metering_company_id, product_theoretical_weight, inventory_ceiling, inventory_lower_limit,
+            product_minimum_unit,product_state,product_filing_person,product_created_date,product_remarks
+            )
+        VALUES
+            (
+             #{technologyProduct.productCode},
+             #{technologyProduct.productName},
+             #{technologyProduct.productSpecificationModel},
+             #{technologyProduct.productMaterial},
+             #{technologyProduct.productBrand},
+             #{technologyProduct.productGeneralCategory},
+             #{technologyProduct.productSubclass},
+             #{technologyProduct.productMeteringCompany},
+             #{technologyProduct.productTheoreticalWeight},
+             #{technologyProduct.inventoryCeiling},
+             #{technologyProduct.inventoryLowerLimit},
+             #{technologyProduct.productMinimumUnit},
+             #{technologyProduct.productState},
+             #{technologyProduct.productFilingPerson},
+             #{technologyProduct.productCreatedDate},
+             #{technologyProduct.productRemarks}
+            )
+    </insert>
+  <!--修改回显查询-->
+    <select id="findTechnologyProductById" parameterType="long" resultType="com.erp.technology.entity.TechnologyProduct">
+        SELECT
+            tp.id,
+            tp.product_process_status,
+            tp.product_name,
+            tp.product_code,
+            tp.product_specification_model,
+            tp.product_state,
+            tp.product_remarks,
+            tp.product_filing_person,
+            tp.product_created_date,
+            tp.product_view_picture,
+            tp.product_material_id productMaterial,
+            tp.product_brand,
+            tp.product_metering_company_id productMeteringCompany,
+            tp.product_theoretical_weight,
+            tp.inventory_ceiling,
+            tp.inventory_lower_limit,
+            tp.product_minimum_unit,
+            tp.product_production_monovalent,
+            tp.product_general_category_id productGeneralCategory,
+            tp.product_subclass_id productSubclass,
+            tp.product_inventory_quantity,
+            tp.product_recent_warehousing
+        FROM
+            jr_technology_product tp
+        WHERE
+            tp.id = #{id}
+    </select>
+
+
+    <update id = "updateTechnologyProduct" parameterType = "com.erp.technology.entity.TechnologyProduct" >
+        UPDATE jr_technology_product tp
+        <trim prefix="set" suffixOverrides=",">
+            <if test="technologyProduct.productName!=null">
+                tp.product_name = #{technologyProduct.productName},</if>
+            <if test="technologyProduct.productSpecificationModel!=null">
+                tp.product_specification_model =#{technologyProduct.productSpecificationModel},</if>
+            <if test="technologyProduct.productMaterial!=null">
+                tp.product_material_id =#{technologyProduct.productMaterial},</if>
+            <if test="technologyProduct.productBrand!=null">
+                tp.product_brand =#{technologyProduct.productBrand},</if>
+            <if test="technologyProduct.productGeneralCategory!=null">
+                tp.product_general_category_id =#{technologyProduct.productGeneralCategory},</if>
+            <if test="technologyProduct.productSubclass!=null">
+                tp.product_subclass_id =#{technologyProduct.productSubclass},</if>
+            <if test="technologyProduct.productMeteringCompany!=null">
+                tp.product_metering_company_id =#{technologyProduct.productMeteringCompany},</if>
+            <if test="technologyProduct.productTheoreticalWeight!=null">
+                tp.product_theoretical_weight =#{technologyProduct.productTheoreticalWeight},</if>
+            <if test="technologyProduct.inventoryCeiling!=null">
+                tp.inventory_ceiling =#{technologyProduct.inventoryCeiling},</if>
+            <if test="technologyProduct.inventoryLowerLimit!=null">
+                tp.inventory_lower_limit =#{technologyProduct.inventoryLowerLimit},</if>
+            <if test="technologyProduct.productMinimumUnit!=null">
+                tp.product_minimum_unit =#{technologyProduct.productMinimumUnit},</if>
+            <if test="technologyProduct.productState!=null">
+                tp.product_state =#{technologyProduct.productState},</if>
+            <if test="technologyProduct.productFilingPerson!=null">
+                tp.product_filing_person =#{technologyProduct.productFilingPerson},</if>
+            <if test="technologyProduct.productRemarks!=null">
+                tp.product_remarks =#{technologyProduct.productRemarks},</if>
+        </trim>
+        WHERE
+            tp.id = #{technologyProduct.id}
+    </update>
+</mapper>

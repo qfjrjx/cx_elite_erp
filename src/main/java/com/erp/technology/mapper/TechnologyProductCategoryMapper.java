@@ -7,6 +7,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * 产品类别表 Mapper
  *
@@ -21,4 +23,7 @@ public interface TechnologyProductCategoryMapper extends BaseMapper<TechnologyPr
     IPage<TechnologyProductCategory> findTechnologyProductCategoryPage(Page<TechnologyProductCategory> page,@Param("technologyProductCategory") TechnologyProductCategory technologyProductCategory);
 
     TechnologyProductCategory findTechnologyById(@Param("id") Long id);
+    //查询产品类别
+    List<TechnologyProductCategory> queryProductGeneralCategory(@Param("productGeneralCategory") String productGeneralCategory,@Param("productCategoryState") String productCategoryState);
+
 }

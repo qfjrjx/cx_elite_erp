@@ -7,6 +7,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * 采购参数表 Mapper
  *
@@ -21,4 +23,7 @@ public interface PurchaseParametersMapper extends BaseMapper<PurchaseParameters>
     IPage<PurchaseParameters> findPurchaseParametersPage(Page<PurchaseParameters> page,@Param("purchaseParameters") PurchaseParameters purchaseParameters);
 
     PurchaseParameters findPurchaseParametersById(@Param("id") Long id);
+    // <!--查询产品参数类别信息-->
+    List<PurchaseParameters> queryProductMaterial(@Param("purchaseParametersCategory") String purchaseParametersCategory,@Param("parametersState") String parametersState);
+
 }

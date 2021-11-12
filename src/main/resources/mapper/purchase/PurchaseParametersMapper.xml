@@ -69,5 +69,22 @@
         WHERE
             pp.id = #{id}
     </select>
+    <!--查询产品参数类别信息-->
+    <select id="queryProductMaterial" parameterType="String" resultType="com.erp.purchase.entity.PurchaseParameters">
+        SELECT
+            pp.id,
+            pp.purchase_parameters_state,
+            pp.purchase_parameters_category,
+            pp.purchase_parameters_value,
+            pp.purchase_parameters_name,
+            pp.purchase_parameters_sort,
+            pp.purchase_parameters_remarks,
+            pp.purchase_parameters_creator,
+            pp.creation_time
+        FROM
+            jr_purchase_parameters pp
+        WHERE
+            pp.purchase_parameters_category = #{purchaseParametersCategory} and  pp.purchase_parameters_state = #{parametersState}
+    </select>
 
 </mapper>

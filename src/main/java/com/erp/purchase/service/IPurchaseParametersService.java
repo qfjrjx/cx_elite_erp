@@ -4,6 +4,7 @@ import com.erp.common.entity.QueryRequest;
 import com.erp.purchase.entity.PurchaseParameters;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.apache.ibatis.annotations.Param;
 
 import java.text.ParseException;
 import java.util.List;
@@ -54,4 +55,6 @@ public interface IPurchaseParametersService extends IService<PurchaseParameters>
     void deletePurchaseParameters(String[] ids);
 
     PurchaseParameters findPurchaseParametersById(Long id);
+    //查询产品材质信息
+    List<PurchaseParameters> queryProductMaterial(String purchaseParametersCategory, String parametersState);
 }

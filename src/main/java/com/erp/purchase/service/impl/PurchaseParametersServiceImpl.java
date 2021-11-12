@@ -76,4 +76,9 @@ public class PurchaseParametersServiceImpl extends ServiceImpl<PurchaseParameter
 
         return baseMapper.findPurchaseParametersById(id);
     }
+    //查询产品材质信息
+    @Override
+    public List<PurchaseParameters> queryProductMaterial(String purchaseParametersCategory, String parametersState) {
+        return baseMapper.queryProductMaterial(purchaseParametersCategory,parametersState);
+    }
 }
