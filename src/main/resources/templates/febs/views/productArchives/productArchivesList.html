@@ -48,17 +48,18 @@
                         </div>
                     </form>
                     <table lay-filter="technologyProductTable"  lay-data="{id: 'technologyProductTable'}"></table>
-                    <div class="layui-col-md8">
+                    <div class="layui-col-sm6">
                         <div class="layui-form-item"></div>
                     </div>
-                    <div class="layui-col-md4 layui-col-sm12 layui-col-xs12 table-action-area">
+                    <div class="layui-col-md6 layui-col-sm12 layui-col-xs12 table-action-area">
                         <!--搜索按钮-->
                         <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
                             <i class="layui-icon">&#xe848;</i>查询
                         </div>
-                        <!-- 刷新表格按钮-->
-                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain table-action" id="reset">
-                            <i class="layui-icon">&#xe79b;</i>刷新
+                        <!--工序查阅按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="technologyProduct:query" id="operation-query">
+                            <i class="layui-icon">&#xe642;</i>工序查阅
                         </div>
                         <!--添加按钮-->
                         <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "shiro:hasAnyPermissions="technologyProduct:add" id="addTo">
@@ -74,9 +75,18 @@
                              shiro:hasAnyPermissions="technologyProduct:copy" id="copyTo">
                             <i class="layui-icon">&#xe642;</i>复制
                         </div>
+                        <!--工序设置按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="technologyProduct:settings" id="operation-settings">
+                            <i class="layui-icon">&#xe642;</i>工序设置
+                        </div>
                         <!--删除按钮-->
                         <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "shiro:hasAnyPermissions="technologyProduct:delete" id="deleteTo">
                             <i class="layui-icon">&#xe8a1;</i>删除
+                        </div>
+                        <!-- 刷新表格按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain table-action" id="reset">
+                            <i class="layui-icon">&#xe79b;</i>刷新
                         </div>
                     </div>
                 </div>
@@ -123,6 +133,8 @@
             $addTo = $view.find('#addTo'),
             $updateTo = $view.find('#updateTo'),
             $copyTo = $view.find('#copyTo'),
+            $settingsTo = $view.find('#operation-settings'),
+            $operationQueryTo = $view.find('#operation-query'),
             $deleteTo = $view.find('#deleteTo'),
             $reset = $view.find('#reset'),
             $searchForm = $view.find('form'),
@@ -283,6 +295,76 @@
                 });
             }
         });
+        $operationQueryTo.on('click', function () {
+            let checkStatus = table.checkStatus('technologyProductTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要查阅的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要查阅的数据');
+            }else{
+                alert("工序查阅")
+                /*layui.each(checkStatus.data, function (key, item) {
+                    febs.modal.open('【产品档案】复制', 'technology/technologyProduct/copy/' + item.id, {
+                        btn: ['保存','保存并新增', '关闭'],
+                        area: $(window).width() <= 750 ? '95%' : '40%',
+                        yes: function (index, layero) {
+                            $('#productArchives-copy').find('#submit').trigger('click');
+                        },
+                        btn2: function (index, layero) {
+                            $('#productArchives-copy').find('#submitOne').trigger('click');
+                            return false;
+                        },
+                        btn3: function () {
+                            $('#productArchives-copy').find('#reset').trigger('click');
+                        }
+                    });
+                });*/
+            }
+        });
+        $settingsTo.on('click', function () {
+            let checkStatus = table.checkStatus('technologyProductTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要设置的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要设置的数据');
+            }else{
+                layui.each(checkStatus.data, function (key, item) {
+                    febs.modal.open('【产品档案】设置工序', 'technology/technologyProduct/settings/' + item.id, {
+                        btn: ['增加行','删除行','删除整单','保存', '关闭'],
+                        area: $(window).width() <= 750 ? '95%' : '50%',
+                        yes: function (index, layero) {
+                            $('#productArchives-settings').find('#submit').trigger('click');
+                        },
+                        btn2: function (index, layero) {
+                            let checkStatus = table.checkStatus('productArchivesSettings-table');
+                            if (checkStatus.data.length < 1) {
+                                layer.alert("请选择一条数据操作");
+                                return false;
+                            }else {
+                                layui.each(checkStatus.data, function (key, item) {
+                                    $("tr[data-index='" + key + "']").remove();
+                                });
+                            }
+                            $('#productArchives-settings').find('#reset').trigger('click');
+                            return false;
+                        },
+                        btn3: function () {
+                            var dataBak = [];
+                            layui.table.reload('productArchivesSettings-table',{
+                                data:dataBak
+                            });
+                            return false;
+                        },
+                        btn4: function () {
+                           alert("保存")
+                        },
+                        btn5: function () {
+                            layer.closeAll();
+                        }
+                    });
+                });
+            }
+        });
         $deleteTo.on('click', function () {
             let checkStatus = table.checkStatus('technologyProductTable');
             if (!checkStatus.data.length) {
@@ -343,32 +425,6 @@
                 $query.click();
             });
         }
-
-
-
-        //单击行勾选checkbox事件
-        $(document).on("click", ".layui-table-body table.layui-table tbody tr", function () {
-            var index = $(this).attr('data-index');
-            var tableBox = $(this).parents('.layui-table-box');
-            //存在固定列
-            if (tableBox.find(".layui-table-fixed.layui-table-fixed-l").length > 0) {
-                tableDiv = tableBox.find(".layui-table-fixed.layui-table-fixed-l");
-            } else {
-                tableDiv = tableBox.find(".layui-table-body.layui-table-main");
-            }
-            var CheckLength = tableDiv.find("tr[data-index=" + index + "]").find(
-                "td div.layui-form-checked").length;
-
-            var checkCell = tableDiv.find("tr[data-index=" + index + "]").find(
-                "td div.laytable-cell-checkbox div.layui-form-checkbox I");
-            if (checkCell.length > 0) {
-                checkCell.click();
-            }
-        });
-
-        $(document).on("click", "td div.laytable-cell-checkbox div.layui-form-checkbox", function (e) {
-            e.stopPropagation();
-        });
 
     })
 

@@ -1,0 +1,94 @@
+<style>
+    #productArchives-settings {
+        padding: 20px 25px 25px 0;
+    }
+</style>
+<div class="layui-fluid" id="productArchives-settings">
+    <form class="layui-form" action="" lay-filter="productArchives-settings-form">
+        <div class="layui-form-item febs-hide">
+            <label class="layui-form-label febs-form-item-require">参数id：</label>
+            <div class="layui-input-block">
+                <input type="text" name="id" data-th-value="${technologyProduct.id}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require" >工件图纸号:</label>
+            <div class="layui-input-inline">
+                <input type="text" name="productName" id="productName" lay-verify="required"
+                       autocomplete="off" class="layui-input" placeholder="请输入名称">
+            </div>
+            <label class="layui-form-label" >规格型号:</label>
+            <div class="layui-input-inline">
+                <input type="text" name="productSpecificationModel" id="productSpecificationModel" style="width: 270px"
+                       autocomplete="off" class="layui-input" placeholder="" >
+            </div>
+        </div>
+        <table class="layui-table layui-form" id="productArchivesSettings-table" lay-filter="productArchivesSettings-table"></table>
+        <div class="layui-form-item febs-hide">
+            <button class="layui-btn" lay-submit="" lay-filter="productArchives-settings-form-submit" id="submit"></button>
+            <button type="reset" class="layui-btn" id="reset"></button>
+        </div>
+    </form>
+</div>
+<script data-th-inline="javascript">
+    layui.use(['febs', 'form','table', 'validate', 'xmSelect','laydate'], function () {
+        let $ = layui.$,
+            febs = layui.febs,
+            layer = layui.layer,
+            form = layui.form,
+            table = layui.table,
+            laydate = layui.laydate,
+            technologyProduct = [[${technologyProduct}]],
+            validate = layui.validate;
+
+        form.verify(validate);
+        form.render();
+
+        initTechnologyProductValue();
+
+        function initTechnologyProductValue() {
+            form.val("productArchives-settings-form", {
+                "productName": technologyProduct.productName,
+                "productSpecificationModel": technologyProduct.productSpecificationModel
+            });
+        }
+
+        table.render({
+            elem: "#productArchivesSettings-table",
+            data:[],
+            even:true,
+            cols: [
+                [
+                    {type: 'checkbox'},
+                    {field:'productOrder',title:'顺序',align:'center',width:100,templet:function (d) {
+                            return d.LAY_INDEX;}},
+                    {field: 'productWorkingProcedure',title: '工序',align:'center', minWidth: 100,event:'choice'
+                    },
+                    {field: 'productUnitPrice', title: '单价',align:'center', minWidth: 100},
+                    {field: 'productRemarks',edit:true, align:'center',title: '备注说明', minWidth: 100}
+                ]
+            ]
+        });
+
+
+        form.on('submit(productArchives-settings-form-submit)', function (data) {
+            var dataBak = [];
+            var tableBak = layui.table.cache['productArchivesSettings-table'];
+            console.log(tableBak);
+            for (var i=0;i<tableBak.length; i++){
+                dataBak.push(tableBak[i]);
+            }
+            dataBak.push({
+                "productOrder":"",
+                "productWorkingProcedure":"",
+                "productUnitPrice":"",
+                "productRemarks":""
+            });
+            console.log(dataBak);
+            layui.table.reload('productArchivesSettings-table',{
+                data:dataBak
+            });
+            return false;
+        });
+    });
+</script>

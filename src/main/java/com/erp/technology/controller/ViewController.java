@@ -50,13 +50,18 @@ public class ViewController {
     @GetMapping("technologyProductCategory/update/{id}")
     @RequiresPermissions("technologyProductCategory:update")
     public String technologyProductCategoryUpdate(@PathVariable Long id, Model model) {
-        technologyProductCategoryModel(id, model, false);
-        return FebsUtil.view("technology/technologyUpdate");
-    }
-    //产品类别修改回填
-    private void technologyProductCategoryModel(Long id, Model model, Boolean transform) {
+        //查询产品类别  1-大类
+        List<TechnologyProductCategory> productGeneralCategory  = technologyProductCategoryService.queryProductGeneralCategory(TechnologyProductCategory.Product_general_category,TechnologyProductCategory.product_category_state);
+        model.addAttribute("productGeneralCategory",productGeneralCategory);
+        //回显产品类别
         TechnologyProductCategory technologyProductCategory = technologyProductCategoryService.findTechnologyById(id);
         model.addAttribute("technologyProductCategory", technologyProductCategory);
+        String ss = technologyProductCategory.getProductCategory();
+        if (ss.equals("1")){
+            return FebsUtil.view("technology/technologyUpdate");
+        }else {
+            return FebsUtil.view("technology/technologyUpdateCategory");
+        }
     }
     /* 产品类别模块结束 */
 
@@ -135,6 +140,19 @@ public class ViewController {
     }
     //产品档案复制回填
     private void technologyProductCopyModel(Long id, Model model, Boolean transform) {
+        TechnologyProduct technologyProduct = technologyProductService.findTechnologyProductById(id);
+        model.addAttribute("technologyProduct", technologyProduct);
+    }
+
+    //产品档案工序设置
+    @GetMapping("technologyProduct/settings/{id}")
+    @RequiresPermissions("technologyProduct:settings")
+    public String technologyProductSettings(@PathVariable Long id, Model model) {
+        technologyProductSettingsModel(id, model, false);
+        return FebsUtil.view("productArchives/productArchivesSettings");
+    }
+    //产品档案工序设置回填
+    private void technologyProductSettingsModel(Long id, Model model, Boolean transform) {
         TechnologyProduct technologyProduct = technologyProductService.findTechnologyProductById(id);
         model.addAttribute("technologyProduct", technologyProduct);
     }

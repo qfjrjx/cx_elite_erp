@@ -1,10 +1,10 @@
 <style>
-    #technology-update {
+    #technology-updateCategory {
         padding: 20px 25px 25px 0;
     }
 </style>
-<div class="layui-fluid" id="technology-update">
-    <form class="layui-form" action="" lay-filter="technology-update-form">
+<div class="layui-fluid" id="technology-updateCategory">
+    <form class="layui-form" action="" lay-filter="technology-updateCategory-form">
         <div class="layui-form-item febs-hide">
             <label class="layui-form-label febs-form-item-require">参数id：</label>
             <div class="layui-input-block">
@@ -25,6 +25,15 @@
             <div class="layui-input-block">
                 <input type="text" name="productCategoryName"
                        autocomplete="off" class="layui-input" placeholder="请输入名称">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require" >所属大类:</label>
+            <div class="layui-input-block">
+                <select id="productBelongingCategory"  name="productBelongingCategory" lay-verify="required" >
+                    <option value="" >请选择</option>
+                    <option th:each="productGeneralCategory:${productGeneralCategory}" th:value="${productGeneralCategory.productCategoryName}">[[${productGeneralCategory.productCategoryName}]]</option>
+                </select>
             </div>
         </div>
         <div class="layui-form-item">
@@ -50,7 +59,7 @@
             </div>
         </div>
         <div class="layui-form-item febs-hide">
-            <button class="layui-btn" lay-submit="" lay-filter="technology-update-form-submit" id="submit"></button>
+            <button class="layui-btn" lay-submit="" lay-filter="technology-updateCategory-form-submit" id="submit"></button>
         </div>
     </form>
 </div>
@@ -71,15 +80,16 @@
         initTechnologyProductCategoryValue();
 
         function initTechnologyProductCategoryValue() {
-            form.val("technology-update-form", {
+            form.val("technology-updateCategory-form", {
                 "productCategory": technologyProductCategory.productCategory,
                 "productCategoryName": technologyProductCategory.productCategoryName,
+                "productBelongingCategory": technologyProductCategory.productBelongingCategory,
                 "productCategorySort": technologyProductCategory.productCategorySort,
                 "productCategoryRemarks": technologyProductCategory.productCategoryRemarks,
                 "productCategoryState": technologyProductCategory.productCategoryState
             });
         }
-        form.on('submit(technology-update-form-submit)', function (data) {
+        form.on('submit(technology-updateCategory-form-submit)', function (data) {
 
             const b = true;
             if (febs.nativeEqual(data.field, technologyProductCategory)) {
