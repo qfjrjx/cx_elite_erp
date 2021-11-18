@@ -1,0 +1,313 @@
+<style>
+    #financial-parameters xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #financial-parameters xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="financial-parameters" lay-title="财务参数">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="parameter-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md8">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm">参数名称</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="financeParameterName" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label layui-form-label-sm">参数类别</label>
+                                        <div class="layui-input-inline">
+                                            <select name="financeParameterCategory"  id="financeParameterCategory" lay-filter="financeParameterCategory" lay-verify="required">
+                                                <option value="">全部</option>
+                                                <option value="1">报支类别</option>
+                                                <option value="2">币种</option>
+                                                <option value="3">调整方式</option>
+                                                <option value="4">发票类型</option>
+                                                <option value="5">付款方式</option>
+                                                <option value="6">付款类型</option>
+                                                <option value="7">管理费用</option>
+                                                <option value="8">收款方式</option>
+                                                <option value="9">收款类型</option>
+                                                <option value="10">收入类别</option>
+                                                <option value="11">收支类别</option>
+                                                <option value="12">税率</option>
+                                                <option value="13">销售费用</option>
+                                                <option value="14">制造费用</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label layui-form-label-sm">状态</label>
+                                        <div class="layui-input-inline">
+                                            <select name="financeState">
+                                                <option value="">全部</option>
+                                                <option value="1">启用</option>
+                                                <option value="2">禁用</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="financialParametersTable" lay-data="{id: 'financialParametersTable'}"></table>
+                    <div class="layui-col-md8">
+                        <div class="layui-form-item"></div>
+                    </div>
+                    <div class="layui-col-md4 layui-col-sm12 layui-col-xs12 table-action-area">
+                        <!--搜索按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                            <i class="layui-icon">&#xe848;</i>查询
+                        </div>
+                        <!-- 刷新表格按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain table-action" id="reset">
+                            <i class="layui-icon">&#xe79b;</i>刷新
+                        </div>
+                        <!--添加按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="financeParameters:add" id="addTo">
+                            <i class="layui-icon">&#xe78a;</i>新增
+                        </div>
+                        <!--修改按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="financeParameters:update" id="updateTo">
+                            <i class="layui-icon">&#xe642;</i>修改
+                        </div>
+                        <!--删除按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="financeParameters:delete" id="deleteTo">
+                            <i class="layui-icon">&#xe8a1;</i>删除
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="finance-parameterCategory">
+    {{#
+    let financeParameterCategory = {
+    1: {title: '报支类别'},
+    2: {title: '币种'},
+    3: {title: '调整方式'},
+    4: {title: '发票类型'},
+    5: {title: '付款方式'},
+    6: {title: '付款类型'},
+    7: {title: '管理费用'},
+    8: {title: '收款方式'},
+    9: {title: '收款类型'},
+    10: {title: '收入类别'},
+    11: {title: '收支类别'},
+    12: {title: '税率'},
+    13: {title: '销售费用'},
+    14: {title: '制造费用'}
+    }[d.financeParameterCategory];
+    }}
+    <span>{{ financeParameterCategory.title }}</span>
+</script>
+<script type="text/html" id="finance-state">
+    {{#
+    let financeState = {
+    1: {title: '启用', color: 'green'},
+    2: {title: '禁用', color: 'volcano'}
+    }[d.financeState];
+    }}
+    <span class="layui-badge febs-bg-{{financeState.color}}">{{ financeState.title }}</span>
+</script>
+<script type="text/html" id="parameter-option">
+    <span shiro:lacksPermission="financeParameters:view,financeParameters:update,financeParameters:delete">
+        <span class="layui-badge-dot febs-bg-orange"></span> 无权限
+    </span>
+    <a lay-event="detail" shiro:hasPermission="financeParameters:view"><i
+            class="layui-icon febs-edit-area febs-green">&#xe7a5;</i></a>
+</script>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+            laydate = layui.laydate,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            dropdownMenu = layui.dropdownMenu,
+            $view = $('#financial-parameters'),
+            $query = $view.find('#query'),
+            $addTo = $view.find('#addTo'),
+            $deleteTo = $view.find('#deleteTo'),
+            $updateTo = $view.find('#updateTo'),
+            $reset = $view.find('#reset'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'createTime', type: null},
+            tableIns,
+            deptXmlSelect;
+
+        form.render();
+        initFinancialParametersTable();
+
+        dropdownMenu.render({
+            elem: $view.find('.action-more'),
+            click: function (name, elem, event) {
+                let checkStatus = table.checkStatus('financialParametersTable');
+                if (name === 'add') {
+                    febs.modal.open('新增人事参数', 'personnel/financeParameters/add', {
+                        btn: ['提交', '重置'],
+                        area: $(window).width() <= 750 ? '95%' : '50%',
+                        yes: function (index, layero) {
+                            $('#financeParameters-add').find('#submit').trigger('click');
+                        },
+                        btn2: function () {
+                            $('#financeParameters-add').find('#reset').trigger('click');
+                            return false;
+                        }
+                    });
+                }
+                if (name === 'delete') {
+                    if (!checkStatus.data.length) {
+                        febs.alert.warn('请选择需要删除的数据');
+                    } else {
+                        febs.modal.confirm('删除参数信息', '确定删除？', function () {
+                            let ids = [];
+                            layui.each(checkStatus.data, function (key, item) {
+                                ids.push(item.id)
+                            });
+                            deleteFinanceParameters(ids.join(','));
+                        });
+                    }
+                }
+            },
+            options: []
+        });
+        table.on('tool(financialParametersTable)', function (obj) {
+            let data = obj.data,
+                layEvent = obj.event;
+            if (layEvent === 'detail') {
+                febs.modal.view('员工档案信息', 'personnel/financeParameters/detail/' + data.userId, {
+                    area: $(window).width() <= 750 ? '95%' : '50%'
+                });
+            }
+            if (layEvent === 'edit') {
+                febs.modal.open('修改员工档案', 'personnel/financeParameters/update/' + data.userId, {
+                    area: $(window).width() <= 750 ? '90%' : '50%',
+                    content: $('#uploadPic'), // 可以添加另外的页面 通过 div
+                    btn: ['提交', '取消'],
+                    yes: function (index, layero) {
+                        $('#financeParameters-update').find('#submit').trigger('click');
+                    },
+                    btn2: function () {
+                        layer.closeAll();
+                    }
+                });
+            }
+        });
+        table.on('sort(financialParametersTable)', function (obj) {
+            sortObject = obj;
+            tableIns.reload({
+                initSort: obj,
+                where: $.extend(getQueryParams(), {
+                    field: obj.field,
+                    order: obj.type
+                })
+            });
+        });
+
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        $reset.on('click', function () {
+            $searchForm[0].reset();
+            tableIns.reload({where: getQueryParams(), page: {curr: 1}});
+        });
+        $addTo.on('click', function () {
+            febs.modal.open('【财务参数】新增', 'finance/financeParameters/add', {
+                btn: ['保存', '关闭'],
+                area:["40%","60%"],
+                yes: function (index, layero) {
+                    $('#financialParameters-add').find('#submit').trigger('click');
+                },
+                btn2: function () {
+                    $('#financialParameters-add').find('#reset').trigger('click');
+                    return false;
+                }
+            });
+        });
+        $deleteTo.on('click', function () {
+            let checkStatus = table.checkStatus('financialParametersTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要删除的数据');
+            } else {
+                febs.modal.confirm('删除参数信息', '确定删除？', function () {
+                    let ids = [];
+                    layui.each(checkStatus.data, function (key, item) {
+                        ids.push(item.id)
+                    });
+                    deleteFinanceParameters(ids.join(','));
+                });
+            }
+        });
+        $updateTo.on('click', function () {
+            let checkStatus = table.checkStatus('financialParametersTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要修改的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要修改的数据');
+            }else{
+                layui.each(checkStatus.data, function (key, item) {
+                    febs.modal.open('【财务参数】修改', 'finance/financeParameters/update/' + item.id, {
+                        area:["40%","60%"],
+                        btn: ['保存', '关闭'],
+                        yes: function (index, layero) {
+                            $('#financialParameters-update').find('#submit').trigger('click');
+                        },
+                        btn2: function () {
+                            layer.closeAll();
+                        }
+                    });
+                });
+            }
+        });
+        function initFinancialParametersTable() {
+            tableIns = febs.table.init({
+                elem: $view.find('table'),
+                id: 'financialParametersTable',
+                url: ctx + 'financeParameters/list',
+                cols: [[
+                    {type: 'checkbox'},
+                    {field:'number',title:'',align:'center',width:80,templet:function (d) {
+                                        return d.LAY_INDEX;}},
+                    {title: '状态', templet: '#finance-state',align:'center',minWidth: 100},
+                    {title: '参数类别', templet: '#finance-parameterCategory',align:'center',minWidth: 100},
+                    {field: 'financeParameterValue', title: '参数值',align:'center', minWidth: 100},
+                    {field: 'financeParameterName', title: '参数名称',align:'center', minWidth: 100},
+                    {field: 'financeSort', title: '排序',align:'center', minWidth: 100},
+                    {field: 'financeRemarks', title: '备注',align:'center', minWidth: 100},
+                    {field: 'financeCreator', title: '创建人',align:'center', minWidth: 100},
+                    {field: 'financeCreationTime', title: '创建时间',align:'center', minWidth: 100,sort: true}
+                ]]
+            });
+        }
+
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+
+        function deleteFinanceParameters(ids) {
+            febs.get(ctx + 'financeParameters/delete/' + ids, null, function () {
+                febs.alert.success('删除参数成功');
+                $query.click();
+            });
+        }
+
+    })
+</script>

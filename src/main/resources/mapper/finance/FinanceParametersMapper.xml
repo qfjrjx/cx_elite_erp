@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.finance.mapper.FinanceParametersMapper">
+
+    <sql id="countFinanceParametersSql">
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_finance_parameters fp
+        WHERE
+            1 = 1
+        <if test="financeParameters.financeState != null and financeParameters.financeState != ''">
+            AND fp.finance_state = #{financeParameters.financeState}
+        </if>
+        <if test="financeParameters.financeParameterCategory != null and financeParameters.financeParameterCategory != ''">
+            AND fp.finance_parameter_category = #{financeParameters.financeParameterCategory}
+        </if>
+        <if test="financeParameters.financeParameterName != null and financeParameters.financeParameterName != ''">
+            AND fp.finance_parameter_name = #{financeParameters.financeParameterName}
+        </if>
+    </sql>
+    <sql id="findFinanceParametersSql">
+        SELECT
+            fp.id,
+            fp.finance_parameter_category,
+            fp.finance_parameter_value,
+            fp.finance_parameter_name,
+            fp.finance_sort,
+            fp.finance_state,
+            fp.finance_remarks,
+            fp.finance_creator,
+            fp.finance_creation_time
+        FROM
+            jr_finance_parameters fp
+        WHERE
+            1 = 1
+        <if test="financeParameters.financeState != null and financeParameters.financeState != ''">
+            AND fp.finance_state = #{financeParameters.financeState}
+        </if>
+        <if test="financeParameters.financeParameterCategory != null and financeParameters.financeParameterCategory != ''">
+            AND fp.finance_parameter_category = #{financeParameters.financeParameterCategory}
+        </if>
+        <if test="financeParameters.financeParameterName != null and financeParameters.financeParameterName != ''">
+            AND fp.finance_parameter_name = #{financeParameters.financeParameterName}
+        </if>
+        ORDER BY
+            fp.finance_parameter_category,
+            fp.finance_sort
+    </sql>
+
+    <select id="countFinanceParameters" parameterType="com.erp.finance.entity.FinanceParameters" resultType="long">
+        <include refid="countFinanceParametersSql"/>
+    </select>
+
+    <select id="findFinanceParametersPage" parameterType="com.erp.finance.entity.FinanceParameters" resultType="com.erp.finance.entity.FinanceParameters">
+        <include refid="findFinanceParametersSql"/>
+    </select>
+
+    <!--修改回显-->
+    <select id="financeParametersById" parameterType="long" resultType="com.erp.finance.entity.FinanceParameters">
+        SELECT
+            fp.id,
+            fp.finance_parameter_category financeParameterCategory,
+            fp.finance_parameter_value financeParameterValue,
+            fp.finance_parameter_name financeParameterName,
+            fp.finance_sort financeSort,
+            fp.finance_state financeState,
+            fp.finance_remarks financeRemarks,
+            fp.finance_creator financeCreator,
+            fp.finance_creation_time financeCreationTime
+        FROM
+            jr_finance_parameters fp
+        WHERE
+            fp.id = #{id}
+    </select>
+
+</mapper>
