@@ -6,21 +6,21 @@
         SELECT
             COUNT( 1 )
         FROM
-            jr_sale_product spt
+            jr_technology_product tp
         WHERE
             1 = 1
     </sql>
     <sql id="findSaleProductsSql">
         SELECT
-            spt.id,
-            spt.product_name productName,
-            spt.specification_model specificationModel,
-            spt.product_remarks productRemarks,
-            spt.product_state productState
+            tp.id,
+            tp.product_name productName,
+            tp.product_specification_model specificationModel,
+            tp.product_remarks productRemarks,
+            tp.product_state productState
         FROM
-            jr_sale_product spt
+            jr_technology_product tp
         WHERE
-            spt.product_state = 1
+            tp.product_state = 1
     </sql>
     <select id="countSaleProducts" parameterType="com.erp.sale.entity.SaleProduct" resultType="long">
         <include refid="countSaleProductsSql"/>

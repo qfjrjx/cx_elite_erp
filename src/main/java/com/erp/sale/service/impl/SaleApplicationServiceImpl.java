@@ -82,41 +82,56 @@ public class SaleApplicationServiceImpl extends ServiceImpl<SaleApplicationMappe
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM");
         //格式化当前月
         String month = simpleDateFormat.format(date);
-        //查询出最后一个销售申请单号
-        SaleApplication saleApplicationOne = baseMapper.querySaleApplication();
-        String createTimeMonth = simpleDateFormat.format(saleApplicationOne.getCreateDate());
-         if (month.equals(createTimeMonth)){
-             String applicationNo = saleApplicationOne.getApplicationNo();
-             String applicationNoOne = applicationNo.substring(7,9);
-             int oddNumbers = Integer.parseInt(applicationNoOne);
-             if (oddNumbers<9){
-                 for (int i = oddNumbers; i < 100; i++) {
-                     String n = "";
-                     // 满足条件1
-                     if (i < 10) {
-                         n = "00" + (i+1);
-                     }if ((i + 1) % 10 != 0){
-                         saleApplication.setApplicationNo("SQ"+yearLast+month+n);
-                         break;
+         //查询出最后一个销售申请单号
+         SaleApplication saleApplicationOne = null;
+         saleApplicationOne = baseMapper.querySaleApplication();
+         String createTimeMonth = "";
+         if (saleApplicationOne != null){
+              createTimeMonth = simpleDateFormat.format(saleApplicationOne.getCreateDate());
+                     if (month.equals(createTimeMonth)){
+                         String applicationNo = saleApplicationOne.getApplicationNo();
+                         String applicationNoOne = applicationNo.substring(7,9);
+                         int oddNumbers = Integer.parseInt(applicationNoOne);
+                         if (oddNumbers<9){
+                             for (int i = oddNumbers; i < 100; i++) {
+                                 String n = "";
+                                 // 满足条件1
+                                 if (i < 10) {
+                                     n = "00" + (i+1);
+                                 }if ((i + 1) % 10 != 0){
+                                     saleApplication.setApplicationNo("SQ"+yearLast+month+n);
+                                     break;
+                                 }
+                             }
+                         }else{
+                             int ff = oddNumbers+1;
+                             if(ff < 100){
+                                 saleApplication.setApplicationNo("SQ"+yearLast+month+"0"+ff);
+                             }
+                         }
+                     }else if(!month.equals(createTimeMonth)){
+                         String n = "";
+                         int i = 0;
+                         // 满足条件1
+                         if (i < 10){
+                             n = "00" + i;
+                         }
+                         if ((i + 1) % 10 != 0){
+                             saleApplication.setApplicationNo("SQ"+yearLast+month+n);
+                         }
                      }
+            }else {
+                 String v = "";
+                 int i = 0;
+                 // 满足条件1
+                 if (i < 10){
+                     v = "00" + i;
                  }
-             }else{
-                 int ff = oddNumbers+1;
-                 if(ff < 100){
-                     saleApplication.setApplicationNo("SQ"+yearLast+month+"0"+ff);
+                 if ((i + 1) % 10 != 0){
+                     saleApplication.setApplicationNo("SQ"+yearLast+month+v);
                  }
-             }
-         }else if(!month.equals(createTimeMonth)){
-             String n = "";
-             int i = 0;
-             // 满足条件1
-             if (i < 10){
-                 n = "00" + i;
-             }
-             if ((i + 1) % 10 != 0){
-                 saleApplication.setApplicationNo("SQ"+yearLast+month+n);
-             }
          }
+
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date requestedDeliveryDates = sdf.parse(requestedDeliveryDate);//格式化数据，取当前时间结果
         saleApplication.setRequestedDeliveryDate(requestedDeliveryDates);

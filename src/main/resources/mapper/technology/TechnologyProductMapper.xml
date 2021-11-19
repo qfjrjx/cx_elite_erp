@@ -8,7 +8,24 @@
             jr_technology_product tp
         WHERE
             1 = 1
-
+        <if test="technologyProduct.productProcessStatus != null and technologyProduct.productProcessStatus != ''">
+            AND tp.product_process_status = #{technologyProduct.productProcessStatus}
+        </if>
+        <if test="technologyProduct.productState != null and technologyProduct.productState != ''">
+            AND tp.product_state = #{technologyProduct.productState}
+        </if>
+        <if test="technologyProduct.productName != null and technologyProduct.productName != ''">
+            AND tp.product_name = #{technologyProduct.productName}
+        </if>
+         <if test="technologyProduct.productSpecificationModel != null and technologyProduct.productSpecificationModel != ''">
+            AND tp.product_specification_model = #{technologyProduct.productSpecificationModel}
+        </if>
+         <if test="technologyProduct.productSubclassId != null and technologyProduct.productSubclassId != ''">
+            AND tp.product_subclass_id = #{technologyProduct.productSubclassId}
+        </if>
+        <if test="technologyProduct.productNameAbbreviation!= null and technologyProduct.productNameAbbreviation !=''">
+            And getPY(tp.product_name) like CONCAT('%',#{technologyProduct.productNameAbbreviation,jdbcType=VARCHAR},'%')
+        </if>
     </sql>
     <sql id="findTechnologyProductSql">
         SELECT
@@ -37,6 +54,26 @@
                 LEFT JOIN jr_purchase_parameters ppb ON ( tp.product_metering_company_id = ppb.id )
                 LEFT JOIN jr_technology_product_category tpca ON ( tp.product_subclass_id = tpca.id )
                 LEFT JOIN jr_technology_product_category tpcb ON ( tp.product_general_category_id = tpcb.id )
+        WHERE
+             1 = 1
+        <if test="technologyProduct.productProcessStatus != null and technologyProduct.productProcessStatus != ''">
+            AND tp.product_process_status = #{technologyProduct.productProcessStatus}
+        </if>
+        <if test="technologyProduct.productState != null and technologyProduct.productState != ''">
+            AND tp.product_state = #{technologyProduct.productState}
+        </if>
+        <if test="technologyProduct.productName != null and technologyProduct.productName != ''">
+            AND tp.product_name = #{technologyProduct.productName}
+        </if>
+        <if test="technologyProduct.productSpecificationModel != null and technologyProduct.productSpecificationModel != ''">
+            AND tp.product_specification_model = #{technologyProduct.productSpecificationModel}
+        </if>
+        <if test="technologyProduct.productSubclassId != null and technologyProduct.productSubclassId != ''">
+            AND tp.product_subclass_id = #{technologyProduct.productSubclassId}
+        </if>
+        <if test="technologyProduct.productNameAbbreviation!= null and technologyProduct.productNameAbbreviation !=''">
+            And getPY(tp.product_name) like CONCAT('%',#{technologyProduct.productNameAbbreviation,jdbcType=VARCHAR},'%')
+        </if>
         ORDER BY
             tp.product_created_date DESC
     </sql>

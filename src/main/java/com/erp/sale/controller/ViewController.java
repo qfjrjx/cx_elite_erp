@@ -3,6 +3,8 @@ package com.erp.sale.controller;
 import com.erp.common.entity.FebsConstant;
 import com.erp.common.utils.DateUtil;
 import com.erp.common.utils.FebsUtil;
+import com.erp.finance.entity.FinanceParameters;
+import com.erp.finance.service.IFinanceParametersService;
 import com.erp.personnel.entity.PersonnelParameters;
 import com.erp.sale.entity.*;
 import com.erp.sale.service.ISaleApplicationService;
@@ -33,6 +35,8 @@ public class ViewController {
     private final ISaleCustomerProfileService saleCustomerProfileService;
     //销售申请表 Service接口
     private final ISaleApplicationService saleApplicationService;
+    //财务参数表 Service接口
+    private final IFinanceParametersService financeParametersService;
 
     /* 销售参数模块开始 */
     //跳转到销售参数页面
@@ -201,7 +205,7 @@ public class ViewController {
 
 
 
-    //跳转到销售申请页面
+    //跳转到销售申请下产品编码选择列表页面
     @GetMapping("saleProductList")
     public String saleProductIndex(Model model){
         return FebsUtil.view("saleProduct/saleProductList");
@@ -231,10 +235,34 @@ public class ViewController {
         //查询业务员信息
         List<SaleBusinessPersonnel> saleBusiness  = saleBusinessPersonnelService.queryBusinessPersonnel();
         model.addAttribute("saleBusiness",saleBusiness);
-
+        //查询币种信息
+        List<FinanceParameters> currency  = financeParametersService.queryCurrencyInformation(FinanceParameters.CURRENCY);
+        model.addAttribute("currency",currency);
         return FebsUtil.view("saleOrder/saleOrderList");
     }
-
+    //销售订单添加
+    @GetMapping("saleOrder/add")
+    @RequiresPermissions("saleOrder:add")
+    public String saleOrderAdd(Model model) {
+        //查询业务员信息
+        List<SaleBusinessPersonnel> saleBusiness  = saleBusinessPersonnelService.queryBusinessPersonnel();
+        model.addAttribute("saleBusiness",saleBusiness);
+        //查询币种信息
+        List<FinanceParameters> currency  = financeParametersService.queryCurrencyInformation(FinanceParameters.CURRENCY);
+        model.addAttribute("currency",currency);
+        //查询税率信息
+        List<FinanceParameters> taxRate  = financeParametersService.queryCurrencyInformation(FinanceParameters.TAX_RATE);
+        model.addAttribute("taxRate",taxRate);
+        //查询付款方式信息
+        List<FinanceParameters> paymentMethod  = financeParametersService.queryCurrencyInformation(FinanceParameters.PAYMENT_METHOD);
+        model.addAttribute("paymentMethod",paymentMethod);
+        return FebsUtil.view("saleOrder/saleOrderAdd");
+    }
+    //跳转到销售订单下产品编码选择列表页面
+    @GetMapping("saleOrderProductList")
+    public String saleOrderProductIndex(Model model){
+        return FebsUtil.view("saleOrder/saleProductList");
+    }
     //销售申请修改
     @GetMapping("saleApplication/update/{id}")
     @RequiresPermissions("saleApplication:update")

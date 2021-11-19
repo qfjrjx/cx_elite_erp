@@ -7,6 +7,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * 财务参数表 Mapper
  *
@@ -21,4 +23,6 @@ public interface FinanceParametersMapper extends BaseMapper<FinanceParameters> {
     IPage<FinanceParameters> findFinanceParametersPage(Page<FinanceParameters> page,@Param("financeParameters") FinanceParameters financeParameters);
 
     FinanceParameters financeParametersById(@Param("id") Long id);
+
+    List<FinanceParameters> queryCurrencyInformation(@Param("parameterCategory") String parameterCategory);
 }

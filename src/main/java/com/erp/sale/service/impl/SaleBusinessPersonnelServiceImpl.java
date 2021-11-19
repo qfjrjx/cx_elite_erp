@@ -1,6 +1,7 @@
 package com.erp.sale.service.impl;
 
 import com.erp.common.entity.QueryRequest;
+import com.erp.finance.entity.FinanceParameters;
 import com.erp.personnel.entity.PersonnelDormitory;
 import com.erp.sale.entity.SaleBusinessPersonnel;
 import com.erp.sale.mapper.SaleBusinessPersonnelMapper;
@@ -80,4 +81,5 @@ public class SaleBusinessPersonnelServiceImpl extends ServiceImpl<SaleBusinessPe
 
         return baseMapper.queryBusinessPersonnel();
     }
+
 }

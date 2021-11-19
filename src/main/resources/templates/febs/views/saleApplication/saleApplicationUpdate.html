@@ -5,21 +5,21 @@
 </style>
 <div class="layui-fluid" id="saleApplication-update">
     <form class="layui-form" action="" lay-filter="saleApplication-update-form">
-        <!--<div class="layui-form-item febs-hide">
+        <div class="layui-form-item">
             <label class="layui-form-label febs-form-item-require">赋值参数：</label>
             <div class="layui-input-block">
-                 &lt;!&ndash;获取tr索引&ndash;&gt;
-                <input type="text" name="parameterIndex" id="parameterIndex1">
-                &lt;!&ndash;获取配置&ndash;&gt;
-                <input type="text" name="parameterOne" id="parameterOne1">
-                &lt;!&ndash;获取单位&ndash;&gt;
-                <input type="text" name="parameterTwo" id="parameterTwo1">
-                &lt;!&ndash;获取数量&ndash;&gt;
-                <input type="text" name="parameterThree" id="parameterThree1">
-                &lt;!&ndash;获取说明&ndash;&gt;
-                <input type="text" name="parameterFour" id="parameterFour1">
+                 <!--获取tr索引-->
+                <input type="text" name="parameterIndex" id="parameterIndexTo">
+                <!--获取配置-->
+                <input type="text" name="parameterOne" id="parameterOneTo">
+                <!--获取单位-->
+                <input type="text" name="parameterTwo" id="parameterTwoTo">
+                <!--获取数量-->
+                <input type="text" name="parameterThree" id="parameterThreeTo">
+                <!--获取说明-->
+                <input type="text" name="parameterFour" id="parameterFourTo">
             </div>
-        </div>-->
+        </div>
         <div class="layui-form-item">
             <label class="layui-form-label febs-form-item-require" >单号</label>
             <div class="layui-input-inline" style="width: 120px">
@@ -146,15 +146,15 @@
             if (layEvent === 'choice') {
                 var tableData = layui.table.cache['saleApplication-table'];
                 var rowIndex = $(obj.tr).attr('data-index');//当前行的索引
-                $("#parameterIndex").val(rowIndex);//获取索引
-                var parameterOptions  = tableData[rowIndex].parameterOption;
-                $("#parameterOne").val(parameterOptions);//配置
+                $("#parameterIndexTo").val(rowIndex);//获取索引
+                var parameterOptions  = tableData[rowIndex].configureName;
+                $("#parameterOneTo").val(parameterOptions);//配置
                 var companyName  = tableData[rowIndex].companyName;
-                $("#parameterTwo").val(companyName);//单位
+                $("#parameterTwoTo").val(companyName);//单位
                 var quantityName  = tableData[rowIndex].quantityName;
-                $("#parameterThree").val(quantityName);//数量
+                $("#parameterThreeTo").val(quantityName);//数量
                  var explainName  = tableData[rowIndex].explainName;
-                $("#parameterFour").val(explainName);//说明
+                $("#parameterFourTo").val(explainName);//说明
                 tableData.splice(rowIndex,1); //删除缓存的行
                 febs.modal.view('产品编码选择列表', "sale/saleProductList", {
                     area:["65%","80%"]

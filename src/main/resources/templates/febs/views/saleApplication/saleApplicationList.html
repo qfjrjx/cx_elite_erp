@@ -308,16 +308,27 @@
                     $('#saleApplication-add').find('#submit').trigger('click');
                 },
                 btn2: function () {
-                    let checkStatus = table.checkStatus('deviceweihu-table');
+                    let checkStatus = table.checkStatus('deviceweihu-table')
+                   , demo = table.cache["deviceweihu-table"];//获取表格中的数据
                     if (checkStatus.data.length < 1) {
                         layer.alert("请选择一条数据操作");
                         return false;
                     }else {
-                        layui.each(checkStatus.data, function (key, item) {
-                            alert(item.id)
+                        var tablelist = [];//存储未选中的数据
+                        //循环表格数据
+                        for (var i in demo) {
+                            //判断未选中数据
+                            if (!demo[i].LAY_CHECKED) {
+                                //存入数组
+                                tablelist.push(demo[i]);
+                            }
+                        }
+                        //重载表格
+                        table.reload('deviceweihu-table', {
+                            data: tablelist
                         });
+
                     }
-                    $('#saleApplication-add').find('#reset').trigger('click');
                     return false;
                 },
                 btn3: function () {
@@ -542,6 +553,7 @@
                 elem: $view.find('table'),
                 id: 'saleApplicationTable',
                 url: ctx + 'saleApplication/list',
+                page: true,
                 cols: [[
                     {type: 'checkbox'},
                     {field:'number',title:'', minWidth: 30,align:'center',templet:function (d) {
@@ -586,6 +598,26 @@
                 $query.click();
             });
         }
+
+        //单击行勾选checkbox事件
+        $(document).on("click",".layui-table-body table.layui-table tbody tr", function () {
+            var index = $(this).attr('data-index');
+            var tableBox = $(this).parents('.layui-table-box');
+            //存在固定列
+            if (tableBox.find(".layui-table-fixed.layui-table-fixed-l").length>0) {
+                tableDiv = tableBox.find(".layui-table-fixed.layui-table-fixed-l");
+            } else {
+                tableDiv = tableBox.find(".layui-table-body.layui-table-main");
+            }
+            var checkCell = tableDiv.find("tr[data-index=" + index + "]").find("td div.laytable-cell-checkbox div.layui-form-checkbox I");
+            if (checkCell.length>0) {
+                checkCell.click();
+            }
+        });
+
+        $(document).on("click", "td div.laytable-cell-checkbox div.layui-form-checkbox", function (e) {
+            e.stopPropagation();
+        });
     })
     function dblclickCustomerName(){
         layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {

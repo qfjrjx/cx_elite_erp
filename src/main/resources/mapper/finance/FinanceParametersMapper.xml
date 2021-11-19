@@ -74,4 +74,21 @@
             fp.id = #{id}
     </select>
 
+    <select id="queryCurrencyInformation" parameterType="String" resultType="com.erp.finance.entity.FinanceParameters">
+        SELECT
+            fp.id,
+            fp.finance_parameter_category financeParameterCategory,
+            fp.finance_parameter_value financeParameterValue,
+            fp.finance_parameter_name financeParameterName,
+            fp.finance_sort financeSort,
+            fp.finance_state financeState,
+            fp.finance_remarks financeRemarks,
+            fp.finance_creator financeCreator,
+            fp.finance_creation_time financeCreationTime
+        FROM
+            jr_finance_parameters fp
+        WHERE
+            fp.finance_parameter_category = #{parameterCategory} and fp.finance_state = 1
+    </select>
+
 </mapper>

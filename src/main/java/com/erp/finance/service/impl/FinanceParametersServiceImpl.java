@@ -77,4 +77,10 @@ public class FinanceParametersServiceImpl extends ServiceImpl<FinanceParametersM
 
         return baseMapper.financeParametersById(id);
     }
+
+    @Override
+    public List<FinanceParameters> queryCurrencyInformation(String parameterCategory) {
+
+        return baseMapper.queryCurrencyInformation(parameterCategory);
+    }
 }

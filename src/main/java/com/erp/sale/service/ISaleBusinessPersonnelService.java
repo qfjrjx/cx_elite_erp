@@ -1,6 +1,7 @@
 package com.erp.sale.service;
 
 import com.erp.common.entity.QueryRequest;
+import com.erp.finance.entity.FinanceParameters;
 import com.erp.sale.entity.SaleBusinessPersonnel;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;

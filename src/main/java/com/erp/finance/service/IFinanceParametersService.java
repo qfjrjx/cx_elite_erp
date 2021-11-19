@@ -55,4 +55,6 @@ public interface IFinanceParametersService extends IService<FinanceParameters> {
     void deleteFinanceParameters(String[] ids);
 
     FinanceParameters financeParametersById(Long id);
+
+    List<FinanceParameters> queryCurrencyInformation(String parameterCategory);
 }

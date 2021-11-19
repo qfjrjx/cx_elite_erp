@@ -56,25 +56,25 @@ public class SaleOrder {
     private String salesmanName;
 
     /**
-     * 币种           1-人民币，2-美元，3-欧元
+     * 币种
      */
     @TableField("currency_name")
-    private Integer currencyName;
+    private Long currencyName;
 
     /**
-     * 税率           13%,9%,6%,3%,0%
+     * 税率
      */
     @TableField("tax_rate")
-    private String taxRate;
+    private Long taxRate;
 
     /**
-     * 付款方式       1-中行，2-农行，3-汇票，4-现金，5-支票，6-电汇，7-承兑，8-其他
+     * 付款方式
      */
     @TableField("payment_method")
-    private Integer paymentMethod;
+    private Long paymentMethod;
 
     /**
-     * 定金
+     * 订金
      */
     @TableField("deposit_money")
     private BigDecimal depositMoney;
@@ -152,7 +152,7 @@ public class SaleOrder {
      * 单价
      */
     @TableField("unit_price")
-    private BigDecimal unitPrice;
+        private BigDecimal unitPrice;
     /**
      * 
 

@@ -2,6 +2,7 @@ package com.erp.sale.mapper;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.erp.finance.entity.FinanceParameters;
 import com.erp.personnel.entity.PersonnelDormitory;
 import com.erp.sale.entity.SaleBusinessPersonnel;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -32,4 +33,5 @@ public interface SaleBusinessPersonnelMapper extends BaseMapper<SaleBusinessPers
     void saveOrUpdate(@Param("saleBusinessPersonnel") SaleBusinessPersonnel saleBusinessPersonnel);
 
     List<SaleBusinessPersonnel> queryBusinessPersonnel();
+
 }

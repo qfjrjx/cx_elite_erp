@@ -37,6 +37,8 @@ public class TechnologyProduct {
      */
     @TableField("product_name")
     private String productName;
+    //全称简拼
+    private transient String productNameAbbreviation;
 
     /**
      * 产品编码
