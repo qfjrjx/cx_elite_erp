@@ -6,6 +6,7 @@ import com.erp.sale.entity.SaleOrder;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -35,9 +36,9 @@ public interface ISaleOrderService extends IService<SaleOrder> {
     /**
      * 新增
      *
-     * @param saleOrder saleOrder
+     * @param
      */
-    void createSaleOrder(SaleOrder saleOrder);
+    void createSaleOrder(String orderDate, String customerName, String salesmanName, String currencyName, String taxRate, String paymentMethod, String depositMoney, String invoiceNot, String contactsName, String mobilePhone, String orderType, String afterSalesClerk, String dataTable, String contImg) throws ParseException;
 
     /**
      * 修改

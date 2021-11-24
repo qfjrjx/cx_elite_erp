@@ -80,7 +80,10 @@
 
  <script type="text/html" id="zizeng">
          {{d.LAY_TABLE_INDEX+1}}
-     </script>
+ </script>
+<script langguage="JavaScript">
+    var deliveryDateTo = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate();
+</script>
 <script data-th-inline="none" type="text/javascript">
     layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
         let $ = layui.jquery,
@@ -164,29 +167,24 @@
             tableIns.reload({where: params, page: {curr: 1}});
         });
         $addTo.on('click', function () {
-            alert("确定")
-            var a =  table.cache["saleOrderProduct-table"];
-            alert(a.number)
-            var aaa = a.cache.number;
-            alert(aaa)
             //var dataOne = new Array();
-           /* var oldDatas;
-            var parameterOnes = document.getElementById("parameterOne");
-            var parameterIndex = document.getElementById("parameterIndex");
-            var parameterTwo = document.getElementById("parameterTwo");
-            var parameterThree = document.getElementById("parameterThree");
-            var parameterFour = document.getElementById("parameterFour");
+            var oldDatas;
+            var parameterIndex = document.getElementById("parameterIndexes");
+            var parameterConfigure = document.getElementById("parameterConfigure");
+            var parameterTwo = document.getElementById("parameterCompany");
+            var parameterThree = document.getElementById("parameterQuantity");
+            var parameterFour = document.getElementById("parameterExplain");
             var oldData =  table.cache["saleOrderProduct-table"];
             //oldData.splice(oldData.tr.data('index'), 1)//根据索引删除当前行
             for (i=0;i<oldData.length;i++){
-                var dataOne1={"productName":oldData[i].productNames,"specificationModel":oldData[i].specificationModels,"parameterOption":parameterOnes.value,"companyName":parameterTwo.value,"quantityName":parameterThree.value,"explainName":parameterFour.value};
-                oldDatas =  table.cache["deviceweihu-table"];
+                var dataOne1={"productName":oldData[i].productNames,"specificationModel":oldData[i].productSpecificationModels,"configureName":parameterConfigure.value,"deliveryDate":deliveryDateTo};
+                oldDatas =  table.cache["saleOrder-table"];
                 oldDatas.push(dataOne1);
             }
-            layui.table.reload('deviceweihu-table',{
+            layui.table.reload('saleOrder-table',{
                 data : oldDatas
             });
-            parent.layer.close(layer.index)*/
+            parent.layer.close(layer.index)
         });
         $reset.on('click', function () {
             $searchForm[0].reset();

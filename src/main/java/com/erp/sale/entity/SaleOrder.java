@@ -179,9 +179,7 @@ public class SaleOrder {
     private String machineRequirements;
 
     /**
-     * 
-
-电脑配置
+     电脑配置
      */
     @TableField("computer_configuration")
     private String computerConfiguration;
@@ -191,6 +189,12 @@ public class SaleOrder {
      */
     @TableField("tool_size")
     private String toolSize;
+
+    /**
+     * 每小时产量
+     */
+    @TableField("hourly_production")
+    private String hourlyProduction;
 
     /**
      * 加工工序
@@ -221,5 +225,11 @@ public class SaleOrder {
      */
     @TableField("other_requirements")
     private String otherRequirements;
+
+    /**
+     * 日期
+     */
+    @TableField("create_date")
+    private Date createDate;
 
 }

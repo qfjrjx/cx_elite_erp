@@ -19,4 +19,8 @@ public interface SaleOrderMapper extends BaseMapper<SaleOrder> {
     long countSaleOrder(@Param("saleOrder") SaleOrder saleOrder);
 
     IPage<SaleOrder> findSaleOrderPage(Page<SaleOrder> page,@Param("saleOrder") SaleOrder saleOrder);
+
+    SaleOrder querySaleOrder();
+
+    void addSaleOrder(SaleOrder saleOrder);
 }

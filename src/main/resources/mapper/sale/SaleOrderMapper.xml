@@ -38,11 +38,13 @@
             so.machine_requirements machineRequirements,
             so.computer_configuration computerConfiguration,
             so.tool_size toolSize,
+            so.hourly_production hourlyProduction,
             so.processing_procedure processingProcedure,
             so.fixture_requirements fixtureRequirements,
             so.product_shape productShape,
             so.product_size productSize,
-            so.other_requirements otherRequirements
+            so.other_requirements otherRequirements,
+            so.create_date createDate
         FROM
             jr_sale_order so
     </sql>
@@ -54,5 +56,121 @@
     <select id="findSaleOrderPage" parameterType="com.erp.sale.entity.SaleOrder" resultType="com.erp.sale.entity.SaleOrder">
         <include refid="findSaleOrderSql"/>
     </select>
+
+    <!--查询出最后一个销售订单单号-->
+    <select id="querySaleOrder" resultType="com.erp.sale.entity.SaleOrder">
+        SELECT
+            so.id,
+            so.odd_numbers oddNumbers,
+            so.order_date orderDate,
+            so.customer_name customerName,
+            so.salesman_name salesmanName,
+            so.currency_name currencyName,
+            so.tax_rate taxRate,
+            so.payment_method paymentMethod,
+            so.deposit_money depositMoney,
+            so.invoice_not invoiceNot,
+            so.contacts_name contactsName,
+            so.mobile_phone mobilePhone,
+            so.enclosure_name enclosureName,
+            so.order_type orderType,
+            so.after_sales_clerk afterSalesClerk,
+            so.product_name productName,
+            so.specification_model specificationModel,
+            so.configure_name configureName,
+            so.company_name companyName,
+            so.quantity_name quantityName,
+            so.unit_price unitPrice,
+            so.amount_money amountMoney,
+            so.delivery_date deliveryDate,
+            so.order_remarks orderRemarks,
+            so.machine_requirements machineRequirements,
+            so.computer_configuration computerConfiguration,
+            so.tool_size toolSize,
+            so.hourly_production hourlyProduction,
+            so.processing_procedure processingProcedure,
+            so.fixture_requirements fixtureRequirements,
+            so.product_shape productShape,
+            so.product_size productSize,
+            so.other_requirements otherRequirements,
+            so.create_date createDate
+        FROM
+            jr_sale_order so
+        GROUP BY
+            so.create_date
+        ORDER BY
+            so.create_date DESC
+            LIMIT 1;
+    </select>
+
+    <insert id="addSaleOrder" parameterType="com.erp.sale.entity.SaleOrder">
+        INSERT INTO jr_sale_order (
+                    odd_numbers ,
+                    order_date ,
+                    customer_name ,
+                    salesman_name ,
+                    currency_name ,
+                    tax_rate ,
+                    payment_method ,
+                    deposit_money ,
+                    invoice_not ,
+                    contacts_name ,
+                    mobile_phone ,
+                    enclosure_name ,
+                    order_type ,
+                    after_sales_clerk ,
+                    product_name ,
+                    specification_model ,
+                    configure_name ,
+                    company_name ,
+                    quantity_name ,
+                    unit_price ,
+                    amount_money ,
+                    delivery_date ,
+                    order_remarks ,
+                    machine_requirements ,
+                    computer_configuration ,
+                    tool_size toolSize,
+                    hourly_production ,
+                    processing_procedure ,
+                    fixture_requirements ,
+                    product_shape ,
+                    product_size ,
+                    other_requirements ,
+                    create_date  )
+        VALUES
+                    (#{oddNumbers},
+                     #{orderDate},
+                     #{customerName},
+                     #{salesmanName},
+                     #{currencyName},
+                     #{taxRate},
+                     #{paymentMethod},
+                     #{depositMoney},
+                     #{invoiceNot},
+                     #{contactsName},
+                     #{mobilePhone},
+                     #{orderType},
+                     #{afterSalesClerk},
+                     #{productName},
+                     #{specificationModel},
+                     #{configureName},
+                     #{companyName},
+                     #{quantityName},
+                     #{unitPrice},
+                     #{amountMoney},
+                     #{deliveryDate},
+                     #{orderRemarks},
+                     #{machineRequirements},
+                     #{computerConfiguration},
+                     #{hourlyProduction},
+                     #{processingProcedure},
+                     #{fixtureRequirements},
+                     #{productShape},
+                     #{productSize},
+                     #{otherRequirements},
+                     #{createDate}
+            )
+    </insert>
 
 </mapper>

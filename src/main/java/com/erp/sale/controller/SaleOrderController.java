@@ -17,10 +17,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
@@ -59,11 +61,26 @@ public class SaleOrderController extends BaseController {
     }
 
     @ControllerEndpoint(operation = "新增SaleOrder", exceptionMessage = "新增SaleOrder失败")
-    @PostMapping("saleOrder")
+    @PostMapping("saleOrder/add")
     @ResponseBody
     @RequiresPermissions("saleOrder:add")
-    public FebsResponse addSaleOrder(@Valid SaleOrder saleOrder) {
-        this.saleOrderService.createSaleOrder(saleOrder);
+    public FebsResponse addSaleOrder(@RequestParam String orderDate,
+                                     @RequestParam String customerName,
+                                     @RequestParam String salesmanName,
+                                     @RequestParam String currencyName,
+                                     @RequestParam String taxRate,
+                                     @RequestParam String paymentMethod,
+                                     @RequestParam String depositMoney,
+                                     @RequestParam String invoiceNot,
+                                     @RequestParam String contactsName,
+                                     @RequestParam String mobilePhone,
+                                     @RequestParam String orderType,
+                                     @RequestParam String afterSalesClerk,
+                                     @RequestParam String dataTable,
+                                     @RequestParam String contImg) throws ParseException {
+        this.saleOrderService.createSaleOrder(orderDate,customerName,
+                salesmanName,currencyName,taxRate,paymentMethod,
+                depositMoney,invoiceNot,contactsName,mobilePhone,orderType,afterSalesClerk,dataTable,contImg);
         return new FebsResponse().success();
     }
 
