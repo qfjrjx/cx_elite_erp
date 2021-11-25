@@ -177,7 +177,7 @@
             var oldData =  table.cache["saleOrderProduct-table"];
             //oldData.splice(oldData.tr.data('index'), 1)//根据索引删除当前行
             for (i=0;i<oldData.length;i++){
-                var dataOne1={"productName":oldData[i].productNames,"specificationModel":oldData[i].productSpecificationModels,"configureName":parameterConfigure.value,"deliveryDate":deliveryDateTo};
+                var dataOne1={"productName":oldData[i].productNames,"specificationModel":oldData[i].productSpecificationModels,"configureName":parameterConfigure.value,"deliveryTime":deliveryDateTo};
                 oldDatas =  table.cache["saleOrder-table"];
                 oldDatas.push(dataOne1);
             }

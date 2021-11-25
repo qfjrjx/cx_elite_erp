@@ -56,6 +56,7 @@ public class SaleOrderServiceImpl extends ServiceImpl<SaleOrderMapper, SaleOrder
     @Override
     public void createSaleOrder(String orderDate, String customerName, String salesmanName, String currencyName, String taxRate, String paymentMethod, String depositMoney, String invoiceNot, String contactsName, String mobilePhone, String orderType, String afterSalesClerk, String dataTable, String contImg) throws ParseException {
             SaleOrder saleOrder = new SaleOrder();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             Date date = new Date();
             //获取当前年
             String yearLast = new SimpleDateFormat("yy", Locale.CHINESE).format(Calendar.getInstance().getTime());Date d = new Date(); //打印当前月
@@ -115,13 +116,51 @@ public class SaleOrderServiceImpl extends ServiceImpl<SaleOrderMapper, SaleOrder
                 saleOrder.setOddNumbers("HT"+yearLast+month+v);
             }
         }
+        if (!orderDate.equals("")) {
+            Date orderDateOne = sdf.parse(orderDate);//格式化数据，取当前时间结果
+            saleOrder.setOrderDate(orderDateOne);
+        }
+        if (!customerName.equals("")) {
+            saleOrder.setCustomerName(customerName);
+        }
+        if (!salesmanName.equals("")) {
+        saleOrder.setSalesmanName(salesmanName);
+        }
+        if (!currencyName.equals("")) {
+            long currencyNameOne = Long.parseLong(currencyName);
+            saleOrder.setCurrencyId(currencyNameOne);
+        }
+        if (!taxRate.equals("")) {
+            saleOrder.setTaxRateId(Long.parseLong(taxRate));
+        }
+        if (!paymentMethod.equals("")) {
+            saleOrder.setPaymentMethodId(Long.parseLong(paymentMethod));
+        }
+        if (!depositMoney.equals("")) {
+            BigDecimal depositMoneyTo = new BigDecimal(depositMoney);
+            saleOrder.setDepositMoney(depositMoneyTo);
+        }
+        if (!invoiceNot.equals("")) {
+            saleOrder.setInvoiceNot(Integer.parseInt(invoiceNot));
+        }
+        if (!contactsName.equals("")) {
+            saleOrder.setContactsName(contactsName);
+        }
+        if (!mobilePhone.equals("")) {
+            saleOrder.setMobilePhone(mobilePhone);
+        }
+        if (!orderType.equals("")) {
+            saleOrder.setOrderType(Integer.parseInt(orderType));
+        }
+        if (!afterSalesClerk.equals("")) {
+            saleOrder.setAfterSalesClerk(afterSalesClerk);
+        }
         if (!contImg.equals("")){
             //截取：之前的字符串
             int contImgOne = contImg.indexOf(".");
             String contImgTwo = contImg.substring(0,contImgOne);
             saleOrder.setEnclosureName(contImgTwo);
         }
-        saleOrder.setSalesmanName(salesmanName);
         JSONArray jsonArrayOne = JSONArray.parseArray(dataTable);
         for(int i = 0; i < jsonArrayOne.size(); i++){
             String productName = jsonArrayOne.getJSONObject(i).getString("productName");
@@ -131,7 +170,7 @@ public class SaleOrderServiceImpl extends ServiceImpl<SaleOrderMapper, SaleOrder
             String quantityName = jsonArrayOne.getJSONObject(i).getString("quantityName");
             String unitPrice = jsonArrayOne.getJSONObject(i).getString("unitPrice");
             String amountMoney = jsonArrayOne.getJSONObject(i).getString("amountMoney");
-            String deliveryDate = jsonArrayOne.getJSONObject(i).getString("deliveryDate");
+            String deliveryDate = jsonArrayOne.getJSONObject(i).getString("deliveryTime");
             String orderRemarks = jsonArrayOne.getJSONObject(i).getString("orderRemarks");
             saleOrder.setProductName(productName);
             saleOrder.setSpecificationModel(specificationModel);
@@ -141,7 +180,6 @@ public class SaleOrderServiceImpl extends ServiceImpl<SaleOrderMapper, SaleOrder
             saleOrder.setUnitPrice(unitPriceTo);
             BigDecimal amountMoneyTo = new BigDecimal(amountMoney);
             saleOrder.setAmountMoney(amountMoneyTo);
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             Date requestedDeliveryDates = sdf.parse(deliveryDate);//格式化数据，取当前时间结果
             saleOrder.setDeliveryDate(requestedDeliveryDates);
             saleOrder.setOrderRemarks(orderRemarks);
@@ -190,9 +228,12 @@ public class SaleOrderServiceImpl extends ServiceImpl<SaleOrderMapper, SaleOrder
                 }
                 //System.out.println("parameterOptions----:"+jsonArrayTwo.get(j));
             }
-
-
             //System.out.println("列表----:"+jsonArrayOne.get(i));
+            saleOrder.setConfigureName(strOne.toString());
+            SimpleDateFormat simpleDateFormatOne = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
+            String dates = simpleDateFormatOne.format(new Date());//系统当前时间
+            Date today = simpleDateFormatOne.parse(dates);//格式化系统当前时间
+            saleOrder.setCreateDate(today);
             //添加到数据库
             baseMapper.addSaleOrder(saleOrder);
         }

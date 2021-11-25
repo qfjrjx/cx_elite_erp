@@ -200,14 +200,14 @@
                                         {field: 'quantityName', edit:true,title: '数量', minWidth: 55,align:'center'},
                                         {field: 'unitPrice', edit:true,title: '单价', minWidth: 55,align:'center'},
                                         {field: 'amountMoney', edit:true,title: '金额', minWidth: 55,align:'center'},
-                                         {field: 'deliveryDate',title: '交货日期', minWidth: 72,event: 'designDateOne',templet:'<div>{{ layui.util.toDateString(<d class="deliveryDate"></d>, "yyyy-MM-dd") }}</div>'},
+                                         {field: 'deliveryTime',title: '交货日期', minWidth: 72,event: 'deliveryDateOne',templet:'<div>{{ layui.util.toDateString(d.deliveryDates, "yyyy-MM-dd") }}</div>'},
                                          {field: 'orderRemarks',edit:true, title: '备注', minWidth: 72}
                                      ]
                                   ]
                      });
 
 
-        //监听行单击事件  给每一行数据绑定点击事件
+        //监听行单击事件  给每一行数据绑定点击事件T
         //row(tableBigType)  表格的id
         table.on('row(saleOrder-table)', function(obj){
             //获取checkbox
@@ -230,7 +230,6 @@
                 if (tableData != "") {
                     $("#parameterIndexes").val(rowIndex);//获取索引
                     var parameterOptions = tableData[rowIndex].configureName;
-                    alert(parameterOptions)
                     $("#parameterConfigure").val(parameterOptions);//配置
                     var companyName = tableData[rowIndex].companyName;
                     $("#parameterCompany").val(companyName);//单位
@@ -244,7 +243,7 @@
                     area:["65%","80%"]
                 });
             }
-            if (layEvent === 'designDateOne') {
+            if (layEvent === 'deliveryDateOne') {
                 var field = $(this).data('field');  //获取当前对象的字段名称，（如：field:'velappr'）
                 laydate.render({
                     elem: this.firstChild
@@ -252,7 +251,7 @@
                     , closeStop: this  //这里代表的意思是：点击 this 所在元素阻止关闭事件冒泡。如果不设定，则无法弹出控件
                     , done: function (value) {
                         data[field] = value; //修改后的值
-                        obj.update(data); //res的值：{"year":2020,"month":1,"date":7,"hours":0,"minutes":0,"seconds":0}
+                        obj.update(data.value);
                     }
                 });
             }
@@ -278,7 +277,6 @@
                         if (parameterOptionTo !=null && parameterOptionTo !=""){
                             var parameterOptionTwo = new Array();
                             parameterOptionTwo = parameterOptionTo.split(',');
-                            alert(parameterOptionTwo)
                             for(var i=0;i<parameterOptionTwo.length;i++){
                                 var parameterOptionThree = parameterOptionTwo[i].split(":")[0];
                                 var parameterOptionFour = parameterOptionTwo[i].split(":")[1];
@@ -307,7 +305,7 @@
                             area:["30%","65%"],
                             btn: ['保存', '关闭'],
                             data:{
-                                    machineRequirementsOne:machineRequirementsOne,
+                                 machineRequirementsOne:machineRequirementsOne,
                                 computerConfigurationOne:computerConfigurationOne,
                                 toolSizeOne:toolSizeOne,
                                 hourlyProductionOne:hourlyProductionOne,
@@ -363,9 +361,9 @@
                                 var rowIndex = $(obj.tr).attr('data-index');//当前行的索引
                                 for (i=0;i<tableDas.length;i++){
                                     if (tableDas[rowIndex].productName == tableDas[i].productName && tableDas[rowIndex].configureName==tableDas[i].configureName){
-                                        tableData = {"id":tableDas[i].id,"productName":tableDas[i].productName,"specificationModel":tableDas[i].specificationModel,"configureName":dataOne,"companyName":tableDas[i].companyName,"quantityName":tableDas[i].quantityName,"explainName":tableDas[i].explainName};
+                                        tableData = {"id":tableDas[i].id,"productName":tableDas[i].productName,"specificationModel":tableDas[i].specificationModel,"configureName":dataOne,"companyName":tableDas[i].companyName,"quantityName":tableDas[i].quantityName,"unitPrice":tableDas[i].unitPrice,"amountMoney":tableDas[i].amountMoney,"deliveryTime":tableDas[i].deliveryTime,"orderRemarks":tableDas[i].orderRemarks};
                                     }else{
-                                        tableData = {"id":tableDas[i].id,"productName":tableDas[i].productName,"specificationModel":tableDas[i].specificationModel,"configureName":tableDas[i].configureName,"companyName":tableDas[i].companyName,"quantityName":tableDas[i].quantityName,"explainName":tableDas[i].explainName};
+                                        tableData = {"id":tableDas[i].id,"productName":tableDas[i].productName,"specificationModel":tableDas[i].specificationModel,"configureName":tableDas[i].configureName,"companyName":tableDas[i].companyName,"quantityName":tableDas[i].quantityName,"unitPrice":tableDas[i].unitPrice,"amountMoney":tableDas[i].amountMoney,"deliveryTime":tableDas[i].deliveryTime,"orderRemarks":tableDas[i].orderRemarks};
                                     }
                                     dataBak.push(tableData);
                                 }
@@ -396,7 +394,7 @@
                "quantityName":"",
                "unitPrice":"",
                "amountMoney":"",
-               "deliveryDate":deliveryDateTo,
+               "deliveryDates":deliveryDateTo,
                "orderRemarks":"",
            });
            console.log(dataBak);

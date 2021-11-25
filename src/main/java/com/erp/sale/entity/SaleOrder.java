@@ -58,20 +58,25 @@ public class SaleOrder {
     /**
      * 币种
      */
-    @TableField("currency_name")
-    private Long currencyName;
+    @TableField("currency_id")
+    private Long currencyId;
+
+    private String currencyName;
 
     /**
      * 税率
      */
-    @TableField("tax_rate")
-    private Long taxRate;
+    @TableField("tax_rate_id")
+    private Long taxRateId;
+    private String taxRate;
 
     /**
      * 付款方式
      */
-    @TableField("payment_method")
-    private Long paymentMethod;
+    @TableField("payment_method_id")
+    private Long paymentMethodId;
+
+    private String paymentMethod;
 
     /**
      * 订金

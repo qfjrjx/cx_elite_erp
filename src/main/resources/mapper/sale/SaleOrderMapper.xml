@@ -16,9 +16,9 @@
             so.order_date orderDate,
             so.customer_name customerName,
             so.salesman_name salesmanName,
-            so.currency_name currencyName,
-            so.tax_rate taxRate,
-            so.payment_method paymentMethod,
+            fpa.finance_parameter_name currencyName,
+            fpb.finance_parameter_name taxRate,
+            fpc.finance_parameter_name paymentMethod,
             so.deposit_money depositMoney,
             so.invoice_not invoiceNot,
             so.contacts_name contactsName,
@@ -47,6 +47,9 @@
             so.create_date createDate
         FROM
             jr_sale_order so
+        LEFT JOIN jr_finance_parameters fpa ON ( so.currency_id = fpa.id )
+        LEFT JOIN jr_finance_parameters fpb ON ( so.tax_rate_id = fpb.id )
+        LEFT JOIN jr_finance_parameters fpc ON ( so.payment_method_id = fpc.id )
     </sql>
 
     <select id="countSaleOrder" parameterType="com.erp.sale.entity.SaleOrder" resultType="long">
@@ -65,9 +68,9 @@
             so.order_date orderDate,
             so.customer_name customerName,
             so.salesman_name salesmanName,
-            so.currency_name currencyName,
-            so.tax_rate taxRate,
-            so.payment_method paymentMethod,
+            so.currency_id currencyId,
+            so.tax_rate_id taxRateId,
+            so.payment_method_id paymentMethodId,
             so.deposit_money depositMoney,
             so.invoice_not invoiceNot,
             so.contacts_name contactsName,
@@ -95,7 +98,7 @@
             so.other_requirements otherRequirements,
             so.create_date createDate
         FROM
-            jr_sale_order so
+	        jr_sale_order so
         GROUP BY
             so.create_date
         ORDER BY
@@ -109,9 +112,9 @@
                     order_date ,
                     customer_name ,
                     salesman_name ,
-                    currency_name ,
-                    tax_rate ,
-                    payment_method ,
+                    currency_id ,
+                    tax_rate_id ,
+                    payment_method_id ,
                     deposit_money ,
                     invoice_not ,
                     contacts_name ,
@@ -130,7 +133,7 @@
                     order_remarks ,
                     machine_requirements ,
                     computer_configuration ,
-                    tool_size toolSize,
+                    tool_size ,
                     hourly_production ,
                     processing_procedure ,
                     fixture_requirements ,
@@ -143,13 +146,14 @@
                      #{orderDate},
                      #{customerName},
                      #{salesmanName},
-                     #{currencyName},
-                     #{taxRate},
-                     #{paymentMethod},
+                     #{currencyId},
+                     #{taxRateId},
+                     #{paymentMethodId},
                      #{depositMoney},
                      #{invoiceNot},
                      #{contactsName},
                      #{mobilePhone},
+                     #{enclosureName},
                      #{orderType},
                      #{afterSalesClerk},
                      #{productName},
@@ -163,6 +167,7 @@
                      #{orderRemarks},
                      #{machineRequirements},
                      #{computerConfiguration},
+                     #{toolSize},
                      #{hourlyProduction},
                      #{processingProcedure},
                      #{fixtureRequirements},

@@ -132,23 +132,14 @@
         </div>
     </div>
 </div>
-<script type="text/html" id="salary-gender">
+<script type="text/html" id="order-type">
     {{#
-    let gender = {
-    1: {title: '男'},
-    2: {title: '女'}
-    }[d.gender];
+    let orderType = {
+    1: {title: '配件'},
+    2: {title: '整机'}
+        }[d.orderType];
     }}
-    <span>{{ gender.title }}</span>
-</script>
-<script type="text/html" id="salary_salaryState">
-    {{#
-    let salaryState = {
-    1: {title: '上调', color: 'green'},
-    2: {title: '下调', color: 'red'}
-    }[d.salaryState];
-    }}
-    <span class="layui-badge febs-bg-{{salaryState.color}}">{{ salaryState.title }}</span>
+    <span>{{ orderType.title }}</span>
 </script>
 <script type="text/html" id="parameter-option">
     <span shiro:lacksPermission="personnelSalaryChange:list,personnelSalaryChange:update,personnelSalaryChange:delete">
@@ -313,7 +304,8 @@
                     var dataThree = new Array();
                     var saleOrder_table =  table.cache["saleOrder-table"];
                     for (i=0;i<saleOrder_table.length;i++){
-                        var dataOne={"productName":saleOrder_table[i].productName,"specificationModel":saleOrder_table[i].specificationModel,"configureName":saleOrder_table[i].configureName,"companyName":saleOrder_table[i].companyName,"quantityName":saleOrder_table[i].quantityName,"unitPrice":saleOrder_table[i].unitPrice,"amountMoney":saleOrder_table[i].amountMoney,"deliveryDate":saleOrder_table[i].deliveryDate,"orderRemarks":saleOrder_table[i].orderRemarks};
+                        alert(saleOrder_table[i].deliveryTime)
+                        var dataOne={"productName":saleOrder_table[i].productName,"specificationModel":saleOrder_table[i].specificationModel,"configureName":saleOrder_table[i].configureName,"companyName":saleOrder_table[i].companyName,"quantityName":saleOrder_table[i].quantityName,"unitPrice":saleOrder_table[i].unitPrice,"amountMoney":saleOrder_table[i].amountMoney,"deliveryTime":saleOrder_table[i].deliveryTime,"orderRemarks":saleOrder_table[i].orderRemarks};
                         dataThree.push(dataOne);
                     }
                     $.ajax({
@@ -376,9 +368,9 @@
                             return d.LAY_INDEX;}},
                     {field: 'id', title: '编号',hide:true,sort: true},
                    //{field: 'state', title: '状态',hide:true,sort: true},
-                    {field: 'orderDate', title: '日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.requestedDeliveryDate, "yyyy-MM-dd") }}</div>', minWidth: 115},
+                    {field: 'orderDate', title: '日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.orderDate, "yyyy-MM-dd") }}</div>', minWidth: 115},
                     {field: 'oddNumbers', title: '订单号',align:'center', minWidth: 100},
-                    {field: 'orderType', title: '订单类型',align:'center', minWidth: 100},
+                    {title: '订单类型', templet: '#order-type',align:'center', minWidth: 100},
                     {field: 'customerName', title: '客户',align:'center', minWidth: 100},
                     {field: 'salesmanName', title: '业务员',align:'center', minWidth: 100},
                     {field: 'afterSalesClerk', title: '售后员',align:'center', minWidth: 100},
@@ -395,8 +387,7 @@
                     {field: 'contactsName', title: '联系人', minWidth: 100,align:'center'},
                     //{field: 'quantityName3', title: '联系电话', minWidth: 55,align:'center'},
                     {field: 'paymentMethod', title: '付款方式', minWidth: 100,align:'center'},
-                   // {field: 'requestedDeliveryDate1', title: '生产交期',align:'center',templet:'<div>{{ layui.util.toDateString(d.requestedDeliveryDate, "yyyy-MM-dd") }}</div>', minWidth: 115},
-                    {field: 'deliveryDate', title: '交货日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.requestedDeliveryDate, "yyyy-MM-dd") }}</div>', minWidth: 115}
+                    {field: 'deliveryDate', title: '交货日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.deliveryDate, "yyyy-MM-dd") }}</div>', minWidth: 115}
                    // {field: 'quantityName', title: '核销状态', minWidth: 55,align:'center'},
                    // {field: 'quantityName', title: '产品编码', minWidth: 55,align:'center'}
                 ]]
