@@ -37,6 +37,10 @@ public class SaleOrder {
     @TableField("order_date")
     private Date orderDate;
 
+    private transient String startTimeFrom;
+    private transient String endTimeTo;
+
+
     /**
      * 关联客户档案id
      */

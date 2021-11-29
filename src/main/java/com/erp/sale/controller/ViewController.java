@@ -7,10 +7,7 @@ import com.erp.finance.entity.FinanceParameters;
 import com.erp.finance.service.IFinanceParametersService;
 import com.erp.personnel.entity.PersonnelParameters;
 import com.erp.sale.entity.*;
-import com.erp.sale.service.ISaleApplicationService;
-import com.erp.sale.service.ISaleBusinessPersonnelService;
-import com.erp.sale.service.ISaleCustomerProfileService;
-import com.erp.sale.service.ISaleParametersService;
+import com.erp.sale.service.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.stereotype.Controller;
@@ -37,6 +34,8 @@ public class ViewController {
     private final ISaleApplicationService saleApplicationService;
     //财务参数表 Service接口
     private final IFinanceParametersService financeParametersService;
+    //销售订单表 Service接口
+    private final ISaleOrderService saleOrderService;
 
     /* 销售参数模块开始 */
     //跳转到销售参数页面
@@ -215,14 +214,14 @@ public class ViewController {
     public String specificationIndex(){
         return FebsUtil.view("saleProduct/toConfigureAdd");
     }
-    //配置查看
+    //销售申请页面配置查看
     @GetMapping("saleApplication/detail/{id}")
     @RequiresPermissions("saleApplication:dispose")
     public String saleApplicationConfigureView(@PathVariable Long id, Model model) {
         saleApplicationConfigureViewModel(id, model, false);
         return FebsUtil.view("saleApplication/saleApplicationConfigureView");
     }
-    //配置信息回填
+    //销售申请页面配置信息回填
     private void saleApplicationConfigureViewModel(Long id, Model model, Boolean transform) {
 
         SaleApplication saleApplication = saleApplicationService.findSaleApplicationConfigureViewById(id);
@@ -262,6 +261,17 @@ public class ViewController {
     @GetMapping("saleOrderProductList")
     public String saleOrderProductIndex(Model model){
         return FebsUtil.view("saleOrder/saleProductList");
+    }
+    //销售订单页面配置查看
+    @GetMapping("saleOrder/detail/{id}")
+    public String saleOrderConfigureView(@PathVariable Long id, Model model) {
+        saleOrderConfigureViewModel(id, model, false);
+        return FebsUtil.view("saleOrder/saleOrderConfigureView");
+    }
+    //销售订单页面配置信息回填
+    private void saleOrderConfigureViewModel(Long id, Model model, Boolean transform) {
+        SaleOrder saleOrder = saleOrderService.findSaleOrderConfigureViewById(id);
+        model.addAttribute("saleOrder", saleOrder);
     }
     //销售申请修改
     @GetMapping("saleApplication/update/{id}")

@@ -23,4 +23,6 @@ public interface SaleOrderMapper extends BaseMapper<SaleOrder> {
     SaleOrder querySaleOrder();
 
     void addSaleOrder(SaleOrder saleOrder);
+
+    SaleOrder findSaleOrderConfigureViewById(@Param("id") Long id);
 }

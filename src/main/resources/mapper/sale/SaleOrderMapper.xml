@@ -8,6 +8,33 @@
             jr_sale_order so
         WHERE
             1 = 1
+        <if test="saleOrder.startTimeFrom != null and saleOrder.startTimeFrom !=''">
+            And so.order_date &gt; #{saleOrder.startTimeFrom}
+        </if>
+        <if test="saleOrder.endTimeTo != null and saleOrder.endTimeTo !=''">
+            And so.order_date &lt; #{saleOrder.endTimeTo}
+        </if>
+        <if test="saleOrder.customerName != null and saleOrder.customerName !=''">
+            And so.customer_name = #{saleOrder.customerName}
+        </if>
+        <if test="saleOrder.salesmanName != null and saleOrder.salesmanName !=''">
+            And so.salesman_name = #{saleOrder.salesmanName}
+        </if>
+        <if test="saleOrder.afterSalesClerk != null and saleOrder.afterSalesClerk !=''">
+            And so.after_sales_clerk = #{saleOrder.afterSalesClerk}
+        </if>
+         <if test="saleOrder.oddNumbers != null and saleOrder.oddNumbers !=''">
+            And so.odd_numbers = #{saleOrder.oddNumbers}
+        </if>
+        <if test="saleOrder.productName != null and saleOrder.productName !=''">
+            And so.product_name = #{saleOrder.productName}
+        </if>
+        <if test="saleOrder.specificationModel != null and saleOrder.specificationModel !=''">
+            And so.specification_model = #{saleOrder.specificationModel}
+        </if>
+         <if test="saleOrder.currencyName != null and saleOrder.currencyName !=''">
+            And so.currency_id = #{saleOrder.currencyName}
+        </if>
     </sql>
     <sql id="findSaleOrderSql" >
         SELECT
@@ -50,6 +77,35 @@
         LEFT JOIN jr_finance_parameters fpa ON ( so.currency_id = fpa.id )
         LEFT JOIN jr_finance_parameters fpb ON ( so.tax_rate_id = fpb.id )
         LEFT JOIN jr_finance_parameters fpc ON ( so.payment_method_id = fpc.id )
+        WHERE
+            1 = 1
+            <if test="saleOrder.startTimeFrom != null and saleOrder.startTimeFrom !=''">
+                And so.order_date &gt; #{saleOrder.startTimeFrom}
+            </if>
+            <if test="saleOrder.endTimeTo != null and saleOrder.endTimeTo !=''">
+                And so.order_date &lt; #{saleOrder.endTimeTo}
+            </if>
+            <if test="saleOrder.customerName != null and saleOrder.customerName !=''">
+                And so.customer_name = #{saleOrder.customerName}
+            </if>
+            <if test="saleOrder.salesmanName != null and saleOrder.salesmanName !=''">
+                And so.salesman_name = #{saleOrder.salesmanName}
+            </if>
+            <if test="saleOrder.afterSalesClerk != null and saleOrder.afterSalesClerk !=''">
+                And so.after_sales_clerk = #{saleOrder.afterSalesClerk}
+            </if>
+            <if test="saleOrder.oddNumbers != null and saleOrder.oddNumbers !=''">
+                And so.odd_numbers = #{saleOrder.oddNumbers}
+            </if>
+            <if test="saleOrder.productName != null and saleOrder.productName !=''">
+                And so.product_name = #{saleOrder.productName}
+            </if>
+            <if test="saleOrder.specificationModel != null and saleOrder.specificationModel !=''">
+                And so.specification_model = #{saleOrder.specificationModel}
+            </if>
+            <if test="saleOrder.currencyName != null and saleOrder.currencyName !=''">
+                And so.currency_id = #{saleOrder.currencyName}
+            </if>
     </sql>
 
     <select id="countSaleOrder" parameterType="com.erp.sale.entity.SaleOrder" resultType="long">
@@ -177,5 +233,23 @@
                      #{createDate}
             )
     </insert>
+
+    <!-- 配置回显查询-->
+    <select id="findSaleOrderConfigureViewById" parameterType="long" resultType="com.erp.sale.entity.SaleOrder">
+        SELECT
+            so.machine_requirements machineRequirements,
+            so.computer_configuration computerConfiguration,
+            so.tool_size toolSize,
+            so.hourly_production hourlyProduction,
+            so.processing_procedure processingProcedure,
+            so.fixture_requirements fixtureRequirements,
+            so.product_shape productShape,
+            so.product_size productSize,
+            so.other_requirements otherRequirements
+        FROM
+            jr_sale_order so
+        WHERE
+            so.id = #{id}
+    </select>
 
 </mapper>

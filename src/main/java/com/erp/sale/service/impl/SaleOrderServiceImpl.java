@@ -178,8 +178,10 @@ public class SaleOrderServiceImpl extends ServiceImpl<SaleOrderMapper, SaleOrder
             saleOrder.setQuantityName(quantityName);
             BigDecimal unitPriceTo = new BigDecimal(unitPrice);
             saleOrder.setUnitPrice(unitPriceTo);
-            BigDecimal amountMoneyTo = new BigDecimal(amountMoney);
-            saleOrder.setAmountMoney(amountMoneyTo);
+            if (!amountMoney.equals("")) {
+                BigDecimal amountMoneyTo = new BigDecimal(amountMoney);
+                saleOrder.setAmountMoney(amountMoneyTo);
+            }
             Date requestedDeliveryDates = sdf.parse(deliveryDate);//格式化数据，取当前时间结果
             saleOrder.setDeliveryDate(requestedDeliveryDates);
             saleOrder.setOrderRemarks(orderRemarks);
@@ -252,4 +254,10 @@ public class SaleOrderServiceImpl extends ServiceImpl<SaleOrderMapper, SaleOrder
 	    // TODO 设置删除条件
 	    this.remove(wrapper);
 	}
+
+    @Override
+    public SaleOrder findSaleOrderConfigureViewById(Long id) {
+
+        return baseMapper.findSaleOrderConfigureViewById(id);
+    }
 }

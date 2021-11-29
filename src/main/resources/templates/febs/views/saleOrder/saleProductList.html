@@ -170,14 +170,16 @@
             //var dataOne = new Array();
             var oldDatas;
             var parameterIndex = document.getElementById("parameterIndexes");
-            var parameterConfigure = document.getElementById("parameterConfigure");
-            var parameterTwo = document.getElementById("parameterCompany");
-            var parameterThree = document.getElementById("parameterQuantity");
-            var parameterFour = document.getElementById("parameterExplain");
+            var parameterConfigure = document.getElementById("parameterConfigure");//获取配置
+            var parameterCompany = document.getElementById("parameterCompany");//获取单位
+            var parameterQuantity = document.getElementById("parameterQuantity");//获取数量
+            var parameterUnitPrice = document.getElementById("parameterUnitPrice");//获取单价
+            var parameterAmountMoney = document.getElementById("parameterAmountMoney");//获取金额
+            var parameterExplain = document.getElementById("parameterExplain");//获取备注
             var oldData =  table.cache["saleOrderProduct-table"];
             //oldData.splice(oldData.tr.data('index'), 1)//根据索引删除当前行
             for (i=0;i<oldData.length;i++){
-                var dataOne1={"productName":oldData[i].productNames,"specificationModel":oldData[i].productSpecificationModels,"configureName":parameterConfigure.value,"deliveryTime":deliveryDateTo};
+                var dataOne1={"productName":oldData[i].productNames,"specificationModel":oldData[i].productSpecificationModels,"configureName":parameterConfigure.value,"companyName":parameterCompany.value,"quantityName":parameterQuantity.value,"unitPrice":parameterUnitPrice.value,"amountMoney":parameterAmountMoney.value,"orderRemarks":parameterExplain.value,"deliveryTime":deliveryDateTo};
                 oldDatas =  table.cache["saleOrder-table"];
                 oldDatas.push(dataOne1);
             }

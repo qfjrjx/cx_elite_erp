@@ -5,7 +5,7 @@
 </style>
 <div class="layui-fluid" id="saleOrderAdd-add">
     <form class="layui-form" action="" lay-filter="saleOrderAdd-add-form">
-        <div class="layui-form-item ">
+        <div class="layui-form-item febs-hide">
             <label class="layui-form-label febs-form-item-require">赋值参数：</label>
             <div class="layui-input-block">
                      <!--获取tr索引-->
@@ -16,7 +16,11 @@
                 <input type="text" name="parameterCompany" id="parameterCompany">
                 <!--获取数量-->
                 <input type="text" name="parameterQuantity" id="parameterQuantity">
-                <!--获取说明-->
+                <!--获取单价-->
+                <input type="text" name="parameterUnitPrice" id="parameterUnitPrice">
+                <!--获取金额-->
+                <input type="text" name="parameterAmountMoney" id="parameterAmountMoney">
+                <!--获取备注-->
                 <input type="text" name="parameterExplain" id="parameterExplain">
             </div>
         </div>
@@ -97,9 +101,9 @@
             　　　　<!-- 隐藏的input,一个隐藏的input（用于保存文件url） -->
             　　　　<!--<input type="hidden" id="img_url" name="img" value=""/>-->
             </div>
-            <label class="layui-form-label ">订单类型</label>
+            <label class="layui-form-label febs-form-item-require">订单类型</label>
             <div class="layui-input-inline" style="width: 100px">
-                <select name="orderType" id="orderType">
+                <select name="orderType" id="orderType" lay-verify="required">
                     <option value=""></option>
                     <option value="1">配件</option>
                     <option value="2">整机</option>
@@ -116,6 +120,7 @@
         <table class="layui-table layui-form" id="saleOrder-table" lay-filter="saleOrder-table"></table>
         <div class="layui-form-item febs-hide">
             <button class="layui-btn" lay-submit="" lay-filter="saleOrderAdd-add-form-submit" id="submit"></button>
+            <button class="layui-btn" lay-submit="" lay-filter="saleOrderAdd-add-form-submitOne" id="submitOne"></button>
             <button type="reset" class="layui-btn" id="reset"></button>
         </div>
     </form>
@@ -125,6 +130,7 @@
     var now = new Date();
     orderDate.value =new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate();
     var deliveryDateTo = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate();
+
 </script>
 <script>
     layui.use(['febs', 'form', 'validate','table', 'xmSelect','upload','laydate'], function () {
@@ -188,19 +194,23 @@
                         even:true,
                             cols: [
                                      [
-                                        {type: 'checkbox'},
+                                         {type: 'checkbox'},
                                          {field:'number',title:'序列号',align:'center',width:100,templet:function (d) {
                                                  return d.LAY_INDEX;}},
-                                        {field: 'productName',title: '产品名称', minWidth: 95,event:'choice'
-                                        },
-                                        {field: 'specificationModel', title: '规格型号', minWidth: 90},
-                                        {field: 'configureName', title: '配置', minWidth: 90,event:'specificationTo'
-                                        },
-                                        {field: 'companyName', edit:true,title: '单位', minWidth: 55,align:'center'},
-                                        {field: 'quantityName', edit:true,title: '数量', minWidth: 55,align:'center'},
-                                        {field: 'unitPrice', edit:true,title: '单价', minWidth: 55,align:'center'},
-                                        {field: 'amountMoney', edit:true,title: '金额', minWidth: 55,align:'center'},
-                                         {field: 'deliveryTime',title: '交货日期', minWidth: 72,event: 'deliveryDateOne',templet:'<div>{{ layui.util.toDateString(d.deliveryDates, "yyyy-MM-dd") }}</div>'},
+                                         {field: 'productName',title: '产品名称', minWidth: 95,event:'choice'
+                                         },
+                                         {field: 'specificationModel', title: '规格型号', minWidth: 90},
+                                         {field: 'configureName', title: '配置', minWidth: 90,event:'specificationTo'
+                                         },
+                                         {field: 'companyName', edit:true,title: '单位', minWidth: 55,align:'center'},
+                                         {field: 'quantityName', edit:true,title: '数量', minWidth: 55,align:'center'},
+                                         {field: 'unitPrice', edit:true,title: '单价', minWidth: 55,align:'center',templet:function (data) {
+                                         var price = parseFloat(data.unitPrice).toFixed(2); //设置小数点后个数
+                                         return price;}},
+                                         {field: 'amountMoney',title: '金额', minWidth: 55,align:'center',templet:function (data) {
+                                                 var price = parseFloat(data.amountMoney).toFixed(2); //设置小数点后个数
+                                                 return price;}},
+                                         {field: 'deliveryTime',title: '交货日期', minWidth: 72,event: 'deliveryDateOne',templet:'<div>{{ layui.util.toDateString(d.deliveryTime, "yyyy-MM-dd") }}</div>'},
                                          {field: 'orderRemarks',edit:true, title: '备注', minWidth: 72}
                                      ]
                                   ]
@@ -221,6 +231,19 @@
                 checked.attr("class","layui-unselect layui-form-checkbox layui-form-checked");
             }
         });
+        //监听行单击事件  给每一行数据绑定点击事件T
+        //row(tableBigType)  表格的id
+        table.on('edit(saleOrder-table)', function(obj){
+            trData = obj.data
+            var tdQuantityName =  trData.quantityName;
+            if (tdQuantityName !="" && tdQuantityName != undefined){
+                 var tdUnitPrice = trData.unitPrice;
+                 var Money  = parseInt(tdQuantityName) * parseInt(tdUnitPrice);
+                trData.amountMoney = Money;
+                obj.update(obj.data);
+            }
+        });
+
         table.on('tool(saleOrder-table)', function (obj) {
             let data = obj.data,
                 layEvent = obj.event;
@@ -235,6 +258,10 @@
                     $("#parameterCompany").val(companyName);//单位
                     var quantityName = tableData[rowIndex].quantityName;
                     $("#parameterQuantity").val(quantityName);//数量
+                     var unitPrice = tableData[rowIndex].unitPrice;
+                    $("#parameterUnitPrice").val(unitPrice);//单价
+                     var amountMoney = tableData[rowIndex].amountMoney;
+                    $("#parameterAmountMoney").val(amountMoney);//金额
                     var explainName = tableData[rowIndex].explainName;
                     $("#parameterExplain").val(explainName);//说明
                     tableData.splice(rowIndex, 1); //删除缓存的行
@@ -251,7 +278,7 @@
                     , closeStop: this  //这里代表的意思是：点击 this 所在元素阻止关闭事件冒泡。如果不设定，则无法弹出控件
                     , done: function (value) {
                         data[field] = value; //修改后的值
-                        obj.update(data.value);
+                        obj.update(data);
                     }
                 });
             }
@@ -275,11 +302,9 @@
                         var otherRequirementsOne = "";
                         var parameterOptionTo  = tableDataTo[rowIndexOne].configureName;
                         if (parameterOptionTo !=null && parameterOptionTo !=""){
-                            var parameterOptionTwo = new Array();
-                            parameterOptionTwo = parameterOptionTo.split(',');
-                            for(var i=0;i<parameterOptionTwo.length;i++){
-                                var parameterOptionThree = parameterOptionTwo[i].split(":")[0];
-                                var parameterOptionFour = parameterOptionTwo[i].split(":")[1];
+                            for(var i=0;i<parameterOptionTo.length;i++){
+                                var parameterOptionThree = parameterOptionTo[i].split(":")[0];
+                                var parameterOptionFour = parameterOptionTo[i].split(":")[1];
                                 if (parameterOptionThree=="机器要求"){
                                     machineRequirementsOne = parameterOptionFour;
                                 }if (parameterOptionThree=="电脑配置"){
@@ -391,10 +416,10 @@
                "specificationModel":"",
                "configureName":"",
                "companyName":"",
-               "quantityName":"",
-               "unitPrice":"",
-               "amountMoney":"",
-               "deliveryDates":deliveryDateTo,
+               "quantityName":"0",
+               "unitPrice":"0.00",
+               "amountMoney":"0.00",
+               "deliveryTime":deliveryDateTo,
                "orderRemarks":"",
            });
            console.log(dataBak);
@@ -404,7 +429,50 @@
             return false;
 
         });
-
+        form.on('submit(saleOrderAdd-add-form-submitOne)', function (data) {
+            var orderDate = document.getElementById("orderDate").value;//日期
+            var customerNameTwo = document.getElementById("customerNameTwo").value;//客户
+            var personnelNameOne = document.getElementById("personnelNameOne").value;//业务员
+            var currencyNameOne = document.getElementById("currencyNameOne").value;//币种
+            var taxRate = document.getElementById("taxRate").value;//税率
+            var paymentMethod = document.getElementById("paymentMethod").value;//付款方式
+            var depositMoney = document.getElementById("depositMoney").value;//订金
+            var invoiceNot = document.getElementById("invoiceNot").value;//是否开票
+            var contactsNameOne = document.getElementById("contactsNameOne").value;//联系人
+            var mobilePhoneOne = document.getElementById("mobilePhoneOne").value;//手机
+            var orderType = document.getElementById("orderType").value;//订单类型
+            var afterSalesClerk = document.getElementById("afterSalesClerk").value;//售后员
+            var contImg = document.getElementById("span-img").innerText;
+            var dataThree = new Array();
+            var saleOrder_table =  table.cache["saleOrder-table"];
+            for (i=0;i<saleOrder_table.length;i++){
+                var dataOne={"productName":saleOrder_table[i].productName,"specificationModel":saleOrder_table[i].specificationModel,"configureName":saleOrder_table[i].configureName,"companyName":saleOrder_table[i].companyName,"quantityName":saleOrder_table[i].quantityName,"unitPrice":saleOrder_table[i].unitPrice,"amountMoney":saleOrder_table[i].amountMoney,"deliveryTime":saleOrder_table[i].deliveryTime,"orderRemarks":saleOrder_table[i].orderRemarks};
+                dataThree.push(dataOne);
+            }
+                $.ajax({
+                    url: '/saleOrder/add',
+                    type:"post",
+                    data: {orderDate: orderDate,//日期
+                        customerName:customerNameTwo,//客户
+                        salesmanName:personnelNameOne,//业务员
+                        currencyName:currencyNameOne,//币种
+                        taxRate:taxRate,//税率
+                        paymentMethod:paymentMethod,//付款方式
+                        depositMoney:depositMoney,//订金
+                        invoiceNot:invoiceNot,//是否开票
+                        contactsName:contactsNameOne,//联系人
+                        mobilePhone:mobilePhoneOne,//手机
+                        orderType:orderType,//订单类型
+                        afterSalesClerk:afterSalesClerk,//售后员
+                        dataTable:JSON.stringify(dataThree),
+                        contImg:contImg},
+                    success : function(res) {
+                        //$query.click();
+                        parent.location.reload();
+                    }
+                });
+            return false;
+        });
         $("#deletePicBtn").click(function () {
             var contFile = document.getElementById("span-img").innerText;
             if(contFile == ""){

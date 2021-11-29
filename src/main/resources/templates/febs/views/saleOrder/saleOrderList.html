@@ -21,7 +21,7 @@
                             <div class="layui-col-md12">
                                 <div class="layui-form-item">
                                     <div class="layui-inline">
-                                        <label class="layui-form-label layui-form-label-sm">状态</label>
+                                        <label class="layui-form-label layui-form-label-sm">状&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;态</label>
                                         <div class="layui-input-inline" style="width: 100px">
                                             <select name="parameterState">
                                                 <option value="">全部</option>
@@ -34,9 +34,9 @@
                                         </div>
                                     </div>
                                     <div class="layui-inline">
-                                        <label class="layui-form-label ">日期</label>
-                                        <div class="layui-input-inline" >
-                                            <input type="text" name="signedTime" id="signedTime" class="layui-input createTime">
+                                        <label class="layui-form-label ">日&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;期</label>
+                                        <div class="layui-input-inline" style="width: 220px">
+                                            <input type="text" name="signedDate" id="signedDate" class="layui-input createTime">
                                         </div>
                                     </div>
                                     <div class="layui-inline">
@@ -49,7 +49,7 @@
                                     <div class="layui-inline" >
                                         <label class="layui-form-label layui-form-label-sm">业务员</label>
                                         <div class="layui-input-inline" style="width: 90px">
-                                            <select id="personnelName"  name="personnelName" lay-verify="required" class="layui-form-select" >
+                                            <select id="salesmanName"  name="salesmanName" lay-verify="required" class="layui-form-select" >
                                                 <option value="" >全部</option>
                                                 <option th:each="saleBusiness:${saleBusiness}" th:value="${saleBusiness.personnelName}">[[${saleBusiness.personnelName}]]</option>
                                             </select>
@@ -58,7 +58,7 @@
                                     <div class="layui-inline" >
                                         <label class="layui-form-label layui-form-label-sm">售后员</label>
                                         <div class="layui-input-inline" style="width: 90px">
-                                            <select id="personnelName1"  name="personnelName" lay-verify="required" class="layui-form-select" >
+                                            <select id="afterSalesClerk"  name="afterSalesClerk" lay-verify="required" class="layui-form-select" >
                                                 <option value="" >全部</option>
                                                 <option th:each="saleBusiness:${saleBusiness}" th:value="${saleBusiness.personnelName}">[[${saleBusiness.personnelName}]]</option>
                                             </select>
@@ -67,24 +67,24 @@
                                     <div class="layui-inline" >
                                         <label class="layui-form-label layui-form-label-sm" >单号</label>
                                         <div class="layui-input-inline" style="width: 80px">
-                                            <input type="text" name="customerFullName" autocomplete="off" style="width: 110px" class="layui-input" >
+                                            <input type="text" name="oddNumbers" autocomplete="off" style="width: 110px" class="layui-input" >
                                         </div>
                                     </div>
                                     <div class="layui-inline" >
                                         <label class="layui-form-label layui-form-label-sm" >物料名称</label>
                                         <div class="layui-input-inline" style="width: 100px">
-                                            <input type="text" name="customerAbbreviation" autocomplete="off" style="width: 100px" class="layui-input" >
+                                            <input type="text" name="productName" autocomplete="off" style="width: 100px" class="layui-input" >
                                         </div>
                                     </div>
                                     <div class="layui-inline" >
-                                        <label class="layui-form-label layui-form-label-sm" >规格型号</label>
+                                        <label class="layui-form-label" >规格型号</label>
+                                        <div class="layui-input-inline" style="width: 220px">
+                                            <input type="text" name="specificationModel" autocomplete="off" style="width: 220px" class="layui-input" >
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm">币&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;种</label>
                                         <div class="layui-input-inline" style="width: 110px">
-                                            <input type="text" name="customerCode" autocomplete="off" style="width: 110px" class="layui-input" >
-                                        </div>
-                                    </div>
-                                    <div class="layui-inline" >
-                                        <label class="layui-form-label layui-form-label-sm">币种</label>
-                                        <div class="layui-input-inline" style="width: 90px">
                                             <select id="currencyName"  name="currencyName" lay-verify="required" class="layui-form-select" >
                                                 <option value="" >全部</option>
                                                 <option th:each="currency:${currency}" th:value="${currency.id}">[[${currency.financeParameterName}]]</option>
@@ -100,9 +100,9 @@
                         <div class="layui-form-item"></div>
                     </div>
                     <div class="layui-col-md4 layui-col-sm12 layui-col-xs12 table-action-area">
-                        <!--搜索按钮-->
+                        <!--查询按钮-->
                         <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
-                            <i class="layui-icon">&#xe848;</i>搜索
+                            <i class="layui-icon">&#xe848;</i>查询
                         </div>
                         <!-- 刷新表格按钮-->
                         <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain table-action" id="reset">
@@ -141,13 +141,11 @@
     }}
     <span>{{ orderType.title }}</span>
 </script>
-<script type="text/html" id="parameter-option">
-    <span shiro:lacksPermission="personnelSalaryChange:list,personnelSalaryChange:update,personnelSalaryChange:delete">
-        <span class="layui-badge-dot febs-bg-orange"></span> 无权限
-    </span>
-    <a lay-event="edit" shiro:hasPermission="personnelSalaryChange:update"><i
-            class="layui-icon febs-edit-area febs-blue">&#xe7a4;</i></a>
-    <a lay-event="del" shiro:hasPermission="personnelSalaryChange:delete"><i class="layui-icon febs-edit-area febs-red">&#xe7f9;</i></a>
+<script type="text/html" id="enclosure-name">
+    {{# if(d.enclosureName != null){ }}
+    <a lay-event="browse" shiro:hasPermission="saleOrder:browse">浏览</a>
+    <a lay-event="download" shiro:hasPermission="saleOrder:download">下载</a>
+    {{# } }}
 </script>
 <script data-th-inline="none" type="text/javascript">
     layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
@@ -165,6 +163,8 @@
             $reset = $view.find('#reset'),
             $searchForm = $view.find('form'),
             sortObject = {field: 'createDate', type: null},
+            startTimeFrom,
+            endTimeTo,
             tableIns;
 
         form.render();
@@ -210,23 +210,33 @@
         table.on('tool(saleOrderTable)', function (obj) {
             let data = obj.data,
                 layEvent = obj.event;
-            if (layEvent === 'del') {
-                febs.modal.confirm('删除领取记录信息', '确定删除？', function () {
-                   deletePersonnelSalaryChange(data.id);
-                });
-            }
-            if (layEvent === 'edit') {
-                febs.modal.open('修改领取记录信息', 'personnel/personnelSalaryChange/update/' + data.contractId, {
-                    area: $(window).width() <= 750 ? '90%' : '30%',
-                    btn: ['提交', '取消'],
+            let fileName = data.enclosureName;
+            if (layEvent === 'see') {
+                febs.modal.view(data.specificationModel, 'sale/saleOrder/detail/' + data.id, {
+                    btn: ['关闭'],
+                    area: $(window).width() <= 750 ? '95%' : '50%',
                     yes: function (index, layero) {
-                        $('#personnelSalaryChange-update').find('#submit').trigger('click');
-                    },
-                    btn2: function () {
                         layer.closeAll();
                     }
                 });
             }
+            if (layEvent === 'download') {
+                window.location.href = encodeURI("saleDocumentFile/down/?fileName="+fileName);
+            }
+            if (layEvent === 'browse') {
+                var checkStatus = obj.data;
+                var url = checkStatus.enclosureName;
+                url = encodeURIComponent(url);
+                console.log(checkStatus.enclosureName);//单号
+                layer.open({
+                    type: 2,
+                    shadeClose: true,
+                    shade: 0.8,
+                    area: ['60%', '90%'],
+                    content: 'newList.html?'+url
+                });
+            }
+
         });
 
         table.on('sort(saleOrderTable)', function (obj) {
@@ -247,6 +257,9 @@
 
         $reset.on('click', function () {
             $searchForm[0].reset();
+            startTimeFrom = null;
+            endTimeTo = null;
+            $("#customerName").attr("value","");
             tableIns.reload({where: getQueryParams(), page: {curr: 1}});
         });
         $addTo.on('click', function () {
@@ -288,48 +301,7 @@
                     return false;
                 },
                 btn4: function () {
-                    var orderDate = document.getElementById("orderDate").value;//日期
-                    var customerNameTwo = document.getElementById("customerNameTwo").value;//客户
-                    var personnelNameOne = document.getElementById("personnelNameOne").value;//业务员
-                    var currencyNameOne = document.getElementById("currencyNameOne").value;//币种
-                    var taxRate = document.getElementById("taxRate").value;//税率
-                    var paymentMethod = document.getElementById("paymentMethod").value;//付款方式
-                    var depositMoney = document.getElementById("depositMoney").value;//订金
-                    var invoiceNot = document.getElementById("invoiceNot").value;//是否开票
-                    var contactsNameOne = document.getElementById("contactsNameOne").value;//联系人
-                    var mobilePhoneOne = document.getElementById("mobilePhoneOne").value;//手机
-                    var orderType = document.getElementById("orderType").value;//订单类型
-                    var afterSalesClerk = document.getElementById("afterSalesClerk").value;//售后员
-                    var contImg = document.getElementById("span-img").innerText;
-                    var dataThree = new Array();
-                    var saleOrder_table =  table.cache["saleOrder-table"];
-                    for (i=0;i<saleOrder_table.length;i++){
-                        alert(saleOrder_table[i].deliveryTime)
-                        var dataOne={"productName":saleOrder_table[i].productName,"specificationModel":saleOrder_table[i].specificationModel,"configureName":saleOrder_table[i].configureName,"companyName":saleOrder_table[i].companyName,"quantityName":saleOrder_table[i].quantityName,"unitPrice":saleOrder_table[i].unitPrice,"amountMoney":saleOrder_table[i].amountMoney,"deliveryTime":saleOrder_table[i].deliveryTime,"orderRemarks":saleOrder_table[i].orderRemarks};
-                        dataThree.push(dataOne);
-                    }
-                    $.ajax({
-                        url: '/saleOrder/add',
-                        type:"post",
-                        data: {orderDate: orderDate,//日期
-                            customerName:customerNameTwo,//客户
-                            salesmanName:personnelNameOne,//业务员
-                            currencyName:currencyNameOne,//币种
-                            taxRate:taxRate,//税率
-                            paymentMethod:paymentMethod,//付款方式
-                            depositMoney:depositMoney,//订金
-                            invoiceNot:invoiceNot,//是否开票
-                            contactsName:contactsNameOne,//联系人
-                            mobilePhone:mobilePhoneOne,//手机
-                            orderType:orderType,//订单类型
-                            afterSalesClerk:afterSalesClerk,//售后员
-                            dataTable:JSON.stringify(dataThree),
-                            contImg:contImg},
-                        success : function(res) {
-                            //$query.click();
-                            parent.location.reload();
-                        }
-                    });
+                    $('#saleOrderAdd-add').find('#submitOne').trigger('click');
                     return false;
                 },
                 btn5: function () {
@@ -376,14 +348,14 @@
                     {field: 'afterSalesClerk', title: '售后员',align:'center', minWidth: 100},
                     {field: 'productName', title: '产品名称', minWidth: 100},
                     {field: 'specificationModel', title: '规格型号', minWidth: 100},
-                    {field: 'configureName', title: '配置', minWidth: 100},
+                    {field: 'configureName', title: '配置', minWidth: 100, templet: dispose},
                     {field: 'companyName', title: '单位', minWidth: 100,align:'center'},
                     {field: 'quantityName', title: '数量', minWidth: 100,align:'center'},
                     //{field: 'quantityName1', title: '发货数量', minWidth: 55,align:'center'},
                     {field: 'unitPrice', title: '单价', minWidth: 100,align:'center'},
                     {field: 'amountMoney', title: '金额', minWidth: 100,align:'center'},
                     {field: 'currencyName', title: '币种', minWidth: 100,align:'center'},
-                    {field: 'enclosureName', title: '附件', minWidth: 100,align:'center'},
+                    {title: '附件', minWidth: 100,align:'center',toolbar: '#enclosure-name'},
                     {field: 'contactsName', title: '联系人', minWidth: 100,align:'center'},
                     //{field: 'quantityName3', title: '联系电话', minWidth: 55,align:'center'},
                     {field: 'paymentMethod', title: '付款方式', minWidth: 100,align:'center'},
@@ -409,6 +381,13 @@
         });
         function getQueryParams() {
             let params = $searchForm.serializeJson();
+            let signedDate = params.signedDate;
+            if (signedDate) {
+                startTimeFrom = signedDate.split(' - ')[0];
+                endTimeTo = signedDate.split(' - ')[1];
+            }
+            params.startTimeFrom = startTimeFrom;
+            params.endTimeTo = endTimeTo;
             params.invalidate_ie_cache = new Date();
             return params;
         }
@@ -421,6 +400,44 @@
             });
         }
 
-    })
+        function dispose(d) {
+            var dispose = d.configureName;
+            if ('' == dispose || null == dispose || undefined == dispose) {
+                return '';
+            }
+            if (dispose.length > 0) {
+                return '<a class="layui-table-link" href="javascript:void(0);" lay-event="see">查看</a>&nbsp;' + d.configureName +' ';
+            }
+        }
 
+        /*table.on('tool(saleOrderTable)', function (obj) {
+            var checkStatus = obj.data;
+            var url = checkStatus.configureName;
+            url = encodeURIComponent(url);
+            console.log(checkStatus.configureName);//单号
+            layer.open({
+                type: 2,
+                title: '账票详细',
+                shadeClose: true,
+                shade: 0.8,
+                area: ['60%', '90%'],
+                content: 'newList.html?'+url
+            });
+        });*/
+
+    })
+    function dblclickCustomerName(){
+        layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
+            let $ = layui.$,
+                febs = layui.febs;
+
+            febs.modal.open('客户选择列表', 'sale/jumpSaleCustomerProfile', {
+                area:["75%","90%"],
+                yes: function (index, layero) {
+
+                }
+
+            });
+        });
+    }
 </script>

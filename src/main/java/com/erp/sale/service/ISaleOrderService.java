@@ -53,4 +53,6 @@ public interface ISaleOrderService extends IService<SaleOrder> {
      * @param saleOrder saleOrder
      */
     void deleteSaleOrder(SaleOrder saleOrder);
+
+    SaleOrder findSaleOrderConfigureViewById(Long id);
 }

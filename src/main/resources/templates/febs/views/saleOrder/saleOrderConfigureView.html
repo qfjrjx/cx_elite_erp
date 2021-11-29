@@ -1,0 +1,106 @@
+<style>
+    #saleOrderConfigure-view {
+        padding: 20px 25px 25px 0;
+    }
+</style>
+<div class="layui-fluid" id="saleOrderConfigure-view">
+    <form class="layui-form" action="" lay-filter="saleOrderConfigure-view-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require" >机器要求:</label>
+            <div class="layui-input-block">
+                <input type="text" name="machineRequirements" id="machineRequirements"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require">电脑配置:</label>
+            <div class="layui-input-block">
+                <input type="text" name="computerConfiguration" id="computerConfiguration"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">刀具大小:</label>
+            <div class="layui-input-block">
+                <input type="text" name="toolSize" id="toolSize"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">每小时产量:</label>
+            <div class="layui-input-block">
+                <input type="text" name="hourlyProduction" id="hourlyProduction"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">加工工序:</label>
+            <div class="layui-input-block">
+                <input type="text" name="processingProcedure"  id="processingProcedure"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">夹具要求:</label>
+            <div class="layui-input-block">
+                <input type="text" name="fixtureRequirements" id="fixtureRequirements"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">产品形状:</label>
+            <div class="layui-input-block">
+                <input type="text" name="productShape" id="productShape"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">产品尺寸:</label>
+            <div class="layui-input-block">
+                <input type="text" name="productSize" id="productSize"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">其他要求:</label>
+            <div class="layui-input-block">
+                <input type="text" name="otherRequirements" id="otherRequirements"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item febs-hide">
+            <button class="layui-btn" lay-submit="" lay-filter="saleOrderConfigure-view-form-submit" id="submit"></button>
+        </div>
+    </form>
+</div>
+
+<script data-th-inline="javascript">
+    layui.use(['febs', 'form', 'xmSelect', 'validate'], function () {
+        let $ = layui.$,
+            febs = layui.febs,
+            layer = layui.layer,
+            form = layui.form,
+            xmSelect = layui.xmSelect,
+            saleOrder = [[${saleOrder}]],
+            validate = layui.validate;
+
+        form.verify(validate);
+        form.render();
+
+        initSaleOrderValue();
+
+        function initSaleOrderValue() {
+            form.val("saleOrderConfigure-view-form", {
+                "machineRequirements": saleOrder.machineRequirements,
+                "computerConfiguration": saleOrder.computerConfiguration,
+                "toolSize": saleOrder.toolSize,
+                "hourlyProduction": saleOrder.hourlyProduction,
+                "processingProcedure": saleOrder.processingProcedure,
+                "fixtureRequirements": saleOrder.fixtureRequirements,
+                "productShape": saleOrder.productShape,
+                "productSize": saleOrder.productSize,
+                "otherRequirements": saleOrder.otherRequirements
+            });
+        }
+    });
+</script>
