@@ -23,8 +23,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.text.ParseException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 /**
  * 销售订单表 Controller
@@ -109,5 +111,25 @@ public class SaleOrderController extends BaseController {
     public void export(QueryRequest queryRequest, SaleOrder saleOrder, HttpServletResponse response) {
         List<SaleOrder> saleOrders = this.saleOrderService.findSaleOrders(queryRequest, saleOrder).getRecords();
         ExcelKit.$Export(SaleOrder.class, response).downXlsx(saleOrders, false);
+    }
+
+    @GetMapping("saleOrder/random")
+    @ResponseBody
+    public Map random(HttpServletResponse response) {
+        Map res = new HashMap();
+        try {
+            //取当前时间的长整形值包含毫秒
+            long millis = System.currentTimeMillis();
+            //加上三位随机数
+            Random random = new Random();
+            int end3 = random.nextInt(999);//该方法的作用是生成一个随机的int值，该值介于[0,n]的区间，也就是0到n之间的随机int值，包含0而不包含n。
+            //如果不足三位前面补0  String.format("%03d", end3); 3代表要获得的总长度，0代表传入的参数不够的时候会用0作为填充，d会被传入的参数替代
+            String str = millis + String.format("%03d", end3);
+           // System.out.println("随机编号"+str);
+            res.put("data",str);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return res;
     }
 }

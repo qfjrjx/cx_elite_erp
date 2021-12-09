@@ -150,15 +150,20 @@
         });
         table.on('rowDouble(saleOrderProductTable)', function (obj) {
              var data = obj.data;
-             var id = data.id;
              var productName = data.productName;
              var specificationModel = data.productSpecificationModel;
              var productRemarks = data.productRemarks;
-             var oldData =  table.cache["saleOrderProduct-table"];
-             var dataOne={"productNames":productName,"productSpecificationModels":specificationModel,"productRemark":productRemarks};
-            oldData.push(dataOne);
-            layui.table.reload('saleOrderProduct-table',{
-                data : oldData
+            $.ajax({
+                url: '/saleOrder/random',
+                success : function(data) {
+                    var random = data.data;
+                    var oldData =  table.cache["saleOrderProduct-table"];
+                    var dataOne={"uniqueNumber":random,"productNames":productName,"productSpecificationModels":specificationModel,"productRemark":productRemarks};
+                    oldData.push(dataOne);
+                    layui.table.reload('saleOrderProduct-table',{
+                        data : oldData
+                    });
+                }
             });
         });
         var tableData=new Array(); // 用于存放表格数据
@@ -167,26 +172,32 @@
             tableIns.reload({where: params, page: {curr: 1}});
         });
         $addTo.on('click', function () {
-            //var dataOne = new Array();
-            var oldDatas;
-            var parameterIndex = document.getElementById("parameterIndexes");
-            var parameterConfigure = document.getElementById("parameterConfigure");//获取配置
-            var parameterCompany = document.getElementById("parameterCompany");//获取单位
-            var parameterQuantity = document.getElementById("parameterQuantity");//获取数量
-            var parameterUnitPrice = document.getElementById("parameterUnitPrice");//获取单价
-            var parameterAmountMoney = document.getElementById("parameterAmountMoney");//获取金额
-            var parameterExplain = document.getElementById("parameterExplain");//获取备注
-            var oldData =  table.cache["saleOrderProduct-table"];
-            //oldData.splice(oldData.tr.data('index'), 1)//根据索引删除当前行
-            for (i=0;i<oldData.length;i++){
-                var dataOne1={"productName":oldData[i].productNames,"specificationModel":oldData[i].productSpecificationModels,"configureName":parameterConfigure.value,"companyName":parameterCompany.value,"quantityName":parameterQuantity.value,"unitPrice":parameterUnitPrice.value,"amountMoney":parameterAmountMoney.value,"orderRemarks":parameterExplain.value,"deliveryTime":deliveryDateTo};
-                oldDatas =  table.cache["saleOrder-table"];
-                oldDatas.push(dataOne1);
-            }
-            layui.table.reload('saleOrder-table',{
-                data : oldDatas
-            });
-            parent.layer.close(layer.index)
+                    var parameterConfigures= new Array();
+                    var oldDatas;
+                    var parameterConfigure = document.getElementById("parameterConfigure");//获取配置
+                    var parameterConfigureTo = parameterConfigure.value;
+                    if (parameterConfigureTo !="" && parameterConfigureTo != null){
+                        var arr=parameterConfigureTo.split(",");
+                        for(var i=0;i<arr.length;i++){
+                            parameterConfigures.push(arr[i]);
+                        }
+                    }
+                    var parameterCompany = document.getElementById("parameterCompany");//获取单位
+                    var parameterQuantity = document.getElementById("parameterQuantity");//获取数量
+                    var parameterUnitPrice = document.getElementById("parameterUnitPrice");//获取单价
+                    var parameterAmountMoney = document.getElementById("parameterAmountMoney");//获取金额
+                    var parameterExplain = document.getElementById("parameterExplain");//获取备注
+                    var oldData =  table.cache["saleOrderProduct-table"];
+                    //oldData.splice(oldData.tr.data('index'), 1)//根据索引删除当前行
+                    for (i=0;i<oldData.length;i++){
+                        var dataOne1={"uniqueNumber":oldData[i].uniqueNumber,"productName":oldData[i].productNames,"specificationModel":oldData[i].productSpecificationModels,"configureName":parameterConfigures,"companyName":parameterCompany.value,"quantityName":parameterQuantity.value,"unitPrice":parameterUnitPrice.value,"amountMoney":parameterAmountMoney.value,"orderRemarks":parameterExplain.value,"deliveryTime":deliveryDateTo};
+                        oldDatas =  table.cache["saleOrder-table"];
+                        oldDatas.push(dataOne1);
+                    }
+                    layui.table.reload('saleOrder-table',{
+                        data : oldDatas
+                    });
+                    parent.layer.close(layer.index)
         });
         $reset.on('click', function () {
             $searchForm[0].reset();
@@ -213,6 +224,7 @@
                 data:tableData,
                 cols: [[
                     {type: 'checkbox'},
+                    {field: 'uniqueNumber',title: '唯一编号',hide:true,minWidth: 95},
                     {field: 'productNames', title: '产品名称',sort: true},
                     {field: 'productSpecificationModels', title: '规格型号',align:'center', minWidth: 100},
                     {field: 'productRemark', title: '备注',align:'center', minWidth: 80}

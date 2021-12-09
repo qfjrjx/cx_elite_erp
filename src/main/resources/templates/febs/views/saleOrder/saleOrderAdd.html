@@ -97,7 +97,7 @@
                <button type="button" class="layui-btn layui-btn-sm" id="uploadPic"><i class="layui-icon">&#xe67c;</i>选择文件</button>
                <button type="button" class="layui-btn layui-btn-sm layui-btn-warm" id="uploadPicBtn"><i class="layui-icon layui-icon-upload-circle"></i>开始上传</button>
                <span id="span-img" style="color: #f5222d"></span>
-               <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" id="deletePicBtn"><i class="layui-icon layui-icon-close"></i>删除</button>
+               <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" id="deletePicBtndeletePicBtn"><i class="layui-icon layui-icon-close"></i>删除</button>
             　　　　<!-- 隐藏的input,一个隐藏的input（用于保存文件url） -->
             　　　　<!--<input type="hidden" id="img_url" name="img" value=""/>-->
             </div>
@@ -195,10 +195,8 @@
                             cols: [
                                      [
                                          {type: 'checkbox'},
-                                         {field:'number',title:'序列号',align:'center',width:100,templet:function (d) {
-                                                 return d.LAY_INDEX;}},
-                                         {field: 'productName',title: '产品名称', minWidth: 95,event:'choice'
-                                         },
+                                         {field: 'uniqueNumber',title: '唯一编号',hide:true,minWidth: 95},
+                                         {field: 'productName',title: '产品名称', minWidth: 95,event:'choice'},
                                          {field: 'specificationModel', title: '规格型号', minWidth: 90},
                                          {field: 'configureName', title: '配置', minWidth: 90,event:'specificationTo'
                                          },
@@ -243,7 +241,6 @@
                 obj.update(obj.data);
             }
         });
-
         table.on('tool(saleOrder-table)', function (obj) {
             let data = obj.data,
                 layEvent = obj.event;
@@ -385,10 +382,10 @@
                                 var tableData;
                                 var rowIndex = $(obj.tr).attr('data-index');//当前行的索引
                                 for (i=0;i<tableDas.length;i++){
-                                    if (tableDas[rowIndex].productName == tableDas[i].productName && tableDas[rowIndex].configureName==tableDas[i].configureName){
-                                        tableData = {"id":tableDas[i].id,"productName":tableDas[i].productName,"specificationModel":tableDas[i].specificationModel,"configureName":dataOne,"companyName":tableDas[i].companyName,"quantityName":tableDas[i].quantityName,"unitPrice":tableDas[i].unitPrice,"amountMoney":tableDas[i].amountMoney,"deliveryTime":tableDas[i].deliveryTime,"orderRemarks":tableDas[i].orderRemarks};
+                                    if (tableDas[rowIndex].uniqueNumber == tableDas[i].uniqueNumber && tableDas[rowIndex].configureName==tableDas[i].configureName){
+                                        tableData = {"uniqueNumber":tableDas[i].uniqueNumber,"productName":tableDas[i].productName,"specificationModel":tableDas[i].specificationModel,"configureName":dataOne,"companyName":tableDas[i].companyName,"quantityName":tableDas[i].quantityName,"unitPrice":tableDas[i].unitPrice,"amountMoney":tableDas[i].amountMoney,"deliveryTime":tableDas[i].deliveryTime,"orderRemarks":tableDas[i].orderRemarks};
                                     }else{
-                                        tableData = {"id":tableDas[i].id,"productName":tableDas[i].productName,"specificationModel":tableDas[i].specificationModel,"configureName":tableDas[i].configureName,"companyName":tableDas[i].companyName,"quantityName":tableDas[i].quantityName,"unitPrice":tableDas[i].unitPrice,"amountMoney":tableDas[i].amountMoney,"deliveryTime":tableDas[i].deliveryTime,"orderRemarks":tableDas[i].orderRemarks};
+                                        tableData = {"uniqueNumber":tableDas[i].uniqueNumber,"productName":tableDas[i].productName,"specificationModel":tableDas[i].specificationModel,"configureName":tableDas[i].configureName,"companyName":tableDas[i].companyName,"quantityName":tableDas[i].quantityName,"unitPrice":tableDas[i].unitPrice,"amountMoney":tableDas[i].amountMoney,"deliveryTime":tableDas[i].deliveryTime,"orderRemarks":tableDas[i].orderRemarks};
                                     }
                                     dataBak.push(tableData);
                                 }

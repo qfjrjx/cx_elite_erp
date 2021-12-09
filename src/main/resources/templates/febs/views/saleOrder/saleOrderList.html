@@ -23,7 +23,7 @@
                                     <div class="layui-inline">
                                         <label class="layui-form-label layui-form-label-sm">状&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;态</label>
                                         <div class="layui-input-inline" style="width: 100px">
-                                            <select name="parameterState">
+                                            <select name="orderState">
                                                 <option value="">全部</option>
                                                 <option value="1">登记</option>
                                                 <option value="2">确认</option>
@@ -140,6 +140,17 @@
         }[d.orderType];
     }}
     <span>{{ orderType.title }}</span>
+</script><script type="text/html" id="order-state">
+    {{#
+    let orderState = {
+    1: {title: '登记'},
+    2: {title: '确认'},
+    3: {title: '审核'},
+    4: {title: '核准'},
+    5: {title: '生产回复'}
+        }[d.orderState];
+    }}
+    <span>{{ orderState.title }}</span>
 </script>
 <script type="text/html" id="enclosure-name">
     {{# if(d.enclosureName != null){ }}
@@ -224,17 +235,32 @@
                 window.location.href = encodeURI("saleDocumentFile/down/?fileName="+fileName);
             }
             if (layEvent === 'browse') {
-                var checkStatus = obj.data;
-                var url = checkStatus.enclosureName;
-                url = encodeURIComponent(url);
-                console.log(checkStatus.enclosureName);//单号
-                layer.open({
-                    type: 2,
-                    shadeClose: true,
-                    shade: 0.8,
-                    area: ['60%', '90%'],
-                    content: 'newList.html?'+url
-                });
+                window.open("/saleDocumentFile/Preview?filePath="+ fileName  );
+              /*   $.ajax({
+                    url: '/saleDocumentFile/Preview',
+                    data: {filePath: fileName},
+                    success : function(data) {
+                       // window.open("/bdfence/bdfence-division/bdfence.html?vehicleId="+ id  );
+                    }
+                });*/
+               /* $.ajax({
+                    url: '/saleDocumentFile/browse',
+                    data: {fileName: fileName},
+                    success : function(data) {
+                        //文档地址
+                        var file = data.data;
+                        //XDOC文档预览服务地址
+
+                        var xurl = "https://view.xdocin.com/view?src=";
+                        xurl += encodeURIComponent(file);
+                        var ops = {
+                        };
+                        for (var a in ops) {
+                            xurl += "&" + a + "=" + encodeURIComponent(ops[a]);
+                        }
+                        window.open(xurl);
+                    }
+                });*/
             }
 
         });
@@ -336,12 +362,12 @@
                 url: ctx + 'saleOrder/list',
                 cols: [[
                     {type: 'checkbox'},
-                    {field:'number',title:'序号', minWidth: 30,align:'center',templet:function (d) {
+                    {field:'number',title:'', minWidth: 20,align:'center',templet:function (d) {
                             return d.LAY_INDEX;}},
                     {field: 'id', title: '编号',hide:true,sort: true},
-                   //{field: 'state', title: '状态',hide:true,sort: true},
+                    {title: '状态',templet: '#order-state',align:'center', minWidth: 100},
                     {field: 'orderDate', title: '日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.orderDate, "yyyy-MM-dd") }}</div>', minWidth: 115},
-                    {field: 'oddNumbers', title: '订单号',align:'center', minWidth: 100},
+                    {field: 'oddNumbers', title: '订单号',align:'center', minWidth: 110},
                     {title: '订单类型', templet: '#order-type',align:'center', minWidth: 100},
                     {field: 'customerName', title: '客户',align:'center', minWidth: 100},
                     {field: 'salesmanName', title: '业务员',align:'center', minWidth: 100},
@@ -365,20 +391,6 @@
                 ]]
             });
         }
-        //监听行单击事件  给每一行数据绑定点击事件
-        //row(tableBigType)  表格的id
-        table.on('row(saleOrderTable)', function(obj){
-            //获取checkbox
-            var checked = $($($(obj.tr[0].firstChild)[0].firstElementChild)[0].lastChild);
-            //判断是否被选中
-            if(checked[0].className == "layui-unselect layui-form-checkbox layui-form-checked") {
-                //设置为未选中的样式
-                checked.attr("class","layui-unselect layui-form-checkbox");
-            } else {
-                //设置为选中的样式
-                checked.attr("class","layui-unselect layui-form-checkbox layui-form-checked");
-            }
-        });
         function getQueryParams() {
             let params = $searchForm.serializeJson();
             let signedDate = params.signedDate;
@@ -409,22 +421,6 @@
                 return '<a class="layui-table-link" href="javascript:void(0);" lay-event="see">查看</a>&nbsp;' + d.configureName +' ';
             }
         }
-
-        /*table.on('tool(saleOrderTable)', function (obj) {
-            var checkStatus = obj.data;
-            var url = checkStatus.configureName;
-            url = encodeURIComponent(url);
-            console.log(checkStatus.configureName);//单号
-            layer.open({
-                type: 2,
-                title: '账票详细',
-                shadeClose: true,
-                shade: 0.8,
-                area: ['60%', '90%'],
-                content: 'newList.html?'+url
-            });
-        });*/
-
     })
     function dblclickCustomerName(){
         layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {

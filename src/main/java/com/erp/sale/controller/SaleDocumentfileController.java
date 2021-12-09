@@ -13,16 +13,23 @@ import com.wuwenze.poi.ExcelKit;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.jodconverter.DocumentConverter;
+import org.jodconverter.document.DefaultDocumentFormatRegistry;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.thymeleaf.util.StringUtils;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.*;
+import java.net.URLEncoder;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -39,6 +46,9 @@ import java.util.*;
 public class SaleDocumentfileController extends BaseController {
 
     private final ISaleDocumentfileService saleDocumentfileService;
+
+    @Autowired
+    private DocumentConverter converter;  //用于转换
 
     @GetMapping(FebsConstant.VIEW_PREFIX + "saleDocumentfile")
     public String saleDocumentfileIndex(){
@@ -191,6 +201,33 @@ public class SaleDocumentfileController extends BaseController {
         }
 
     }
+    @GetMapping("saleDocumentFile/browse")
+    @ResponseBody
+    public Map browse(HttpServletResponse response,@RequestParam("fileName") String fileName) {
+        Map res = new HashMap();
+        try {
+            SaleDocumentfile documentFileBrowse = saleDocumentfileService.findSaleDocumentFileByName(fileName);
+            String path = documentFileBrowse.getPath();
+            String name = documentFileBrowse.getName();
+            String nameOne = documentFileBrowse.getFileName();
+            String suffix = documentFileBrowse.getSuffix();
+            //String filePath = path+"/"+name+suffix;
+            String filePath = name+suffix;
+            String filePathOne = path+"/"+nameOne+suffix;
+             String filenames = name+suffix;
+             System.out.println("文件地址"+filePath);
+             res.put("data",filePath);
+            // filePath是指欲下载的文件的路径。
+           /* File file = new File(filePath);
+            File fileOne = new File(filePathOne);
+            // 取得文件名。
+            String filename = file.getName();
+            String filenameOne = fileOne.getName();*/
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
     //删除
     @GetMapping("saleDocumentFile/deleteFile")
     @ResponseBody
@@ -206,6 +243,41 @@ public class SaleDocumentfileController extends BaseController {
             e.printStackTrace();
         }
         return res;
+    }
+
+    @ResponseBody
+    @RequestMapping("saleDocumentFile/Preview")
+    public void toPdfFile(HttpServletResponse response,@RequestParam("filePath") String filePath) {
+        SaleDocumentfile documentFileBrowse = saleDocumentfileService.findSaleDocumentFileByName(filePath);
+        String path = documentFileBrowse.getPath();
+        String name = documentFileBrowse.getName();
+        String suffix = documentFileBrowse.getSuffix();
+        String filePathOne = path+"/"+name+suffix;
+        System.out.println("文件地址"+filePathOne);
+        //File file = new File("D:\\testMyDoc\\doc\\testJc.docx");//需要转换的文件
+        File file = new File(filePathOne);//需要转换的文件
+        try {
+            File newFile = new File("D:/testMyDoc");//转换之后文件生成的地址
+            if (!newFile.exists()) {
+                newFile.mkdirs();
+            }
+            String savePath="D:/testMyDoc/"; //pdf文件生成保存的路径
+            String fileName="JCccc"+UUID.randomUUID().toString().replaceAll("-","").substring(0,6);
+            String fileType=".pdf"; //pdf文件后缀
+            String newFileMix=savePath+fileName+fileType;  //将这三个拼接起来,就是我们最后生成文件保存的完整访问路径了
+
+            //文件转化
+            converter.convert(file).to(new File(newFileMix)).execute();
+            //使用response,将pdf文件以流的方式发送的前端浏览器上
+            ServletOutputStream outputStream = response.getOutputStream();
+            InputStream in = new FileInputStream(new File(newFileMix));// 读取文件
+            int i = IOUtils.copy(in, outputStream);   // copy流数据,i为字节数
+            in.close();
+            outputStream.close();
+            System.out.println("流已关闭,可预览,该文件字节大小："+i);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

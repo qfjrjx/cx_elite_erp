@@ -26,6 +26,12 @@ public class SaleOrder {
     private Long id;
 
     /**
+     * 状态  1-登记，2-确认，3-审核，4-核准,5-生产回复
+     */
+    @TableField("order_state")
+    private String orderState;
+
+    /**
      * 单号
      */
     @TableField("odd_numbers")

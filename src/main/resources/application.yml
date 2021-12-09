@@ -57,3 +57,9 @@ logging:
           core:
             metadata:
               TableInfoHelper: error
+
+jodconverter:
+  enabled: true  #注意这个开关，今天部署时就遇到这个问题，排查好久才发现。
+  officeHome: C:\Program Files (x86)\OpenOffice 4
+  portNumbers: 8101,8102,8103,8104,8105
+  maxTasksPerProcess: 5

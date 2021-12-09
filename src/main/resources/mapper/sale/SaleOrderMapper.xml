@@ -8,6 +8,9 @@
             jr_sale_order so
         WHERE
             1 = 1
+        <if test="saleOrder.orderState != null and saleOrder.orderState !=''">
+            And so.order_state = #{saleOrder.orderState}
+        </if>
         <if test="saleOrder.startTimeFrom != null and saleOrder.startTimeFrom !=''">
             And so.order_date &gt; #{saleOrder.startTimeFrom}
         </if>
@@ -39,6 +42,7 @@
     <sql id="findSaleOrderSql" >
         SELECT
             so.id,
+            so.order_state orderState,
             so.odd_numbers oddNumbers,
             so.order_date orderDate,
             so.customer_name customerName,
@@ -79,6 +83,9 @@
         LEFT JOIN jr_finance_parameters fpc ON ( so.payment_method_id = fpc.id )
         WHERE
             1 = 1
+            <if test="saleOrder.orderState != null and saleOrder.orderState !=''">
+                And so.order_state = #{saleOrder.orderState}
+            </if>
             <if test="saleOrder.startTimeFrom != null and saleOrder.startTimeFrom !=''">
                 And so.order_date &gt; #{saleOrder.startTimeFrom}
             </if>

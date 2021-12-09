@@ -232,6 +232,62 @@
             <artifactId>fastjson</artifactId>
             <version>1.2.15</version>
         </dependency>
+        <!--open office-->
+        <dependency>
+            <groupId>org.jodconverter</groupId>
+            <artifactId>jodconverter-core</artifactId>
+            <version>4.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jodconverter</groupId>
+            <artifactId>jodconverter-local</artifactId>
+            <version>4.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jodconverter</groupId>
+            <artifactId>jodconverter-spring-boot-starter</artifactId>
+            <version>4.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.libreoffice</groupId>
+            <artifactId>juh</artifactId>
+            <version>5.4.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.libreoffice</groupId>
+            <artifactId>jurt</artifactId>
+            <version>5.4.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.libreoffice</groupId>
+            <artifactId>ridl</artifactId>
+            <version>5.4.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.libreoffice</groupId>
+            <artifactId>unoil</artifactId>
+            <version>5.4.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.libreoffice</groupId>
+            <artifactId>unoloader</artifactId>
+            <version>5.4.2</version>
+        </dependency>
+        <dependency>
+            <groupId>aspose.slides</groupId>
+            <artifactId>slides-jar</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>aspose.cells</groupId>
+            <artifactId>cells-jar</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>aspose.words</groupId>
+            <artifactId>words-jar</artifactId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
 
     <build>
