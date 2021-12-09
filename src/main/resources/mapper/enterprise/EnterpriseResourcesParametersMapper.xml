@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.enterprise.mapper.EnterpriseResourcesParametersMapper">
+    <sql id="countEnterpriseResourcesParametersSql">
+        SELECT
+        COUNT( 1 )
+        FROM
+        jr_enterprise_resources_parameters erp
+        WHERE
+        1 = 1
+        <if test="enterpriseResourcesParameters.parameterName != null and enterpriseResourcesParameters.parameterName != ''">
+            AND erp.parameter_name = #{enterpriseResourcesParameters.parameterName}
+        </if>
+        <if test="enterpriseResourcesParameters.parameterCategory != null and enterpriseResourcesParameters.parameterCategory != ''">
+            AND erp.parameter_category = #{enterpriseResourcesParameters.parameterCategory}
+        </if>
+        <if test="enterpriseResourcesParameters.commonResourceState != null and enterpriseResourcesParameters.commonResourceState != ''">
+            AND erp.common_resource_state = #{enterpriseResourcesParameters.commonResourceState}
+        </if>
+    </sql>
+    <sql id="findEnterpriseResourcesParametersSql">
+        SELECT
+            erp.id,
+            erp.parameter_value,
+            erp.parameter_name,
+            erp.parameter_category,
+            erp.common_resource_sort,
+            erp.common_resource_state,
+            erp.common_resource_remarks,
+            erp.creation_time
+        FROM
+            jr_enterprise_resources_parameters erp
+        WHERE
+            1 = 1
+        <if test="enterpriseResourcesParameters.parameterName != null and enterpriseResourcesParameters.parameterName != ''">
+            AND erp.parameter_name = #{enterpriseResourcesParameters.parameterName}
+        </if>
+        <if test="enterpriseResourcesParameters.parameterCategory != null and enterpriseResourcesParameters.parameterCategory != ''">
+            AND erp.parameter_category = #{enterpriseResourcesParameters.parameterCategory}
+        </if>
+        <if test="enterpriseResourcesParameters.commonResourceState != null and enterpriseResourcesParameters.commonResourceState != ''">
+            AND erp.common_resource_state = #{enterpriseResourcesParameters.commonResourceState}
+        </if>
+            ORDER BY
+            erp.parameter_category,
+            erp.common_resource_sort
+    </sql>
+
+    <select id="countEnterpriseResourcesParameters" parameterType="com.erp.enterprise.entity.EnterpriseResourcesParameters" resultType="long">
+        <include refid="countEnterpriseResourcesParametersSql"/>
+    </select>
+
+    <select id="findEnterpriseResourcesParametersPage" parameterType="com.erp.enterprise.entity.EnterpriseResourcesParameters" resultType="com.erp.enterprise.entity.EnterpriseResourcesParameters">
+        <include refid="findEnterpriseResourcesParametersSql"/>
+    </select>
+
+    <!--修改回显-->
+    <select id="resourcesParameterById" parameterType="long" resultType="com.erp.enterprise.entity.EnterpriseResourcesParameters">
+        SELECT
+            erp.id,
+            erp.parameter_value,
+            erp.parameter_name,
+            erp.parameter_category,
+            erp.common_resource_sort,
+            erp.common_resource_state,
+            erp.common_resource_remarks,
+            erp.creation_time
+        FROM
+            jr_enterprise_resources_parameters erp
+        WHERE
+            erp.id = #{id}
+    </select>
+
+</mapper>

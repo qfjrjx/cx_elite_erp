@@ -1,0 +1,105 @@
+<style>
+    #resourcesParameter-update {
+        padding: 20px 25px 25px 0;
+    }
+</style>
+<div class="layui-fluid" id="resourcesParameter-update">
+    <form class="layui-form" action="" lay-filter="resourcesParameter-update-form">
+        <div class="layui-form-item febs-hide">
+            <label class="layui-form-label febs-form-item-require">参数id：</label>
+            <div class="layui-input-block">
+                <input type="text" name="id" data-th-value="${enterpriseResourcesParameters.id}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">参数类别：</label>
+            <div class="layui-input-block">
+                <select name="parameterCategory">
+                    <option value=""></option>
+                    <option value="1">工作类型</option>
+                    <option value="2">公文类型</option>
+                    <option value="3">文件档案类型</option>
+                    <option value="4">责任单位</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require" >参数值：</label>
+            <div class="layui-input-block">
+                <input type="text" name="parameterValue"
+                       autocomplete="off" class="layui-input" placeholder="请输入名称">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require" >参数名称：</label>
+            <div class="layui-input-block">
+                <input type="text" name="parameterName"
+                       autocomplete="off" class="layui-input" placeholder="请输入名称">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">排序：</label>
+            <div class="layui-input-block">
+                <input type="text" name="commonResourceSort"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">备注：</label>
+            <div class="layui-input-block">
+                <textarea name="commonResourceRemarks" maxlength="100" class="layui-textarea" placeholder=""></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">状态：</label>
+            <div class="layui-input-block">
+                <select name="commonResourceState">
+                    <option value="1">启用</option>
+                    <option value="2">禁用</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item febs-hide">
+            <button class="layui-btn" lay-submit="" lay-filter="resourcesParameter-update-form-submit" id="submit"></button>
+            <button type="reset" class="layui-btn" id="reset"></button>
+        </div>
+    </form>
+</div>
+
+<script data-th-inline="javascript">
+    layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
+        let $ = layui.$,
+            febs = layui.febs,
+            layer = layui.layer,
+            enterpriseResourcesParameters = [[${enterpriseResourcesParameters}]],
+            form = layui.form,
+            validate = layui.validate;
+
+        form.verify(validate);
+        form.render();
+
+        initResourcesParameterValue();
+
+        function initResourcesParameterValue() {
+            form.val("resourcesParameter-update-form", {
+                "parameterCategory": enterpriseResourcesParameters.parameterCategory,
+                "parameterValue": enterpriseResourcesParameters.parameterValue,
+                "parameterName": enterpriseResourcesParameters.parameterName,
+                "commonResourceSort": enterpriseResourcesParameters.commonResourceSort,
+                "commonResourceRemarks": enterpriseResourcesParameters.commonResourceRemarks,
+                "commonResourceState": enterpriseResourcesParameters.commonResourceState
+            });
+        }
+
+        form.on('submit(resourcesParameter-update-form-submit)', function (data) {
+            febs.post(ctx + 'enterpriseResourcesParameters/update', data.field, function () {
+                layer.closeAll();
+                febs.alert.success('修改参数成功');
+                $('#resources-parameter').find('#query').click();
+            });
+            return false;
+
+        });
+
+    });
+</script>
