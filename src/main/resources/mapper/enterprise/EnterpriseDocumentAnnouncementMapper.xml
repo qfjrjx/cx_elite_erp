@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.enterprise.mapper.EnterpriseDocumentAnnouncementMapper">
+
+    <sql id="countEnterpriseDocumentAnnouncementsSql">
+        SELECT
+           COUNT( 1 )
+        FROM
+           jr_enterprise_document_announcement eda
+        WHERE
+           1 = 1
+        <if test="enterpriseDocumentAnnouncement.signedDateFrom != null and enterpriseDocumentAnnouncement.signedDateFrom !=''">
+            And eda.creation_time &gt; #{enterpriseDocumentAnnouncement.signedDateFrom}
+        </if>
+        <if test="enterpriseDocumentAnnouncement.signedDateTo != null and enterpriseDocumentAnnouncement.signedDateTo !=''">
+            And eda.creation_time &lt; #{enterpriseDocumentAnnouncement.signedDateTo}
+        </if>
+        <if test="enterpriseDocumentAnnouncement.fileType != null and enterpriseDocumentAnnouncement.fileType != ''">
+            AND eda.file_type = #{enterpriseDocumentAnnouncement.fileType}
+        </if>
+        <if test="enterpriseDocumentAnnouncement.departmentId != null and enterpriseDocumentAnnouncement.departmentId != ''">
+            AND eda.department_id = #{enterpriseDocumentAnnouncement.departmentId}
+        </if>
+        <if test="enterpriseDocumentAnnouncement.announcementSubject != null and enterpriseDocumentAnnouncement.announcementSubject != ''">
+            AND eda.announcement_subject = #{enterpriseDocumentAnnouncement.announcementSubject}
+        </if>
+    </sql>
+    <sql id="findEnterpriseDocumentAnnouncementsSql">
+        SELECT
+            eda.id,
+            eda.odd_numbers,
+            eda.creation_time,
+            d.DEPT_NAME departmentName,
+            eda.file_type,
+            eda.announcement_subject,
+            eda.announcement_state,
+            eda.announcement_enclosure,
+            eda.announcement_remarks
+        FROM
+            jr_enterprise_document_announcement eda
+            LEFT JOIN t_dept d ON ( eda.department_id = d.dept_id )
+        WHERE
+            1 = 1
+        <if test="enterpriseDocumentAnnouncement.signedDateFrom != null and enterpriseDocumentAnnouncement.signedDateFrom !=''">
+            And eda.creation_time &gt; #{enterpriseDocumentAnnouncement.signedDateFrom}
+        </if>
+        <if test="enterpriseDocumentAnnouncement.signedDateTo != null and enterpriseDocumentAnnouncement.signedDateTo !=''">
+            And eda.creation_time &lt; #{enterpriseDocumentAnnouncement.signedDateTo}
+        </if>
+        <if test="enterpriseDocumentAnnouncement.fileType != null and enterpriseDocumentAnnouncement.fileType != ''">
+            AND eda.file_type = #{enterpriseDocumentAnnouncement.fileType}
+        </if>
+        <if test="enterpriseDocumentAnnouncement.departmentId != null and enterpriseDocumentAnnouncement.departmentId != ''">
+            AND eda.department_id = #{enterpriseDocumentAnnouncement.departmentId}
+        </if>
+        <if test="enterpriseDocumentAnnouncement.announcementSubject != null and enterpriseDocumentAnnouncement.announcementSubject != ''">
+            AND eda.announcement_subject = #{enterpriseDocumentAnnouncement.announcementSubject}
+        </if>
+    </sql>
+
+    <select id="countEnterpriseDocumentAnnouncements" parameterType="com.erp.enterprise.entity.EnterpriseDocumentAnnouncement" resultType="long">
+        <include refid="countEnterpriseDocumentAnnouncementsSql"/>
+    </select>
+
+    <select id="findEnterpriseDocumentAnnouncementsPage" parameterType="com.erp.enterprise.entity.EnterpriseDocumentAnnouncement" resultType="com.erp.enterprise.entity.EnterpriseDocumentAnnouncement">
+        <include refid="findEnterpriseDocumentAnnouncementsSql"/>
+    </select>
+
+    <!--查询上传的最后一条数据-->
+    <select id="queryEnterpriseDocumentAnnouncement" resultType="com.erp.enterprise.entity.EnterpriseDocumentAnnouncement">
+        SELECT
+            eda.id,
+            eda.odd_numbers oddNumbers,
+            eda.creation_time creationTime,
+            eda.department_id departmentId,
+            eda.file_type fileType,
+            eda.announcement_subject announcementSubject,
+            eda.announcement_state announcementState,
+            eda.announcement_enclosure announcementEnclosure,
+            eda.announcement_remarks announcementRemarks,
+            eda.create_date createDate
+        FROM
+            jr_enterprise_document_announcement eda
+        GROUP BY
+            eda.create_date
+        ORDER BY
+            eda.create_date DESC
+            LIMIT 1;
+    </select>
+    <insert id="saveDocumentAnnouncement" parameterType="com.erp.enterprise.entity.EnterpriseDocumentAnnouncement">
+        INSERT INTO jr_enterprise_document_announcement (
+                    odd_numbers, creation_time, department_id,
+                    file_type, announcement_subject, announcement_enclosure, announcement_remarks,create_date)
+        VALUES
+            (#{enterpriseDocumentAnnouncement.oddNumbers},
+             #{enterpriseDocumentAnnouncement.creationTime},
+             #{enterpriseDocumentAnnouncement.departmentId},
+             #{enterpriseDocumentAnnouncement.fileType},
+             #{enterpriseDocumentAnnouncement.announcementSubject},
+             #{enterpriseDocumentAnnouncement.announcementEnclosure},
+             #{enterpriseDocumentAnnouncement.announcementRemarks},
+             #{enterpriseDocumentAnnouncement.createDate}
+
+            )
+    </insert>
+
+    <!--修改回显-->
+    <select id="documentAnnouncementById" parameterType="long" resultType="com.erp.enterprise.entity.EnterpriseDocumentAnnouncement">
+        SELECT
+            eda.id,
+            eda.odd_numbers oddNumbers,
+            eda.creation_time creationTime,
+            eda.department_id departmentId,
+            eda.file_type fileType,
+            eda.announcement_subject announcementSubject,
+            eda.announcement_state announcementState,
+            eda.announcement_enclosure announcementEnclosure,
+            eda.announcement_remarks announcementRemarks,
+            eda.create_date createDate
+        FROM
+            jr_enterprise_document_announcement eda
+        WHERE
+            eda.id = #{id}
+    </select>
+    <!--修改数据-->
+    <update id = "updateEnterpriseDocumentAnnouncement" parameterType = "com.erp.enterprise.entity.EnterpriseDocumentAnnouncement" >
+        UPDATE jr_enterprise_document_announcement eda
+        SET eda.creation_time = #{enterpriseDocumentAnnouncement.creationTime},
+            eda.department_id = #{enterpriseDocumentAnnouncement.departmentId},
+            eda.file_type = #{enterpriseDocumentAnnouncement.fileType},
+            eda.announcement_subject = #{enterpriseDocumentAnnouncement.announcementSubject},
+            eda.announcement_enclosure = #{enterpriseDocumentAnnouncement.announcementEnclosure},
+            eda.announcement_remarks = #{enterpriseDocumentAnnouncement.announcementRemarks}
+        WHERE eda.id = #{enterpriseDocumentAnnouncement.id}
+    </update>
+
+</mapper>

@@ -54,4 +54,6 @@ public interface IEnterpriseResourcesParametersService extends IService<Enterpri
     void deleteEnterpriseResourcesParameters(String[] ids);
 
     EnterpriseResourcesParameters resourcesParameterById(Long id);
+    //查询参数设置里的公文类型信息
+    List<EnterpriseResourcesParameters> queryEnterpriseResourcesParameters(String parametersType);
 }

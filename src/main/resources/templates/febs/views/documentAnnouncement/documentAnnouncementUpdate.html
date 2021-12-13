@@ -1,0 +1,180 @@
+<style>
+    #documentAnnouncement-update {
+        padding: 20px 25px 25px 0;
+    }
+</style>
+<div class="layui-fluid" id="documentAnnouncement-update">
+    <form class="layui-form" action="" lay-filter="documentAnnouncement-update-form">
+        <div class="layui-form-item febs-hide">
+            <label class="layui-form-label febs-form-item-require">参数id：</label>
+            <div class="layui-input-block">
+                <input type="text" name="id" data-th-value="${documentAnnouncement.id}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require" >单号</label>
+            <div class="layui-input-inline" style="width: 170px">
+                <input type="text" name="oddNumbers" id="oddNumbers" style="width: 170px"
+                       autocomplete="off" class="layui-input" placeholder="为空时自动生成" readonly>
+            </div>
+            <label class="layui-form-label febs-form-item-require" >
+                日期:
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="creationTime" name="creationTime" lay-verify="required" placeholder="请选择日期" readonly
+                       autocomplete="off" class="layui-input startTime">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require" >部门</label>
+            <div class="layui-input-inline" id="document-update-dept" style="width: 170px"></div>
+            <label class="layui-form-label febs-form-item-require" >类型</label>
+            <div class="layui-input-inline" style="width: 150px" id="content">
+                <select id="fileType"  name="fileType" type="select" lay-verify="required"  class="layui-form-select selector" lay-filter="fileType">
+                    <option value="" ></option>
+                    <option th:each="resourcesParameters:${resourcesParameters}" th:value="${resourcesParameters.parameterName}">[[${resourcesParameters.parameterName}]]</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require" >主题</label>
+            <div class="layui-input-block">
+                <input type="text" name="announcementSubject"
+                       autocomplete="off" class="layui-input" placeholder="请输入主题">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            　　<label class="layui-form-label">附件</label>
+            　　<div class="layui-input-inline" style="width: 600px">
+                    <button type="button" class="layui-btn layui-btn-sm" id="uploadPic"><i class="layui-icon">&#xe67c;</i>选择文件</button>
+                    <button type="button" class="layui-btn layui-btn-sm layui-btn-warm" id="uploadPicBtn"><i class="layui-icon layui-icon-upload-circle"></i>开始上传</button>
+                    <span id="span-img" style="color: #f5222d"></span>
+                    <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" id="deletePicBtn"><i class="layui-icon layui-icon-close"></i>删除</button>
+            　　</div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">备注：</label>
+            <div class="layui-input-block">
+                <textarea name="announcementRemarks" maxlength="100" class="layui-textarea" placeholder=""></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item febs-hide">
+            <button class="layui-btn" lay-submit="" lay-filter="documentAnnouncement-update-form-submit" id="submit"></button>
+            <button type="reset" class="layui-btn" id="reset"></button>
+        </div>
+    </form>
+</div>
+
+<script data-th-inline="javascript">
+    layui.use(['febs', 'form', 'validate', 'xmSelect','laydate','upload'], function () {
+        let $ = layui.$,
+            febs = layui.febs,
+            laydate = layui.laydate,
+            layer = layui.layer,
+            form = layui.form,
+            validate = layui.validate,
+            upload = layui.upload,
+            documentAnnouncement = [[${documentAnnouncement}]],
+            creationTime = [[${creationTime}]],
+            deptXmlSelect,
+            uploadInst;
+
+        form.verify(validate);
+        form.render();
+
+        initDocumentAnnouncementValue();
+
+        //日期同时绑定多个
+        lay('.startTime').each(function(){
+            laydate.render({
+                elem: this
+                ,trigger: 'click'
+            });
+        })
+
+        //上传图片
+        uploadInst = upload.render({
+            elem: '#uploadPic' //绑定元素
+            ,url: 'document/uploadFile' //上传接口 [[@{/upload/img}]]
+            ,auto: false
+            ,size: 307200 //限制文件大小，单位 KB
+            ,accept: 'file' //允许上传的文件类型
+            ,exts: 'doc|docx|pdf|jpg|jpeg|png|zip|xlsx|xls|excel|'
+            ,bindAction: '#uploadPicBtn'
+            ,before: function(obj){
+                //预读本地文件示例，不支持ie8
+                obj.preview(function(index, file, result){
+                    $('#preShow').attr('src', result); //图片链接（base64）
+                });
+            }
+            ,done: function(res){
+                //如果上传失败
+                if(res.code > 0){
+                    alert("上传失败");
+                    return layer.msg('上传失败');
+                }
+                //上传成功
+                $('#span-img').html(res.data);
+                return layer.msg('上传成功');
+            }
+            ,error: function(){
+                var demoText = $('#demoText');
+                demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-mini demo-reload">重试</a>');
+                demoText.find('.demo-reload').on('click', function(){
+                    uploadInst.upload();
+                });
+            }
+        });
+
+        deptXmlSelect = xmSelect.render({
+            el: '#document-update-dept',
+            model: {label: {type: 'text'}},
+            tree: {
+                show: true,
+                strict: false,
+                showLine: false,
+                clickCheck: true,
+                expandedKeys: [-1],
+            },
+            name: 'departmentId',
+            theme: {
+                color: '#52c41a',
+            },
+            prop: {
+                value: 'id'
+            },
+            height: 'auto',
+            on: function(data){
+                if(data.isAdd){
+                    return data.change.slice(0, 1)
+                }
+            }
+        });
+        febs.get(ctx + 'dept/select/tree', null, function (data) {
+            deptXmlSelect.update(data)
+            documentAnnouncement.departmentId && deptXmlSelect.setValue([documentAnnouncement.departmentId]);
+
+        });
+
+        function initDocumentAnnouncementValue() {
+            form.val("documentAnnouncement-update-form", {
+                "oddNumbers": documentAnnouncement.oddNumbers,
+                "creationTime": creationTime,
+                "fileType": documentAnnouncement.fileType,
+                "announcementSubject": documentAnnouncement.announcementSubject,
+                "announcementRemarks": documentAnnouncement.announcementRemarks
+            });
+        }
+
+        form.on('submit(documentAnnouncement-update-form-submit)', function (data) {
+            febs.post(ctx + 'enterpriseDocumentAnnouncement/update', data.field, function () {
+                layer.closeAll();
+                febs.alert.success('新增成功');
+                $('#document-announcement').find('#query').click();
+            });
+            return false;
+
+        });
+
+    });
+</script>

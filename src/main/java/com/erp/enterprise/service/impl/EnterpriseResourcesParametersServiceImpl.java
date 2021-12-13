@@ -33,7 +33,7 @@ public class EnterpriseResourcesParametersServiceImpl extends ServiceImpl<Enterp
 
     @Override
     public IPage<EnterpriseResourcesParameters> findEnterpriseResourcesParameterss(QueryRequest request, EnterpriseResourcesParameters enterpriseResourcesParameters) {
-        Page<FinanceParameters> page = new Page<>(request.getPageNum(), request.getPageSize());
+        Page<EnterpriseResourcesParameters> page = new Page<>(request.getPageNum(), request.getPageSize());
         page.setSearchCount(false);
         page.setTotal(baseMapper.countEnterpriseResourcesParameters(enterpriseResourcesParameters));
         return baseMapper.findEnterpriseResourcesParametersPage(page,enterpriseResourcesParameters);
@@ -70,4 +70,12 @@ public class EnterpriseResourcesParametersServiceImpl extends ServiceImpl<Enterp
 
         return baseMapper.resourcesParameterById(id);
     }
+    //查询参数设置里的公文类型信息
+    @Override
+    public List<EnterpriseResourcesParameters> queryEnterpriseResourcesParameters(String parametersType) {
+
+        return baseMapper.queryEnterpriseResourcesParameters(parametersType);
+    }
+
+
 }

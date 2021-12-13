@@ -19,6 +19,23 @@ import com.baomidou.mybatisplus.annotation.TableName;
 public class EnterpriseResourcesParameters {
 
     /**
+     * 1-工作类型，
+     */
+    public static final String WORK_TYPE = "1";
+    /**
+     * 2-公文类型，
+     */
+    public static final String DOCUMENT_TYPE = "2";
+    /**
+     * 3-文件档案类型，
+     */
+    public static final String FILE_TYPE = "3";
+    /**
+     * 4-责任单位
+     */
+    public static final String RESPONSIBLE_UNIT = "4";
+
+    /**
      * 主键
      */
     @TableId(value = "id", type = IdType.AUTO)
@@ -37,7 +54,7 @@ public class EnterpriseResourcesParameters {
     private String parameterName;
 
     /**
-     * 参数类别
+     * 参数类别  1-工作类型，2-公文类型，3-文件档案类型，4-责任单位
      */
     @TableField("parameter_category")
     private String parameterCategory;

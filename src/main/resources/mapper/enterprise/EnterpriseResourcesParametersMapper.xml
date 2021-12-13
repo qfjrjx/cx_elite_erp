@@ -70,5 +70,22 @@
         WHERE
             erp.id = #{id}
     </select>
+    <!-- 查询参数设置里的公文类型信息 -->
+    <select id="queryEnterpriseResourcesParameters" parameterType="com.erp.enterprise.entity.EnterpriseResourcesParameters" resultType="com.erp.enterprise.entity.EnterpriseResourcesParameters">
+       SELECT
+            erp.id,
+            erp.parameter_value parameterValue,
+            erp.parameter_name parameterName,
+            erp.parameter_category parameterCategory,
+            erp.common_resource_sort commonResourceSort,
+            erp.common_resource_state commonResourceState,
+            erp.common_resource_remarks commonResourceRemarks,
+            erp.creation_time creationTime
+        FROM
+            jr_enterprise_resources_parameters erp
+        WHERE
+            erp.parameter_category = #{parametersType}
+        AND erp.common_resource_state = 1
+    </select>
 
 </mapper>
