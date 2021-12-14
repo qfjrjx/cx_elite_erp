@@ -3,6 +3,7 @@ package com.erp.personnel.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.erp.common.entity.QueryRequest;
+import com.erp.enterprise.entity.EmployeeAddressBook;
 import com.erp.personnel.entity.ArchivesParameters;
 import com.erp.personnel.entity.PersonnelArchives;
 
@@ -32,6 +33,14 @@ public interface IPersonnelArchivesService extends IService<PersonnelArchives> {
      * @return IPage<PersonnelArchives>
      */
     IPage<PersonnelArchives> findPersonnelArchivesList(PersonnelArchives personnelArchives, QueryRequest request);
+
+    /**
+     * 查询（通讯录）
+     *
+     * @param employeeAddressBook employeeAddressBook
+     * @return IPage<PersonnelArchives>
+     */
+    IPage<EmployeeAddressBook> findEmployeeAddressBook(EmployeeAddressBook employeeAddressBook, QueryRequest request);
     /**
      * 新增
      *

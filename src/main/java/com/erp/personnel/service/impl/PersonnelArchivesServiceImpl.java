@@ -4,6 +4,7 @@ import com.erp.common.entity.FebsConstant;
 import com.erp.common.entity.QueryRequest;
 import com.erp.common.entity.Strings;
 import com.erp.common.utils.SortUtil;
+import com.erp.enterprise.entity.EmployeeAddressBook;
 import com.erp.personnel.entity.ArchivesParameters;
 import com.erp.personnel.entity.PersonnelArchives;
 import com.erp.personnel.entity.PersonnelParameters;
@@ -57,6 +58,15 @@ public class PersonnelArchivesServiceImpl extends ServiceImpl<PersonnelArchivesM
         page.setTotal(baseMapper.countPersonnelArchives(personnelArchives));
         SortUtil.handlePageSort(request, page, "entryDate", FebsConstant.ORDER_DESC, true);
         return baseMapper.findPersonnelArchivesPage(page,personnelArchives);
+    }
+    /*查询通讯录*/
+    @Override
+    public IPage<EmployeeAddressBook> findEmployeeAddressBook(EmployeeAddressBook employeeAddressBook, QueryRequest request) {
+        Page<EmployeeAddressBook> page = new Page<>(request.getPageNum(), request.getPageSize());
+        page.setSearchCount(false);
+        page.setTotal(baseMapper.countEmployeeAddressBook(employeeAddressBook));
+        SortUtil.handlePageSort(request, page, "entryDate", FebsConstant.ORDER_DESC, true);
+        return baseMapper.findEmployeeAddressBookPage(page,employeeAddressBook);
     }
 
 

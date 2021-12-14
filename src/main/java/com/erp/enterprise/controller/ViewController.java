@@ -97,6 +97,12 @@ public class ViewController {
         }
     }
 
+    /*公共资源-通讯录*/
+    @GetMapping("employeeAddressBook/list")
+    @RequiresPermissions("employeeAddressBook:view")
+    public String employeeAddressBookIndex(){
+        return FebsUtil.view("employeeAddressBook/employeeAddressList");
+    }
 
     //企业管理模块结束
 }

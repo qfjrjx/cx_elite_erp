@@ -3,6 +3,7 @@ package com.erp.personnel.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.erp.enterprise.entity.EmployeeAddressBook;
 import com.erp.personnel.entity.PersonnelArchives;
 import com.erp.system.entity.User;
 import org.apache.ibatis.annotations.Mapper;
@@ -32,4 +33,8 @@ public interface PersonnelArchivesMapper extends BaseMapper<PersonnelArchives> {
     void savePersonnelArchives(@Param("personnelArchives") PersonnelArchives personnelArchives);
     //查询出最后一个员工信息
     PersonnelArchives queryPersonnelArchives();
+
+    long countEmployeeAddressBook(@Param("employeeAddressBook") EmployeeAddressBook employeeAddressBook);
+
+    IPage<EmployeeAddressBook> findEmployeeAddressBookPage(Page<EmployeeAddressBook> page,@Param("employeeAddressBook") EmployeeAddressBook employeeAddressBook);
 }

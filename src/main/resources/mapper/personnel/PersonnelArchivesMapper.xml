@@ -95,7 +95,10 @@
         <if test="personnelArchives.positionId != null and personnelArchives.positionId != ''">
             AND par.id = #{personnelArchives.positionId}
         </if>
-        GROUP BY pe.user_name,pe.job_number
+        GROUP BY
+        pe.job_number,
+        pe.user_name
+        ORDER BY pe.create_date
     </sql>
 
     <select id="countPersonnelArchives" parameterType="com.erp.personnel.entity.PersonnelArchives" resultType="long">
@@ -285,6 +288,61 @@
         ORDER BY
             pe.create_date DESC
             LIMIT 1;
+    </select>
+
+
+   <!--统计通讯录数量sql-->
+    <sql id="countEmployeeAddressBookSql" >
+        SELECT COUNT(1)
+        FROM jr_personnel_archives pe
+        WHERE
+        1 = 1
+        <if test="employeeAddressBook.jobNumber != null and employeeAddressBook.jobNumber != ''">
+            AND pe.job_number = #{employeeAddressBook.jobNumber}
+        </if>
+        <if test="employeeAddressBook.userName != null and employeeAddressBook.userName != ''">
+            AND pe.user_name = #{employeeAddressBook.userName}
+        </if>
+        <if test="employeeAddressBook.deptId != null and employeeAddressBook.deptId != ''">
+            AND pe.dept_id = #{employeeAddressBook.deptId}
+        </if>
+    </sql>
+
+   <!--查询通讯录数据sql-->
+    <sql id="findEmployeeAddressBookSql">
+        SELECT
+            pe.user_id userId,
+            pe.job_number jobNumber,
+            pe.user_name userName,
+            d.dept_name deptName,
+            pe.phone
+        FROM
+            jr_personnel_archives pe
+            LEFT JOIN t_dept d ON ( pe.dept_id = d.dept_id )
+        WHERE
+            1 = 1
+        <if test="employeeAddressBook.jobNumber != null and employeeAddressBook.jobNumber != ''">
+            AND pe.job_number = #{employeeAddressBook.jobNumber}
+        </if>
+        <if test="employeeAddressBook.userName != null and employeeAddressBook.userName != ''">
+            AND pe.user_name = #{employeeAddressBook.userName}
+        </if>
+        <if test="employeeAddressBook.deptId != null and employeeAddressBook.deptId != ''">
+            AND pe.dept_id = #{employeeAddressBook.deptId}
+        </if>
+        GROUP BY
+            pe.job_number,
+            pe.user_name
+        ORDER BY
+            pe.create_date
+    </sql>
+    <!--统计通讯录数量-->
+    <select id="countEmployeeAddressBook" parameterType="com.erp.enterprise.entity.EmployeeAddressBook" resultType="long">
+        <include refid="countEmployeeAddressBookSql"/>
+    </select>
+    <!--查询通讯录数据-->
+    <select id="findEmployeeAddressBookPage" parameterType="com.erp.enterprise.entity.EmployeeAddressBook" resultType="com.erp.enterprise.entity.EmployeeAddressBook">
+        <include refid="findEmployeeAddressBookSql"/>
     </select>
 
 
