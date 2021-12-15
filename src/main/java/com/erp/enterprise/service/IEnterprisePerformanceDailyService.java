@@ -6,6 +6,7 @@ import com.erp.enterprise.entity.EnterprisePerformanceDaily;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -37,7 +38,7 @@ public interface IEnterprisePerformanceDailyService extends IService<EnterpriseP
      *
      * @param enterprisePerformanceDaily enterprisePerformanceDaily
      */
-    void createEnterprisePerformanceDaily(EnterprisePerformanceDaily enterprisePerformanceDaily);
+    void createEnterprisePerformanceDaily(EnterprisePerformanceDaily enterprisePerformanceDaily) throws ParseException;
 
     /**
      * 修改
@@ -49,7 +50,9 @@ public interface IEnterprisePerformanceDailyService extends IService<EnterpriseP
     /**
      * 删除
      *
-     * @param enterprisePerformanceDaily enterprisePerformanceDaily
+     * @param ids enterprisePerformanceDaily
      */
-    void deleteEnterprisePerformanceDaily(EnterprisePerformanceDaily enterprisePerformanceDaily);
+    void deleteEnterprisePerformanceDaily(String[] ids);
+
+    EnterprisePerformanceDaily enterprisePerformanceDailyById(Long id);
 }

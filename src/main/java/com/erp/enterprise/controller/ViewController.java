@@ -4,8 +4,10 @@ import com.erp.common.entity.FebsConstant;
 import com.erp.common.utils.DateUtil;
 import com.erp.common.utils.FebsUtil;
 import com.erp.enterprise.entity.EnterpriseDocumentAnnouncement;
+import com.erp.enterprise.entity.EnterprisePerformanceDaily;
 import com.erp.enterprise.entity.EnterpriseResourcesParameters;
 import com.erp.enterprise.service.IEnterpriseDocumentAnnouncementService;
+import com.erp.enterprise.service.IEnterprisePerformanceDailyService;
 import com.erp.enterprise.service.IEnterpriseResourcesParametersService;
 import com.erp.sale.entity.SaleBusinessPersonnel;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +32,8 @@ public class ViewController {
     private final IEnterpriseResourcesParametersService enterpriseResourcesParametersService;
     //公文公告表 Service接口
     private final IEnterpriseDocumentAnnouncementService enterpriseDocumentAnnouncementService;
+    //业绩日报表  Service接口
+    private final IEnterprisePerformanceDailyService enterprisePerformanceDailyService;
 
     /*企业管理模块开始*/
 
@@ -96,7 +100,6 @@ public class ViewController {
             model.addAttribute("creationTime", DateUtil.getDateFormat(documentAnnouncement.getCreationTime(), DateUtil.FULL_TIME_SPLIT));
         }
     }
-
     /*公共资源-通讯录*/
     @GetMapping("employeeAddressBook/list")
     @RequiresPermissions("employeeAddressBook:view")
@@ -104,5 +107,41 @@ public class ViewController {
         return FebsUtil.view("employeeAddressBook/employeeAddressList");
     }
 
+    /*公共资源-业绩日报*/
+    @GetMapping("enterprisePerformanceDaily/list")
+    @RequiresPermissions("enterprisePerformanceDaily:view")
+    public String enterprisePerformanceDailyIndex(Model model){
+        //查询参数设置里的工作类型信息
+        List<EnterpriseResourcesParameters> workType  = enterpriseResourcesParametersService.queryEnterpriseResourcesParameters(EnterpriseResourcesParameters.WORK_TYPE);
+        model.addAttribute("workType",workType);
+        return FebsUtil.view("performanceDaily/performanceDailyList");
+    }
+        /*公共资源-业绩日报添加*/
+        @GetMapping("enterprisePerformanceDaily/add")
+        @RequiresPermissions("enterprisePerformanceDaily:add")
+        public String enterprisePerformanceDailyAdd(Model model) {
+            //查询参数设置里的工作类型信息
+            List<EnterpriseResourcesParameters> workType  = enterpriseResourcesParametersService.queryEnterpriseResourcesParameters(EnterpriseResourcesParameters.WORK_TYPE);
+            model.addAttribute("workType",workType);
+            return FebsUtil.view("performanceDaily/performanceDailyAdd");
+        }
+        /*公共资源-业绩日报修改*/
+        @GetMapping("enterprisePerformanceDaily/update/{id}")
+        @RequiresPermissions("enterprisePerformanceDaily:update")
+        public String enterprisePerformanceDailyUpdate(@PathVariable Long id, Model model) {
+            enterprisePerformanceDailyModel(id, model, false);
+            //查询参数设置里的工作类型信息
+            List<EnterpriseResourcesParameters> workType  = enterpriseResourcesParametersService.queryEnterpriseResourcesParameters(EnterpriseResourcesParameters.WORK_TYPE);
+            model.addAttribute("workType",workType);
+            return FebsUtil.view("performanceDaily/performanceDailyUpdate");
+        }
+        /*公共资源-业绩日报修改回填*/
+        private void enterprisePerformanceDailyModel(Long id, Model model, Boolean transform) {
+            EnterprisePerformanceDaily enterprisePerformanceDaily = enterprisePerformanceDailyService.enterprisePerformanceDailyById(id);
+            model.addAttribute("enterprisePerformanceDaily", enterprisePerformanceDaily);
+            if (enterprisePerformanceDaily.getPerformanceDailyDate() != null) {
+                model.addAttribute("performanceDailyDate", DateUtil.getDateFormat(enterprisePerformanceDaily.getPerformanceDailyDate(), DateUtil.FULL_TIME_SPLIT));
+            }
+        }
     //企业管理模块结束
 }

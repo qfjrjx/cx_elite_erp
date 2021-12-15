@@ -1,0 +1,361 @@
+<style>
+    #performance-daily xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #performance-daily xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="performance-daily" lay-title="业绩日报">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="parameter-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md12">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label layui-form-label-sm">日期</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="performanceDailyDate" style="width: 180px" id="performanceDailyDate" class="layui-input createTime">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label layui-form-label-sm">类型</label>
+                                        <div class="layui-input-inline">
+                                            <select id="performanceDailyType" style="width: 190px"  name="performanceDailyType" type="select" lay-verify="required"  class="layui-form-select selector" lay-filter="performanceDailyType">
+                                                <option value="" ></option>
+                                                <option th:each="workType:${workType}" th:value="${workType.parameterName}">[[${workType.parameterName}]]</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm">人员</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="fullName" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label layui-form-label-sm">状态</label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <select name="performanceDailyState">
+                                                <option value="">全部</option>
+                                                <option value="1">登记</option>
+                                                <option value="2">确认</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="enterprisePerformanceDailyTable" lay-data="{id: 'enterprisePerformanceDailyTable'}"></table>
+
+                    <div class="layui-col-md7">
+                        <div class="layui-form-item"></div>
+                    </div>
+                    <div class="layui-col-md5 layui-col-sm12 layui-col-xs12 table-action-area">
+                        <!--搜索按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                            <i class="layui-icon">&#xe848;</i>查询
+                        </div>
+                        <!-- 刷新表格按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain table-action" id="reset">
+                            <i class="layui-icon">&#xe79b;</i>刷新
+                        </div>
+                        <!--添加按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
+                                     "shiro:hasAnyPermissions="enterprisePerformanceDaily:add" id="addTo">
+                            <i class="layui-icon">&#xe78a;</i>新增
+                        </div>
+                        <!--修改按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="enterprisePerformanceDaily:update" id="updateTo">
+                            <i class="layui-icon">&#xe642;</i>修改
+                        </div>
+                        <!--确认按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
+                                     "shiro:hasAnyPermissions="enterprisePerformanceDaily:confirm" id="confirmTo">
+                            <i class="layui-icon layui-icon-ok-circle"></i>确认
+                        </div>
+                        <!--取消按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
+                                     "shiro:hasAnyPermissions="enterprisePerformanceDaily:cancel" id="cancelTo">
+                            <i class="layui-icon layui-icon-close"></i>取消
+                        </div>
+                        <!--删除按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
+                                     "shiro:hasAnyPermissions="enterprisePerformanceDaily:delete" id="deleteTo">
+                            <i class="layui-icon">&#xe8a1;</i>删除
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="performanceDaily-state">
+    {{#
+    let performanceDailyState = {
+    1: {title: '登记'},
+    2: {title: '确认'},
+    3: {title: '核准'}
+    }[d.performanceDailyState];
+    }}
+    <span>{{ performanceDailyState.title }}</span>
+</script>
+<script type="text/html" id="parameter-option">
+    <span shiro:lacksPermission="enterprisePerformanceDaily:view,enterprisePerformanceDaily:update,enterprisePerformanceDaily:delete">
+        <span class="layui-badge-dot febs-bg-orange"></span> 无权限
+    </span>
+    <a lay-event="edit" shiro:hasPermission="enterprisePerformanceDaily:update"><i
+            class="layui-icon febs-edit-area febs-blue">&#xe7a4;</i></a>
+    <a lay-event="del" shiro:hasPermission="enterprisePerformanceDaily:delete"><i class="layui-icon febs-edit-area febs-red">&#xe7f9;</i></a>
+</script>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+            laydate = layui.laydate,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            dropdownMenu = layui.dropdownMenu,
+            $view = $('#performance-daily'),
+            $query = $view.find('#query'),
+            $addTo = $view.find('#addTo'),
+            $updateTo = $view.find('#updateTo'),
+            $deleteTo = $view.find('#deleteTo'),
+            $confirmTo = $view.find('#confirmTo'),
+            $cancelTo = $view.find('#cancelTo'),
+            $reset = $view.find('#reset'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'performanceDailyDate', type: null},
+            tableIns,
+            signedDateFrom,
+            signedDateTo;
+
+        form.render();
+
+        initEnterprisePerformanceDailyTable();
+
+        //日期同时绑定多个
+        lay('.createTime').each(function(){
+            laydate.render({
+                elem: this,
+                range: true,
+                trigger: 'click'
+            });
+        })
+
+        dropdownMenu.render({
+            elem: $view.find('.action-more'),
+            click: function (name, elem, event) {
+                let checkStatus = table.checkStatus('enterprisePerformanceDailyTable');
+                if (name === 'add') {
+                    febs.modal.open('新增人事参数', 'personnel/enterprisePerformanceDaily/add', {
+                        btn: ['提交', '重置'],
+                        area: $(window).width() <= 750 ? '95%' : '50%',
+                        yes: function (index, layero) {
+                            $('#enterprisePerformanceDaily-add').find('#submit').trigger('click');
+                        },
+                        btn2: function () {
+                            $('#enterprisePerformanceDaily-add').find('#reset').trigger('click');
+                            return false;
+                        }
+                    });
+                }
+                if (name === 'delete') {
+                    if (!checkStatus.data.length) {
+                        febs.alert.warn('请选择需要删除的数据');
+                    } else {
+                        febs.modal.confirm('删除参数信息', '确定删除？', function () {
+                            let ids = [];
+                            layui.each(checkStatus.data, function (key, item) {
+                                ids.push(item.id)
+                            });
+                            deleteDocumentAnnouncement(ids.join(','));
+                        });
+                    }
+                }
+            },
+            options: [{
+                name: 'add',
+                title: '新增',
+                perms: 'enterprisePerformanceDaily:add'
+            }, {
+                name: 'delete',
+                title: '删除',
+                perms: 'enterprisePerformanceDaily:delete'
+            }]
+        });
+
+        table.on('tool(enterprisePerformanceDailyTable)', function (obj) {
+            let data = obj.data,
+                layEvent = obj.event;
+            if (layEvent === 'del') {
+                febs.modal.confirm('删除参数信息', '确定删除？', function () {
+                    deleteDocumentAnnouncement(data.id);
+                });
+            }
+            if (layEvent === 'edit') {
+                febs.modal.open('修改参数', 'personnel/enterprisePerformanceDaily/update/' + data.id, {
+                    area: $(window).width() <= 750 ? '90%' : '50%',
+                    btn: ['提交', '取消'],
+                    yes: function (index, layero) {
+                        $('#enterprisePerformanceDaily-update').find('#submit').trigger('click');
+                    },
+                    btn2: function () {
+                        layer.closeAll();
+                    }
+                });
+            }
+        });
+
+        table.on('sort(enterprisePerformanceDailyTable)', function (obj) {
+            sortObject = obj;
+            tableIns.reload({
+                initSort: obj,
+                where: $.extend(getQueryParams(), {
+                    field: obj.field,
+                    order: obj.type
+                })
+            });
+        });
+
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        $reset.on('click', function () {
+            $searchForm[0].reset();
+            sortObject.type = 'null';
+            signedDateFrom = null;
+            signedDateTo = null;
+            tableIns.reload({where: getQueryParams(true), page: {curr: 1}, initSort: sortObject});
+        });
+        $addTo.on('click', function () {
+            febs.modal.open('【业绩日报】 新增', 'enterprise/enterprisePerformanceDaily/add', {
+                btn: ['保存', '关闭'],
+                area:["25%","48%"],
+                yes: function (index, layero) {
+                    $('#performanceDaily-add').find('#submit').trigger('click');
+                },
+                btn2: function () {
+                    layer.closeAll();
+                }
+            });
+        });
+        $updateTo.on('click', function () {
+            let checkStatus = table.checkStatus('enterprisePerformanceDailyTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要修改的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要修改的数据');
+            }else{
+                layui.each(checkStatus.data, function (key, item) {
+                    febs.modal.open('【业绩日报】 修改', 'enterprise/enterprisePerformanceDaily/update/' + item.id, {
+                        area:["25%","48%"],
+                        btn: ['保存', '关闭'],
+                        yes: function (index, layero) {
+                            $('#performanceDaily-update').find('#submit').trigger('click');
+                        },
+                        btn2: function () {
+                            layer.closeAll();
+                        }
+                    });
+                });
+            }
+        });
+        $deleteTo.on('click', function () {
+            let checkStatus = table.checkStatus('enterprisePerformanceDailyTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要删除的数据');
+            } else {
+                febs.modal.confirm('删除公文公告信息', '确定删除？', function () {
+                    let ids = [];
+                    layui.each(checkStatus.data, function (key, item) {
+                        ids.push(item.id)
+                    });
+                    deleteEnterprisePerformanceDaily(ids.join(','));
+                });
+            }
+        });
+        $confirmTo.on('click', function () {
+            let checkStatus = table.checkStatus('enterprisePerformanceDailyTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要确认的数据');
+            } else {
+                alert("确认")
+                /*layui.each(checkStatus.data, function (key, item) {
+                    $.ajax({
+                        url: ctx + '/ /',
+                        data: {
+                            "id": item.id
+                        },
+                        async: false,
+                        type: 'get',
+                        success: function (d) {
+                            (!d) && (result = '该用户名已存在')
+                        }
+                    });
+                });*/
+            }
+        });
+        $cancelTo.on('click', function () {
+            let checkStatus = table.checkStatus('enterprisePerformanceDailyTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要取消的数据');
+            } else {
+               alert("取消")
+            }
+        });
+
+        function initEnterprisePerformanceDailyTable() {
+            tableIns = febs.table.init({
+                elem: $view.find('table'),
+                id: 'enterprisePerformanceDailyTable',
+                url: ctx + 'enterprisePerformanceDaily/list',
+                cols: [[
+                    {type: 'checkbox'},
+                    {field:'number',title:'序号',align:'center',width:100,templet:function (d) {
+                                        return d.LAY_INDEX;}},
+                    {field: 'performanceDailyDate', title: '日期',align:'center', minWidth: 110, templet:'<div>{{ layui.util.toDateString(d.performanceDailyDate, "yyyy-MM-dd") }}</div>',sort: true},
+
+                    {field: 'oddNumbers', title: '单号', minWidth: 100},
+                    {field: 'departmentName', title: '部门', minWidth: 100},
+                    {field: 'fullName', title: '姓名', minWidth: 100},
+                    {field: 'performanceDailyType', title: '类型', minWidth: 100},
+                    {field: 'amountMoney', title: '金额', minWidth: 100},
+                    {field: 'performanceDailyRemarks', title: '备注', minWidth: 100},
+                    {title: '状态', templet: '#performanceDaily-state'}
+                ]]
+            });
+        }
+
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            let performanceDailyDate = params.performanceDailyDate;
+            if (performanceDailyDate) {
+                signedDateFrom = performanceDailyDate.split(' - ')[0];
+                signedDateTo = performanceDailyDate.split(' - ')[1];
+            }
+            params.signedDateFrom = signedDateFrom;
+            params.signedDateTo = signedDateTo;
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+
+        function deleteEnterprisePerformanceDaily(ids) {
+            febs.get(ctx + 'enterprisePerformanceDaily/delete/' + ids, null, function () {
+                febs.alert.success('删除成功');
+                $query.click();
+            });
+        }
+
+    })
+
+</script>

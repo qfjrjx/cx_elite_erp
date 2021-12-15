@@ -1,0 +1,107 @@
+<style>
+    #performanceDaily-update {
+        padding: 20px 25px 25px 0;
+    }
+</style>
+<div class="layui-fluid" id="performanceDaily-update">
+    <form class="layui-form" action="" lay-filter="performanceDaily-update-form">
+        <div class="layui-form-item febs-hide">
+            <label class="layui-form-label febs-form-item-require">参数id：</label>
+            <div class="layui-input-block">
+                <input type="text" name="id" data-th-value="${enterprisePerformanceDaily.id}">
+            </div>
+        </div>
+        <div class="layui-form-item febs-hide">
+            <label class="layui-form-label febs-form-item-require">赋值参数(姓名)：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="fullName" id="fullName">
+            </div>
+            <label class="layui-form-label febs-form-item-require">赋值参数(部门)：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="departmentName" id="departmentName">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label " >日期:</label>
+            <div class="layui-input-inline" style="width: 245px">
+                <input type="text" id="performanceDailyDate" name="performanceDailyDate" lay-verify="required" placeholder="请选择日期" readonly
+                       autocomplete="off" class="layui-input startTime">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label " >类型</label>
+            <div class="layui-input-inline" style="width: 245px" id="content">
+                <select id="performanceDailyType" style="width: 190px"  name="performanceDailyType" type="select" lay-verify="required"  class="layui-form-select selector" lay-filter="performanceDailyType">
+                    <option value="" ></option>
+                    <option th:each="workType:${workType}" th:value="${workType.parameterName}">[[${workType.parameterName}]]</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label " >金额</label>
+            <div class="layui-input-inline" style="width: 245px">
+                <input type="text" name="amountMoney"
+                       autocomplete="off" class="layui-input" value="0">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">备注</label>
+            <div class="layui-input-inline" style="width: 245px">
+                <textarea name="performanceDailyRemarks" maxlength="100" class="layui-textarea" placeholder=""></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item febs-hide">
+            <button class="layui-btn" lay-submit="" lay-filter="performanceDaily-update-form-submit" id="submit"></button>
+            <button type="reset" class="layui-btn" id="reset"></button>
+        </div>
+    </form>
+</div>
+
+<script data-th-inline="javascript">
+    layui.use(['febs', 'form', 'validate', 'xmSelect','laydate','upload'], function () {
+        let $ = layui.$,
+            febs = layui.febs,
+            laydate = layui.laydate,
+            layer = layui.layer,
+            form = layui.form,
+            enterprisePerformanceDaily = [[${enterprisePerformanceDaily}]],
+            performanceDailyDate = [[${performanceDailyDate}]],
+            validate = layui.validate;
+
+        form.verify(validate);
+        form.render();
+
+        initEnterprisePerformanceDailyValue();
+
+        //日期同时绑定多个
+        lay('.startTime').each(function(){
+            laydate.render({
+                elem: this
+                ,trigger: 'click'
+            });
+        })
+        let userName = currentUser.username;
+        let deptName     = currentUser.deptName;
+        $('#fullName').val(userName);
+        $('#departmentName').val(deptName);
+
+        function initEnterprisePerformanceDailyValue() {
+            form.val("performanceDaily-update-form", {
+                "performanceDailyDate": performanceDailyDate,
+                "performanceDailyType": enterprisePerformanceDaily.performanceDailyType,
+                "amountMoney": enterprisePerformanceDaily.amountMoney,
+                "performanceDailyRemarks": enterprisePerformanceDaily.performanceDailyRemarks
+            });
+        }
+        form.on('submit(performanceDaily-update-form-submit)', function (data) {
+            febs.post(ctx + 'enterprisePerformanceDaily/update', data.field, function () {
+                layer.closeAll();
+                febs.alert.success('修改成功');
+                $('#performance-daily').find('#query').click();
+            });
+            return false;
+
+        });
+
+    });
+</script>

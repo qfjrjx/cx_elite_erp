@@ -1,5 +1,108 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.erp.enterprise.mapper.EnterprisePerformanceDailyMapper">
+    <sql id="countEnterprisePerformanceDailySql">
+        SELECT
+           COUNT( 1 )
+        FROM
+           jr_enterprise_performance_daily epd
+        WHERE
+        1 = 1
+        <if test="enterprisePerformanceDaily.signedDateFrom != null and enterprisePerformanceDaily.signedDateFrom !=''">
+            And epd.performance_daily_date &gt; #{enterprisePerformanceDaily.signedDateFrom}
+        </if>
+        <if test="enterprisePerformanceDaily.signedDateTo != null and enterprisePerformanceDaily.signedDateTo !=''">
+            And epd.performance_daily_date &lt; #{enterprisePerformanceDaily.signedDateTo}
+        </if>
+        <if test="enterprisePerformanceDaily.performanceDailyType != null and enterprisePerformanceDaily.performanceDailyType != ''">
+            AND epd.performance_daily_type = #{enterprisePerformanceDaily.performanceDailyType}
+        </if>
+        <if test="enterprisePerformanceDaily.fullName != null and enterprisePerformanceDaily.fullName != ''">
+            AND epd.full_name = #{enterprisePerformanceDaily.fullName}
+        </if>
+        <if test="enterprisePerformanceDaily.performanceDailyState != null and enterprisePerformanceDaily.performanceDailyState != ''">
+            AND epd.performance_daily_state = #{enterprisePerformanceDaily.performanceDailyState}
+        </if>
+    </sql>
+    <sql id="findEnterprisePerformanceDailySql">
+        SELECT
+            epd.id,
+            epd.performance_daily_date performanceDailyDate,
+            epd.odd_numbers oddNumbers,
+            epd.department_name departmentName,
+            epd.full_name fullName,
+            epd.performance_daily_type performanceDailyType,
+            epd.amount_money amountMoney,
+            epd.performance_daily_remarks performanceDailyRemarks,
+            epd.performance_daily_state performanceDailyState
+        FROM
+            jr_enterprise_performance_daily epd
+        WHERE
+            1 = 1
+        <if test="enterprisePerformanceDaily.signedDateFrom != null and enterprisePerformanceDaily.signedDateFrom !=''">
+            And epd.performance_daily_date &gt; #{enterprisePerformanceDaily.signedDateFrom}
+        </if>
+        <if test="enterprisePerformanceDaily.signedDateTo != null and enterprisePerformanceDaily.signedDateTo !=''">
+            And epd.performance_daily_date &lt; #{enterprisePerformanceDaily.signedDateTo}
+        </if>
+        <if test="enterprisePerformanceDaily.performanceDailyType != null and enterprisePerformanceDaily.performanceDailyType != ''">
+            AND epd.performance_daily_type = #{enterprisePerformanceDaily.performanceDailyType}
+        </if>
+        <if test="enterprisePerformanceDaily.fullName != null and enterprisePerformanceDaily.fullName != ''">
+            AND epd.full_name = #{enterprisePerformanceDaily.fullName}
+        </if>
+        <if test="enterprisePerformanceDaily.performanceDailyState != null and enterprisePerformanceDaily.performanceDailyState != ''">
+            AND epd.performance_daily_state = #{enterprisePerformanceDaily.performanceDailyState}
+        </if>
+    </sql>
+
+    <select id="countEnterprisePerformanceDaily" parameterType="com.erp.enterprise.entity.EnterprisePerformanceDaily" resultType="long">
+        <include refid="countEnterprisePerformanceDailySql"/>
+    </select>
+
+    <select id="findEnterprisePerformanceDailyPage" parameterType="com.erp.enterprise.entity.EnterprisePerformanceDaily" resultType="com.erp.enterprise.entity.EnterprisePerformanceDaily">
+        <include refid="findEnterprisePerformanceDailySql"/>
+    </select>
+
+    <!--查询添加的最后一条数据-->
+    <select id="queryEnterprisePerformanceDaily" resultType="com.erp.enterprise.entity.EnterprisePerformanceDaily">
+       SELECT
+            epd.id,
+            epd.performance_daily_date performanceDailyDate,
+            epd.odd_numbers oddNumbers,
+            epd.department_name departmentName,
+            epd.full_name fullName,
+            epd.performance_daily_type performanceDailyType,
+            epd.amount_money amountMoney,
+            epd.performance_daily_remarks performanceDailyRemarks,
+            epd.performance_daily_state performanceDailyState,
+            epd.create_date createDate
+        FROM
+            jr_enterprise_performance_daily epd
+        GROUP BY
+            epd.create_date
+        ORDER BY
+            epd.create_date DESC
+            LIMIT 1;
+    </select>
+
+    <!--修改回显-->
+    <select id="enterprisePerformanceDailyById" parameterType="long" resultType="com.erp.enterprise.entity.EnterprisePerformanceDaily">
+        SELECT
+            epd.id,
+            epd.performance_daily_date performanceDailyDate,
+            epd.odd_numbers oddNumbers,
+            epd.department_name departmentName,
+            epd.full_name fullName,
+            epd.performance_daily_type performanceDailyType,
+            epd.amount_money amountMoney,
+            epd.performance_daily_remarks performanceDailyRemarks,
+            epd.performance_daily_state performanceDailyState,
+            epd.create_date createDate
+        FROM
+            jr_enterprise_performance_daily epd
+        WHERE
+            epd.id = #{id}
+    </select>
 
 </mapper>
