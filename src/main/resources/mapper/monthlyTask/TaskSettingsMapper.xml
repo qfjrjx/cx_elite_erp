@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.monthly.mapper.TaskSettingsMapper">
+
+
+    <sql id="countTaskSettingsSql" >
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_task_settings ts
+        WHERE
+	        1 = 1
+        <if test="taskSettings.taskSettingsMonthly != null and taskSettings.taskSettingsMonthly != ''">
+            AND ts.task_settings_monthly = #{taskSettings.taskSettingsMonthly}
+        </if>
+    </sql>
+    <sql id="findTaskSettingsSql" >
+        SELECT
+            ts.id,
+            ts.task_settings_monthly,
+            ts.sales_target,
+            ts.design_goal,
+            ts.production_target,
+            ts.delivery_target
+        FROM
+            jr_task_settings ts
+        WHERE
+            1 = 1
+        <if test="taskSettings.taskSettingsMonthly != null and taskSettings.taskSettingsMonthly != ''">
+            AND ts.task_settings_monthly = #{taskSettings.taskSettingsMonthly}
+        </if>
+    </sql>
+
+    <select id="countTaskSettings" parameterType="com.erp.monthly.entity.TaskSettings" resultType="long">
+        <include refid="countTaskSettingsSql"/>
+    </select>
+
+    <select id="findTaskSettingsPage" parameterType="com.erp.monthly.entity.TaskSettings" resultType="com.erp.monthly.entity.TaskSettings">
+        <include refid="findTaskSettingsSql"/>
+    </select>
+
+    <!--修改回显查询-->
+    <select id="taskSettingsById" parameterType="long" resultType="com.erp.monthly.entity.TaskSettings">
+        SELECT
+            ts.id,
+            ts.task_settings_monthly,
+            ts.sales_target,
+            ts.design_goal,
+            ts.production_target,
+            ts.delivery_target
+        FROM
+            jr_task_settings ts
+        WHERE
+            ts.id = #{id}
+    </select>
+</mapper>

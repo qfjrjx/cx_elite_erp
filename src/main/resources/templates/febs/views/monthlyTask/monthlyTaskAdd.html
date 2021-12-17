@@ -1,0 +1,79 @@
+<style>
+    #monthlyTask-add {
+        padding: 20px 25px 25px 0;
+    }
+</style>
+<div class="layui-fluid" id="monthlyTask-add">
+    <form class="layui-form" action="" lay-filter="monthlyTask-add-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label " >目标月度：</label>
+            <div class="layui-input-inline" style="width: 245px">
+                <input type="text" id="taskSettingsMonthly" name="taskSettingsMonthly" lay-verify="required" placeholder="请选择日期" readonly
+                       autocomplete="off" class="layui-input startTime">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label " >销售目标：</label>
+            <div class="layui-input-inline" style="width: 245px">
+                <input type="text" name="salesTarget"
+                       autocomplete="off" class="layui-input" placeholder="请输入数字">
+            </div>
+        </div> <div class="layui-form-item">
+            <label class="layui-form-label " >设计目标：</label>
+            <div class="layui-input-inline" style="width: 245px">
+                <input type="text" name="designGoal"
+                       autocomplete="off" class="layui-input" placeholder="请输入数字">
+            </div>
+        </div> <div class="layui-form-item">
+            <label class="layui-form-label " >生产目标：</label>
+            <div class="layui-input-inline" style="width: 245px">
+                <input type="text" name="productionTarget"
+                       autocomplete="off" class="layui-input" placeholder="请输入数字">
+            </div>
+        </div> <div class="layui-form-item">
+            <label class="layui-form-label " >发货目标：</label>
+            <div class="layui-input-inline" style="width: 245px">
+                <input type="text" name="deliveryTarget"
+                       autocomplete="off" class="layui-input" placeholder="请输入数字">
+            </div>
+        </div>
+
+        <div class="layui-form-item febs-hide">
+            <button class="layui-btn" lay-submit="" lay-filter="monthlyTask-add-form-submit" id="submit"></button>
+            <button type="reset" class="layui-btn" id="reset"></button>
+        </div>
+    </form>
+</div>
+<script>
+    layui.use(['febs', 'form', 'validate', 'xmSelect','laydate','upload'], function () {
+        let $ = layui.$,
+            febs = layui.febs,
+            laydate = layui.laydate,
+            layer = layui.layer,
+            form = layui.form,
+            validate = layui.validate;
+
+        form.verify(validate);
+        form.render();
+
+        //日期同时绑定多个
+        lay('.startTime').each(function(){
+            laydate.render({
+                elem: this,
+                type:'month',//年月选择器
+                value:new Date(),
+                format:'yyyy-MM'
+            });
+        })
+        form.on('submit(monthlyTask-add-form-submit)', function (data) {
+            febs.post(ctx + 'taskSettings/add', data.field, function () {
+                layer.closeAll();
+                febs.alert.success('新增成功');
+                $('#monthly-task').find('#query').click();
+            });
+            return false;
+
+        });
+
+    });
+</script>

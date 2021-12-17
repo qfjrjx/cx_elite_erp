@@ -1,0 +1,228 @@
+<style>
+    #monthly-task xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #monthly-task xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="monthly-task" lay-title="任务设置">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="parameter-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md12">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label layui-form-label-sm">目标月度</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="taskSettingsMonthly" style="width: 120px" id="settingsMonthly" class="layui-input createTime">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="monthlyTaskTable" lay-data="{id: 'monthlyTaskTable'}"></table>
+
+                    <div class="layui-col-md8">
+                        <div class="layui-form-item"></div>
+                    </div>
+                    <div class="layui-col-md4 layui-col-sm12 layui-col-xs12 table-action-area">
+                        <!--搜索按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                            <i class="layui-icon">&#xe848;</i>查询
+                        </div>
+                        <!-- 刷新表格按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain table-action" id="reset">
+                            <i class="layui-icon">&#xe79b;</i>刷新
+                        </div>
+                        <!--添加按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
+                                     "shiro:hasAnyPermissions="taskSettings:add" id="addTo">
+                            <i class="layui-icon">&#xe78a;</i>新增
+                        </div>
+                        <!--修改按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="taskSettings:update" id="updateTo">
+                            <i class="layui-icon">&#xe642;</i>修改
+                        </div>
+                        <!--删除按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
+                                     "shiro:hasAnyPermissions="taskSettings:delete" id="deleteTo">
+                            <i class="layui-icon">&#xe8a1;</i>删除
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="performanceDaily-state">
+    {{#
+    let performanceDailyState = {
+    1: {title: '登记'},
+    2: {title: '确认'},
+    3: {title: '核准'}
+    }[d.performanceDailyState];
+    }}
+    <span>{{ performanceDailyState.title }}</span>
+</script>
+<script type="text/html" id="parameter-option">
+    <span shiro:lacksPermission="taskSettings:view,taskSettings:update,taskSettings:delete">
+        <span class="layui-badge-dot febs-bg-orange"></span> 无权限
+    </span>
+    <a lay-event="edit" shiro:hasPermission="taskSettings:update"><i
+            class="layui-icon febs-edit-area febs-blue">&#xe7a4;</i></a>
+    <a lay-event="del" shiro:hasPermission="taskSettings:delete"><i class="layui-icon febs-edit-area febs-red">&#xe7f9;</i></a>
+</script>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+            laydate = layui.laydate,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            dropdownMenu = layui.dropdownMenu,
+            $view = $('#monthly-task'),
+            $query = $view.find('#query'),
+            $addTo = $view.find('#addTo'),
+            $updateTo = $view.find('#updateTo'),
+            $deleteTo = $view.find('#deleteTo'),
+            $reset = $view.find('#reset'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'taskSettingsMonthly', type: null},
+            tableIns;
+
+        form.render();
+        //日期同时绑定多个
+        lay('.createTime').each(function(){
+            laydate.render({
+                elem: this,
+                type:'month',//年月选择器
+                value:new Date(),
+                format:'yyyy-MM'
+            });
+        });
+        initMonthlyTaskTable();
+        dropdownMenu.render({
+            elem: $view.find('.action-more'),
+            click: function (name, elem, event) {
+                let checkStatus = table.checkStatus('monthlyTaskTable');
+            }
+        });
+
+        table.on('tool(monthlyTaskTable)', function (obj) {
+            let data = obj.data,
+                layEvent = obj.event;
+        });
+
+        table.on('sort(monthlyTaskTable)', function (obj) {
+            sortObject = obj;
+            tableIns.reload({
+                initSort: obj,
+                where: $.extend(getQueryParams(), {
+                    field: obj.field,
+                    order: obj.type
+                })
+            });
+        });
+
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        $reset.on('click', function () {
+            tableIns.reload({where: getQueryParams(true), page: {curr: 1}, initSort: sortObject});
+        });
+        $addTo.on('click', function () {
+            febs.modal.open('【目标设置】 新增', 'monthly/taskSettings/add', {
+                btn: ['保存', '关闭'],
+                area:["25%","48%"],
+                yes: function (index, layero) {
+                    $('#monthlyTask-add').find('#submit').trigger('click');
+                },
+                btn2: function () {
+                    layer.closeAll();
+                }
+            });
+        });
+        $updateTo.on('click', function () {
+            let checkStatus = table.checkStatus('monthlyTaskTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要修改的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要修改的数据');
+            }else{
+                layui.each(checkStatus.data, function (key, item) {
+                    febs.modal.open('【目标设置】 修改', 'monthly/taskSettings/update/' + item.id, {
+                        area:["25%","48%"],
+                        btn: ['保存', '关闭'],
+                        yes: function (index, layero) {
+                            $('#monthlyTask-update').find('#submit').trigger('click');
+                        },
+                        btn2: function () {
+                            layer.closeAll();
+                        }
+                    });
+                });
+            }
+        });
+        $deleteTo.on('click', function () {
+            let checkStatus = table.checkStatus('monthlyTaskTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要删除的数据');
+            } else {
+                febs.modal.confirm('删除目标设置信息', '确定删除？', function () {
+                    let ids = [];
+                    layui.each(checkStatus.data, function (key, item) {
+                        ids.push(item.id)
+                    });
+                    deleteMonthlyTask(ids.join(','));
+                });
+            }
+        });
+
+        function initMonthlyTaskTable() {
+            //let settingsMonthlyValue = document.getElementById("settingsMonthly").value;
+            tableIns = febs.table.init({
+                elem: $view.find('table'),
+                id: 'monthlyTaskTable',
+                url: ctx + 'taskSettings/list',
+                where:{
+                    taskSettingsMonthly:$('#settingsMonthly').val()
+                },
+                cols: [[
+                    {type: 'checkbox'},
+                    {field:'number',title:'序号',align:'center',width:100,templet:function (d) {
+                                        return d.LAY_INDEX;}},
+                    {field: 'taskSettingsMonthly', title: '月度',align:'center', minWidth: 110},
+                    {field: 'salesTarget', title: '销售目标', minWidth: 100},
+                    {field: 'designGoal', title: '设计目标', minWidth: 100},
+                    {field: 'productionTarget', title: '生产目标', minWidth: 100},
+                    {field: 'deliveryTarget', title: '发货目标', minWidth: 100}
+                ]]
+            });
+        }
+
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+
+        function deleteMonthlyTask(ids) {
+            febs.get(ctx + 'taskSettings/delete/' + ids, null, function () {
+                febs.alert.success('删除成功');
+                $query.click();
+            });
+        }
+
+    })
+
+</script>
