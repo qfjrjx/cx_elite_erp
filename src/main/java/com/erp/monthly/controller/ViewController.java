@@ -23,7 +23,7 @@ public class ViewController {
     private final ITaskSettingsService taskSettingsService;
 
     /*月度任务管理模块开始*/
-    /* */
+    /*任务设置列表*/
     @GetMapping("taskSettings/list")
     @RequiresPermissions("taskSettings:view")
     public String taskSettingsIndex(){
@@ -47,6 +47,13 @@ public class ViewController {
     private void taskSettingsModel(Long id, Model model, Boolean transform) {
         TaskSettings taskSettings = taskSettingsService.taskSettingsById(id);
         model.addAttribute("taskSettings", taskSettings);
+    }
+
+    /*完成情况列表*/
+    @GetMapping("completionStatus/list")
+    @RequiresPermissions("completionStatus:view")
+    public String completionStatusIndex(){
+        return FebsUtil.view("completionStatus/completionStatusList");
     }
     //月度任务模块结束
 }

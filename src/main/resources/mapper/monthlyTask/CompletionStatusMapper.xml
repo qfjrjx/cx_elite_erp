@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.monthly.mapper.CompletionStatusMapper">
+
+    <sql id="countCompletionStatusSql" >
+       SELECT
+            COUNT( 1 )
+        FROM
+            jr_completion_status cs
+        WHERE
+            1 = 1
+        <if test="completionStatus.completionMonthly != null and completionStatus.completionMonthly != ''">
+            AND cs.completion_monthly = #{completionStatus.completionMonthly}
+        </if>
+    </sql>
+    <sql id="findCompletionStatusSql" >
+        SELECT
+            cs.id,
+            cs.completion_monthly,
+            cs.sales_target_amount,
+            cs.sales_completion_amount,
+            cs.sales_completion_rate,
+            cs.technical_target_amount,
+            cs.technical_completion_amount,
+            cs.technical_completion_rate,
+            cs.production_target_amount,
+            cs.production_completion_amount,
+            cs.production_completion_rate,
+            cs.delivery_target_amount,
+            cs.delivery_completion_amount,
+            cs.delivery_completion_rate
+        FROM
+            jr_completion_status cs
+        WHERE
+            1 = 1
+        <if test="completionStatus.completionMonthly != null and completionStatus.completionMonthly != ''">
+            AND cs.completion_monthly = #{completionStatus.completionMonthly}
+        </if>
+    </sql>
+
+    <select id="countCompletionStatus" parameterType="com.erp.monthly.entity.CompletionStatus" resultType="long">
+        <include refid="countCompletionStatusSql"/>
+    </select>
+
+    <select id="findCompletionStatusPage" parameterType="com.erp.monthly.entity.CompletionStatus" resultType="com.erp.monthly.entity.CompletionStatus">
+        <include refid="findCompletionStatusSql"/>
+    </select>
+</mapper>

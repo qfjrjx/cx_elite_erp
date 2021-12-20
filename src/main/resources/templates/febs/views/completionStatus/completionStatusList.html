@@ -1,0 +1,153 @@
+<style>
+    #completion-status xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #completion-status xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="completion-status" lay-title="完成情况">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="parameter-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md12">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label layui-form-label-sm">月度</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="completionMonthly" style="width: 120px" id="completionMonthly" class="layui-input createTime">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="completionStatusTable" lay-data="{id: 'completionStatusTable'}"></table>
+
+                    <div class="layui-col-md8">
+                        <div class="layui-form-item"></div>
+                    </div>
+                    <div class="layui-col-md4 layui-col-sm12 layui-col-xs12 table-action-area">
+                        <!--搜索按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                            <i class="layui-icon">&#xe848;</i>查询
+                        </div>
+                        <!-- 刷新表格按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain table-action" id="reset">
+                            <i class="layui-icon">&#xe79b;</i>刷新
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="parameter-option">
+    <span shiro:lacksPermission="taskSettings:view,taskSettings:update,taskSettings:delete">
+        <span class="layui-badge-dot febs-bg-orange"></span> 无权限
+    </span>
+    <a lay-event="edit" shiro:hasPermission="taskSettings:update"><i
+            class="layui-icon febs-edit-area febs-blue">&#xe7a4;</i></a>
+    <a lay-event="del" shiro:hasPermission="taskSettings:delete"><i class="layui-icon febs-edit-area febs-red">&#xe7f9;</i></a>
+</script>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+            laydate = layui.laydate,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            dropdownMenu = layui.dropdownMenu,
+            $view = $('#completion-status'),
+            $query = $view.find('#query'),
+            $reset = $view.find('#reset'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'completionMonthly', type: null},
+            tableIns;
+
+        form.render();
+        //日期同时绑定多个
+        lay('.createTime').each(function(){
+            laydate.render({
+                elem: this,
+                type:'month',//年月选择器
+                value:new Date(),
+                format:'yyyy-MM'
+            });
+        });
+        initCompletionStatusTable();
+        dropdownMenu.render({
+            elem: $view.find('.action-more'),
+            click: function (name, elem, event) {
+                let checkStatus = table.checkStatus('completionStatusTable');
+            }
+        });
+
+        table.on('tool(completionStatusTable)', function (obj) {
+            let data = obj.data,
+                layEvent = obj.event;
+        });
+
+        table.on('sort(completionStatusTable)', function (obj) {
+            sortObject = obj;
+            tableIns.reload({
+                initSort: obj,
+                where: $.extend(getQueryParams(), {
+                    field: obj.field,
+                    order: obj.type
+                })
+            });
+        });
+
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        $reset.on('click', function () {
+            tableIns.reload({where: getQueryParams(true), page: {curr: 1}, initSort: sortObject});
+        });
+
+        function initCompletionStatusTable() {
+            //let settingsMonthlyValue = document.getElementById("settingsMonthly").value;
+            tableIns = febs.table.init({
+                elem: $view.find('table'),
+                id: 'completionStatusTable',
+                url: ctx + 'completionStatus/list',
+                where:{
+                    completionMonthly:$('#completionMonthly').val()
+                },
+                cols: [[
+                    {type: 'checkbox'},
+                    {field:'number',title:'序号',align:'center',width:60,templet:function (d) {
+                                        return d.LAY_INDEX;}},
+                    {field: 'completionMonthly', title: '月度',align:'center', minWidth: 100,align:'center'},
+                    {field: 'salesTargetAmount', title: '销售目标金额', minWidth: 115,align:'center'},
+                    {field: 'salesCompletionAmount', title: '销售完成金额', minWidth: 115,align:'center'},
+                    {field: 'salesCompletionRate', title: '销售完成率', minWidth: 100,align:'center'},
+                    {field: 'technicalTargetAmount', title: '技术目标金额', minWidth: 115,align:'center'},
+                    {field: 'technicalCompletionAmount', title: '技术完成金额', minWidth: 115,align:'center'},
+                    {field: 'technicalCompletionRate', title: '技术完成率', minWidth: 100,align:'center'},
+                    {field: 'productionTargetAmount', title: '生产目标金额', minWidth: 115,align:'center'},
+                    {field: 'productionCompletionAmount', title: '生产完成金额', minWidth: 115,align:'center'},
+                    {field: 'productionCompletionRate', title: '生产完成率', minWidth: 100,align:'center'},
+                    {field: 'deliveryTargetAmount', title: '发货目标金额', minWidth: 115,align:'center'},
+                    {field: 'deliveryCompletionAmount', title: '发货完成金额', minWidth: 115,align:'center'},
+                    {field: 'deliveryCompletionRate', title: '发货完成率', minWidth: 100,align:'center'}
+                ]]
+            });
+        }
+
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+    })
+
+</script>
