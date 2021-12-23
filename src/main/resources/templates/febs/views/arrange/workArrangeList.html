@@ -1,0 +1,486 @@
+<style>
+    #work-arrange xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #work-arrange xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="work-arrange" lay-title="工作安排">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="parameter-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md12">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label layui-form-label-sm">日期</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="startDateTo" style="width: 180px" id="startDateTo" class="layui-input createTime">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm">单号</label>
+                                        <div class="layui-input-inline" style="width: 120px">
+                                            <input type="text" name="oddNumbers" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm">责任人</label>
+                                        <div class="layui-input-inline" style="width: 120px">
+                                            <input type="text" name="personLiable" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm">工作类型</label>
+                                        <div class="layui-input-inline" style="width: 120px">
+                                            <select name="workType">
+                                                <option value="">全部</option>
+                                                <option value="1">会议</option>
+                                                <option value="2">日常</option>
+                                                <option value="3">外出</option>
+                                                <option value="4">接待</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm">考核</label>
+                                        <div class="layui-input-inline" style="width: 120px">
+                                            <select name="appraisalStatus">
+                                                <option value="">全部</option>
+                                                <option value="1">合格</option>
+                                                <option value="2">不合格</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm">状态</label>
+                                        <div class="layui-input-inline" style="width: 120px">
+                                            <select name="arrangeState" >
+                                                <option value="">全部</option>
+                                                <option value="1">登记</option>
+                                                <option value="2">确认</option>
+                                                <option value="3">开始</option>
+                                                <option value="4">完成</option>
+                                                <option value="5">考核</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="workArrangeTable" lay-data="{id: 'workArrangeTable'}"></table>
+
+                    <div class="layui-col-md5">
+                        <div class="layui-form-item"></div>
+                    </div>
+                    <div class="layui-col-md7 layui-col-sm12 layui-col-xs12 table-action-area">
+                        <!--搜索按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                            <i class="layui-icon">&#xe848;</i>查询
+                        </div>
+                        <!--搜索按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action"
+                        shiro:hasAnyPermissions="workArrange:consult" id="consult">
+                            <i class="layui-icon">&#xe848;</i>查阅
+                        </div>
+                        <!-- 刷新表格按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain table-action" id="reset">
+                            <i class="layui-icon">&#xe79b;</i>刷新
+                        </div>
+                        <!--添加按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
+                                     "shiro:hasAnyPermissions="workArrange:add" id="addTo">
+                            <i class="layui-icon">&#xe78a;</i>新增
+                        </div>
+                        <!--修改按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="workArrange:update" id="updateTo">
+                            <i class="layui-icon">&#xe642;</i>修改
+                        </div>
+                        <!--删除按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
+                                     "shiro:hasAnyPermissions="workArrange:delete" id="deleteTo">
+                            <i class="layui-icon layui-icon-close"></i>删除
+                        </div>
+                        <!--确认按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="workArrange:confirm" id="confirmTo">
+                            <i class="layui-icon layui-icon-ok-circle"></i>确认
+                        </div>
+                        <!--取消按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="workArrange:cancel" id="cancelTo">
+                            <i class="layui-icon layui-icon-close-fill"></i>取消
+                        </div>
+                        <!--开始按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="workArrange:start" id="startTo">
+                            <i class="layui-icon layui-icon-play"></i>开始
+                        </div>
+                        <!--完成按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="workArrange:complete" id="completeTo">
+                            <i class="layui-icon layui-icon-ok-circle"></i>完成
+                        </div>
+                        <!--考核按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="workArrange:assessment" id="assessmentTo">
+                            <i class="layui-icon layui-icon-survey"></i>考核
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="work_type">
+    {{#
+    let workType = {
+    1: {title: '会议'},
+    2: {title: '日常'},
+    3: {title: '外出'},
+    4: {title: '接待'}
+    }[d.workType];
+    }}
+    <span>{{ workType.title }}</span>
+</script>
+<script type="text/html" id="arrange-state">
+    {{#
+    let arrangeState = {
+    1: {title: '登记'},
+    2: {title: '确认'},
+    3: {title: '开始'},
+    4: {title: '完成'},
+    5: {title: '考核'}
+    }[d.arrangeState];
+    }}
+    <span>{{ arrangeState.title }}</span>
+</script>
+<script type="text/html" id="appraisal-status">
+    {{#
+    let appraisalStatus = {
+    "": {title: ''},
+    1: {title: '合格'},
+    2: {title: '不合格'}
+    }[d.appraisalStatus];
+    }}
+    <span>{{ appraisalStatus.title }}</span>
+</script>
+<script type="text/html" id="parameter-option">
+    <span shiro:lacksPermission="workArrange:view,workArrange:update,workArrange:delete">
+        <span class="layui-badge-dot febs-bg-orange"></span> 无权限
+    </span>
+    <a lay-event="edit" shiro:hasPermission="workArrange:update"><i
+            class="layui-icon febs-edit-area febs-blue">&#xe7a4;</i></a>
+    <a lay-event="del" shiro:hasPermission="workArrange:delete"><i class="layui-icon febs-edit-area febs-red">&#xe7f9;</i></a>
+</script>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+            laydate = layui.laydate,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            dropdownMenu = layui.dropdownMenu,
+            $view = $('#work-arrange'),
+            $query = $view.find('#query'),
+            $addTo = $view.find('#addTo'),
+            $updateTo = $view.find('#updateTo'),
+            $deleteTo = $view.find('#deleteTo'),
+            $confirmTo = $view.find('#confirmTo'),
+            $cancelTo = $view.find('#cancelTo'),
+            $startTo = $view.find('#startTo'),
+            $completeTo = $view.find('#completeTo'),
+            $assessmentTo = $view.find('#assessmentTo'),
+            $reset = $view.find('#reset'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'startDateTo', type: null},
+            signedDateFrom,
+            signedDateTo,
+            tableIns;
+
+        form.render();
+        //日期同时绑定多个
+        lay('.createTime').each(function(){
+            laydate.render({
+                elem: this,
+                range: true,
+                trigger: 'click'
+            });
+        });
+        initWorkArrangeTable();
+        dropdownMenu.render({
+            elem: $view.find('.action-more'),
+            click: function (name, elem, event) {
+                let checkStatus = table.checkStatus('workArrangeTable');
+            }
+        });
+
+        table.on('tool(workArrangeTable)', function (obj) {
+            let data = obj.data,
+                layEvent = obj.event;
+        });
+
+        table.on('sort(workArrangeTable)', function (obj) {
+            sortObject = obj;
+            tableIns.reload({
+                initSort: obj,
+                where: $.extend(getQueryParams(), {
+                    field: obj.field,
+                    order: obj.type
+                })
+            });
+        });
+
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        $reset.on('click', function () {
+            $searchForm[0].reset();
+            sortObject.type = 'null';
+            signedDateFrom = null;
+            signedDateTo = null;
+            tableIns.reload({where: getQueryParams(true), page: {curr: 1}, initSort: sortObject});
+        });
+        /*添加工作安排*/
+        $addTo.on('click', function () {
+            febs.modal.open('【工作安排】 新增', 'arrange/workArrange/add', {
+                btn: ['保存', '关闭'],
+                area:["40%","78%"],
+                yes: function (index, layero) {
+                    $('#workArrange-add').find('#submit').trigger('click');
+                },
+                btn2: function () {
+                    layer.closeAll();
+                }
+            });
+        });
+        /*修改工作安排*/
+        $updateTo.on('click', function () {
+            let checkStatus = table.checkStatus('workArrangeTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要修改的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要修改的数据');
+            }else{
+                layui.each(checkStatus.data, function (key, item) {
+                    febs.modal.open('【工作安排】 修改', 'arrange/workArrange/update/' + item.id, {
+                        area:["40%","78%"],
+                        btn: ['保存', '关闭'],
+                        yes: function (index, layero) {
+                            $('#workArrange-update').find('#submit').trigger('click');
+                        },
+                        btn2: function () {
+                            layer.closeAll();
+                        }
+                    });
+                });
+            }
+        });
+        /*删除工作安排*/
+        $deleteTo.on('click', function () {
+            let checkStatus = table.checkStatus('workArrangeTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要删除的数据');
+            } else {
+                febs.modal.confirm('删除工作安排信息', '确定删除？', function () {
+                    let ids = [];
+                    layui.each(checkStatus.data, function (key, item) {
+                        ids.push(item.id)
+                    });
+                    deleteWorkArrange(ids.join(','));
+                });
+            }
+        });
+        /*确认工作安排*/
+        $confirmTo.on('click', function () {
+            let checkStatus = table.checkStatus('workArrangeTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要确认的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要确认的数据');
+            }else{
+                layui.each(checkStatus.data, function (key, item) {
+                    if (item.arrangeState== "1") {
+                         febs.post(ctx + 'workArrange/confirm/' + item.id, null, function () {
+                             febs.alert.success('确认成功');
+                             $query.click();
+                         });
+                    }else if (item.arrangeState== "2"){
+                         febs.alert.warn('该数据已确认!');
+                         return false;
+                    }else {
+                        febs.alert.warn('该数据不是登记状态不能确认!');
+                        return false;
+                    }
+                });
+            }
+        });
+        /*取消工作安排*/
+        $cancelTo.on('click', function () {
+            let checkStatus = table.checkStatus('workArrangeTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要取消的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要取消的数据');
+            }else{
+                layui.each(checkStatus.data, function (key, item) {
+                    if (item.arrangeState== "2") {
+                        febs.post(ctx + 'workArrange/cancel/' + item.id, null, function () {
+                            febs.alert.success('取消成功');
+                            $query.click();
+                        });
+                    }else if (item.arrangeState== "1"){
+                        febs.alert.warn('该数据已是登记状态,无法执行取消操作!');
+                        return false;
+                    }else {
+                        febs.alert.warn('该数据不是确认状态不能取消!');
+                        return false;
+                    }
+                });
+            }
+        });
+        /*开始工作安排*/
+        $startTo.on('click', function () {
+            let checkStatus = table.checkStatus('workArrangeTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要开始的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要开始的数据');
+            }else{
+                layui.each(checkStatus.data, function (key, item) {
+                    if (item.arrangeState== "2") {
+                        febs.post(ctx + 'workArrange/start/' + item.id, null, function () {
+                            febs.alert.success('开始成功');
+                            $query.click();
+                        });
+                    }else if (item.arrangeState== "3"){
+                        febs.alert.warn('该数据已是开始状态,无法执行开始操作!');
+                        return false;
+                    }else {
+                        febs.alert.warn('该数据不是确认状态不能开始!');
+                        return false;
+                    }
+                });
+            }
+        });
+        /*完成工作安排*/
+        $completeTo.on('click', function () {
+            let checkStatus = table.checkStatus('workArrangeTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要完成的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要完成的数据');
+            }else{
+                layui.each(checkStatus.data, function (key, item) {
+                    if (item.arrangeState== "3") {
+                        febs.post(ctx + 'workArrange/complete/' + item.id, null, function () {
+                            febs.alert.success('已完成');
+                            $query.click();
+                        });
+                    }else if (item.arrangeState== "4"){
+                        febs.alert.warn('该数据已是完成状态,无法执行完成操作!');
+                        return false;
+                    }else {
+                        febs.alert.warn('该数据不是开始状态不能完成!');
+                        return false;
+                    }
+                });
+            }
+        });
+        /*考核工作安排*/
+        $assessmentTo.on('click', function () {
+            let checkStatus = table.checkStatus('workArrangeTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要考核的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要考核的数据');
+            }else{
+                layui.each(checkStatus.data, function (key, item) {
+                    if (item.arrangeState== "4") {
+                        layui.each(checkStatus.data, function (key, item) {
+                            febs.modal.open('【工作安排】 考核', 'arrange/workArrange/assessment/' + item.id, {
+                                area:["40%","83%"],
+                                btn: ['保存', '关闭'],
+                                yes: function (index, layero) {
+                                    $('#workArrange-assessment').find('#submit').trigger('click');
+                                },
+                                btn2: function () {
+                                    layer.closeAll();
+                                }
+                            });
+                        });
+                    }else if (item.arrangeState== "5"){
+                        febs.alert.warn('该数据已考核,无法执行操作!');
+                        return false;
+                    }else {
+                        febs.alert.warn('该数据不是完成状态不能考核!');
+                        return false;
+                    }
+                });
+            }
+        });
+
+        function initWorkArrangeTable() {
+            //let settingsMonthlyValue = document.getElementById("settingsMonthly").value;
+            tableIns = febs.table.init({
+                elem: $view.find('table'),
+                id: 'workArrangeTable',
+                url: ctx + 'workArrange/list',
+                cols: [[
+                    {type: 'checkbox'},
+                    {field:'number',title:'序号',align:'center',width:70,templet:function (d) {
+                                        return d.LAY_INDEX;}},
+                    {field: 'oddNumbers', title: '单号',align:'center', minWidth: 120},
+                    {field: 'startDate', title: '起始日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.startDate, "yyyy-MM-dd") }}</div>', minWidth: 110, sort: true},
+                    {field: 'endDate', title: '结束日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.endDate, "yyyy-MM-dd") }}</div>', minWidth: 110, sort: true},
+                    {title: '工作类型', templet: '#work_type',align:'center', minWidth: 100},
+                    {field: 'reminderDate', title: '提醒日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.reminderDate, "yyyy-MM-dd") }}</div>', minWidth: 110, sort: true},
+                    {field: 'dutyStation', title: '工作地点', minWidth: 100},
+                    {field: 'jobContent', title: '工作内容', minWidth: 100},
+                    {field: 'arrangeInitiator', title: '发起人', minWidth: 100},
+                    {field: 'personLiable', title: '责任人', minWidth: 100},
+                    {field: 'arrangeSupervisor', title: '监督人', minWidth: 100},
+                    {title: '状态', templet: '#arrange-state',align:'center', minWidth: 100},
+                    {field: 'creationTime', title: '创建日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.creationTime, "yyyy-MM-dd") }}</div>', minWidth: 110, sort: true},
+                    {field: 'startTime', title: '开始时间',align:'center',templet:'<div>{{ layui.util.toDateString(d.startTime, "yyyy-MM-dd") }}</div>', minWidth: 160, sort: true},
+                    {field: 'completionTime', title: '完成时间',align:'center',templet:'<div>{{ layui.util.toDateString(d.completionTime, "yyyy-MM-dd") }}</div>', minWidth: 160, sort: true},
+                    {title: '考核状态', templet: '#appraisal-status',align:'center', minWidth: 100},
+                    {field: 'assessmentComments', title: '考核评语', minWidth: 100},
+                    {field: 'assessmentTime', title: '考核时间',align:'center',templet:'<div>{{ layui.util.toDateString(d.assessmentTime, "yyyy-MM-dd") }}</div>', minWidth: 110, sort: true},
+                    {field: 'assessmentPeople', title: '考核人', minWidth: 100}
+                ]]
+            });
+        }
+
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            let startDateTo = params.startDateTo;
+            if (startDateTo) {
+                signedDateFrom = startDateTo.split(' - ')[0];
+                signedDateTo = startDateTo.split(' - ')[1];
+            }
+            params.signedDateFrom = signedDateFrom;
+            params.signedDateTo = signedDateTo;
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+
+        function deleteWorkArrange(ids) {
+            febs.get(ctx + 'workArrange/delete/' + ids, null, function () {
+                febs.alert.success('删除成功');
+                $query.click();
+            });
+        }
+
+    })
+
+</script>

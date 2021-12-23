@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.arrange.mapper.WorkArrangeMapper">
+
+    <sql id="countWorkArrangeSql">
+       SELECT
+            COUNT( 1 )
+        FROM
+            jr_work_arrange wa
+        WHERE
+            1 = 1
+        <if test="workArrange.signedDateFrom != null and workArrange.signedDateFrom !=''">
+            And wa.start_date &gt;= #{workArrange.signedDateFrom}
+        </if>
+        <if test="workArrange.signedDateTo != null and workArrange.signedDateTo !=''">
+            And wa.start_date &lt;= #{workArrange.signedDateTo}
+        </if>
+        <if test="workArrange.oddNumbers != null and workArrange.oddNumbers != ''">
+            AND wa.odd_numbers = #{workArrange.oddNumbers}
+        </if>
+        <if test="workArrange.personLiable != null and workArrange.personLiable != ''">
+            AND wa.person_liable = #{workArrange.personLiable}
+        </if>
+        <if test="workArrange.workType != null and workArrange.workType != ''">
+            AND wa.work_type = #{workArrange.workType}
+        </if>
+        <if test="workArrange.appraisalStatus != null and workArrange.appraisalStatus != ''">
+            AND wa.appraisal_status = #{workArrange.appraisalStatus}
+        </if>
+        <if test="workArrange.arrangeState != null and workArrange.arrangeState != ''">
+            AND wa.arrange_state = #{workArrange.arrangeState}
+        </if>
+    </sql>
+    <sql id="findWorkArrangeSql">
+       SELECT
+            wa.id,
+            wa.odd_numbers,
+            wa.start_date,
+            wa.end_date,
+            wa.work_type workType,
+            wa.reminder_date,
+            wa.duty_station,
+            wa.job_content,
+            wa.arrange_initiator,
+            wa.person_liable,
+            wa.arrange_supervisor,
+            wa.arrange_state,
+            wa.creation_time,
+            wa.start_time,
+            wa.completion_time,
+            wa.appraisal_status,
+            wa.assessment_comments,
+            wa.assessment_time,
+            wa.assessment_people
+        FROM
+            jr_work_arrange wa
+        WHERE
+            1 = 1
+        <if test="workArrange.signedDateFrom != null and workArrange.signedDateFrom !=''">
+            And wa.start_date &gt;= #{workArrange.signedDateFrom}
+        </if>
+        <if test="workArrange.signedDateTo != null and workArrange.signedDateTo !=''">
+            And wa.start_date &lt;= #{workArrange.signedDateTo}
+        </if>
+        <if test="workArrange.oddNumbers != null and workArrange.oddNumbers != ''">
+            AND wa.odd_numbers = #{workArrange.oddNumbers}
+        </if>
+        <if test="workArrange.personLiable != null and workArrange.personLiable != ''">
+            AND wa.person_liable = #{workArrange.personLiable}
+        </if>
+        <if test="workArrange.workType != null and workArrange.workType != ''">
+            AND wa.work_type = #{workArrange.workType}
+        </if>
+        <if test="workArrange.appraisalStatus != null and workArrange.appraisalStatus != ''">
+            AND wa.appraisal_status = #{workArrange.appraisalStatus}
+        </if>
+        <if test="workArrange.arrangeState != null and workArrange.arrangeState != ''">
+            AND wa.arrange_state = #{workArrange.arrangeState}
+        </if>
+    </sql>
+
+    <select id="countWorkArrange" parameterType="com.erp.arrange.entity.WorkArrange" resultType="long">
+        <include refid="countWorkArrangeSql"/>
+    </select>
+
+    <select id="findWorkArrangePage" parameterType="com.erp.arrange.entity.WorkArrange" resultType="com.erp.arrange.entity.WorkArrange">
+        <include refid="findWorkArrangeSql"/>
+    </select>
+
+    <!--查询上传的最后一条数据-->
+    <select id="queryWorkArrange" resultType="com.erp.arrange.entity.WorkArrange">
+       SELECT
+            wa.id,
+            wa.odd_numbers oddNumbers,
+            wa.start_date startDate,
+            wa.end_date endDate,
+            wa.work_type workType,
+            wa.reminder_date reminderDate,
+            wa.duty_station dutyStation,
+            wa.job_content jobContent,
+            wa.arrange_initiator arrangeInitiator,
+            wa.person_liable personLiable,
+            wa.arrange_supervisor arrangeSupervisor,
+            wa.arrange_state arrangeState,
+            wa.creation_time creationTime,
+            wa.start_time startTime,
+            wa.completion_time completionTime,
+            wa.appraisal_status appraisalStatus,
+            wa.assessment_comments assessmentComments,
+            wa.assessment_time assessmentTime,
+            wa.assessment_people assessmentPeople
+        FROM
+            jr_work_arrange wa
+        GROUP BY
+            wa.creation_time
+        ORDER BY
+            wa.creation_time DESC
+            LIMIT 1;
+    </select>
+
+    <!--修改回显-->
+    <select id="findWorkArrangeById" parameterType="long" resultType="com.erp.arrange.entity.WorkArrange">
+       SELECT
+            wa.id,
+            wa.odd_numbers oddNumbers,
+            wa.start_date startDate,
+            wa.end_date endDate,
+            wa.work_type workType,
+            wa.reminder_date reminderDate,
+            wa.duty_station dutyStation,
+            wa.job_content jobContent,
+            wa.arrange_initiator arrangeInitiator,
+            wa.person_liable personLiable,
+            wa.arrange_supervisor arrangeSupervisor,
+            wa.arrange_state arrangeState,
+            wa.creation_time creationTime,
+            wa.start_time startTime,
+            wa.completion_time completionTime,
+            wa.appraisal_status appraisalStatus,
+            wa.assessment_comments assessmentComments,
+            wa.assessment_time assessmentTime,
+            wa.assessment_people assessmentPeople
+        FROM
+            jr_work_arrange wa
+        WHERE
+            wa.id = #{id}
+    </select>
+    <!--修改确认、取消状态-->
+    <update id = "updateWorkArrangeState">
+        UPDATE jr_work_arrange wa
+        SET wa.arrange_state = #{stateParam}
+        WHERE  wa.id = #{id}
+    </update>
+    <!--修改开始状态、开始时间-->
+    <update id = "updateWorkArrangeStateDate">
+        UPDATE jr_work_arrange wa
+        SET wa.arrange_state = #{stateParam} , wa.start_time = #{today}
+        WHERE  wa.id = #{id}
+    </update>
+    <!--修改完成状态、完成时间-->
+    <update id = "updateWorkArrangeStateTime">
+        UPDATE jr_work_arrange wa
+        SET wa.arrange_state = #{stateParam} , wa.completion_time = #{today}
+        WHERE  wa.id = #{id}
+    </update>
+</mapper>

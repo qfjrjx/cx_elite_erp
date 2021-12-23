@@ -1,0 +1,209 @@
+<style>
+    #workArrange-update {
+        padding: 20px 25px 25px 0;
+    }
+</style>
+<div class="layui-fluid" id="workArrange-update">
+    <form class="layui-form" action="" lay-filter="workArrange-update-form">
+         <!--责任人id-->
+        <input type="hidden" name="personLiableId" id="personLiableId"
+               autocomplete="off" class="layui-input" readonly>
+        <!--监督人id-->
+        <input type="hidden" name="arrangeSupervisorId" id="arrangeSupervisorId"
+               autocomplete="off" class="layui-input" readonly>
+        <div class="layui-form-item febs-hide">
+            <label class="layui-form-label febs-form-item-require">参数id：</label>
+            <div class="layui-input-block">
+                <input type="text" name="id" data-th-value="${workArrange.id}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require" >单&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号:</label>
+            <div class="layui-input-inline" >
+                <input type="text" name="oddNumbers" id="oddNumbers"
+                       autocomplete="off" class="layui-input" placeholder="为空时自动生成" readonly>
+            </div>
+            <label class="layui-form-label">工作类型:</label>
+            <div class="layui-input-inline">
+                <select name="workType">
+                    <option value="1">会议</option>
+                    <option value="2">日常</option>
+                    <option value="3">外出</option>
+                    <option value="4">接待</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" >
+                起始日期:
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="startDate" name="startDate" lay-verify="required" placeholder="请选择日期" readonly
+                       autocomplete="off" class="layui-input startTime">
+            </div>
+            <label class="layui-form-label" >
+                结束日期:
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="endDate" name="endDate" lay-verify="required" placeholder="请选择日期" readonly
+                       autocomplete="off" class="layui-input startTime">
+            </div>
+
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" >
+                提醒日期:
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="reminderDate" name="reminderDate" lay-verify="required" placeholder="请选择日期" readonly
+                       autocomplete="off" class="layui-input startTime">
+            </div>
+            <label class="layui-form-label " >工作地点:</label>
+            <div class="layui-input-inline">
+                <input type="text" name="dutyStation"
+                       autocomplete="off" class="layui-input" placeholder="请输入工作地点">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label " >发&nbsp;起&nbsp;&nbsp;人:</label>
+            <div class="layui-input-inline">
+                <input type="text" name="arrangeInitiator" id="arrangeInitiator" ondblclick="optPersonnelInformation()" lay-verify="required"
+                       autocomplete="off" class="layui-input" placeholder="请双击选择" readonly >
+            </div>
+            <label class="layui-form-label " >责&nbsp;任&nbsp;&nbsp;人:</label>
+            <div class="layui-input-inline" >
+                <input type="text" name="personLiable" id="personLiable" ondblclick="optPersonLiable()"
+                       autocomplete="off" class="layui-input"placeholder="请双击选择" readonly>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label " >监&nbsp;督&nbsp;&nbsp;人:</label>
+            <div class="layui-input-inline" >
+                <input type="text" name="arrangeSupervisor" id="arrangeSupervisor" ondblclick="optArrangeSupervisor()"
+                       autocomplete="off" class="layui-input" placeholder="请双击选择" readonly>
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">工作内容:</label>
+            <div class="layui-input-block" >
+                <textarea name="jobContent" maxlength="100" class="layui-textarea" placeholder=""></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text" disabled="disabled">
+            <label class="layui-form-label">考核评语:</label>
+            <div class="layui-input-block">
+                <textarea name="assessmentComments" maxlength="100" class="layui-textarea" readonly></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">考核状态:</label>
+            <div class="layui-input-inline" >
+                <select name="appraisalStatus" disabled>
+                    <option value="">全部</option>
+                    <option value="1">合格</option>
+                    <option value="2">不合格</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item febs-hide">
+            <button class="layui-btn" lay-submit="" lay-filter="workArrange-update-form-submit" id="submit"></button>
+            <button type="reset" class="layui-btn" id="reset"></button>
+        </div>
+    </form>
+</div>
+<script data-th-inline="javascript">
+    layui.use(['febs', 'form', 'validate', 'xmSelect','laydate','upload'], function () {
+        let $ = layui.$,
+            febs = layui.febs,
+            laydate = layui.laydate,
+            layer = layui.layer,
+            workArrange = [[${workArrange}]],
+            startTime = [[${startTime}]],
+            endTime = [[${endTime}]],
+            reminderTime = [[${reminderTime}]],
+            form = layui.form,
+            validate = layui.validate;
+
+        form.verify(validate);
+        form.render();
+        //日期同时绑定多个
+        lay('.startTime').each(function(){
+            laydate.render({
+                elem: this,
+                type:'date',//年月日选择器
+                value:new Date(),
+                format:'yyyy-MM-dd'
+            });
+        });
+        initWorkArrangeValue();
+        function initWorkArrangeValue() {
+            form.val("workArrange-update-form", {
+                "oddNumbers": workArrange.oddNumbers,
+                "workType": workArrange.workType,
+                "startDate": startTime,
+                "endDate": endTime,
+                "reminderDate": reminderTime,
+                "dutyStation": workArrange.dutyStation,
+                "arrangeInitiator": workArrange.arrangeInitiator,
+                "personLiable": workArrange.personLiable,
+                "arrangeSupervisor": workArrange.arrangeSupervisor,
+                "jobContent": workArrange.jobContent
+            });
+        }
+        form.on('submit(workArrange-update-form-submit)', function (data) {
+            febs.post(ctx + 'workArrange/update', data.field, function () {
+                layer.closeAll();
+                febs.alert.success('修改成功');
+                $('#work-arrange').find('#query').click();
+            });
+            return false;
+
+        });
+
+    });
+     /*发起人 人员选择列表*/
+    function optPersonnelInformation(){
+        layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
+            let $ = layui.$,
+                febs = layui.febs;
+
+            febs.modal.open('【人员选择】选择列表', 'arrange/arrangeInitiator/list', {
+                area:["65%","90%"],
+                yes: function (index, layero) {
+
+                }
+
+            });
+        });
+    }
+    /*责任人 人员选择列表*/
+    function optPersonLiable(){
+        layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
+            let $ = layui.$,
+                febs = layui.febs;
+
+            febs.modal.open('【人员选择】选择列表', 'arrange/personLiable/list', {
+                area:["65%","90%"],
+                yes: function (index, layero) {
+
+                }
+
+            });
+        });
+    }
+    /*监督人 人员选择列表*/
+    function optArrangeSupervisor(){
+        layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
+            let $ = layui.$,
+                febs = layui.febs;
+
+            febs.modal.open('【人员选择】选择列表', 'arrange/arrangeSupervisor/list', {
+                area:["65%","90%"],
+                yes: function (index, layero) {
+
+                }
+
+            });
+        });
+    }
+</script>

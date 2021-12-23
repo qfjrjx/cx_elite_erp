@@ -1,0 +1,164 @@
+<style>
+    #workArrange-assessment {
+        padding: 20px 25px 25px 0;
+    }
+</style>
+<div class="layui-fluid" id="workArrange-assessment">
+    <form class="layui-form" action="" lay-filter="workArrange-assessment-form">
+         <!--责任人id-->
+        <input type="hidden" name="personLiableId" id="personLiableId"
+               autocomplete="off" class="layui-input" readonly>
+        <!--监督人id-->
+        <input type="hidden" name="arrangeSupervisorId" id="arrangeSupervisorId"
+               autocomplete="off" class="layui-input" readonly>
+        <div class="layui-form-item febs-hide">
+            <label class="layui-form-label febs-form-item-require">参数id：</label>
+            <div class="layui-input-block">
+                <input type="text" name="id" data-th-value="${workArrange.id}">
+            </div>
+        </div>
+        <div class="layui-form-item febs-hide">
+            <label class="layui-form-label febs-form-item-require">考核人：</label>
+            <div class="layui-input-block">
+                <input type="text" name="assessmentPeople" id="assessmentPeople">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require" >单&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号:</label>
+            <div class="layui-input-inline" >
+                <input type="text" name="oddNumbers" id="oddNumbers"
+                       autocomplete="off" class="layui-input" placeholder="为空时自动生成" readonly>
+            </div>
+            <label class="layui-form-label">工作类型:</label>
+            <div class="layui-input-inline">
+                <select name="workType" disabled>
+                    <option value="1">会议</option>
+                    <option value="2">日常</option>
+                    <option value="3">外出</option>
+                    <option value="4">接待</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" >
+                起始日期:
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="startDate" name="startDate" lay-verify="required" placeholder="请选择日期" readonly
+                       autocomplete="off" class="layui-input">
+            </div>
+            <label class="layui-form-label" >
+                结束日期:
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="endDate" name="endDate" lay-verify="required" placeholder="请选择日期" readonly
+                       autocomplete="off" class="layui-input">
+            </div>
+
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" >
+                提醒日期:
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="reminderDate" name="reminderDate" lay-verify="required" placeholder="请选择日期" readonly
+                       autocomplete="off" class="layui-input">
+            </div>
+            <label class="layui-form-label " >工作地点:</label>
+            <div class="layui-input-inline">
+                <input type="text" name="dutyStation"
+                       autocomplete="off" class="layui-input" placeholder="请输入工作地点" readonly>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label " >发&nbsp;起&nbsp;&nbsp;人:</label>
+            <div class="layui-input-inline">
+                <input type="text" name="arrangeInitiator" id="arrangeInitiator" lay-verify="required"
+                       autocomplete="off" class="layui-input" placeholder="请双击选择" readonly >
+            </div>
+            <label class="layui-form-label " >责&nbsp;任&nbsp;&nbsp;人:</label>
+            <div class="layui-input-inline" >
+                <input type="text" name="personLiable" id="personLiable"
+                       autocomplete="off" class="layui-input"placeholder="请双击选择" readonly>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label " >监&nbsp;督&nbsp;&nbsp;人:</label>
+            <div class="layui-input-inline" >
+                <input type="text" name="arrangeSupervisor" id="arrangeSupervisor"
+                       autocomplete="off" class="layui-input" placeholder="请双击选择" readonly>
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">工作内容:</label>
+            <div class="layui-input-block" >
+                <textarea name="jobContent" maxlength="100" class="layui-textarea" placeholder="" readonly></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text" disabled="disabled">
+            <label class="layui-form-label">考核评语:</label>
+            <div class="layui-input-block">
+                <textarea name="assessmentComments" maxlength="100" class="layui-textarea"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">考核状态:</label>
+            <div class="layui-input-inline" >
+                <select name="appraisalStatus">
+                    <option value="1">合格</option>
+                    <option value="2">不合格</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item febs-hide">
+            <button class="layui-btn" lay-submit="" lay-filter="workArrange-assessment-form-submit" id="submit"></button>
+            <button type="reset" class="layui-btn" id="reset"></button>
+        </div>
+    </form>
+</div>
+<script data-th-inline="javascript">
+    layui.use(['febs', 'form', 'validate', 'xmSelect','laydate','upload'], function () {
+        let $ = layui.$,
+            febs = layui.febs,
+            laydate = layui.laydate,
+            layer = layui.layer,
+            user = currentUser,
+            workArrange = [[${workArrange}]],
+            startTime = [[${startTime}]],
+            endTime = [[${endTime}]],
+            reminderTime = [[${reminderTime}]],
+            form = layui.form,
+            validate = layui.validate;
+
+        form.verify(validate);
+        form.render();
+
+        initWorkArrangeValue();
+        function initWorkArrangeValue() {
+            form.val("workArrange-assessment-form", {
+                "oddNumbers": workArrange.oddNumbers,
+                "workType": workArrange.workType,
+                "startDate": startTime,
+                "endDate": endTime,
+                "reminderDate": reminderTime,
+                "dutyStation": workArrange.dutyStation,
+                "arrangeInitiator": workArrange.arrangeInitiator,
+                "personLiable": workArrange.personLiable,
+                "arrangeSupervisor": workArrange.arrangeSupervisor,
+                "jobContent": workArrange.jobContent,
+                "assessmentPeople": user.username
+            });
+        }
+
+        form.on('submit(workArrange-assessment-form-submit)', function (data) {
+            febs.post(ctx + 'workArrange/assessment', data.field, function () {
+                layer.closeAll();
+                febs.alert.success('考核成功');
+                $('#work-arrange').find('#query').click();
+            });
+            return false;
+
+        });
+
+    });
+</script>
