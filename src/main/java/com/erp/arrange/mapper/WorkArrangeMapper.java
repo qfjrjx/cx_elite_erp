@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.erp.arrange.entity.WorkArrange;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.erp.arrange.entity.WorkArrangementStatistics;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -31,4 +32,8 @@ public interface WorkArrangeMapper extends BaseMapper<WorkArrange> {
     void updateWorkArrangeStateDate(@Param("id") Long id,@Param("stateParam") String stateParam,@Param("today") Date today);
 
     void updateWorkArrangeStateTime(@Param("id") Long id,@Param("stateParam") String stateParam,@Param("today") Date today);
+
+    long countWorkArrangementStatistics(@Param("workArrangementStatistics") WorkArrangementStatistics workArrangementStatistics);
+
+    IPage<WorkArrangementStatistics> findWorkArrangementStatisticsPage(Page<WorkArrangementStatistics> page,@Param("workArrangementStatistics") WorkArrangementStatistics workArrangementStatistics);
 }

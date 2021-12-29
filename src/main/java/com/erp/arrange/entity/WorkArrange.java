@@ -1,5 +1,6 @@
 package com.erp.arrange.entity;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import lombok.Data;
@@ -137,7 +138,7 @@ public class WorkArrange {
     private Date completionTime;
 
     /**
-     * 考核状态
+     * 考核状态   1-合格 ， 2-不合格
      */
     @TableField("appraisal_status")
     private String appraisalStatus;
@@ -159,5 +160,11 @@ public class WorkArrange {
      */
     @TableField("assessment_people")
     private String assessmentPeople;
+
+    /**
+     * 处罚金额
+     */
+    @TableField("penalty_amount")
+    private BigDecimal penaltyAmount;
 
 }

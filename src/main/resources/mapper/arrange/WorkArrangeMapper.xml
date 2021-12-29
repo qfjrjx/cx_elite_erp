@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.erp.arrange.mapper.WorkArrangeMapper">
-
+    <!--统计所有工作安排数量SQL-->
     <sql id="countWorkArrangeSql">
        SELECT
             COUNT( 1 )
@@ -31,6 +31,7 @@
             AND wa.arrange_state = #{workArrange.arrangeState}
         </if>
     </sql>
+    <!--查询所有工作安排并进行分页SQL-->
     <sql id="findWorkArrangeSql">
        SELECT
             wa.id,
@@ -78,11 +79,11 @@
             AND wa.arrange_state = #{workArrange.arrangeState}
         </if>
     </sql>
-
+    <!--统计所有工作安排数量-->
     <select id="countWorkArrange" parameterType="com.erp.arrange.entity.WorkArrange" resultType="long">
         <include refid="countWorkArrangeSql"/>
     </select>
-
+    <!--查询所有工作安排并进行分页-->
     <select id="findWorkArrangePage" parameterType="com.erp.arrange.entity.WorkArrange" resultType="com.erp.arrange.entity.WorkArrange">
         <include refid="findWorkArrangeSql"/>
     </select>
@@ -163,4 +164,83 @@
         SET wa.arrange_state = #{stateParam} , wa.completion_time = #{today}
         WHERE  wa.id = #{id}
     </update>
+
+
+    <!--所有工作安排统计数量SQL-->
+    <sql id="countWorkArrangementStatisticsSql">
+        SELECT
+            COUNT( 1 )
+        FROM
+            (
+            SELECT
+                DATE_FORMAT( start_date, '%Y-%m' ) AS monthly,
+                wa.person_liable personLiable,
+                count(
+                IF
+                ( wa.appraisal_status = 1, TRUE, NULL )) AS qualified,
+                count(
+                IF
+                ( wa.appraisal_status = 2, TRUE, NULL )) AS unqualified,
+                SUM( wa.penalty_amount ) AS penaltyAmount,
+                COUNT(*) AS totalQuantity
+            FROM
+                jr_work_arrange wa
+            WHERE
+                wa.arrange_state = "5"
+            <if test="workArrangementStatistics.signedDateFrom != null and workArrangementStatistics.signedDateFrom !=''">
+                And wa.start_date &gt;= #{workArrangementStatistics.signedDateFrom}
+            </if>
+            <if test="workArrangementStatistics.signedDateTo != null and workArrangementStatistics.signedDateTo !=''">
+                And wa.start_date &lt;= #{workArrangementStatistics.signedDateTo}
+            </if>
+            <if test="workArrangementStatistics.personLiable != null and workArrangementStatistics.personLiable != ''">
+                AND wa.person_liable = #{workArrangementStatistics.personLiable}
+            </if>
+            GROUP BY
+                person_liable,
+                monthly
+            ORDER BY
+              monthly
+            ) total
+    </sql>
+    <!--查询所有工作安排统计并进行分页SQL-->
+    <sql id="findWorkArrangementStatisticsSql">
+        SELECT
+            DATE_FORMAT( start_date, '%Y-%m' ) AS monthly,
+            wa.person_liable personLiable,
+            count(
+            IF
+            ( wa.appraisal_status = 1, TRUE, NULL )) AS qualified,
+            count(
+            IF
+            ( wa.appraisal_status = 2, TRUE, NULL )) AS unqualified,
+            SUM( wa.penalty_amount ) AS penaltyAmount,
+            COUNT(*) AS totalQuantity
+        FROM
+            jr_work_arrange wa
+        WHERE
+            wa.arrange_state = "5"
+        <if test="workArrangementStatistics.signedDateFrom != null and workArrangementStatistics.signedDateFrom !=''">
+            And wa.start_date &gt;= #{workArrangementStatistics.signedDateFrom}
+        </if>
+        <if test="workArrangementStatistics.signedDateTo != null and workArrangementStatistics.signedDateTo !=''">
+            And wa.start_date &lt;= #{workArrangementStatistics.signedDateTo}
+        </if>
+        <if test="workArrangementStatistics.personLiable != null and workArrangementStatistics.personLiable != ''">
+            AND wa.person_liable = #{workArrangementStatistics.personLiable}
+        </if>
+        GROUP BY
+            person_liable,
+            monthly
+        ORDER BY
+            monthly,wa.person_liable DESC
+    </sql>
+    <!--统计所有工作安排数量-->
+    <select id="countWorkArrangementStatistics" parameterType="com.erp.arrange.entity.WorkArrangementStatistics" resultType="long">
+        <include refid="countWorkArrangementStatisticsSql"/>
+    </select>
+    <!--查询所有工作安排并进行分页-->
+    <select id="findWorkArrangementStatisticsPage" parameterType="com.erp.arrange.entity.WorkArrangementStatistics" resultType="com.erp.arrange.entity.WorkArrangementStatistics">
+        <include refid="findWorkArrangementStatisticsSql"/>
+    </select>
 </mapper>

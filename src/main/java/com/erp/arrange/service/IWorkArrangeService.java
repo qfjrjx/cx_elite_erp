@@ -4,6 +4,7 @@ import com.erp.arrange.entity.WorkArrange;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.erp.arrange.entity.WorkArrangementStatistics;
 import com.erp.common.entity.QueryRequest;
 
 import java.text.ParseException;
@@ -61,4 +62,6 @@ public interface IWorkArrangeService extends IService<WorkArrange> {
     void updateWorkArrangeStateDate(Long id, String stateParam) throws ParseException;
 
     void workArrangeAssessment(WorkArrange workArrange) throws ParseException;
+   /*工作安排统计*/
+    IPage<WorkArrangementStatistics> findWorkArrangementStatistics(QueryRequest request, WorkArrangementStatistics workArrangementStatistics);
 }

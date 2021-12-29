@@ -1,0 +1,223 @@
+<style>
+    #workArrange-statistics xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #workArrange-statistics xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="workArrange-statistics" lay-title="工作安排统计">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="parameter-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md12">
+                                <div class="layui-form-item layui-row layui-col-space10">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label">日期</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="start_date" name="signedDateFrom" placeholder="" lay-verify='date' class="layui-input"/>
+                                            <i class="layui-icon" id="start_date_icon"></i>
+                                        </div>
+                                        <label class="layui-form-label">至：</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="end_date" name="signedDateTo" placeholder="" lay-verify='date' class="layui-input"/>
+                                            <i class="layui-icon " id="end_date_icon"></i>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label">员工姓名</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="personLiable" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="workArrangeStatisticsTable" lay-data="{id: 'workArrangeStatisticsTable'}"></table>
+
+                    <div class="layui-col-md10">
+                        <div class="layui-form-item"></div>
+                    </div>
+                    <div class="layui-col-md2 layui-col-sm12 layui-col-xs12 table-action-area">
+                        <!--查询按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                            <i class="layui-icon">&#xe848;</i>查询
+                        </div>
+                        <!--导出按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action action-more"
+                             shiro:hasAnyPermissions="workArrangementStatistics:export" id="exportTo">
+                            <i class="layui-icon">&#xe7a8;</i>导出
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="parameter-option">
+    <span shiro:lacksPermission="workArrangementStatistics:view">
+        <span class="layui-badge-dot febs-bg-orange"></span> 无权限
+    </span>
+</script>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+            laydate = layui.laydate,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            dropdownMenu = layui.dropdownMenu,
+            $view = $('#workArrange-statistics'),
+            $query = $view.find('#query'),
+            $exportTo = $view.find('#exportTo'),
+            $reset = $view.find('#reset'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'startDateTo', type: null},
+            signedDateFrom,
+            signedDateTo,
+            tableIns;
+
+        form.render();
+
+        var firstDate = new Date();
+        firstDate.setDate(1); //本月第一天
+        var datetime =firstDate.getFullYear() + '-' + (firstDate.getMonth() + 1) + '-' + firstDate.getDate();
+      /*  var endDate = new Date(firstDate);
+        endDate.setMonth(firstDate.getMonth()+1);
+        endDate.setDate(0);*///本月最后一天
+        //开始日期
+        var start = laydate.render({
+            elem: '#start_date',
+            max: 0 ,//设置一个默认最大值//最大值为当前日期
+            trigger: 'click',
+            value: new Date(firstDate),//初始赋值,//默认值本月第一天
+            done:function(value,date){
+                if(value && (value>$("#end_date").val())){
+                    /*开始时间大于结束时间时，清空结束时间*/
+                    $("#end_date").val("");
+                }
+                end.config.min ={
+                    year:date.year,
+                    month:date.month-1,
+                    date: date.date,
+                };
+            }
+        });
+        //结束日期
+        var end = laydate.render({
+            elem: '#end_date',
+            min : datetime,//最大值为当前日期
+            trigger: 'click',
+            value: new Date(),//初始赋值,//默认当前时间
+            done:function(value,date){
+                start.config.max={
+                    year:date.year,
+                    month:date.month-1,
+                    date: date.date,
+                }
+            }
+        });
+
+        initWorkArrangeStatisticsTable();
+        dropdownMenu.render({
+            elem: $view.find('.action-more'),
+            click: function (name, elem, event) {
+                let checkStatus = table.checkStatus('workArrangeStatisticsTable');
+            }
+        });
+
+        table.on('tool(workArrangeStatisticsTable)', function (obj) {
+            let data = obj.data,
+                layEvent = obj.event;
+        });
+
+        table.on('sort(workArrangeStatisticsTable)', function (obj) {
+            sortObject = obj;
+            tableIns.reload({
+                initSort: obj,
+                where: $.extend(getQueryParams(), {
+                    field: obj.field,
+                    order: obj.type
+                })
+            });
+        });
+
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        $reset.on('click', function () {
+            $searchForm[0].reset();
+            sortObject.type = 'null';
+            signedDateFrom = null;
+            signedDateTo = null;
+            tableIns.reload({where: getQueryParams(true), page: {curr: 1}, initSort: sortObject});
+        });
+        var myDate = new Date();
+        var myYear = myDate.getFullYear(); //获取完整的年份(4位,1970-????)
+        var myMonth = myDate.getMonth() + 1; //获取当前月份(0-11,0代表1月)
+        var myToday = myDate.getDate(); //获取当前日(1-31)
+        var myHour = myDate.getHours(); //获取当前小时数(0-23)
+        var myMinute = myDate.getMinutes(); //获取当前分钟数(0-59)
+        var mySecond = myDate.getSeconds(); //获取当前秒数(0-59)
+        var result = "";
+        result += myYear;
+        result += myMonth;
+        result += myToday;
+        result += myHour;
+        result += myMinute;
+        result += mySecond;
+        $exportTo.on('click', function () {
+            let params = getQueryParams();
+            params.pageSize = $view.find(".layui-laypage-limits option:selected").val();
+            params.pageNum = $view.find(".layui-laypage-em").next().html();
+            febs.download(ctx + 'workArrangementStatistics/excel', params, "工作安排统计"+result+'.xlsx');
+        });
+        function initWorkArrangeStatisticsTable() {
+            //let settingsMonthlyValue = document.getElementById("settingsMonthly").value;
+            tableIns = febs.table.init({
+                elem: $view.find('table'),
+                id: 'workArrangeStatisticsTable',
+                url: ctx + 'workArrangementStatistics/list',
+                where:{
+                    signedDateFrom:$('#start_date').val(),
+                    signedDateTo:$('#end_date').val()
+                },
+                cols: [[
+                    {type: 'checkbox'},
+                    {field:'number',title:'序号',align:'center',width:70,templet:function (d) {
+                                        return d.LAY_INDEX;}},
+                    {field: 'monthly', title: '月度',align:'center', minWidth: 120},
+                    {field: 'personLiable', title: '员工姓名', minWidth: 100},
+                    {field: 'qualified', title: '合格（个数）', minWidth: 100},
+                    {field: 'unqualified', title: '不合格（个数）', minWidth: 100},
+                    {field: 'penaltyAmount', title: '处罚金额', minWidth: 100},
+                    {field: 'totalQuantity', title: '本月任务（总数量）', minWidth: 100}
+                ]]
+            });
+        }
+       /* $("#query").keydown(function(event){
+            if(event.keyCode == 13){
+                alert('你按下了Enter');
+            }
+        });*/
+        $(document).on('keydown', function (e) {
+            if (e.keyCode === 13) {
+                let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+                tableIns.reload({where: params, page: {curr: 1}});
+            }
+        });
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+    })
+</script>

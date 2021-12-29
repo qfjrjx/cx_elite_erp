@@ -1,6 +1,7 @@
 package com.erp.arrange.service.impl;
 
 import com.erp.arrange.entity.WorkArrange;
+import com.erp.arrange.entity.WorkArrangementStatistics;
 import com.erp.arrange.mapper.WorkArrangeMapper;
 import com.erp.arrange.service.IWorkArrangeService;
 import com.erp.common.entity.QueryRequest;
@@ -16,6 +17,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -145,6 +147,20 @@ public class WorkArrangeServiceImpl extends ServiceImpl<WorkArrangeMapper, WorkA
          Date today = simpleDateFormatOne.parse(dates);//格式化系统当前时间
          workArrange.setAssessmentTime(today);//把获取系统当前时间赋值给实体对象
          workArrange.setArrangeState(WorkArrange.STATE_ASSESSMENT);
+         if (workArrange.getAppraisalStatus().equals("2")){
+             BigDecimal bigDecimal = new BigDecimal("50");
+             workArrange.setPenaltyAmount(bigDecimal);
+         }
         this.saveOrUpdate(workArrange);
+    }
+
+    @Override
+    public IPage<WorkArrangementStatistics> findWorkArrangementStatistics(QueryRequest request, WorkArrangementStatistics workArrangementStatistics) {
+        Page<WorkArrangementStatistics> page = new Page<>(request.getPageNum(), request.getPageSize());
+        page.setSearchCount(false);
+        /*统计所有数据数量*/
+        page.setTotal(baseMapper.countWorkArrangementStatistics(workArrangementStatistics));
+        /*查出所有数据进行分页*/
+        return baseMapper.findWorkArrangementStatisticsPage(page,workArrangementStatistics);
     }
 }

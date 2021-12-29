@@ -1,6 +1,7 @@
 package com.erp.arrange.controller;
 
 import com.erp.arrange.entity.WorkArrange;
+import com.erp.arrange.entity.WorkArrangementStatistics;
 import com.erp.arrange.service.IWorkArrangeService;
 import com.erp.common.annotation.ControllerEndpoint;
 import com.erp.common.controller.BaseController;
@@ -9,6 +10,7 @@ import com.erp.common.entity.FebsResponse;
 import com.erp.common.entity.QueryRequest;
 import com.erp.common.entity.Strings;
 import com.erp.common.utils.FebsUtil;
+import com.erp.personnel.entity.PersonnelArchives;
 import com.wuwenze.poi.ExcelKit;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
@@ -141,5 +143,21 @@ public class WorkArrangeController extends BaseController {
     public FebsResponse workArrangeAssessment(WorkArrange workArrange) throws ParseException {
         this.workArrangeService.workArrangeAssessment(workArrange);
         return new FebsResponse().success();
+    }
+
+    @ControllerEndpoint(operation = "导出WorkArrange", exceptionMessage = "导出Excel失败")
+    @GetMapping("workArrangementStatistics/excel")
+    @RequiresPermissions("workArrangementStatistics:export")
+    public void export(QueryRequest queryRequest, WorkArrangementStatistics workArrangementStatistics, HttpServletResponse response) {
+        ExcelKit.$Export(WorkArrangementStatistics.class, response)
+                .downXlsx(workArrangeService.findWorkArrangementStatistics(queryRequest,workArrangementStatistics).getRecords(),false);
+    }
+    /*工作安排统计*/
+    @GetMapping("workArrangementStatistics/list")
+    @ResponseBody
+    @RequiresPermissions("workArrangementStatistics:view")
+    public FebsResponse workArrangementStatisticsList(QueryRequest request, WorkArrangementStatistics workArrangementStatistics) {
+        Map<String, Object> dataTable = getDataTable(this.workArrangeService.findWorkArrangementStatistics(request, workArrangementStatistics));
+        return new FebsResponse().success().data(dataTable);
     }
 }

@@ -96,5 +96,12 @@ public class ViewController {
             model.addAttribute("reminderTime", DateUtil.getDateFormat(workArrange.getReminderDate(), DateUtil.FULL_TIME_SPLIT));
         }
     }
+
+    /*工作安排统计列表查询*/
+    @GetMapping("workArrangementStatistics/list")
+    @RequiresPermissions("workArrangementStatistics:view")
+    public String workArrangementStatisticsIndex(){
+        return FebsUtil.view("arrange/workArrangeStatisticsList");
+    }
     //工作安排模块结束
 }
