@@ -1,0 +1,188 @@
+<style>
+    #expenseReporting-add {
+        padding: 20px 25px 25px 0;
+    }
+</style>
+<div class="layui-fluid" id="expenseReporting-add">
+    <form class="layui-form" action="" lay-filter="expenseReporting-add-form">
+        <div class="layui-form-item febs-hide">
+            <label class="layui-form-label febs-form-item-require">赋值参数：</label>
+            <div class="layui-input-block">
+                <input type="text" name="expenseReportingPreparer" id="expenseReportingPreparer">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require" >单&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号</label>
+            <div class="layui-input-inline" style="width: 150px">
+                <input type="text" name="oddNumbers" id="oddNumbers" style="width: 150px"
+                       autocomplete="off" class="layui-input" placeholder="自动生成" readonly>
+            </div>
+            <label class="layui-form-label febs-form-item-require">日&nbsp;期</label>
+            <div class="layui-input-inline" style="width: 150px">
+                <input type="text" name="expenseReportingDate" id="expenseReportingDate"
+                       autocomplete="off" class="layui-input createDate" readonly>
+            </div>
+            <label class="layui-form-label" >用款部门:</label>
+            <div class="layui-input-inline" id="expense-add-dept" style="width: 155px"></div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label " >经办人</label>
+            <div class="layui-input-inline" style="width: 150px">
+                <input type="text" name="expenseReportingHandler" id="expenseReportingHandler" style="width: 150px"
+                       autocomplete="off" class="layui-input" placeholder="打印后签字" readonly>
+            </div>
+            <label class="layui-form-label ">支付方式</label>
+            <div class="layui-input-inline" style="width: 150px">
+                <select name="paymentMethod">
+                    <option value="1">先付</option>
+                    <option value="2">后付</option>
+                    <option value="3">分批付</option>
+                </select>
+            </div>
+            <label class="layui-form-label ">费用类型</label>
+            <div class="layui-input-inline" style="width: 155px">
+                <select id="expenseType"  name="expenseType" lay-verify="required" class="layui-form-select" >
+                    <option value="" >全部</option>
+                    <option th:each="expenseReportingCategory:${expenseReportingCategory}" th:value="${expenseReportingCategory.id}">[[${expenseReportingCategory.financeParameterName}]]</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require" >单位名称:</label>
+            <div class="layui-input-inline" style="width: 150px">
+                <input type="text" name="unitName" id="unitName" lay-verify="required"
+                       autocomplete="off" class="layui-input" placeholder="" >
+            </div>
+            <label class="layui-form-label febs-form-item-require" >开户银行:</label>
+            <div class="layui-input-inline" style="width: 150px">
+                <input type="text" name="bankOfDeposit" id="bankOfDeposit" lay-verify="required"
+                       autocomplete="off" class="layui-input" placeholder="" >
+            </div>
+            <label class="layui-form-label febs-form-item-require" >账号:</label>
+            <div class="layui-input-inline" style="width: 155px">
+                <input type="text" name="accountNumber" id="accountNumber" lay-verify="required"
+                       autocomplete="off" class="layui-input" placeholder="" >
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require" >用款金额:</label>
+            <div class="layui-input-inline" style="width: 150px">
+                <input type="text" name="amountUsed" id="amountUsed" lay-verify="required"
+                       autocomplete="off" class="layui-input" placeholder="" >
+            </div>
+            <label class="layui-form-label febs-form-item-require" >是否开票:</label>
+            <div class="layui-input-inline" style="width: 150px">
+                <select name="invoiceOrNot">
+                    <option value="1">未开</option>
+                    <option value="2">已开</option>
+                </select>
+            </div>
+            <label class="layui-form-label febs-form-item-require" >用途:</label>
+            <div class="layui-input-inline" style="width: 155px">
+                <input type="text" name="expenseReportingPurpose" id="expenseReportingPurpose" lay-verify="required"
+                       autocomplete="off" class="layui-input" placeholder="" >
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require" >项目名称:</label>
+            <div class="layui-input-block" >
+                <input type="text" name="entryName" id="entryName" lay-verify="required"
+                       autocomplete="off" class="layui-input" placeholder="" >
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require" >项目总价:</label>
+            <div class="layui-input-block" >
+                <input type="text" name="totalProjectPrice" id="totalProjectPrice" lay-verify="required"
+                       autocomplete="off" class="layui-input" placeholder="" >
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require" >付款明细:</label>
+            <div class="layui-input-block" >
+                <input type="text" name="paymentDetails" id="paymentDetails" lay-verify="required"
+                       autocomplete="off" class="layui-input" placeholder="" >
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require" >未付款多少:</label>
+            <div class="layui-input-block" >
+                <input type="text" name="unpaidNumber" id="unpaidNumber" lay-verify="required"
+                       autocomplete="off" class="layui-input" placeholder="" >
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require" >汇款备注:</label>
+            <div class="layui-input-block" >
+                <input type="text" name="remittanceRemarks" id="remittanceRemarks" lay-verify="required"
+                       autocomplete="off" class="layui-input" placeholder="" >
+            </div>
+        </div>
+        <div class="layui-form-item febs-hide">
+            <button class="layui-btn" lay-submit="" lay-filter="expenseReporting-add-form-submit" id="submit"></button>
+            <button type="reset" class="layui-btn" id="reset"></button>
+        </div>
+    </form>
+</div>
+<script>
+    layui.use(['febs', 'form', 'validate', 'xmSelect','laydate'], function () {
+        let $ = layui.$,
+            febs = layui.febs,
+            layer = layui.layer,
+            form = layui.form,
+            laydate = layui.laydate,
+            validate = layui.validate,
+            deptXmlSelect;
+
+        form.verify(validate);
+        form.render();
+
+        //日期同时绑定多个
+        lay('.createDate').each(function(){
+            laydate.render({
+                elem: this
+                ,trigger: 'click'
+            });
+        });
+        deptXmlSelect = xmSelect.render({
+            el: '#expense-add-dept',
+            model: {label: {type: 'text'}},
+            tree: {
+                show: true,
+                strict: false,
+                showLine: false,
+                clickCheck: true,
+                expandedKeys: [-1],
+            },
+            name: 'userDepartment',
+            theme: {
+                color: '#52c41a',
+            },
+            prop: {
+                value: 'id'
+            },
+            height: 'auto',
+            on: function(data){
+                if(data.isAdd){
+                    return data.change.slice(0, 1)
+                }
+            }
+        });
+        febs.get(ctx + 'dept/select/tree', null, function (data) {
+            deptXmlSelect.update(
+                data
+            )
+        });
+        let userName = currentUser.username;
+        $('#expenseReportingPreparer').val(userName);
+        form.on('submit(expenseReporting-add-form-submit)', function (data) {
+            febs.post(ctx + 'expenseReporting/add', data.field, function () {
+                layer.closeAll();
+                febs.alert.success('新增费用报支成功');
+                $('#expenseReporting-list').find('#query').click();
+            });
+            return false;
+
+        });
+    });
+</script>

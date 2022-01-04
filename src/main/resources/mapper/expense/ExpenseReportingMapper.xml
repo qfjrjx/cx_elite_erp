@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.expense.mapper.ExpenseReportingMapper">
+
+    <sql id="countExpenseReportingSql">
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_expense_reporting er
+        WHERE
+            1 = 1
+    </sql>
+    <sql id="findExpenseReportingSql">
+        SELECT
+            er.id,
+            er.odd_numbers oddNumbers,
+            er.expense_reporting_date expenseReportingDate,
+            d.dept_name deptName,
+            er.expense_reporting_handler expenseReportingHandler,
+            er.payment_method paymentMethod,
+            fp.finance_parameter_name expenseTypeName,
+            er.unit_name unitName,
+            er.bank_of_deposit bankOfDeposit,
+            er.account_number accountNumber,
+            er.amount_used amountUsed,
+            er.invoice_or_not invoiceOrNot,
+            er.expense_reporting_purpose expenseReportingPurpose,
+            er.entry_name entryName,
+            er.total_project_price totalProjectPrice,
+            er.payment_details paymentDetails,
+            er.unpaid_number unpaidNumber,
+            er.remittance_remarks remittanceRemarks,
+            er.expense_reporting_preparer expenseReportingPreparer,
+            er.expense_reporting_state expenseReportingState
+        FROM
+            jr_expense_reporting er
+            LEFT JOIN t_dept d ON ( er.user_department = d.dept_id )
+            LEFT JOIN jr_finance_parameters fp ON ( er.expense_type = fp.id )
+        WHERE
+            1 = 1
+    </sql>
+
+    <select id="countExpenseReporting" parameterType="com.erp.expense.entity.ExpenseReporting" resultType="long">
+        <include refid="countExpenseReportingSql"/>
+    </select>
+
+    <select id="findExpenseReportingPage" parameterType="com.erp.expense.entity.ExpenseReporting" resultType="com.erp.expense.entity.ExpenseReporting">
+        <include refid="findExpenseReportingSql"/>
+    </select>
+
+
+    <!--查询上传的最后一条数据-->
+    <select id="queryExpenseReporting" resultType="com.erp.expense.entity.ExpenseReporting">
+        SELECT
+            er.id,
+            er.odd_numbers oddNumbers,
+            er.expense_reporting_date expenseReportingDate,
+            er.user_department deptName,
+            er.expense_reporting_handler expenseReportingHandler,
+            er.payment_method paymentMethod,
+            er.expense_type expenseTypeName,
+            er.unit_name unitName,
+            er.bank_of_deposit bankOfDeposit,
+            er.account_number accountNumber,
+            er.amount_used amountUsed,
+            er.invoice_or_not invoiceOrNot,
+            er.expense_reporting_purpose expenseReportingPurpose,
+            er.entry_name entryName,
+            er.total_project_price totalProjectPrice,
+            er.payment_details paymentDetails,
+            er.unpaid_number unpaidNumber,
+            er.remittance_remarks remittanceRemarks,
+            er.expense_reporting_preparer expenseReportingPreparer,
+            er.expense_reporting_state expenseReportingState,
+            er.creation_time
+        FROM
+            jr_expense_reporting er
+        GROUP BY
+            er.creation_time
+        ORDER BY
+            er.creation_time DESC
+            LIMIT 1;
+    </select>
+</mapper>
