@@ -19,8 +19,8 @@
                                 <div class="layui-form-item">
                                     <div class="layui-inline">
                                         <label class="layui-form-label layui-form-label-sm">状态</label>
-                                        <div class="layui-input-inline" style="width: 90px">
-                                            <select name="financeState">
+                                        <div class="layui-input-inline" style="width: 85px">
+                                            <select name="expenseReportingState">
                                                 <option value="">全部</option>
                                                 <option value="1">登记</option>
                                                 <option value="2">确认</option>
@@ -40,8 +40,8 @@
                                     </div>
                                     <div class="layui-inline" >
                                         <label class="layui-form-label layui-form-label-sm">单号</label>
-                                        <div class="layui-input-inline" style="width: 110px">
-                                            <input type="text" name="financeParameterName" autocomplete="off" class="layui-input">
+                                        <div class="layui-input-inline" style="width: 120px">
+                                            <input type="text" name="oddNumbers" autocomplete="off" class="layui-input">
                                         </div>
                                     </div>
                                     <div class="layui-inline" >
@@ -53,7 +53,7 @@
                                     <div class="layui-inline" >
                                         <label class="layui-form-label layui-form-label-sm">费用类别</label>
                                         <div class="layui-input-inline" style="width: 100px">
-                                            <select id="currencyName"  name="currencyName" lay-verify="required" class="layui-form-select" >
+                                            <select id="expenseType"  name="expenseType" lay-verify="required" class="layui-form-select" >
                                                 <option value="" >全部</option>
                                                 <option th:each="expenseReportingCategory:${expenseReportingCategory}" th:value="${expenseReportingCategory.id}">[[${expenseReportingCategory.financeParameterName}]]</option>
                                             </select>
@@ -61,10 +61,10 @@
                                     </div>
                                     <div class="layui-inline" >
                                         <label class="layui-form-label layui-form-label-sm">开票状态</label>
-                                        <div class="layui-input-inline" style="width: 90px">
-                                            <select name="financeState">
+                                        <div class="layui-input-inline" style="width: 85px">
+                                            <select name="invoiceOrNot">
                                                 <option value="">全部</option>
-                                                <option value="1">代开</option>
+                                                <option value="1">待开</option>
                                                 <option value="2">已开</option>
                                             </select>
                                         </div>
@@ -74,10 +74,10 @@
                         </div>
                     </form>
                     <table lay-filter="expenseReportingTable" lay-data="{id: 'expenseReportingTable'}"></table>
-                    <div class="layui-col-md8">
+                    <div class="layui-col-md6">
                         <div class="layui-form-item"></div>
                     </div>
-                    <div class="layui-col-md4 layui-col-sm12 layui-col-xs12 table-action-area">
+                    <div class="layui-col-md6 layui-col-sm12 layui-col-xs12 table-action-area">
                         <!--搜索按钮-->
                         <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
                             <i class="layui-icon">&#xe848;</i>查询
@@ -101,6 +101,16 @@
                              shiro:hasAnyPermissions="expenseReporting:delete" id="deleteTo">
                             <i class="layui-icon">&#xe8a1;</i>删除
                         </div>
+                        <!--确认按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
+                                     "shiro:hasAnyPermissions="expenseReporting:confirm" id="confirmTo">
+                            <i class="layui-icon layui-icon-ok-circle"></i>确认
+                        </div>
+                        <!--取消按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
+                                     "shiro:hasAnyPermissions="expenseReporting:cancel" id="cancelTo">
+                            <i class="layui-icon layui-icon-close"></i>取消
+                        </div>
                     </div>
                 </div>
             </div>
@@ -119,7 +129,6 @@
 <script type="text/html" id="expenseReporting-state">
     {{#
     let expenseReportingState = {
-    "": {title: ''},
     1: {title: '登记'},
     2: {title: '确认'}
     }[d.expenseReportingState];
@@ -146,6 +155,8 @@
             $addTo = $view.find('#addTo'),
             $deleteTo = $view.find('#deleteTo'),
             $updateTo = $view.find('#updateTo'),
+            $confirmTo = $view.find('#confirmTo'),
+            $cancelTo = $view.find('#cancelTo'),
             $reset = $view.find('#reset'),
             $searchForm = $view.find('form'),
             sortObject = {field: 'createTime', type: null},
@@ -289,7 +300,7 @@
             if (!checkStatus.data.length) {
                 febs.alert.warn('请选择需要删除的数据');
             } else {
-                febs.modal.confirm('删除参数信息', '确定删除？', function () {
+                febs.modal.confirm('删除费用报支信息', '确定删除？', function () {
                     let ids = [];
                     layui.each(checkStatus.data, function (key, item) {
                         ids.push(item.id)
@@ -306,11 +317,11 @@
                 febs.alert.warn('请选择一条需要修改的数据');
             }else{
                 layui.each(checkStatus.data, function (key, item) {
-                    febs.modal.open('【财务参数】修改', 'finance/expenseReporting/update/' + item.id, {
-                        area:["40%","60%"],
+                    febs.modal.open('【费用报支】修改', 'expenses/expenseReporting/update/' + item.id, {
+                        area: $(window).width() <= 750 ? '95%' : '50%',
                         btn: ['保存', '关闭'],
                         yes: function (index, layero) {
-                            $('#financialParameters-update').find('#submit').trigger('click');
+                            $('#expenseReporting-update').find('#submit').trigger('click');
                         },
                         btn2: function () {
                             layer.closeAll();
@@ -319,11 +330,63 @@
                 });
             }
         });
+        /*确认*/
+        $confirmTo.on('click', function () {
+            let checkStatus = table.checkStatus('expenseReportingTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要确认的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要确认的数据');
+            }else{
+                layui.each(checkStatus.data, function (key, item) {
+                    if (item.expenseReportingState== "1") {
+                        febs.post(ctx + 'expenseReporting/confirm/' + item.id, null, function () {
+                            febs.alert.success('确认成功');
+                            $query.click();
+                        });
+                    }else if (item.expenseReportingState== "2"){
+                        febs.alert.warn('该数据已确认!');
+                        return false;
+                    }else {
+                        febs.alert.warn('该数据不是登记状态不能确认!');
+                        return false;
+                    }
+                });
+            }
+        });
+        /*取消*/
+        $cancelTo.on('click', function () {
+            let checkStatus = table.checkStatus('expenseReportingTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要取消的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要取消的数据');
+            }else{
+                layui.each(checkStatus.data, function (key, item) {
+                    if (item.expenseReportingState== "2") {
+                        febs.post(ctx + 'expenseReporting/cancel/' + item.id, null, function () {
+                            febs.alert.success('取消成功');
+                            $query.click();
+                        });
+                    }else if (item.expenseReportingState== "1"){
+                        febs.alert.warn('该数据已是登记状态,无法执行取消操作!');
+                        return false;
+                    }else {
+                        febs.alert.warn('该数据不是确认状态不能取消!');
+                        return false;
+                    }
+                });
+            }
+        });
         function initExpenseReportingTable() {
             tableIns = febs.table.init({
                 elem: $view.find('table'),
                 id: 'expenseReportingTable',
                 url: ctx + 'expenseReporting/list',
+                where:{
+                    signedDateFrom:$('#start_date').val(),
+                    signedDateTo:$('#end_date').val()
+                },
                 cols: [[
                     {type: 'checkbox'},
                     {field:'number',title:'序号',align:'center',width:80,templet:function (d) {
@@ -350,7 +413,7 @@
 
         function deleteExpenseReporting(ids) {
             febs.get(ctx + 'expenseReporting/delete/' + ids, null, function () {
-                febs.alert.success('删除参数成功');
+                febs.alert.success('删除费用报支成功');
                 $query.click();
             });
         }

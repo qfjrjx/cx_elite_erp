@@ -18,10 +18,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 /**
  * 费用报支表 Service实现
@@ -107,14 +104,25 @@ public class ExpenseReportingServiceImpl extends ServiceImpl<ExpenseReportingMap
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateExpenseReporting(ExpenseReporting expenseReporting) {
-        this.saveOrUpdate(expenseReporting);
+        baseMapper.saveOrUpdate(expenseReporting);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deleteExpenseReporting(ExpenseReporting expenseReporting) {
-        LambdaQueryWrapper<ExpenseReporting> wrapper = new LambdaQueryWrapper<>();
-	    // TODO 设置删除条件
-	    this.remove(wrapper);
+    public void deleteExpenseReporting(String[] ids) {
+        List<String> list = Arrays.asList(ids);
+        baseMapper.deleteBatchIds(list);
 	}
+
+    @Override
+    public ExpenseReporting expenseReportingById(Long id) {
+
+
+        return baseMapper.expenseReportingById(id);
+    }
+
+    @Override
+    public void updateExpenseReportingState(Long id, String stateParam) {
+        baseMapper.updateExpenseReportingState(id,stateParam);
+    }
 }

@@ -21,6 +21,15 @@ import org.springframework.format.annotation.DateTimeFormat;
 public class ExpenseReporting {
 
     /**
+     * 1-登记，
+     */
+    public static final String STATE_REGISTER = "1";
+    /**
+     * 2-确认，
+     */
+    public static final String STATE_CONFIRM = "2";
+
+    /**
      * 主键
      */
     @TableId(value = "id", type = IdType.AUTO)
@@ -38,6 +47,9 @@ public class ExpenseReporting {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @TableField("expense_reporting_date")
     private Date expenseReportingDate;
+
+    private transient String signedDateFrom;
+    private transient String signedDateTo;
 
     /**
      * 用款部门

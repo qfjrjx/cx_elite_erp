@@ -50,7 +50,11 @@ public interface IExpenseReportingService extends IService<ExpenseReporting> {
     /**
      * 删除
      *
-     * @param expenseReporting expenseReporting
+     * @param ids expenseReporting
      */
-    void deleteExpenseReporting(ExpenseReporting expenseReporting);
+    void deleteExpenseReporting(String[] ids);
+
+    ExpenseReporting expenseReportingById(Long id);
+
+    void updateExpenseReportingState(Long id, String stateParam);
 }

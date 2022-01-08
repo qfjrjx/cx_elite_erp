@@ -9,6 +9,24 @@
             jr_expense_reporting er
         WHERE
             1 = 1
+        <if test="expenseReporting.expenseReportingState != null and expenseReporting.expenseReportingState != ''">
+            AND er.expense_reporting_state = #{expenseReporting.expenseReportingState}
+        </if>
+        <if test="expenseReporting.signedDateFrom != null and expenseReporting.signedDateFrom !=''">
+            And er.expense_reporting_date &gt;= #{expenseReporting.signedDateFrom}
+        </if>
+        <if test="expenseReporting.signedDateTo != null and expenseReporting.signedDateTo !=''">
+            And er.expense_reporting_date &lt;= #{expenseReporting.signedDateTo}
+        </if>
+        <if test="expenseReporting.oddNumbers != null and expenseReporting.oddNumbers != ''">
+            AND er.odd_numbers = #{expenseReporting.oddNumbers}
+        </if>
+        <if test="expenseReporting.expenseType != null and expenseReporting.expenseType != ''">
+            AND er.expense_type = #{expenseReporting.expenseType}
+        </if>
+        <if test="expenseReporting.invoiceOrNot != null and expenseReporting.invoiceOrNot != ''">
+            AND er.invoice_or_not = #{expenseReporting.invoiceOrNot}
+        </if>
     </sql>
     <sql id="findExpenseReportingSql">
         SELECT
@@ -38,6 +56,24 @@
             LEFT JOIN jr_finance_parameters fp ON ( er.expense_type = fp.id )
         WHERE
             1 = 1
+        <if test="expenseReporting.expenseReportingState != null and expenseReporting.expenseReportingState != ''">
+            AND er.expense_reporting_state = #{expenseReporting.expenseReportingState}
+        </if>
+        <if test="expenseReporting.signedDateFrom != null and expenseReporting.signedDateFrom !=''">
+            And er.expense_reporting_date &gt;= #{expenseReporting.signedDateFrom}
+        </if>
+        <if test="expenseReporting.signedDateTo != null and expenseReporting.signedDateTo !=''">
+            And er.expense_reporting_date &lt;= #{expenseReporting.signedDateTo}
+        </if>
+        <if test="expenseReporting.oddNumbers != null and expenseReporting.oddNumbers != ''">
+            AND er.odd_numbers = #{expenseReporting.oddNumbers}
+        </if>
+        <if test="expenseReporting.expenseType != null and expenseReporting.expenseType != ''">
+            AND er.expense_type = #{expenseReporting.expenseType}
+        </if>
+        <if test="expenseReporting.invoiceOrNot != null and expenseReporting.invoiceOrNot != ''">
+            AND er.invoice_or_not = #{expenseReporting.invoiceOrNot}
+        </if>
     </sql>
 
     <select id="countExpenseReporting" parameterType="com.erp.expense.entity.ExpenseReporting" resultType="long">
@@ -81,4 +117,98 @@
             er.creation_time DESC
             LIMIT 1;
     </select>
+
+    <!--修改回显-->
+    <select id="expenseReportingById" parameterType="long" resultType="com.erp.expense.entity.ExpenseReporting">
+       SELECT
+            er.id,
+            er.odd_numbers oddNumbers,
+            er.expense_reporting_date expenseReportingDate,
+            er.user_department userDepartment,
+            er.expense_reporting_handler expenseReportingHandler,
+            er.payment_method paymentMethod,
+            er.expense_type expenseType,
+            er.unit_name unitName,
+            er.bank_of_deposit bankOfDeposit,
+            er.account_number accountNumber,
+            er.amount_used amountUsed,
+            er.invoice_or_not invoiceOrNot,
+            er.expense_reporting_purpose expenseReportingPurpose,
+            er.entry_name entryName,
+            er.total_project_price totalProjectPrice,
+            er.payment_details paymentDetails,
+            er.unpaid_number unpaidNumber,
+            er.remittance_remarks remittanceRemarks,
+            er.expense_reporting_preparer expenseReportingPreparer,
+            er.expense_reporting_state expenseReportingState,
+            er.creation_time
+        FROM
+            jr_expense_reporting er
+        WHERE
+            er.id = #{id}
+    </select>
+    <!--修改数据信息-->
+    <update id="saveOrUpdate" parameterType = "com.erp.expense.entity.ExpenseReporting">
+        UPDATE jr_expense_reporting er
+        <trim prefix="set" suffixOverrides=",">
+            <if test="expenseReporting.expenseReportingDate!=null">
+                er.expense_reporting_date = #{expenseReporting.expenseReportingDate},
+            </if>
+            <if test="expenseReporting.userDepartment!=null">
+                er.user_department =#{expenseReporting.userDepartment},
+            </if>
+            <if test="expenseReporting.expenseReportingHandler!=null">
+                er.expense_reporting_handler =#{expenseReporting.expenseReportingHandler},
+            </if>
+            <if test="expenseReporting.paymentMethod!=null">
+                er.payment_method =#{expenseReporting.paymentMethod},
+            </if>
+            <if test="expenseReporting.expenseType!=null">
+                er.expense_type =#{expenseReporting.expenseType},
+            </if>
+            <if test="expenseReporting.unitName!=null">
+                er.unit_name =#{expenseReporting.unitName},
+            </if>
+            <if test="expenseReporting.bankOfDeposit!=null">
+                er.bank_of_deposit =#{expenseReporting.bankOfDeposit},
+            </if>
+            <if test="expenseReporting.accountNumber!=null">
+                er.account_number =#{expenseReporting.accountNumber},
+            </if>
+            <if test="expenseReporting.amountUsed!=null">
+                er.amount_used =#{expenseReporting.amountUsed},
+            </if>
+            <if test="expenseReporting.invoiceOrNot!=null">
+                er.invoice_or_not =#{expenseReporting.invoiceOrNot},
+            </if>
+            <if test="expenseReporting.expenseReportingPurpose!=null">
+                er.expense_reporting_purpose =#{expenseReporting.expenseReportingPurpose},
+            </if>
+            <if test="expenseReporting.entryName!=null">
+                er.entry_name =#{expenseReporting.entryName},
+            </if>
+            <if test="expenseReporting.totalProjectPrice!=null">
+                er.total_project_price =#{expenseReporting.totalProjectPrice},
+            </if>
+            <if test="expenseReporting.paymentDetails!=null">
+                er.payment_details =#{expenseReporting.paymentDetails},
+            </if>
+            <if test="expenseReporting.unpaidNumber!=null">
+                er.unpaid_number =#{expenseReporting.unpaidNumber},
+            </if>
+            <if test="expenseReporting.remittanceRemarks!=null">
+                er.remittance_remarks =#{expenseReporting.remittanceRemarks},
+            </if>
+            <if test="expenseReporting.expenseReportingPreparer!=null">
+                er.expense_reporting_preparer =#{expenseReporting.expenseReportingPreparer},
+            </if>
+        </trim>
+        where er.id = #{expenseReporting.id}
+    </update>
+    <!--修改确认、取消状态-->
+    <update id = "updateExpenseReportingState">
+        UPDATE jr_expense_reporting er
+        SET er.expense_reporting_state = #{stateParam}
+        WHERE  er.id = #{id}
+    </update>
 </mapper>

@@ -1,10 +1,12 @@
 package com.erp.expense.controller;
 
+import com.erp.arrange.entity.WorkArrange;
 import com.erp.common.annotation.ControllerEndpoint;
 import com.erp.common.controller.BaseController;
 import com.erp.common.entity.FebsConstant;
 import com.erp.common.entity.FebsResponse;
 import com.erp.common.entity.QueryRequest;
+import com.erp.common.entity.Strings;
 import com.erp.common.utils.FebsUtil;
 import com.erp.expense.entity.ExpenseReporting;
 import com.erp.expense.service.IExpenseReportingService;
@@ -12,15 +14,18 @@ import com.wuwenze.poi.ExcelKit;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
@@ -69,11 +74,11 @@ public class ExpenseReportingController extends BaseController {
     }
 
     @ControllerEndpoint(operation = "删除ExpenseReporting", exceptionMessage = "删除ExpenseReporting失败")
-    @GetMapping("expenseReporting/delete")
+    @GetMapping("expenseReporting/delete/{ids}")
     @ResponseBody
     @RequiresPermissions("expenseReporting:delete")
-    public FebsResponse deleteExpenseReporting(ExpenseReporting expenseReporting) {
-        this.expenseReportingService.deleteExpenseReporting(expenseReporting);
+    public FebsResponse deleteExpenseReporting(@NotBlank(message = "{required}") @PathVariable String ids) {
+        this.expenseReportingService.deleteExpenseReporting(StringUtils.split(ids, Strings.COMMA));
         return new FebsResponse().success();
     }
 
@@ -86,7 +91,26 @@ public class ExpenseReportingController extends BaseController {
         return new FebsResponse().success();
     }
 
-    @ControllerEndpoint(operation = "修改ExpenseReporting", exceptionMessage = "导出Excel失败")
+    @ControllerEndpoint(operation = "确认ExpenseReporting", exceptionMessage = "确认ExpenseReporting失败")
+    @PostMapping("expenseReporting/confirm/{id}")
+    @ResponseBody
+    @RequiresPermissions("expenseReporting:confirm")
+    public FebsResponse confirmExpenseReporting(@PathVariable Long id) {
+        this.expenseReportingService.updateExpenseReportingState(id, ExpenseReporting.STATE_CONFIRM);
+        return new FebsResponse().success();
+    }
+
+    @ControllerEndpoint(operation = "取消ExpenseReporting", exceptionMessage = "取消ExpenseReporting失败")
+    @PostMapping("expenseReporting/cancel/{id}")
+    @ResponseBody
+    @RequiresPermissions("expenseReporting:cancel")
+    public FebsResponse cancelExpenseReporting(@PathVariable Long id) {
+        this.expenseReportingService.updateExpenseReportingState(id, ExpenseReporting.STATE_REGISTER);
+        return new FebsResponse().success();
+    }
+
+
+    @ControllerEndpoint(operation = "导出ExpenseReporting", exceptionMessage = "导出Excel失败")
     @PostMapping("expenseReporting/excel")
     @ResponseBody
     @RequiresPermissions("expenseReporting:export")

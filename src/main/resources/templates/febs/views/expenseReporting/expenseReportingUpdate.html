@@ -1,76 +1,125 @@
 <style>
-    #financialParameters-update {
+    #expenseReporting-update {
         padding: 20px 25px 25px 0;
     }
 </style>
-<div class="layui-fluid" id="financialParameters-update">
-    <form class="layui-form" action="" lay-filter="financialParameters-update-form">
+<div class="layui-fluid" id="expenseReporting-update">
+    <form class="layui-form" action="" lay-filter="expenseReporting-update-form">
         <div class="layui-form-item febs-hide">
             <label class="layui-form-label febs-form-item-require">参数id：</label>
             <div class="layui-input-block">
-                <input type="text" name="id" data-th-value="${financeParameters.id}">
+                <input type="text" name="id" data-th-value="${expenseReporting.id}">
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label" >参数类别:</label>
-            <div class="layui-input-block">
-                <select name="financeParameterCategory"  id="financeParameterCategory" lay-filter="financeParameterCategory">
-                    <option value="1">报支类别</option>
-                    <option value="2">币种</option>
-                    <option value="3">调整方式</option>
-                    <option value="4">发票类型</option>
-                    <option value="5">付款方式</option>
-                    <option value="6">付款类型</option>
-                    <option value="7">管理费用</option>
-                    <option value="8">收款方式</option>
-                    <option value="9">收款类型</option>
-                    <option value="10">收入类别</option>
-                    <option value="11">收支类别</option>
-                    <option value="12">税率</option>
-                    <option value="13">销售费用</option>
-                    <option value="14">制造费用</option>
+            <label class="layui-form-label febs-form-item-require" >单&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号</label>
+            <div class="layui-input-inline" style="width: 150px">
+                <input type="text" name="oddNumbers" id="oddNumbers" style="width: 150px"
+                       autocomplete="off" class="layui-input" placeholder="自动生成" readonly>
+            </div>
+            <label class="layui-form-label febs-form-item-require">日&nbsp;期</label>
+            <div class="layui-input-inline" style="width: 150px">
+                <input type="text" name="expenseReportingDate" id="expenseReportingDate"
+                       autocomplete="off" class="layui-input createDate" readonly>
+            </div>
+            <label class="layui-form-label" >用款部门:</label>
+            <div class="layui-input-inline" id="expense-add-dept" style="width: 155px"></div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label " >经办人</label>
+            <div class="layui-input-inline" style="width: 150px">
+                <input type="text" name="expenseReportingHandler" id="expenseReportingHandler" style="width: 150px"
+                       autocomplete="off" class="layui-input" placeholder="打印后签字" readonly>
+            </div>
+            <label class="layui-form-label ">支付方式</label>
+            <div class="layui-input-inline" style="width: 150px">
+                <select name="paymentMethod">
+                    <option value="1">先付</option>
+                    <option value="2">后付</option>
+                    <option value="3">分批付</option>
+                </select>
+            </div>
+            <label class="layui-form-label ">费用类型</label>
+            <div class="layui-input-inline" style="width: 155px">
+                <select id="expenseType"  name="expenseType" lay-verify="required" class="layui-form-select" >
+                    <option value="" >全部</option>
+                    <option th:each="expenseReportingCategory:${expenseReportingCategory}" th:value="${expenseReportingCategory.id}">[[${expenseReportingCategory.financeParameterName}]]</option>
                 </select>
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label febs-form-item-require" >参数值:</label>
-            <div class="layui-input-block">
-                <input type="text" name="financeParameterValue" id="financeParameterValue" lay-verify="required"
-                       autocomplete="off" class="layui-input">
+            <label class="layui-form-label febs-form-item-require" >单位名称:</label>
+            <div class="layui-input-inline" style="width: 150px">
+                <input type="text" name="unitName" id="unitName" lay-verify="required"
+                       autocomplete="off" class="layui-input" placeholder="" >
+            </div>
+            <label class="layui-form-label febs-form-item-require" >开户银行:</label>
+            <div class="layui-input-inline" style="width: 150px">
+                <input type="text" name="bankOfDeposit" id="bankOfDeposit" lay-verify="required"
+                       autocomplete="off" class="layui-input" placeholder="" >
+            </div>
+            <label class="layui-form-label febs-form-item-require" >账号:</label>
+            <div class="layui-input-inline" style="width: 155px">
+                <input type="text" name="accountNumber" id="accountNumber" lay-verify="required"
+                       autocomplete="off" class="layui-input" placeholder="" >
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label febs-form-item-require" >参数名称:</label>
-            <div class="layui-input-block">
-                <input type="text" name="financeParameterName" id="financeParameterName" lay-verify="required"
-                       autocomplete="off" class="layui-input">
+            <label class="layui-form-label febs-form-item-require" >用款金额:</label>
+            <div class="layui-input-inline" style="width: 150px">
+                <input type="text" name="amountUsed" id="amountUsed" lay-verify="required"
+                       autocomplete="off" class="layui-input" placeholder="" >
             </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label" >排序:</label>
-            <div class="layui-input-block">
-                <input type="text" name="financeSort" id="financeSort"
-                       autocomplete="off" class="layui-input" >
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label" >备注:</label>
-            <div class="layui-input-block">
-                <input type="text" name="financeRemarks" id="financeRemarks"
-                       autocomplete="off" class="layui-input" >
-            </div>
-        </div>
-        <div class="layui-inline">
-            <label class="layui-form-label">状态</label>
-            <div class="layui-input-block">
-                <select name="financeState">
-                    <option value="1">启用</option>
-                    <option value="2">禁用</option>
+            <label class="layui-form-label febs-form-item-require" >是否开票:</label>
+            <div class="layui-input-inline" style="width: 150px">
+                <select name="invoiceOrNot">
+                    <option value="1">未开</option>
+                    <option value="2">已开</option>
                 </select>
+            </div>
+            <label class="layui-form-label febs-form-item-require" >用途:</label>
+            <div class="layui-input-inline" style="width: 155px">
+                <input type="text" name="expenseReportingPurpose" id="expenseReportingPurpose" lay-verify="required"
+                       autocomplete="off" class="layui-input" placeholder="" >
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require" >项目名称:</label>
+            <div class="layui-input-block" >
+                <input type="text" name="entryName" id="entryName" lay-verify="required"
+                       autocomplete="off" class="layui-input" placeholder="" >
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require" >项目总价:</label>
+            <div class="layui-input-block" >
+                <input type="text" name="totalProjectPrice" id="totalProjectPrice" lay-verify="required"
+                       autocomplete="off" class="layui-input" placeholder="" >
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require" >付款明细:</label>
+            <div class="layui-input-block" >
+                <input type="text" name="paymentDetails" id="paymentDetails" lay-verify="required"
+                       autocomplete="off" class="layui-input" placeholder="" >
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require" >未付款多少:</label>
+            <div class="layui-input-block" >
+                <input type="text" name="unpaidNumber" id="unpaidNumber" lay-verify="required"
+                       autocomplete="off" class="layui-input" placeholder="" >
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require" >汇款备注:</label>
+            <div class="layui-input-block" >
+                <input type="text" name="remittanceRemarks" id="remittanceRemarks" lay-verify="required"
+                       autocomplete="off" class="layui-input" placeholder="" >
             </div>
         </div>
         <div class="layui-form-item febs-hide">
-            <button class="layui-btn" lay-submit="" lay-filter="financialParameters-update-form-submit" id="submit"></button>
+            <button class="layui-btn" lay-submit="" lay-filter="expenseReporting-update-form-submit" id="submit"></button>
             <button type="reset" class="layui-btn" id="reset"></button>
         </div>
     </form>
@@ -80,30 +129,82 @@
         let $ = layui.$,
             febs = layui.febs,
             layer = layui.layer,
-            financeParameters = [[${financeParameters}]],
             form = layui.form,
-            validate = layui.validate;
+            laydate = layui.laydate,
+            expenseReporting = [[${expenseReporting}]],
+            expenseReportingTime = [[${expenseReportingTime}]],
+            validate = layui.validate,
+            deptXmlSelect;
 
         form.verify(validate);
         form.render();
 
-        initFinanceParametersValue();
+        //日期同时绑定多个
+        lay('.createDate').each(function(){
+            laydate.render({
+                elem: this
+                ,trigger: 'click'
+            });
+        });
+        deptXmlSelect = xmSelect.render({
+            el: '#expense-add-dept',
+            model: {label: {type: 'text'}},
+            tree: {
+                show: true,
+                strict: false,
+                showLine: false,
+                clickCheck: true,
+                expandedKeys: [-1],
+            },
+            name: 'userDepartment',
+            theme: {
+                color: '#52c41a',
+            },
+            prop: {
+                value: 'id'
+            },
+            height: 'auto',
+            on: function(data){
+                if(data.isAdd){
+                    return data.change.slice(0, 1)
+                }
+            }
+        });
+        febs.get(ctx + 'dept/select/tree', null, function (data) {
+            deptXmlSelect.update(data)
+            expenseReporting.userDepartment && deptXmlSelect.setValue([expenseReporting.userDepartment]);
+        });
+        let userName = currentUser.username;
+        $('#expenseReportingPreparer').val(userName);
 
-        function initFinanceParametersValue() {
-            form.val("financialParameters-update-form", {
-                "financeParameterCategory": financeParameters.financeParameterCategory,
-                "financeParameterValue": financeParameters.financeParameterValue,
-                "financeParameterName": financeParameters.financeParameterName,
-                "financeSort": financeParameters.financeSort,
-                "financeRemarks": financeParameters.financeRemarks,
-                "financeState": financeParameters.financeState
+
+        initExpenseReportingValue();
+
+        function initExpenseReportingValue() {
+            form.val("expenseReporting-update-form", {
+                "oddNumbers": expenseReporting.oddNumbers,
+                "expenseReportingDate": expenseReportingTime,
+                "expenseReportingHandler": expenseReporting.expenseReportingHandler,
+                "paymentMethod": expenseReporting.paymentMethod,
+                "expenseType": expenseReporting.expenseType,
+                "unitName": expenseReporting.unitName,
+                "bankOfDeposit": expenseReporting.bankOfDeposit,
+                "accountNumber": expenseReporting.accountNumber,
+                "amountUsed": expenseReporting.amountUsed,
+                "invoiceOrNot": expenseReporting.invoiceOrNot,
+                "expenseReportingPurpose": expenseReporting.expenseReportingPurpose,
+                "entryName": expenseReporting.entryName,
+                "totalProjectPrice": expenseReporting.totalProjectPrice,
+                "paymentDetails": expenseReporting.paymentDetails,
+                "unpaidNumber": expenseReporting.unpaidNumber,
+                "remittanceRemarks": expenseReporting.remittanceRemarks
             });
         }
-        form.on('submit(financialParameters-update-form-submit)', function (data) {
-            febs.post(ctx + 'financeParameters/update', data.field, function () {
+        form.on('submit(expenseReporting-update-form-submit)', function (data) {
+            febs.post(ctx + 'expenseReporting/update', data.field, function () {
                 layer.closeAll();
-                febs.alert.success('修改财务参数成功');
-                $('#financial-parameters').find('#query').click();
+                febs.alert.success('修改费用报支成功');
+                $('#expenseReporting-list').find('#query').click();
             });
             return false;
 

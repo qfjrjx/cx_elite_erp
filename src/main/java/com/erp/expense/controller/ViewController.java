@@ -1,7 +1,9 @@
 package com.erp.expense.controller;
 
 import com.erp.common.entity.FebsConstant;
+import com.erp.common.utils.DateUtil;
 import com.erp.common.utils.FebsUtil;
+import com.erp.expense.entity.ExpenseReporting;
 import com.erp.expense.service.IExpenseReportingService;
 import com.erp.finance.entity.FinanceParameters;
 import com.erp.finance.service.IFinanceParametersService;
@@ -53,12 +55,18 @@ public class ViewController {
     @RequiresPermissions("expenseReporting:update")
     public String expenseReportingUpdate(@PathVariable Long id, Model model) {
         expenseReportingModel(id, model, false);
-        return FebsUtil.view("finance/financialParametersUpdate");
+        //查询费用类型信息
+        List<FinanceParameters> expenseReportingCategory  = financeParametersService.queryCurrencyInformation(FinanceParameters.EXPENSE_REPORTING_CATEGORY);
+        model.addAttribute("expenseReportingCategory",expenseReportingCategory);
+        return FebsUtil.view("expenseReporting/expenseReportingUpdate");
     }
     //费用报支修改回填
     private void expenseReportingModel(Long id, Model model, Boolean transform) {
-       // ExpenseReporting expenseReporting = expenseReportingService.expenseReportingById(id);
-       // model.addAttribute("expenseReporting", expenseReporting);
+        ExpenseReporting expenseReporting = expenseReportingService.expenseReportingById(id);
+        model.addAttribute("expenseReporting", expenseReporting);
+        if (expenseReporting.getExpenseReportingDate() != null) {
+            model.addAttribute("expenseReportingTime", DateUtil.getDateFormat(expenseReporting.getExpenseReportingDate(), DateUtil.FULL_TIME_SPLIT));
+        }
     }
     //费用报支模块结束
 }
