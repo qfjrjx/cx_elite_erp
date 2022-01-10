@@ -203,11 +203,7 @@
                 ]]
             });
         }
-       /* $("#query").keydown(function(event){
-            if(event.keyCode == 13){
-                alert('你按下了Enter');
-            }
-        });*/
+        /*回车快捷搜索*/
         $(document).on('keydown', function (e) {
             if (e.keyCode === 13) {
                 let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});

@@ -1,0 +1,339 @@
+<style>
+    #febs-supplier xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #febs-supplier xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="febs-supplier" lay-title="供货单位">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="parameter-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md12">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label layui-form-label-sm">状&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;态</label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <select name="supplierState">
+                                                <option value="">全部</option>
+                                                <option value="1">启用</option>
+                                                <option value="2">禁用</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label" >供应商编码</label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <input type="text" name="supplierCode" autocomplete="off" style="width: 110px" class="layui-input" >
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label" >供应商全称</label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <input type="text" name="supplierFullName" autocomplete="off" style="width: 120px" class="layui-input" >
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label" >供应商简称</label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <input type="text" name="supplierAbbreviation" autocomplete="off" style="width: 110px" class="layui-input" >
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label" >全称简拼</label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <input type="text" name="abbreviationOfFullName" autocomplete="off" style="width: 110px" class="layui-input" >
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="supplierTable" lay-data="{id: 'supplierTable'}"></table>
+                    <div class="layui-col-md8">
+                        <div class="layui-form-item"></div>
+                    </div>
+                    <div class="layui-col-md4 layui-col-sm12 layui-col-xs12 table-action-area">
+                        <!--搜索按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                            <i class="layui-icon">&#xe848;</i>查询
+                        </div>
+                        <!--查阅按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action"
+                             shiro:hasAnyPermissions="purchaseSupplier:consult" id="consult">
+                            <i class="layui-icon">&#xe848;</i>查阅
+                        </div>
+                        <!-- 刷新表格按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain table-action" id="reset">
+                            <i class="layui-icon">&#xe79b;</i>刷新
+                        </div>
+                        <!--添加按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="purchaseSupplier:add" id="addTo">
+                            <i class="layui-icon">&#xe78a;</i>新增
+                        </div>
+                        <!--修改按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="purchaseSupplier:update" id="updateTo">
+                            <i class="layui-icon">&#xe642;</i>修改
+                        </div>
+                        <!--删除按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="purchaseSupplier:delete" id="deleteTo">
+                            <i class="layui-icon">&#xe8a1;</i>删除
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="supplier-state">
+    {{#
+    let supplierState = {
+    1: {title: '启用', color: 'green'},
+    2: {title: '禁用', color: 'volcano'}
+    }[d.supplierState];
+    }}
+    <span class="layui-badge febs-bg-{{supplierState.color}}">{{ supplierState.title }}</span>
+</script>
+<script type="text/html" id="parameter-option">
+    <span shiro:lacksPermission="purchaseSupplier:view,purchaseSupplier:update,purchaseSupplier:delete">
+        <span class="layui-badge-dot febs-bg-orange"></span> 无权限
+    </span>
+    <a lay-event="detail" shiro:hasPermission="purchaseSupplier:view"><i
+            class="layui-icon febs-edit-area febs-green">&#xe7a5;<font size="3px"></font></i>
+    </a>
+</script>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+            laydate = layui.laydate,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            dropdownMenu = layui.dropdownMenu,
+            $view = $('#febs-supplier'),
+            $query = $view.find('#query'),
+            $addTo = $view.find('#addTo'),
+            $updateTo = $view.find('#updateTo'),
+            $deleteTo = $view.find('#deleteTo'),
+            $consult = $view.find('#consult'),
+            $reset = $view.find('#reset'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'createTime', type: null},
+            createdDateFrom,
+            createdDateTo,
+            tableIns;
+
+        form.render();
+
+        initTable();
+
+
+//日期同时绑定多个
+        lay('.createTime').each(function(){
+            laydate.render({
+                elem: this,
+                range: true,
+                trigger: 'click'
+            });
+        })
+        dropdownMenu.render({
+            elem: $view.find('.action-more'),
+            click: function (name, elem, event) {
+                let checkStatus = table.checkStatus('supplierTable');
+                if (name === 'add') {
+                    febs.modal.open('新增销售参数', 'personnel/purchaseSupplier/add', {
+                        btn: ['提交', '重置'],
+                        area: $(window).width() <= 750 ? '95%' : '50%',
+                        yes: function (index, layero) {
+                            $('#purchaseSupplier-add').find('#submit').trigger('click');
+                        },
+                        btn2: function () {
+                            $('#purchaseSupplier-add').find('#reset').trigger('click');
+                            return false;
+                        }
+                    });
+                }
+                if (name === 'delete') {
+                    if (!checkStatus.data.length) {
+                        let checkStatus = table.checkStatus('loginLogTable');
+                        febs.alert.warn('请选择需要删除的数据');
+                    } else {
+                        febs.modal.confirm('删除参数信息', '确定删除？', function () {
+                            let ids = [];
+                            layui.each(checkStatus.data, function (key, item) {
+                                ids.push(item.id)
+                            });
+                            deletePurchaseSupplier(ids.join(','));
+                        });
+                    }
+                }
+            },
+            options: [{
+                name: 'add',
+                title: '新增',
+                perms: 'purchaseSupplier:add'
+            }, {
+                name: 'delete',
+                title: '删除',
+                perms: 'purchaseSupplier:delete'
+            }]
+        });
+
+        table.on('tool(supplierTable)', function (obj) {
+            let data = obj.data,
+                layEvent = obj.event;
+            if (layEvent === 'detail') {
+                febs.modal.view('客户档案信息', 'purchase/purchaseSupplierConsult/detail/' + data.id, {
+                    area: $(window).width() <= 750 ? '95%' : '50%'
+                });
+            }
+        });
+
+        table.on('sort(supplierTable)', function (obj) {
+            sortObject = obj;
+            tableIns.reload({
+                initSort: obj,
+                where: $.extend(getQueryParams(), {
+                    field: obj.field,
+                    order: obj.type
+                })
+            });
+        });
+
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        $reset.on('click', function () {
+            $searchForm[0].reset();
+            createdDateFrom = null;
+            createdDateTo = null;
+            tableIns.reload({where: getQueryParams(), page: {curr: 1}});
+        });
+        $addTo.on('click', function () {
+            febs.modal.open('【供货单位】新增', 'purchase/purchaseSupplier/add', {
+                btn: ['保存', '重置'],
+                area: $(window).width() <= 750 ? '95%' : '40%',
+                yes: function (index, layero) {
+                    $('#purchaseSupplier-add').find('#submit').trigger('click');
+                },
+                btn2: function () {
+                    $('#purchaseSupplier-add').find('#reset').trigger('click');
+                    return false;
+                }
+            });
+        });
+        $updateTo.on('click', function () {
+            let checkStatus = table.checkStatus('supplierTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要修改的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要修改的数据');
+            }else{
+                layui.each(checkStatus.data, function (key, item) {
+                    febs.modal.open('【供货单位】修改', 'purchase/purchaseSupplier/update/' + item.id, {
+                        area: $(window).width() <= 750 ? '90%' : '50%',
+                        btn: ['保存', '关闭'],
+                        yes: function (index, layero) {
+                            $('#purchaseSupplier-update').find('#submit').trigger('click');
+                        },
+                        btn2: function () {
+                            layer.closeAll();
+                        }
+                    });
+                });
+            }
+        });
+        $consult.on('click', function () {
+            let checkStatus = table.checkStatus('supplierTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要查阅的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要查阅的数据');
+            }else{
+                layui.each(checkStatus.data, function (key, item) {
+                    febs.modal.open('【供货单位】查阅', 'purchase/purchaseSupplier/consult/' + item.id, {
+                        area: $(window).width() <= 750 ? '90%' : '50%',
+                        btn: ['关闭'],
+                        yes: function (index, layero) {
+                            layer.closeAll();
+                        },
+                    });
+                });
+            }
+        });
+        $deleteTo.on('click', function () {
+            let checkStatus = table.checkStatus('supplierTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要删除的数据');
+            } else {
+                febs.modal.confirm('删除参数信息', '确定删除？', function () {
+                    let ids = [];
+                    layui.each(checkStatus.data, function (key, item) {
+                        ids.push(item.id)
+                    });
+                    deletePurchaseSupplier(ids.join(','));
+                });
+            }
+        });
+
+        function initTable() {
+            tableIns = febs.table.init({
+                elem: $view.find('table'),
+                id: 'supplierTable',
+                url: ctx + 'purchaseSupplier/list',
+                cols: [[
+                    {type: 'checkbox'},
+                    {title: '状态', templet: '#supplier-state',align:'center', minWidth: 80},
+                    {field: 'supplierCode', title: '供应商编码', align:'center',minWidth: 95},
+                    {field: 'supplierFullName', title: '供应商全称', align:'center',minWidth: 200},
+                    {field: 'supplierAbbreviation', title: '供应商简称',align:'center', minWidth: 150},
+                    {field: 'supplierContacts', title: '联系人',align:'center', minWidth: 90},
+                    {field: 'supplierContactNumber', title: '联系电话',align:'center', minWidth: 100},
+                    {field: 'unitFax', title: '单位传真', minWidth: 100},
+                    {field: 'electronicMailbox', title: '电子邮箱',align:'center', minWidth: 120},
+                    {field: 'supplierRemarks', title: '备注', minWidth: 100}
+                ]]
+            });
+        }
+        /*回车快捷搜索*/
+        $(document).on('keydown', function (e) {
+            if (e.keyCode === 13) {
+                let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+                tableIns.reload({where: params, page: {curr: 1}});
+            }
+        });
+
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            let signedTime = params.signedTime;
+            if (signedTime) {
+                createdDateFrom = signedTime.split(' - ')[0];
+                createdDateTo = signedTime.split(' - ')[1];
+            }
+            params.createdDateFrom = createdDateFrom;
+            params.createdDateTo = createdDateTo;
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+
+        function deletePurchaseSupplier(ids) {
+            febs.get(ctx + 'purchaseSupplier/delete/' + ids, null, function () {
+                febs.alert.success('删除信息成功');
+                $query.click();
+            });
+        }
+
+    })
+
+</script>

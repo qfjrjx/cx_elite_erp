@@ -1,0 +1,199 @@
+<style>
+    #purchaseSupplier-add {
+        padding: 20px 25px 25px 0;
+    }
+</style>
+<div class="layui-fluid" id="purchaseSupplier-add">
+    <form class="layui-form" action="" lay-filter="purchaseSupplier-add-form">
+        <input type="hidden" name="personnelId" id="personnelId"
+               autocomplete="off" class="layui-input" readonly>
+        <div class="layui-tab">
+            <ul class="layui-tab-title">
+                <li class="layui-this">基本信息</li>
+                <li>财税信息</li>
+                <li>物流信息</li>
+            </ul>
+            <div class="layui-tab-content">
+                <div class="layui-tab-item layui-show">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label" >供应商编码：</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="supplierCode" id="supplierCode" readonly
+                                   autocomplete="off" class="layui-input" placeholder="为空时自动产生编码">
+                        </div>
+
+                        <label class="layui-form-label febs-form-item-require" >单位全称：</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="supplierFullName" id="supplierFullName" lay-verify="required"
+                                   autocomplete="off" class="layui-input" placeholder="请输入单位全称">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label febs-form-item-require" >单位简称：</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="supplierAbbreviation" id="supplierAbbreviation" lay-verify="required"
+                                   autocomplete="off" class="layui-input" placeholder="请输入单位简称">
+                        </div>
+
+                        <label class="layui-form-label" >单位电话：</label>
+                        <div class="layui-input-inline">
+                            <input type="tel" name="workTelephone" lay-verify="phone" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">单位传真：</label>
+                        <div class="layui-input-inline">
+                            <input type="tel" name="unitFax" lay-verify="unitFax" autocomplete="off" class="layui-input">
+                        </div>
+                        <label class="layui-form-label febs-form-item-require" >联&nbsp;&nbsp;系&nbsp;&nbsp;人：</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="supplierContacts" id="supplierContacts" lay-verify="required"
+                                   autocomplete="off" class="layui-input" placeholder="请输入联系人">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">联系电话：</label>
+                        <div class="layui-input-inline">
+                            <input type="tel" name="supplierContactNumber" lay-verify="phone" autocomplete="off" class="layui-input">
+                        </div>
+                        <label class="layui-form-label" >单位地址：</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="unitAddress" id="unitAddress"
+                                   autocomplete="off" class="layui-input" placeholder="">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">电子邮箱：</label>
+                        <div class="layui-input-inline">
+                            <input type="tel" name="electronicMailbox" lay-verify="" autocomplete="off" class="layui-input">
+                        </div>
+                        <label class="layui-form-label">状&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;态：</label>
+                        <div class="layui-input-inline">
+                            <select name="supplierState" >
+                                <option value="1">启用</option>
+                                <option value="2">禁用</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-form-text">
+                        <label class="layui-form-label">备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注：</label>
+                        <div class="layui-input-block">
+                            <textarea name="supplierRemarks" maxlength="100" class="layui-textarea"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-tab-item">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label" >
+                            开户银行：
+                        </label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="bankOfDeposit"  placeholder="请输入开户银行"
+                                   autocomplete="off" class="layui-input">
+                        </div>
+                        <label class="layui-form-label" >
+                            银行帐号：
+                        </label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="bankAccountNumber" placeholder="请输入开户银行账号"
+                                   autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label" >
+                            税&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号：
+                        </label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="dutyParagraph" placeholder="请输入单位税号"
+                                   autocomplete="off" class="layui-input">
+                        </div>
+                        <label class="layui-form-label">联系电话：</label>
+                        <div class="layui-input-inline">
+                            <input type="tel" name="contactNumber" lay-verify="phone" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label" >发票地址：</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="invoiceAddress" id="invoiceAddress"
+                                   autocomplete="off" class="layui-input" placeholder="">
+                        </div>
+                    </div>
+
+                </div>
+                <div class="layui-tab-item">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label" >收&nbsp;&nbsp;货&nbsp;人：</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="logisticsConsignee" id="logisticsConsignee"
+                                   autocomplete="off" class="layui-input" placeholder="">
+                        </div>
+
+                        <label class="layui-form-label">联系电话：</label>
+                        <div class="layui-input-inline">
+                            <input type="tel" name="logisticsContactNumber" lay-verify="phone" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label" >邮政编码：</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="postalCode" id="postalCode"
+                                   autocomplete="off" class="layui-input" placeholder="">
+                        </div>
+                        <label class="layui-form-label" >收货地址：</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="receivingAddress" id="receivingAddress"
+                                   autocomplete="off" class="layui-input" placeholder="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-form-item febs-hide">
+            <button class="layui-btn" lay-submit="" lay-filter="purchaseSupplier-add-form-submit" id="submit"></button>
+            <button type="reset" class="layui-btn" id="reset"></button>
+        </div>
+    </form>
+</div>
+
+<script>
+    layui.use(['element','febs', 'form', 'validate', 'xmSelect'], function () {
+        let $ = layui.$,
+            febs = layui.febs,
+            layer = layui.layer,
+            element = layui.element,
+            form = layui.form,
+            validate = layui.validate;
+
+        form.verify(validate);
+        form.render();
+
+
+        form.on('submit(purchaseSupplier-add-form-submit)', function (data) {
+            febs.post(ctx + 'purchaseSupplier/add', data.field, function () {
+                layer.closeAll();
+                febs.alert.success('新增供货单位成功');
+                $('#febs-supplier').find('#query').click();
+            });
+            return false;
+
+        });
+
+    });
+
+    function dblclickPersonnelName(){
+        layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
+            let $ = layui.$,
+                febs = layui.febs;
+
+            febs.modal.open('业务人员信息', 'sale/saleCustomerPersonnelList', {
+                area:["75%","90%"],
+                yes: function (index, layero) {
+
+                }
+
+            });
+        });
+    }
+</script>

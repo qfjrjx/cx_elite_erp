@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.purchase.mapper.PurchaseSupplierMapper">
+
+    <sql id="countPurchaseSuppliersSql">
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_purchase_supplier ps
+        WHERE
+            1 = 1
+        <if test="purchaseSupplier.supplierState != null and purchaseSupplier.supplierState != ''">
+            AND ps.supplier_state = #{purchaseSupplier.supplierState}
+        </if>
+        <if test="purchaseSupplier.supplierCode != null and purchaseSupplier.supplierCode != ''">
+            AND ps.supplier_code = #{purchaseSupplier.supplierCode}
+        </if>
+        <if test="purchaseSupplier.supplierFullName != null and purchaseSupplier.supplierFullName != ''">
+            AND ps.supplier_full_name like CONCAT('%',#{purchaseSupplier.supplierFullName},'%')
+        </if>
+        <if test="purchaseSupplier.supplierAbbreviation != null and purchaseSupplier.supplierAbbreviation != ''">
+            AND ps.supplier_abbreviation like CONCAT('%',#{purchaseSupplier.supplierAbbreviation},'%')
+        </if>
+        <if test="purchaseSupplier.abbreviationOfFullName!= null and purchaseSupplier.abbreviationOfFullName !=''">
+            And getPY(ps.supplier_full_name) like CONCAT('%',#{purchaseSupplier.abbreviationOfFullName,jdbcType=VARCHAR},'%')
+        </if>
+    </sql>
+    <sql id="findPurchaseSuppliersSql">
+        SELECT
+            ps.id,
+            ps.supplier_state supplierState,
+            ps.supplier_code supplierCode,
+            ps.supplier_full_name supplierFullName,
+            ps.supplier_abbreviation supplierAbbreviation,
+            ps.supplier_contacts supplierContacts,
+            ps.supplier_contact_number supplierContactNumber,
+            ps.work_telephone workTelephone,
+            ps.unit_fax unitFax,
+            ps.electronic_mailbox electronicMailbox,
+            ps.supplier_remarks supplierRemarks,
+            ps.creation_time creationTime,
+            ps.unit_address unitAddress,
+            ps.bank_of_deposit bankOfDeposit,
+            ps.contact_number contactNumber,
+            ps.duty_paragraph dutyParagraph,
+            ps.bank_account_number bankAccountNumber,
+            ps.invoice_address invoiceAddress,
+            ps.logistics_consignee logisticsConsignee,
+            ps.logistics_contact_number logisticsContactNumber,
+            ps.postal_code postalCode,
+            ps.receiving_address receivingAddress
+        FROM
+            jr_purchase_supplier ps
+        WHERE
+            1 = 1
+        <if test="purchaseSupplier.supplierState != null and purchaseSupplier.supplierState != ''">
+            AND ps.supplier_state = #{purchaseSupplier.supplierState}
+        </if>
+        <if test="purchaseSupplier.supplierCode != null and purchaseSupplier.supplierCode != ''">
+            AND ps.supplier_code = #{purchaseSupplier.supplierCode}
+        </if>
+        <if test="purchaseSupplier.supplierFullName != null and purchaseSupplier.supplierFullName != ''">
+            AND ps.supplier_full_name like CONCAT('%',#{purchaseSupplier.supplierFullName},'%')
+        </if>
+        <if test="purchaseSupplier.supplierAbbreviation != null and purchaseSupplier.supplierAbbreviation != ''">
+            AND ps.supplier_abbreviation like CONCAT('%',#{purchaseSupplier.supplierAbbreviation},'%')
+        </if>
+        <if test="purchaseSupplier.abbreviationOfFullName!= null and purchaseSupplier.abbreviationOfFullName !=''">
+            And getPY(ps.supplier_full_name) like CONCAT('%',#{purchaseSupplier.abbreviationOfFullName,jdbcType=VARCHAR},'%')
+        </if>
+    </sql>
+
+    <select id="countPurchaseSuppliers" parameterType="com.erp.purchase.entity.PurchaseSupplier" resultType="long">
+        <include refid="countPurchaseSuppliersSql"/>
+    </select>
+
+    <select id="findPurchaseSuppliersPage" parameterType="com.erp.purchase.entity.PurchaseSupplier" resultType="com.erp.purchase.entity.PurchaseSupplier">
+        <include refid="findPurchaseSuppliersSql"/>
+    </select>
+    <insert id="savePurchaseSupplier" parameterType="com.erp.purchase.entity.PurchaseSupplier">
+        INSERT INTO  jr_purchase_supplier (
+            supplier_state,
+            supplier_code ,
+            supplier_full_name ,
+            supplier_abbreviation ,
+            supplier_contacts ,
+            supplier_contact_number ,
+            work_telephone ,
+            unit_fax ,
+            electronic_mailbox ,
+            supplier_remarks ,
+            creation_time ,
+            unit_address ,
+            bank_of_deposit ,
+            contact_number ,
+            duty_paragraph ,
+            bank_account_number ,
+            invoice_address,
+            logistics_consignee ,
+            logistics_contact_number ,
+            postal_code ,
+            receiving_address
+        )VALUES (
+                    #{purchaseSupplier.supplierState},
+                    #{purchaseSupplier.supplierCode},
+                    #{purchaseSupplier.supplierFullName},
+                    #{purchaseSupplier.supplierAbbreviation},
+                    #{purchaseSupplier.supplierContacts},
+                    #{purchaseSupplier.supplierContactNumber},
+                    #{purchaseSupplier.workTelephone},
+                    #{purchaseSupplier.unitFax},
+                    #{purchaseSupplier.electronicMailbox},
+                    #{purchaseSupplier.supplierRemarks},
+                    #{purchaseSupplier.creationTime},
+                    #{purchaseSupplier.unitAddress},
+                    #{purchaseSupplier.bankOfDeposit},
+                    #{purchaseSupplier.contactNumber},
+                    #{purchaseSupplier.dutyParagraph},
+                    #{purchaseSupplier.bankAccountNumber},
+                    #{purchaseSupplier.invoiceAddress},
+                    #{purchaseSupplier.logisticsConsignee},
+                    #{purchaseSupplier.logisticsContactNumber},
+                    #{purchaseSupplier.postalCode},
+                    #{purchaseSupplier.receivingAddress}
+                )
+    </insert>
+
+    <!--查询上传的最后一条数据-->
+    <select id="queryPurchaseSupplier" resultType="com.erp.purchase.entity.PurchaseSupplier">
+       SELECT
+            ps.id,
+            ps.supplier_state supplierState,
+            ps.supplier_code supplierCode,
+            ps.supplier_full_name supplierFullName,
+            ps.supplier_abbreviation supplierAbbreviation,
+            ps.supplier_contacts supplierContacts,
+            ps.supplier_contact_number supplierContactNumber,
+            ps.work_telephone workTelephone,
+            ps.unit_fax unitFax,
+            ps.electronic_mailbox electronicMailbox,
+            ps.supplier_remarks supplierRemarks,
+            ps.creation_time creationTime,
+            ps.unit_address unitAddress,
+            ps.bank_of_deposit bankOfDeposit,
+            ps.contact_number contactNumber,
+            ps.duty_paragraph dutyParagraph,
+            ps.bank_account_number bankAccountNumber,
+            ps.invoice_address invoiceAddress,
+            ps.logistics_consignee logisticsConsignee,
+            ps.logistics_contact_number logisticsContactNumber,
+            ps.postal_code postalCode,
+            ps.receiving_address receivingAddress
+        FROM
+            jr_purchase_supplier ps
+        GROUP BY
+            ps.creation_time
+        ORDER BY
+            ps.creation_time DESC
+            LIMIT 1;
+    </select>
+
+    <!--修改回显-->
+    <select id="findPurchaseSupplierById" parameterType="long" resultType="com.erp.purchase.entity.PurchaseSupplier">
+        SELECT
+            ps.id,
+            ps.supplier_state supplierState,
+            ps.supplier_code supplierCode,
+            ps.supplier_full_name supplierFullName,
+            ps.supplier_abbreviation supplierAbbreviation,
+            ps.supplier_contacts supplierContacts,
+            ps.supplier_contact_number supplierContactNumber,
+            ps.work_telephone workTelephone,
+            ps.unit_fax unitFax,
+            ps.electronic_mailbox electronicMailbox,
+            ps.supplier_remarks supplierRemarks,
+            ps.creation_time creationTime,
+            ps.unit_address unitAddress,
+            ps.bank_of_deposit bankOfDeposit,
+            ps.contact_number contactNumber,
+            ps.duty_paragraph dutyParagraph,
+            ps.bank_account_number bankAccountNumber,
+            ps.invoice_address invoiceAddress,
+            ps.logistics_consignee logisticsConsignee,
+            ps.logistics_contact_number logisticsContactNumber,
+            ps.postal_code postalCode,
+            ps.receiving_address receivingAddress
+        FROM
+            jr_purchase_supplier ps
+        WHERE
+            ps.id = #{id}
+    </select>
+
+</mapper>
