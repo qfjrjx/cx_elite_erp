@@ -284,6 +284,14 @@
             });
         }
 
+        /*回车快捷搜索*/
+        $(document).on('keydown', function (e) {
+            if (e.keyCode === 13) {
+                let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+                tableIns.reload({where: params, page: {curr: 1}});
+            }
+        });
+
         function getQueryParams() {
             let params = $searchForm.serializeJson();
             params.invalidate_ie_cache = new Date();
