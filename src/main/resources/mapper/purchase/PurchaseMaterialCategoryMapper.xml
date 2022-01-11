@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.purchase.mapper.PurchaseMaterialCategoryMapper">
+
+    <sql id="countPurchaseMaterialCategorySql">
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_purchase_material_category pmc
+        WHERE
+            1 = 1
+        <if test="purchaseMaterialCategory.categoryName != null and purchaseMaterialCategory.categoryName != ''">
+            AND pmc.category_name like CONCAT('%',#{purchaseMaterialCategory.categoryName},'%')
+        </if>
+        <if test="purchaseMaterialCategory.materialCategory != null and purchaseMaterialCategory.materialCategory != ''">
+            AND pmc.material_category = #{purchaseMaterialCategory.materialCategory}
+        </if>
+        <if test="purchaseMaterialCategory.materialCategoryState != null and purchaseMaterialCategory.materialCategoryState != ''">
+            AND pmc.material_category_state = #{purchaseMaterialCategory.materialCategoryState}
+        </if>
+    </sql>
+    <sql id="findPurchaseMaterialCategorySql">
+        SELECT
+            pmc.id,
+            pmc.material_category_state materialCategoryState,
+            pmc.material_category materialCategory,
+            pmc.belonging_general_category belongingGeneralCategory,
+            pmc.category_name categoryName,
+            pmc.material_category_sort materialCategorySort,
+            pmc.material_category_remarks materialCategoryRemarks
+        FROM
+            jr_purchase_material_category pmc
+        WHERE
+            1 = 1
+        <if test="purchaseMaterialCategory.categoryName != null and purchaseMaterialCategory.categoryName != ''">
+            AND pmc.category_name like CONCAT('%',#{purchaseMaterialCategory.categoryName},'%')
+        </if>
+        <if test="purchaseMaterialCategory.materialCategory != null and purchaseMaterialCategory.materialCategory != ''">
+            AND pmc.material_category = #{purchaseMaterialCategory.materialCategory}
+        </if>
+        <if test="purchaseMaterialCategory.materialCategoryState != null and purchaseMaterialCategory.materialCategoryState != ''">
+            AND pmc.material_category_state = #{purchaseMaterialCategory.materialCategoryState}
+        </if>
+    </sql>
+
+    <select id="countPurchaseMaterialCategory" parameterType="com.erp.purchase.entity.PurchaseMaterialCategory" resultType="long">
+        <include refid="countPurchaseMaterialCategorySql"/>
+    </select>
+
+    <select id="findPurchaseMaterialCategoryPage" parameterType="com.erp.purchase.entity.PurchaseMaterialCategory" resultType="com.erp.purchase.entity.PurchaseMaterialCategory">
+        <include refid="findPurchaseMaterialCategorySql"/>
+    </select>
+
+    <!-- 查询物料类别表 -->
+    <select id="queryPurchaseMaterialCategory" parameterType="com.erp.purchase.entity.PurchaseMaterialCategory" resultType="com.erp.purchase.entity.PurchaseMaterialCategory">
+        SELECT
+            pmc.id,
+            pmc.material_category_state materialCategoryState,
+            pmc.material_category materialCategory,
+            pmc.belonging_general_category belongingGeneralCategory,
+            pmc.category_name categoryName,
+            pmc.material_category_sort materialCategorySort,
+            pmc.material_category_remarks materialCategoryRemarks
+        FROM
+            jr_purchase_material_category pmc
+        WHERE
+            pmc.material_category = #{generalCategory}
+        AND pmc.material_category_state = 1
+    </select>
+    <select id="findPurchaseMaterialCategoryById" parameterType="long" resultType="com.erp.purchase.entity.PurchaseMaterialCategory">
+        SELECT
+            pmc.id,
+            pmc.material_category_state materialCategoryState,
+            pmc.material_category materialCategory,
+            pmc.belonging_general_category belongingGeneralCategory,
+            pmc.category_name categoryName,
+            pmc.material_category_sort materialCategorySort,
+            pmc.material_category_remarks materialCategoryRemarks
+        FROM
+            jr_purchase_material_category pmc
+        WHERE
+            pmc.id = #{id}
+    </select>
+
+</mapper>

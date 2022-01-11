@@ -2,8 +2,11 @@ package com.erp.purchase.controller;
 
 import com.erp.common.entity.FebsConstant;
 import com.erp.common.utils.FebsUtil;
+import com.erp.enterprise.entity.EnterpriseResourcesParameters;
+import com.erp.purchase.entity.PurchaseMaterialCategory;
 import com.erp.purchase.entity.PurchaseParameters;
 import com.erp.purchase.entity.PurchaseSupplier;
+import com.erp.purchase.service.IPurchaseMaterialCategoryService;
 import com.erp.purchase.service.IPurchaseParametersService;
 import com.erp.purchase.service.IPurchaseSupplierService;
 import com.erp.technology.entity.TechnologyProductCategory;
@@ -16,6 +19,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.List;
+
 /**
  * @author qiufeng
  */
@@ -27,6 +32,8 @@ public class ViewController {
     private final IPurchaseParametersService purchaseParametersService;
     //供货单位表 Service接口
     private final IPurchaseSupplierService purchaseSupplierService;
+    //物料类别表 Service接口
+    private final IPurchaseMaterialCategoryService purchaseMaterialCategoryService;
 
     /*采购管理模块开始*/
     /*采购参数列表*/
@@ -93,7 +100,38 @@ public class ViewController {
         model.addAttribute("purchaseSupplier", purchaseSupplier);
     }
 
+    /*物料类别列表*/
+    @GetMapping("purchaseMaterialCategory/list")
+    @RequiresPermissions("purchaseMaterialCategory:view")
+    public String purchaseMaterialCategoryIndex(){
+        return FebsUtil.view("materialCategory/materialCategoryList");
+    }
 
+    //物料类别添加
+    @GetMapping("purchaseMaterialCategory/add")
+    @RequiresPermissions("purchaseMaterialCategory:add")
+    public String purchaseMaterialCategoryAdd(Model model) {
+        //查询物料类别表
+        List<PurchaseMaterialCategory> purchaseMaterialCategories  = purchaseMaterialCategoryService.queryPurchaseMaterialCategory(PurchaseMaterialCategory.GENERAL_CATEGORY);
+        model.addAttribute("purchaseMaterialCategories",purchaseMaterialCategories);
+        return FebsUtil.view("materialCategory/materialCategoryAdd");
+    }
+
+    //物料类别修改
+    @GetMapping("purchaseMaterialCategory/update/{id}")
+    @RequiresPermissions("purchaseMaterialCategory:update")
+    public String purchaseMaterialCategoryUpdate(@PathVariable Long id, Model model) {
+        purchaseMaterialCategoryModel(id, model, false);
+        //查询物料类别表
+        List<PurchaseMaterialCategory> purchaseMaterialCategories  = purchaseMaterialCategoryService.queryPurchaseMaterialCategory(PurchaseMaterialCategory.GENERAL_CATEGORY);
+        model.addAttribute("purchaseMaterialCategories",purchaseMaterialCategories);
+        return FebsUtil.view("materialCategory/materialCategoryUpdate");
+    }
+    //物料类别修改回填
+    private void purchaseMaterialCategoryModel(Long id, Model model, Boolean transform) {
+        PurchaseMaterialCategory purchaseMaterialCategory = purchaseMaterialCategoryService.findPurchaseMaterialCategoryById(id);
+        model.addAttribute("purchaseMaterialCategory", purchaseMaterialCategory);
+    }
 
     /*采购管理模块结束*/
 }
