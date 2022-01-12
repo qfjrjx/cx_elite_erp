@@ -55,7 +55,7 @@ public class PurchaseMaterialCategoryServiceImpl extends ServiceImpl<PurchaseMat
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updatePurchaseMaterialCategory(PurchaseMaterialCategory purchaseMaterialCategory) {
-        this.saveOrUpdate(purchaseMaterialCategory);
+        baseMapper.updatePurchaseMaterialCategory(purchaseMaterialCategory);
     }
 
     @Override

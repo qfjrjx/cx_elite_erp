@@ -49,8 +49,12 @@ public class PurchaseMaterialCategory {
     /**
      * 所属大类
      */
-    @TableField("belonging_general_category")
+    @TableField("belonging_general_category_id")
+    private Long belongingGeneralCategoryId;
+
     private String belongingGeneralCategory;
+
+
 
     /**
      * 类别名称

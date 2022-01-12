@@ -24,14 +24,15 @@
             pmc.id,
             pmc.material_category_state materialCategoryState,
             pmc.material_category materialCategory,
-            pmc.belonging_general_category belongingGeneralCategory,
+            pmca.category_name belongingGeneralCategory,
             pmc.category_name categoryName,
             pmc.material_category_sort materialCategorySort,
             pmc.material_category_remarks materialCategoryRemarks
         FROM
             jr_purchase_material_category pmc
+            LEFT JOIN jr_purchase_material_category pmca ON ( pmc.belonging_general_category_id = pmca.id )
         WHERE
-            1 = 1
+             1 = 1
         <if test="purchaseMaterialCategory.categoryName != null and purchaseMaterialCategory.categoryName != ''">
             AND pmc.category_name like CONCAT('%',#{purchaseMaterialCategory.categoryName},'%')
         </if>
@@ -51,13 +52,13 @@
         <include refid="findPurchaseMaterialCategorySql"/>
     </select>
 
-    <!-- 查询物料类别表 -->
+    <!-- 查询物料类别表 大类 -->
     <select id="queryPurchaseMaterialCategory" parameterType="com.erp.purchase.entity.PurchaseMaterialCategory" resultType="com.erp.purchase.entity.PurchaseMaterialCategory">
         SELECT
             pmc.id,
             pmc.material_category_state materialCategoryState,
             pmc.material_category materialCategory,
-            pmc.belonging_general_category belongingGeneralCategory,
+            pmc.belonging_general_category_id belongingGeneralCategoryId,
             pmc.category_name categoryName,
             pmc.material_category_sort materialCategorySort,
             pmc.material_category_remarks materialCategoryRemarks
@@ -67,12 +68,13 @@
             pmc.material_category = #{generalCategory}
         AND pmc.material_category_state = 1
     </select>
+    <!--修改回显-->
     <select id="findPurchaseMaterialCategoryById" parameterType="long" resultType="com.erp.purchase.entity.PurchaseMaterialCategory">
         SELECT
             pmc.id,
             pmc.material_category_state materialCategoryState,
             pmc.material_category materialCategory,
-            pmc.belonging_general_category belongingGeneralCategory,
+            pmc.belonging_general_category_id belongingGeneralCategoryId,
             pmc.category_name categoryName,
             pmc.material_category_sort materialCategorySort,
             pmc.material_category_remarks materialCategoryRemarks
@@ -81,5 +83,16 @@
         WHERE
             pmc.id = #{id}
     </select>
+
+    <update id="updatePurchaseMaterialCategory">
+         UPDATE jr_purchase_material_category pmc
+         SET pmc.material_category_state = #{materialCategoryState},
+             pmc.material_category = #{materialCategory},
+             pmc.belonging_general_category_id = #{belongingGeneralCategoryId},
+             pmc.category_name = #{categoryName},
+             pmc.material_category_sort = #{materialCategorySort},
+             pmc.material_category_remarks = #{materialCategoryRemarks}
+         WHERE pmc.id = #{id}
+    </update>
 
 </mapper>

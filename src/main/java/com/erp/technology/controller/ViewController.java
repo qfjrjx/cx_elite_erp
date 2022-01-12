@@ -88,7 +88,7 @@ public class ViewController {
          //查询产品类别  2-小类
          List<TechnologyProductCategory> productSubclass  = technologyProductCategoryService.queryProductGeneralCategory(TechnologyProductCategory.product_subclass,TechnologyProductCategory.product_category_state);
          model.addAttribute("productSubclass",productSubclass);
-         //查询产品材质信息
+         //查询计量单位信息
          List<PurchaseParameters> unitOfMeasure  = purchaseParametersService.queryProductMaterial(PurchaseParameters.unit_of_measure,PurchaseParameters.parameters_state);
          model.addAttribute("unitOfMeasure",unitOfMeasure);
          return FebsUtil.view("productArchives/productArchivesAdd");

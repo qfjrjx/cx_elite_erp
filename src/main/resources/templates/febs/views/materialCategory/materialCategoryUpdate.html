@@ -30,9 +30,9 @@
         <div class="layui-form-item" id="div-show" hidden>
             <label class="layui-form-label">所属大类：</label>
             <div class="layui-input-block">
-                <select id="belongingGeneralCategory" style="width: 190px"  name="belongingGeneralCategory" type="select" class="layui-form-select selector" lay-filter="belongingGeneralCategory">
+                <select id="belongingGeneralCategoryId" style="width: 190px"  name="belongingGeneralCategoryId" type="select" class="layui-form-select selector" lay-filter="belongingGeneralCategoryId">
                     <option value="" ></option>
-                    <option th:each="purchaseMaterialCategories:${purchaseMaterialCategories}" th:value="${purchaseMaterialCategories.categoryName}">[[${purchaseMaterialCategories.categoryName}]]</option>
+                    <option th:each="purchaseMaterialCategories:${purchaseMaterialCategories}" th:value="${purchaseMaterialCategories.id}">[[${purchaseMaterialCategories.categoryName}]]</option>
                 </select>
             </div>
         </div>
@@ -89,7 +89,7 @@
             form.val("materialCategory-update-form", {
                 "materialCategory": purchaseMaterialCategory.materialCategory,
                 "categoryName": purchaseMaterialCategory.categoryName,
-                "belongingGeneralCategory": purchaseMaterialCategory.belongingGeneralCategory,
+                "belongingGeneralCategoryId": purchaseMaterialCategory.belongingGeneralCategoryId,
                 "materialCategorySort": purchaseMaterialCategory.materialCategorySort,
                 "materialCategoryRemarks": purchaseMaterialCategory.materialCategoryRemarks,
                 "materialCategoryState": purchaseMaterialCategory.materialCategoryState
