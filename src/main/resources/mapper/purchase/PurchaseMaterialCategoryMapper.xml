@@ -95,4 +95,16 @@
          WHERE pmc.id = #{id}
     </update>
 
+    <select id="queryMaterialSubclass" parameterType="long" resultType="com.erp.purchase.entity.PurchaseMaterialCategory">
+        SELECT
+            pmc.id,
+            pmc.belonging_general_category_id belongingGeneralCategoryId,
+            pmc.category_name categoryName
+        FROM
+            jr_purchase_material_category pmc
+        WHERE
+            pmc.belonging_general_category_id = #{id}
+            AND pmc.material_category_state = 1
+    </select>
+
 </mapper>

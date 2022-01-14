@@ -56,4 +56,6 @@ public interface IPurchaseMaterialCategoryService extends IService<PurchaseMater
     List<PurchaseMaterialCategory> queryPurchaseMaterialCategory(String generalCategory);
 
     PurchaseMaterialCategory findPurchaseMaterialCategoryById(Long id);
+
+    List<PurchaseMaterialCategory> queryMaterialSubclass(Long id);
 }

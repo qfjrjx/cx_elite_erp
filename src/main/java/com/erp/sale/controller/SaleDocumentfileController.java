@@ -158,7 +158,69 @@ public class SaleDocumentfileController extends BaseController {
         // resUrl.put("src", tempFile.getPath());
         res.put("code", "0");
         res.put("msg", "");
+        //文件名+后缀名
         res.put("data", tempFile.getName());
+        return res;
+    }
+    //上传控制器
+    @PostMapping("document/uploadPictureImg")
+    @ResponseBody
+    public Map uploadPictureImg(@RequestParam("file")MultipartFile file, HttpServletRequest servletRequest)
+            throws IOException {
+
+        Map res = new HashMap();
+
+        //上传文件名
+        String name = file.getOriginalFilename();//上传文件的真实名称
+        //以“.”截取文件名称
+        int nameOne = name.indexOf(".");
+        //从下标0开始截取到“.”
+        String contName = name.substring(0,nameOne);
+        String suffixName = name.substring(name.lastIndexOf("."));//获取后缀名
+        // String hash = Integer.toHexString(new Random().nextInt());//自定义随机数（字母+数字）作为文件名
+        String hash = UUID.randomUUID().toString().replaceAll("-","");
+        String fileName = hash + suffixName;
+        String fileNameOne = hash;
+        String os = System.getProperty("os.name");
+        ////上传文件保存路径
+        String path="";
+        if(os.toLowerCase().startsWith("win")){
+            //windows下的路径
+            path ="d:/pictureUpload/uploadFile";
+        }else {
+            //linux下的路径
+            path="/root/pictureUpload/uploadFile";
+        }
+        File filePath = new File(path, fileName);
+        //System.out.println("随机数文件名称"+filePath.getName());
+        //System.out.println("文件地址"+filePath);
+        //判断路径是否存在，没有就创建一个
+        if (!filePath.getParentFile().exists()) {
+            filePath.getParentFile().mkdirs();
+        }
+        //将上传文件保存到一个目标文档中
+        File tempFile = new File(path + File.separator + fileName);
+        File tempFileOne = new File(path + File.separator + fileNameOne);
+        //System.out.println("将上传文件保存到一个目标文档中"+tempFile);
+        file.transferTo(tempFile);
+        if(file!=null){
+            //将上传的文件信息写入数据库
+            SaleDocumentfile documentFile=new SaleDocumentfile();
+            documentFile.setName(hash);
+            documentFile.setFileName(contName);
+            documentFile.setSuffix(suffixName);
+            documentFile.setPath(path);
+            documentFile.setTime(new Timestamp(new Date().getTime()));
+            saleDocumentfileService.addDocumentFile(documentFile);
+
+        }
+        // resUrl.put("src", tempFile.getPath());
+        res.put("code", "0");
+        res.put("msg", "");
+        //文件名+后缀名
+         //System.out.println("文件名称"+tempFile.getName());
+        res.put("data", tempFile.getName());
+        res.put("dataName", tempFileOne.getName());
         return res;
     }
     @GetMapping("saleDocumentFile/down")

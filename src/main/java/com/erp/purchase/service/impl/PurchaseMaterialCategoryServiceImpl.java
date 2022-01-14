@@ -77,4 +77,11 @@ public class PurchaseMaterialCategoryServiceImpl extends ServiceImpl<PurchaseMat
 
         return baseMapper.findPurchaseMaterialCategoryById(id);
     }
+
+    @Override
+    public List<PurchaseMaterialCategory> queryMaterialSubclass(Long id) {
+
+
+        return baseMapper.queryMaterialSubclass(id);
+    }
 }

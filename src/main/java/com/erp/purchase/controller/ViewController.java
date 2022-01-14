@@ -4,9 +4,11 @@ import com.erp.common.entity.FebsConstant;
 import com.erp.common.utils.FebsUtil;
 import com.erp.enterprise.entity.EnterpriseResourcesParameters;
 import com.erp.purchase.entity.PurchaseMaterialCategory;
+import com.erp.purchase.entity.PurchaseMaterialFile;
 import com.erp.purchase.entity.PurchaseParameters;
 import com.erp.purchase.entity.PurchaseSupplier;
 import com.erp.purchase.service.IPurchaseMaterialCategoryService;
+import com.erp.purchase.service.IPurchaseMaterialFileService;
 import com.erp.purchase.service.IPurchaseParametersService;
 import com.erp.purchase.service.IPurchaseSupplierService;
 import com.erp.technology.entity.TechnologyProductCategory;
@@ -34,6 +36,9 @@ public class ViewController {
     private final IPurchaseSupplierService purchaseSupplierService;
     //物料类别表 Service接口
     private final IPurchaseMaterialCategoryService purchaseMaterialCategoryService;
+    //物料档案表 Service接口
+    private final IPurchaseMaterialFileService purchaseMaterialFileService;
+
 
     /*采购管理模块开始*/
     /*采购参数列表*/
@@ -122,7 +127,7 @@ public class ViewController {
     @RequiresPermissions("purchaseMaterialCategory:update")
     public String purchaseMaterialCategoryUpdate(@PathVariable Long id, Model model) {
         purchaseMaterialCategoryModel(id, model, false);
-        //查询物料类别表
+        //查询物料类别表 大类
         List<PurchaseMaterialCategory> purchaseMaterialCategories  = purchaseMaterialCategoryService.queryPurchaseMaterialCategory(PurchaseMaterialCategory.GENERAL_CATEGORY);
         model.addAttribute("purchaseMaterialCategories",purchaseMaterialCategories);
         return FebsUtil.view("materialCategory/materialCategoryUpdate");
@@ -133,5 +138,92 @@ public class ViewController {
         model.addAttribute("purchaseMaterialCategory", purchaseMaterialCategory);
     }
 
+    /*物料档案列表*/
+    @GetMapping("purchaseMaterialFile/list")
+    @RequiresPermissions("purchaseMaterialFile:view")
+    public String purchaseMaterialFileIndex(Model model){
+
+        //查询产品材质信息
+        List<PurchaseParameters> productMaterial  = purchaseParametersService.queryProductMaterial(PurchaseParameters.product_material,PurchaseParameters.parameters_state);
+        model.addAttribute("productMaterial",productMaterial);
+        //查询物料类别表 大类
+        List<PurchaseMaterialCategory> generalCategory  = purchaseMaterialCategoryService.queryPurchaseMaterialCategory(PurchaseMaterialCategory.GENERAL_CATEGORY);
+        model.addAttribute("generalCategory",generalCategory);
+
+        return FebsUtil.view("purchaseMaterialFile/purchaseMaterialFileList");
+    }
+
+    //物料档案添加
+    @GetMapping("purchaseMaterialFile/add")
+    @RequiresPermissions("purchaseMaterialFile:add")
+    public String purchaseMaterialFileAdd(Model model) {
+        //查询产品材质信息
+        List<PurchaseParameters> productMaterial  = purchaseParametersService.queryProductMaterial(PurchaseParameters.product_material,PurchaseParameters.parameters_state);
+        model.addAttribute("productMaterial",productMaterial);
+        //查询计量单位信息
+        List<PurchaseParameters> unitOfMeasure  = purchaseParametersService.queryProductMaterial(PurchaseParameters.unit_of_measure,PurchaseParameters.parameters_state);
+        model.addAttribute("unitOfMeasure",unitOfMeasure);
+        //查询物料类别表 大类
+        List<PurchaseMaterialCategory> generalCategory  = purchaseMaterialCategoryService.queryPurchaseMaterialCategory(PurchaseMaterialCategory.GENERAL_CATEGORY);
+        model.addAttribute("generalCategory",generalCategory);
+        //查询物料类别表 小类
+        List<PurchaseMaterialCategory> purchaseMaterialCategory  = purchaseMaterialCategoryService.queryPurchaseMaterialCategory(PurchaseMaterialCategory.SUBCLASS);
+        model.addAttribute("purchaseMaterialCategory",purchaseMaterialCategory);
+
+        return FebsUtil.view("purchaseMaterialFile/purchaseMaterialFileAdd");
+    }
+    //物料档案修改
+    @GetMapping("purchaseMaterialFile/update/{id}")
+    @RequiresPermissions("purchaseMaterialFile:update")
+    public String purchaseMaterialFileUpdate(@PathVariable Long id, Model model) {
+        purchaseMaterialFileModel(id, model, false);
+        //查询产品材质信息
+        List<PurchaseParameters> productMaterial  = purchaseParametersService.queryProductMaterial(PurchaseParameters.product_material,PurchaseParameters.parameters_state);
+        model.addAttribute("productMaterial",productMaterial);
+        //查询计量单位信息
+        List<PurchaseParameters> unitOfMeasure  = purchaseParametersService.queryProductMaterial(PurchaseParameters.unit_of_measure,PurchaseParameters.parameters_state);
+        model.addAttribute("unitOfMeasure",unitOfMeasure);
+        //查询物料类别表 大类
+        List<PurchaseMaterialCategory> generalCategory  = purchaseMaterialCategoryService.queryPurchaseMaterialCategory(PurchaseMaterialCategory.GENERAL_CATEGORY);
+        model.addAttribute("generalCategory",generalCategory);
+        return FebsUtil.view("purchaseMaterialFile/purchaseMaterialFileUpdate");
+    }
+    //物料档案修改回填
+    private void purchaseMaterialFileModel(Long id, Model model, Boolean transform) {
+        PurchaseMaterialFile purchaseMaterialFile = purchaseMaterialFileService.findPurchaseMaterialFileById(id);
+        model.addAttribute("purchaseMaterialFile", purchaseMaterialFile);
+
+        Long generalCategoryId = purchaseMaterialFile.getGeneralCategoryId();
+        //查询物料类别表 小类
+        List<PurchaseMaterialCategory> purchaseMaterialCategory  = purchaseMaterialCategoryService.queryMaterialSubclass(generalCategoryId);
+        model.addAttribute("purchaseMaterialCategory",purchaseMaterialCategory);
+    }
+
+    //物料档案复制
+    @GetMapping("purchaseMaterialFile/copy/{id}")
+    @RequiresPermissions("purchaseMaterialFile:copy")
+    public String purchaseMaterialFileCopy(@PathVariable Long id, Model model) {
+        purchaseMaterialFileCopyModel(id, model, false);
+        //查询产品材质信息
+        List<PurchaseParameters> productMaterial  = purchaseParametersService.queryProductMaterial(PurchaseParameters.product_material,PurchaseParameters.parameters_state);
+        model.addAttribute("productMaterial",productMaterial);
+        //查询计量单位信息
+        List<PurchaseParameters> unitOfMeasure  = purchaseParametersService.queryProductMaterial(PurchaseParameters.unit_of_measure,PurchaseParameters.parameters_state);
+        model.addAttribute("unitOfMeasure",unitOfMeasure);
+        //查询物料类别表 大类
+        List<PurchaseMaterialCategory> generalCategory  = purchaseMaterialCategoryService.queryPurchaseMaterialCategory(PurchaseMaterialCategory.GENERAL_CATEGORY);
+        model.addAttribute("generalCategory",generalCategory);
+        return FebsUtil.view("purchaseMaterialFile/purchaseMaterialFileCopy");
+    }
+    //物料档案复制回填
+    private void purchaseMaterialFileCopyModel(Long id, Model model, Boolean transform) {
+        PurchaseMaterialFile purchaseMaterialFile = purchaseMaterialFileService.findPurchaseMaterialFileCopyById(id);
+        model.addAttribute("purchaseMaterialFile", purchaseMaterialFile);
+
+        Long generalCategoryId = purchaseMaterialFile.getGeneralCategoryId();
+        //查询物料类别表 小类
+        List<PurchaseMaterialCategory> purchaseMaterialCategory  = purchaseMaterialCategoryService.queryMaterialSubclass(generalCategoryId);
+        model.addAttribute("purchaseMaterialCategory",purchaseMaterialCategory);
+    }
     /*采购管理模块结束*/
 }

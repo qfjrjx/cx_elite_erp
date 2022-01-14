@@ -12,7 +12,7 @@ public class MyConfiguration extends WebMvcConfigurerAdapter {
         registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
 
         //addResourceHandler是指定的虚拟路径，addResourceLocations是自己的物理路径，
-        registry.addResourceHandler("/file/**").addResourceLocations("file:D:/pictureUpload/upload");
+        registry.addResourceHandler("/file/**").addResourceLocations("file:D:/pictureUpload/uploadFile");
 
         super.addResourceHandlers(registry);
 

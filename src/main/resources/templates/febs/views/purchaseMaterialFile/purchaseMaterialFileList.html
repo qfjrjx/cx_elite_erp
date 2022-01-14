@@ -1,0 +1,381 @@
+<style>
+    #purchaseMaterialFile-list xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #purchaseMaterialFile-list xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="purchaseMaterialFile-list" lay-title="物料档案">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="parameter-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md12">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label">状态</label>
+                                        <div class="layui-input-inline" style="width: 80px">
+                                            <select name="materialState">
+                                                <option value="">全部</option>
+                                                <option value="1">启用</option>
+                                                <option value="2">禁用</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label">物料名称</label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <input type="text" name="materialName"   autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label">规格型号</label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <input type="text" name="specificationsModel" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label " >材质：</label>
+                                        <div class="layui-input-inline" style="width: 120px" id="content4">
+                                            <select id="materialQualityId" style="width: 120px"  name="materialQualityId" type="select" class="layui-form-select selector" lay-filter="materialQualityId">
+                                                <option value="" ></option>
+                                                <option th:each="productMaterial:${productMaterial}" th:value="${productMaterial.id}">[[${productMaterial.purchaseParametersName}]]</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label " >大类：</label>
+                                        <div class="layui-input-inline" style="width: 120px" id="content1">
+                                            <select id="generalCategoryId" style="width: 130px"  name="generalCategoryId" type="select" lay-verify="required"  class="layui-form-select selector" lay-filter="generalCategoryId">
+                                                <option value="" ></option>
+                                                <option th:each="generalCategory:${generalCategory}" th:value="${generalCategory.id}">[[${generalCategory.categoryName}]]</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label " >小类：</label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <select id="materialSubclassId" style="width: 110px"  name="materialSubclassId" type="select" lay-verify="required"  class="layui-form-select selector" lay-filter="materialSubclassId">
+                                                <option value="" ></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label">品牌</label>
+                                        <div class="layui-input-inline" style="width: 90px">
+                                            <input type="text" name="materialBrand" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="purchaseMaterialFileTable" lay-data="{id: 'purchaseMaterialFileTable'}"></table>
+                    <div class="layui-col-md8">
+                        <div class="layui-form-item"></div>
+                    </div>
+                    <div class="layui-col-md4 layui-col-sm12 layui-col-xs12 table-action-area">
+                        <!--搜索按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                            <i class="layui-icon">&#xe848;</i>查询
+                        </div>
+                        <!-- 刷新表格按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain table-action" id="reset">
+                            <i class="layui-icon">&#xe79b;</i>刷新
+                        </div>
+                        <!--添加按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
+                                     "shiro:hasAnyPermissions="purchaseMaterialFile:add" id="addTo">
+                            <i class="layui-icon">&#xe78a;</i>新增
+                        </div>
+                        <!--修改按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="purchaseMaterialFile:update" id="updateTo">
+                            <i class="layui-icon">&#xe642;</i>修改
+                        </div>
+                        <!--复制按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="purchaseMaterialFile:copy" id="copyTo">
+                            <i class="layui-icon">&#xe642;</i>复制
+                        </div>
+                        <!--删除按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
+                                     "shiro:hasAnyPermissions="purchaseMaterialFile:delete" id="deleteTo">
+                            <i class="layui-icon">&#xe8a1;</i>删除
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="material-state">
+    {{#
+    let materialState = {
+    1: {title: '启用', color: 'green'},
+    2: {title: '禁用', color: 'volcano'}
+    }[d.materialState];
+    }}
+    <span class="layui-badge febs-bg-{{materialState.color}}">{{ materialState.title }}</span>
+</script>
+<script type="text/html" id="parameter-option">
+    <span shiro:lacksPermission="purchaseMaterialFile:view,purchaseMaterialFile:update,purchaseMaterialFile:delete">
+        <span class="layui-badge-dot febs-bg-orange"></span> 无权限
+    </span>
+    <a lay-event="edit" shiro:hasPermission="purchaseMaterialFile:update"><i
+            class="layui-icon febs-edit-area febs-blue">&#xe7a4;</i></a>
+    <a lay-event="del" shiro:hasPermission="purchaseMaterialFile:delete"><i class="layui-icon febs-edit-area febs-red">&#xe7f9;</i></a>
+</script>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+            laydate = layui.laydate,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            dropdownMenu = layui.dropdownMenu,
+            $view = $('#purchaseMaterialFile-list'),
+            $query = $view.find('#query'),
+            $addTo = $view.find('#addTo'),
+            $updateTo = $view.find('#updateTo'),
+            $deleteTo = $view.find('#deleteTo'),
+            $copyTo = $view.find('#copyTo'),
+            $reset = $view.find('#reset'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'createTime', type: null},
+            tableIns;
+
+        form.render();
+
+        //二级联动
+        form.on("select(generalCategoryId)",function (data) {
+            var division1id = data.value;
+            $.ajax({
+                type : "post",
+                url : "purchaseMaterialFile/query",
+                data : {'id':division1id},
+                dataType : "json",
+                success : function(d) {
+                    var tmp = '';
+                    for ( var i in d) {
+                        tmp += '<option value="' + d[i].id +  '">' + d[i].categoryName + '</option>';
+                    }
+                    $("#materialSubclassId").html(tmp);
+                    form.render();
+                },
+                error:function(){
+                    layer.alert('请求失败，稍后再试', {icon: 5});
+                }
+            });
+        });
+
+        initPurchaseMaterialFileTable();
+        dropdownMenu.render({
+            elem: $view.find('.action-more'),
+            click: function (name, elem, event) {
+                let checkStatus = table.checkStatus('purchaseMaterialFileTable');
+                if (name === 'add') {
+                    febs.modal.open('新增人事参数', 'personnel/purchaseMaterialFile/add', {
+                        btn: ['提交', '重置'],
+                        area: $(window).width() <= 750 ? '95%' : '50%',
+                        yes: function (index, layero) {
+                            $('#purchaseMaterialFile-add').find('#submit').trigger('click');
+                        },
+                        btn2: function () {
+                            $('#purchaseMaterialFile-add').find('#reset').trigger('click');
+                            return false;
+                        }
+                    });
+                }
+                if (name === 'delete') {
+                    if (!checkStatus.data.length) {
+                        let checkStatus = table.checkStatus('loginLogTable');
+                        febs.alert.warn('请选择需要删除的数据');
+                    } else {
+                        febs.modal.confirm('删除参数信息', '确定删除？', function () {
+                            let ids = [];
+                            layui.each(checkStatus.data, function (key, item) {
+                                ids.push(item.id)
+                            });
+                            deletePurchaseMaterialFile(ids.join(','));
+                        });
+                    }
+                }
+            },
+            options: []
+        });
+
+        table.on('tool(purchaseMaterialFileTable)', function (obj) {
+            let data = obj.data,
+                layEvent = obj.event;
+        });
+
+        table.on('sort(purchaseMaterialFileTable)', function (obj) {
+            sortObject = obj;
+            tableIns.reload({
+                initSort: obj,
+                where: $.extend(getQueryParams(), {
+                    field: obj.field,
+                    order: obj.type
+                })
+            });
+        });
+
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        $reset.on('click', function () {
+            $searchForm[0].reset();
+            tableIns.reload({where: getQueryParams(), page: {curr: 1}});
+        });
+        $addTo.on('click', function () {
+            febs.modal.open('【物料档案】 新增', 'purchase/purchaseMaterialFile/add', {
+                btn: ['保存', '关闭'],
+                area: $(window).width() <= 750 ? '95%' : '50%',
+                yes: function (index, layero) {
+                    $('#purchaseMaterialFile-add').find('#submit').trigger('click');
+                },
+                btn2: function () {
+                    layer.closeAll();
+                }
+            });
+        });
+        $updateTo.on('click', function () {
+            let checkStatus = table.checkStatus('purchaseMaterialFileTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要修改的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要修改的数据');
+            }else{
+                layui.each(checkStatus.data, function (key, item) {
+                    febs.modal.open('【物料档案】 修改', 'purchase/purchaseMaterialFile/update/' + item.id, {
+                        area: $(window).width() <= 750 ? '95%' : '50%',
+                        btn: ['保存', '关闭'],
+                        yes: function (index, layero) {
+                            $('#purchaseMaterialFile-update').find('#submit').trigger('click');
+                        },
+                        btn2: function () {
+                            layer.closeAll();
+                        }
+                    });
+                });
+            }
+        });
+        $copyTo.on('click', function () {
+            let checkStatus = table.checkStatus('purchaseMaterialFileTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要复制的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要复制的数据');
+            }else{
+                layui.each(checkStatus.data, function (key, item) {
+                    febs.modal.open('【物料档案】复制', 'purchase/purchaseMaterialFile/copy/' + item.id, {
+                        btn: ['保存','保存并新增', '关闭'],
+                        area: $(window).width() <= 750 ? '95%' : '50%',
+                        yes: function (index, layero) {
+                            $('#purchaseMaterialFile-copy').find('#submit').trigger('click');
+                        },
+                        btn2: function (index, layero) {
+                            $('#purchaseMaterialFile-copy').find('#submitOne').trigger('click');
+                            return false;
+                        },
+                        btn3: function () {
+                            $('#purchaseMaterialFile-copy').find('#reset').trigger('click');
+                        }
+                    });
+                });
+            }
+        });
+        $deleteTo.on('click', function () {
+            let checkStatus = table.checkStatus('purchaseMaterialFileTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要删除的数据');
+            } else {
+                febs.modal.confirm('删除物料档案', '确定删除？', function () {
+                    let ids = [];
+                    layui.each(checkStatus.data, function (key, item) {
+                        ids.push(item.id)
+                    });
+                    deletePurchaseMaterialFile(ids.join(','));
+                });
+            }
+        });
+
+        function initPurchaseMaterialFileTable() {
+            tableIns = febs.table.init({
+                elem: $view.find('table'),
+                id: 'purchaseMaterialFileTable',
+                url: ctx + 'purchaseMaterialFile/list',
+                cols: [[
+                    {type: 'checkbox'},
+                    {field:'number',minWidth: 50,align:'center',templet:function (d) {
+                                        return d.LAY_INDEX;}},
+                    {field: 'materialCode', title: '物料编码', minWidth: 110,align:'center'},
+                    {field: 'materialName', title: '物料名称', minWidth: 100,align:'center'},
+                    {field: 'specificationsModel', title: '规格型号', minWidth: 100,align:'center'},
+                    {field: 'materialLocation', title: '库位', minWidth: 100,align:'center'},
+                    {field: 'materialQuality', title: '材质', minWidth: 100,align:'center'},
+                    {field: 'materialBrand', title: '品牌', minWidth: 100,align:'center'},
+                    {field: 'meteringCompany', title: '计量单位', minWidth: 90,align:'center'},
+                    {field: 'materialSubclass', title: '小类', minWidth: 100,align:'center'},
+                    /*{field: 'materialCategorySort', title: '库存数量', minWidth: 100},
+                    {field: 'materialCategorySort', title: '最近入库', minWidth: 100},*/
+                    {title: '状态', templet: '#material-state',align:'center'},
+                    {field: 'materialPicture', title: '查看图片',minWidth: 130, unresize: true, sort: false,align: 'center',templet:function (d) {
+                        if (d.materialPicture !=null)
+                        return '<div><img  onclick="showimg(this)" src="/file/uploadFile/'+d.materialPicture+'", ' +
+                            'style="width: 100px;height: 100px"></div>'
+                        else
+                            return ''
+                    }},
+                    /*{field: 'materialPicture', title: '查看图片', minWidth: 100,align:'center'},*/
+                    {field: 'materialRemarks', title: '备注', minWidth: 100,align:'center'},
+                    {field: 'materialFilingPerson', title: '建档人', minWidth: 80,align:'center'},
+                    {field: 'theoreticalWeight', title: '理论重量', minWidth: 90,align:'center'},
+                    {field: 'materialCreatedDate', title: '建档日期', minWidth: 170,align:'center'}
+                ]]
+            });
+        }
+        /*回车快捷搜索*/
+        $(document).on('keydown', function (e) {
+            if (e.keyCode === 13) {
+                let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+                tableIns.reload({where: params, page: {curr: 1}});
+            }
+        });
+
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+
+        function deletePurchaseMaterialFile(ids) {
+            febs.get(ctx + 'purchaseMaterialFile/delete/' + ids, null, function () {
+                febs.alert.success('删除物料档案成功');
+                $query.click();
+            });
+        }
+
+    })
+    //通过点击，使图片放大（方法）
+    function showimg(t) {
+        //Layui的弹出层
+        layer.open({
+            type: 1,
+            title: false,
+            closeBtn: 0,
+            area: '1200px',
+            skin: 'layui-layer-nobg', //没有背景色
+            shadeClose: true,
+            content: '<img style="display: inline-block; width: 100%; height: 100%;" src="'+t.src+'">'
+        });
+    }
+</script>

@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.purchase.mapper.PurchaseMaterialFileMapper">
+
+    <sql id="countPurchaseMaterialFilesSql">
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_purchase_material_file pmf
+        WHERE
+            1 = 1
+        <if test="purchaseMaterialFile.materialState != null and purchaseMaterialFile.materialState != ''">
+            AND pmf.material_state = #{purchaseMaterialFile.materialState}
+        </if>
+        <if test="purchaseMaterialFile.materialName != null and purchaseMaterialFile.materialName != ''">
+            AND pmf.material_name like CONCAT('%',#{purchaseMaterialFile.materialName},'%')
+        </if>
+        <if test="purchaseMaterialFile.specificationsModel != null and purchaseMaterialFile.specificationsModel != ''">
+            AND pmf.specifications_model like CONCAT('%',#{purchaseMaterialFile.specificationsModel},'%')
+        </if>
+        <if test="purchaseMaterialFile.materialQualityId != null and purchaseMaterialFile.materialQualityId != ''">
+            AND pmf.material_quality_id = #{purchaseMaterialFile.materialQualityId}
+        </if>
+        <if test="purchaseMaterialFile.generalCategoryId != null and purchaseMaterialFile.generalCategoryId != ''">
+            AND pmf.general_category_id = #{purchaseMaterialFile.generalCategoryId}
+        </if>
+        <if test="purchaseMaterialFile.materialSubclassId != null and purchaseMaterialFile.materialSubclassId != ''">
+            AND pmf.material_subclass_id = #{purchaseMaterialFile.materialSubclassId}
+        </if>
+        <if test="purchaseMaterialFile.materialBrand != null and purchaseMaterialFile.materialBrand != ''">
+            AND pmf.material_brand like CONCAT('%',#{purchaseMaterialFile.materialBrand},'%')
+        </if>
+    </sql>
+    <sql id="findPurchaseMaterialFilesSql">
+       SELECT
+            pmf.id,
+            pmf.material_code materialCode,
+            pmf.material_name materialName,
+            pmf.specifications_model specificationsModel,
+            pmf.material_location materialLocation,
+            ppa.purchase_parameters_name materialQuality,
+            pmf.material_brand materialBrand,
+            pmca.category_name generalCategory,
+            pmcb.category_name materialSubclass,
+            ppb.purchase_parameters_name meteringCompany,
+            pmf.theoretical_weight theoreticalWeight,
+            pmf.inventory_ceiling inventoryCeiling,
+            pmf.inventory_lower inventoryLower,
+            pmf.minimum_unit minimumUnit,
+            pmf.material_state materialState,
+            pmf.material_remarks materialRemarks,
+            CONCAT( pmf.material_picture, sda.suffix ) AS materialPicture,
+            pmf.material_filing_person materialFilingPerson,
+            pmf.material_created_date materialCreatedDate
+        FROM
+            jr_purchase_material_file pmf
+            LEFT JOIN jr_purchase_parameters ppa ON ( pmf.material_quality_id = ppa.id )
+            LEFT JOIN jr_purchase_parameters ppb ON ( pmf.metering_company_id = ppb.id )
+            LEFT JOIN jr_purchase_material_category pmca ON ( pmf.general_category_id = pmca.id )
+            LEFT JOIN jr_purchase_material_category pmcb ON ( pmf.material_subclass_id = pmcb.id )
+            LEFT JOIN jr_sale_documentfile sda ON ( pmf.material_picture = sda.`name` )
+        WHERE
+            1 = 1
+            <if test="purchaseMaterialFile.materialState != null and purchaseMaterialFile.materialState != ''">
+                AND pmf.material_state = #{purchaseMaterialFile.materialState}
+            </if>
+            <if test="purchaseMaterialFile.materialName != null and purchaseMaterialFile.materialName != ''">
+                AND pmf.material_name like CONCAT('%',#{purchaseMaterialFile.materialName},'%')
+            </if>
+            <if test="purchaseMaterialFile.specificationsModel != null and purchaseMaterialFile.specificationsModel != ''">
+                AND pmf.specifications_model like CONCAT('%',#{purchaseMaterialFile.specificationsModel},'%')
+            </if>
+            <if test="purchaseMaterialFile.materialQualityId != null and purchaseMaterialFile.materialQualityId != ''">
+                AND pmf.material_quality_id = #{purchaseMaterialFile.materialQualityId}
+            </if>
+            <if test="purchaseMaterialFile.generalCategoryId != null and purchaseMaterialFile.generalCategoryId != ''">
+                AND pmf.general_category_id = #{purchaseMaterialFile.generalCategoryId}
+            </if>
+            <if test="purchaseMaterialFile.materialSubclassId != null and purchaseMaterialFile.materialSubclassId != ''">
+                AND pmf.material_subclass_id = #{purchaseMaterialFile.materialSubclassId}
+            </if>
+            <if test="purchaseMaterialFile.materialBrand != null and purchaseMaterialFile.materialBrand != ''">
+                AND pmf.material_brand like CONCAT('%',#{purchaseMaterialFile.materialBrand},'%')
+            </if>
+            ORDER BY pmf.material_code
+    </sql>
+
+    <select id="countPurchaseMaterialFiles" parameterType="com.erp.purchase.entity.PurchaseMaterialFile" resultType="long">
+        <include refid="countPurchaseMaterialFilesSql"/>
+    </select>
+
+    <select id="findPurchaseMaterialFilesPage" parameterType="com.erp.purchase.entity.PurchaseMaterialFile" resultType="com.erp.purchase.entity.PurchaseMaterialFile">
+        <include refid="findPurchaseMaterialFilesSql"/>
+    </select>
+
+    <!--查询上传的最后一条数据-->
+    <select id="queryPurchaseMaterialFile" resultType="com.erp.purchase.entity.PurchaseMaterialFile">
+       SELECT
+            pmf.id,
+            MAX( pmf.material_code ) as materialCode,
+            pmf.material_name materialName,
+            pmf.specifications_model specificationsModel,
+            pmf.material_location materialLocation,
+            pmf.material_quality_id materialQualityId,
+            pmf.material_brand materialBrand,
+            pmf.general_category_id generalCategoryId,
+            pmf.material_subclass_id materialSubclassId,
+            pmf.metering_company_id meteringCompanyId,
+            pmf.theoretical_weight theoreticalWeight,
+            pmf.inventory_ceiling inventoryCeiling,
+            pmf.inventory_lower inventoryLower,
+            pmf.minimum_unit minimumUnit,
+            pmf.material_state materialState,
+            pmf.material_remarks materialRemarks,
+            pmf.material_picture materialPicture,
+            pmf.material_filing_person materialFilingPerson,
+            pmf.material_created_date materialCreatedDate
+        FROM
+            jr_purchase_material_file pmf
+        GROUP BY
+            pmf.material_code
+        ORDER BY
+            pmf.material_code DESC
+            LIMIT 1;
+    </select>
+
+
+    <!--修改回显-->
+    <select id="findPurchaseMaterialFileById" parameterType="long" resultType="com.erp.purchase.entity.PurchaseMaterialFile">
+       SELECT
+            pmf.id,
+            pmf.material_code materialCode,
+            pmf.material_name materialName,
+            pmf.specifications_model specificationsModel,
+            pmf.material_location materialLocation,
+            pmf.material_quality_id materialQualityId,
+            pmf.material_brand materialBrand,
+            pmf.general_category_id generalCategoryId,
+            pmf.material_subclass_id materialSubclassId,
+            pmf.metering_company_id meteringCompanyId,
+            pmf.theoretical_weight theoreticalWeight,
+            pmf.inventory_ceiling inventoryCeiling,
+            pmf.inventory_lower inventoryLower,
+            pmf.minimum_unit minimumUnit,
+            pmf.material_state materialState,
+            pmf.material_remarks materialRemarks,
+            CONCAT( pmf.material_picture, sda.suffix ) AS materialPicture,
+            pmf.material_filing_person materialFilingPerson,
+            pmf.material_created_date materialCreatedDate
+        FROM
+            jr_purchase_material_file pmf
+             LEFT JOIN jr_sale_documentfile sda ON ( pmf.material_picture = sda.`name` )
+        WHERE
+            pmf.id = #{id}
+    </select>
+
+    <!--修改-->
+    <update id="updatePurchaseMaterialFile" parameterType="com.erp.purchase.entity.PurchaseMaterialFile" >
+        update  jr_purchase_material_file pmf
+        <set >
+            <if test="purchaseMaterialFile.materialName != null and purchaseMaterialFile.materialName != ''">
+                pmf.material_name = #{purchaseMaterialFile.materialName},
+            </if>
+            <if test="purchaseMaterialFile.specificationsModel != null and purchaseMaterialFile.specificationsModel != ''">
+                pmf.specifications_model = #{purchaseMaterialFile.specificationsModel},
+            </if>
+            <if test="purchaseMaterialFile.materialLocation != null and purchaseMaterialFile.materialLocation != ''">
+                pmf.material_location = #{purchaseMaterialFile.materialLocation},
+            </if>
+            <if test="purchaseMaterialFile.materialQualityId != null and purchaseMaterialFile.materialQualityId != ''">
+                pmf.material_quality_id = #{purchaseMaterialFile.materialQualityId},
+            </if>
+            <if test="purchaseMaterialFile.materialBrand != null and purchaseMaterialFile.materialBrand != ''">
+                pmf.material_brand = #{purchaseMaterialFile.materialBrand},
+            </if>
+            <if test="purchaseMaterialFile.generalCategoryId != null and purchaseMaterialFile.generalCategoryId != ''">
+                pmf.general_category_id = #{purchaseMaterialFile.generalCategoryId},
+            </if>
+            <if test="purchaseMaterialFile.materialSubclassId != null and purchaseMaterialFile.materialSubclassId != ''">
+                pmf.material_subclass_id = #{purchaseMaterialFile.materialSubclassId},
+            </if>
+            <if test="purchaseMaterialFile.meteringCompanyId != null and purchaseMaterialFile.meteringCompanyId != ''">
+                pmf.metering_company_id = #{purchaseMaterialFile.meteringCompanyId},
+            </if>
+            <if test="purchaseMaterialFile.theoreticalWeight != null and purchaseMaterialFile.theoreticalWeight != ''">
+                pmf.theoretical_weight = #{purchaseMaterialFile.theoreticalWeight},
+            </if>
+            <if test="purchaseMaterialFile.inventoryCeiling != null and purchaseMaterialFile.inventoryCeiling != ''">
+                pmf.inventory_ceiling = #{purchaseMaterialFile.inventoryCeiling},
+            </if>
+            <if test="purchaseMaterialFile.inventoryLower != null and purchaseMaterialFile.inventoryLower != ''">
+                pmf.inventory_lower = #{purchaseMaterialFile.inventoryLower},
+            </if>
+            <if test="purchaseMaterialFile.minimumUnit != null and purchaseMaterialFile.minimumUnit != ''">
+                pmf.minimum_unit = #{purchaseMaterialFile.minimumUnit},
+            </if>
+            <if test="purchaseMaterialFile.materialState != null and purchaseMaterialFile.materialState != ''">
+                pmf.material_state = #{purchaseMaterialFile.materialState},
+            </if>
+            <if test="purchaseMaterialFile.materialRemarks != null and purchaseMaterialFile.materialRemarks != ''">
+                pmf.material_remarks = #{purchaseMaterialFile.materialRemarks},
+            </if>
+            <if test="purchaseMaterialFile.materialPicture != null and purchaseMaterialFile.materialPicture != ''">
+                pmf.material_picture = #{purchaseMaterialFile.materialPicture},
+            </if>
+        </set>
+        where pmf.id = #{purchaseMaterialFile.id}
+    </update>
+
+
+    <!--修改回显-->
+    <select id="findPurchaseMaterialFileCopyById" parameterType="long" resultType="com.erp.purchase.entity.PurchaseMaterialFile">
+       SELECT
+            pmf.id,
+            pmf.material_name materialName,
+            pmf.specifications_model specificationsModel,
+            pmf.material_location materialLocation,
+            pmf.material_quality_id materialQualityId,
+            pmf.material_brand materialBrand,
+            pmf.general_category_id generalCategoryId,
+            pmf.material_subclass_id materialSubclassId,
+            pmf.metering_company_id meteringCompanyId,
+            pmf.theoretical_weight theoreticalWeight,
+            pmf.inventory_ceiling inventoryCeiling,
+            pmf.inventory_lower inventoryLower,
+            pmf.minimum_unit minimumUnit,
+            pmf.material_state materialState,
+            pmf.material_remarks materialRemarks,
+            CONCAT( pmf.material_picture, sda.suffix ) AS materialPicture,
+            pmf.material_picture materialFilePicture,
+            pmf.material_filing_person materialFilingPerson,
+            pmf.material_created_date materialCreatedDate
+        FROM
+            jr_purchase_material_file pmf
+             LEFT JOIN jr_sale_documentfile sda ON ( pmf.material_picture = sda.`name` )
+        WHERE
+            pmf.id = #{id}
+    </select>
+
+</mapper>

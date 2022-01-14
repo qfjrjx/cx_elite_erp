@@ -28,4 +28,7 @@ public interface PurchaseMaterialCategoryMapper extends BaseMapper<PurchaseMater
     PurchaseMaterialCategory findPurchaseMaterialCategoryById(@Param("id") Long id);
 
     void updatePurchaseMaterialCategory(PurchaseMaterialCategory purchaseMaterialCategory);
+
+    List<PurchaseMaterialCategory> queryMaterialSubclass(@Param("id") Long id);
+
 }
