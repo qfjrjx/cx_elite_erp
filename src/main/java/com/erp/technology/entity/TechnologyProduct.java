@@ -82,6 +82,8 @@ public class TechnologyProduct {
     @TableField("product_view_picture")
     private String productViewPicture;
 
+    private String productPicture;
+
     /**
      * 材质
      */

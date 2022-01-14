@@ -11,108 +11,128 @@
                 <input type="text" name="productFilingPerson" id="productFilingPerson">
             </div>
         </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label febs-form-item-require" >产品编码:</label>
-            <div class="layui-input-inline">
-                <input type="text" name="productCode" id="productCode"
-                       autocomplete="off" class="layui-input" placeholder="为空时自动生成编码" readonly>
+        <div class="layui-col-md9">
+            <div class="layui-form-item">
+                <label class="layui-form-label febs-form-item-require" >产品编码：</label>
+                <div class="layui-input-inline" style="width: 170px">
+                    <input type="text" name="productCode" id="productCode" style="width: 170px"
+                           autocomplete="off" class="layui-input" placeholder="为空时自动生成编码" readonly>
+                </div>
+                <label class="layui-form-label febs-form-item-require" >产品名称：</label>
+                <div class="layui-input-inline" style="width: 170px">
+                    <input type="text" name="productName" id="productName" lay-verify="required" style="width: 170px"
+                           autocomplete="off" class="layui-input" placeholder="请输入名称">
+                </div>
             </div>
-            <label class="layui-form-label febs-form-item-require" >产品名称:</label>
-            <div class="layui-input-inline">
-                <input type="text" name="productName" id="productName" lay-verify="required"
-                       autocomplete="off" class="layui-input" placeholder="请输入名称">
+            <div class="layui-form-item">
+                <label class="layui-form-label" >规格型号：</label>
+                <div class="layui-input-block" style="width: 460px">
+                    <input type="text" name="productSpecificationModel" id="productSpecificationModel" style="width: 460px"
+                           autocomplete="off" class="layui-input" placeholder="" >
+                </div>
             </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label" >规格型号:</label>
-            <div class="layui-input-block">
-                <input type="text" name="productSpecificationModel" id="productSpecificationModel"
-                       autocomplete="off" class="layui-input" placeholder="" >
-            </div>
-        </div>
-        <br>
-        <div class="layui-form-item">
-            <label class="layui-form-label" >材&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;质:</label>
-            <div class="layui-input-inline">
-                <select id="productMaterial"  name="productMaterial" lay-verify="required" >
-                    <option value="" >请选择</option>
-                    <option th:each="productMaterial:${productMaterial}" th:value="${productMaterial.id}">[[${productMaterial.purchaseParametersName}]]</option>
-                </select>
-            </div>
-            <label class="layui-form-label" >品&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;牌:</label>
-            <div class="layui-input-inline">
-                <input type="text" name="productBrand" id="productBrand"
-                       autocomplete="off" class="layui-input" placeholder="" >
-            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" >材&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;质：</label>
+                <div class="layui-input-inline" style="width: 170px">
+                    <select id="productMaterial"  name="productMaterial" lay-verify="required"  style="width: 170px">
+                        <option value="" >请选择</option>
+                        <option th:each="productMaterial:${productMaterial}" th:value="${productMaterial.id}">[[${productMaterial.purchaseParametersName}]]</option>
+                    </select>
+                </div>
+                <label class="layui-form-label" >品&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;牌：</label>
+                <div class="layui-input-inline" style="width: 170px">
+                    <input type="text" name="productBrand" id="productBrand" style="width: 170px"
+                           autocomplete="off" class="layui-input" placeholder="" >
+                </div>
 
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label febs-form-item-require" >大&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;类:</label>
-            <div class="layui-input-inline">
-                <select id="productGeneralCategory"  name="productGeneralCategory" lay-verify="required" >
-                    <option value="" >请选择</option>
-                    <option th:each="productGeneralCategory:${productGeneralCategory}" th:value="${productGeneralCategory.id}">[[${productGeneralCategory.productCategoryName}]]</option>
-                </select>
             </div>
-            <label class="layui-form-label febs-form-item-require" >小&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;类:</label>
-            <div class="layui-input-inline">
-                <select id="productSubclass"  name="productSubclass" lay-verify="required" >
-                    <option value="" >请选择</option>
-                    <option th:each="productSubclass:${productSubclass}" th:value="${productSubclass.id}">[[${productSubclass.productCategoryName}]]</option>
-                </select>
-            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label febs-form-item-require" >大&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;类：</label>
+                <div class="layui-input-inline" style="width: 170px">
+                    <select id="productGeneralCategory"  name="productGeneralCategory" lay-verify="required"  style="width: 170px">
+                        <option value="" >请选择</option>
+                        <option th:each="productGeneralCategory:${productGeneralCategory}" th:value="${productGeneralCategory.id}">[[${productGeneralCategory.productCategoryName}]]</option>
+                    </select>
+                </div>
+                <label class="layui-form-label febs-form-item-require" >小&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;类：</label>
+                <div class="layui-input-inline" style="width: 170px">
+                    <select id="productSubclass"  name="productSubclass" lay-verify="required" style="width: 170px">
+                        <option value="" >请选择</option>
+                        <option th:each="productSubclass:${productSubclass}" th:value="${productSubclass.id}">[[${productSubclass.productCategoryName}]]</option>
+                    </select>
+                </div>
 
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label febs-form-item-require" >计量单位:</label>
-            <div class="layui-input-inline">
-                <select id="productMeteringCompany"  name="productMeteringCompany" lay-verify="required" >
-                    <option value="" >请选择</option>
-                    <option th:each="unitOfMeasure:${unitOfMeasure}" th:value="${unitOfMeasure.id}">[[${unitOfMeasure.purchaseParametersName}]]</option>
-                </select>
             </div>
-            <label class="layui-form-label" >理论重量:</label>
-            <div class="layui-input-inline">
-                <input type="text" name="productTheoreticalWeight" id="productTheoreticalWeight"
-                       autocomplete="off" class="layui-input" placeholder="" >
-            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label febs-form-item-require" >计量单位：</label>
+                <div class="layui-input-inline" style="width: 170px">
+                    <select id="productMeteringCompany"  name="productMeteringCompany" lay-verify="required" style="width: 170px">
+                        <option value="" >请选择</option>
+                        <option th:each="unitOfMeasure:${unitOfMeasure}" th:value="${unitOfMeasure.id}">[[${unitOfMeasure.purchaseParametersName}]]</option>
+                    </select>
+                </div>
+                <label class="layui-form-label" >理论重量：</label>
+                <div class="layui-input-inline" style="width: 170px">
+                    <input type="text" name="productTheoreticalWeight" id="productTheoreticalWeight" style="width: 170px"
+                           autocomplete="off" class="layui-input" placeholder="" >
+                </div>
 
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label" >库存上限:</label>
-            <div class="layui-input-inline">
-                <input type="text" name="inventoryCeiling" id="inventoryCeiling"
-                       autocomplete="off" class="layui-input" placeholder="" >
             </div>
-            <label class="layui-form-label" >库存下限:</label>
-            <div class="layui-input-inline">
-                <input type="text" name="inventoryLowerLimit" id="inventoryLowerLimit"
-                       autocomplete="off" class="layui-input" placeholder="" >
-            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" >库存上限：</label>
+                <div class="layui-input-inline" style="width: 170px">
+                    <input type="text" name="inventoryCeiling" id="inventoryCeiling" style="width: 170px"
+                           autocomplete="off" class="layui-input" placeholder="" >
+                </div>
+                <label class="layui-form-label" >库存下限：</label>
+                <div class="layui-input-inline" style="width: 170px">
+                    <input type="text" name="inventoryLowerLimit" id="inventoryLowerLimit" style="width: 170px"
+                           autocomplete="off" class="layui-input" placeholder="" >
+                </div>
 
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" >最小单位：</label>
+                <div class="layui-input-inline" style="width: 170px">
+                    <input type="text" name="productMinimumUnit" id="productMinimumUnit" value="1" style="width: 170px"
+                           autocomplete="off" class="layui-input" placeholder="" >
+                </div>
+                <label class="layui-form-label" >状&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;态：</label>
+                <div class="layui-input-inline" style="width: 170px">
+                    <select name="productState" style="width: 170px">
+                        <option value="1">启用</option>
+                        <option value="2">禁用</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md3 layui-col-sm12 layui-col-xs12 table-action-area">
+            <div class="layui-upload">
+                　<!-- 隐藏的input,一个隐藏的input（用于保存文件url） -->
+                <div class="layui-upload-list" id="uploadPic1"
+                     style="margin-top: 5%;width: 180px;height: 300px; border: 1px solid #c2c2c2;margin-left: 5%;">
+                    <img class="layui-upload-img" th:src="@{'/file/uploadFile/'+${technologyProduct.productViewPicture}}" onclick="showImg(this)"  id="preShow" name="preShow" width="180px" height="300px" >
+                    <p id="demoText"></p>
+                </div>
+            </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label febs-form-item-require" >最小单位:</label>
-            <div class="layui-input-inline">
-                <input type="text" name="productMinimumUnit" id="productMinimumUnit" lay-verify="required"
-                       autocomplete="off" class="layui-input" placeholder="" >
-            </div>
-            <label class="layui-form-label" >状&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;态:</label>
-            <div class="layui-input-inline">
-                <select name="productState">
-                    <option value="1">启用</option>
-                    <option value="2">禁用</option>
-                </select>
+            <label class="layui-form-label">备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注：</label>
+            <div class="layui-input-block" style="width: 700px">
+                <input type="text" name="productRemarks" id="productRemarks" class="layui-input" style="width: 700px">
             </div>
         </div>
-        <br>
         <div class="layui-form-item">
-            <label class="layui-form-label">备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注</label>
-            <div class="layui-input-inline">
-                <input type="text" name="productRemarks" id="productRemarks" class="layui-input">
-            </div>
+            　　<label class="layui-form-label">图&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;片：</label>
+            　　<div class="layui-input-inline" style="width: 600px">
+                    <button type="button" class="layui-btn layui-btn-sm" id="uploadPic"><i class="layui-icon">&#xe67c;</i>选择文件</button>
+                    <button type="button" class="layui-btn layui-btn-sm layui-btn-warm" id="uploadPicBtn"><i class="layui-icon layui-icon-upload-circle"></i>开始上传</button>
+                    <span id="span-img" style="color: #f5222d"></span>
+                    <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" id="deletePicBtn"><i class="layui-icon layui-icon-close"></i>删除</button>
+                    <!-- 隐藏的input,一个隐藏的input（用于保存文件url） -->
+                    　　　　 <input type="hidden" id="img_url" name="productViewPicture" data-th-value="${technologyProduct.productPicture}"/>    　　
+               </div>
         </div>
-
         <div class="layui-form-item febs-hide">
             <button class="layui-btn" lay-submit="" lay-filter="productArchives-copy-form-submit" id="submit"></button>
             <button class="layui-btn" lay-submit="" lay-filter="productArchives-copy-form-submitOne" id="submitOne"></button>
@@ -121,14 +141,16 @@
     </form>
 </div>
 <script data-th-inline="javascript">
-    layui.use(['febs', 'form', 'validate', 'xmSelect','laydate'], function () {
+    layui.use(['febs', 'form', 'validate', 'xmSelect','laydate','upload'], function () {
         let $ = layui.$,
             febs = layui.febs,
             layer = layui.layer,
             form = layui.form,
             laydate = layui.laydate,
             technologyProduct = [[${technologyProduct}]],
-            validate = layui.validate;
+            validate = layui.validate,
+            upload = layui.upload,
+            uploadInst;
 
         form.verify(validate);
         form.render();
@@ -139,7 +161,6 @@
             let userName = currentUser.username;
             $('#productFilingPerson').val(userName);
             form.val("productArchives-copy-form", {
-                "productCode": technologyProduct.productCode,
                 "productName": technologyProduct.productName,
                 "productSpecificationModel": technologyProduct.productSpecificationModel,
                 "productMaterial": technologyProduct.productMaterial,
@@ -155,7 +176,62 @@
                 "productRemarks": technologyProduct.productRemarks
             });
         }
+//上传图片
+        uploadInst = upload.render({
+            elem: '#uploadPic' //绑定元素
+            ,url: 'document/uploadPictureImg' //上传接口 [[@{/upload/img}]]
+            ,auto: false
+            ,size: 307200 //限制文件大小，单位 KB
+            ,accept: 'file' //允许上传的文件类型
+            ,exts: 'jpg|jpeg|png|'
+            ,bindAction: '#uploadPicBtn'
+            ,before: function(obj){
+                //预读本地文件示例，不支持ie8
+                obj.preview(function(index, file, result){
+                    $('#preShow').attr('src', result); //图片链接（base64）
+                });
+            }
+            ,done: function(res){
+                //如果上传失败
+                if(res.code > 0){
+                    alert("上传失败");
+                    return layer.msg('上传失败');
+                }
+                //上传成功
+                $('#span-img').html(res.data);
+                $('#img_url').attr('value', res.dataName);
+                return layer.msg('上传成功');
+            }
+            ,error: function(){
+                var demoText = $('#demoText');
+                demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-mini demo-reload">重试</a>');
+                demoText.find('.demo-reload').on('click', function(){
+                    uploadInst.upload();
+                });
+            }
+        });
+        $("#deletePicBtn").click(function () {
+            var contFile = document.getElementById("span-img").innerText;
+            if(contFile == ""){
+                return layer.msg('您还没有上传文件！');
+            }else {
+                $.ajax({
+                    url: '/saleDocumentFile/deleteFile',
+                    data: {contFile: contFile},
+                    success : function(res) {
+                        //如果上传失败
+                        if(res.code >0){
+                            return layer.msg('删除失败');
+                        }else {
+                            $('#span-img').html("");
+                            $('#preShow').attr('src', ''); //图片链接（base64）
+                            return layer.msg('删除成功');
+                        }
+                    }
+                });
+            }
 
+        });
 
         form.on('submit(productArchives-copy-form-submit)', function (data) {
             if (!data.field.productName) {

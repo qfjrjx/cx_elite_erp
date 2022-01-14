@@ -22,8 +22,8 @@
                                         <div class="layui-input-inline" style="width: 110px">
                                             <select name="productProcessStatus">
                                                 <option value="">全部</option>
-                                                <option value="1">已设置</option>
-                                                <option value="2">未设置</option>
+                                                <option value="2">已设置</option>
+                                                <option value="1">未设置</option>
                                             </select>
                                         </div>
                                     </div>
@@ -251,7 +251,7 @@
         $addTo.on('click', function () {
             febs.modal.open('【产品档案】 新增', 'technology/technologyProduct/add', {
                 btn: ['保存','保存并新增', '关闭'],
-                area: $(window).width() <= 750 ? '95%' : '40%',
+                area: $(window).width() <= 750 ? '95%' : '50%',
                 yes: function (index, layero) {
                     $('#productArchives-add').find('#submit').trigger('click');
                 },
@@ -274,7 +274,7 @@
             }else{
                 layui.each(checkStatus.data, function (key, item) {
                     febs.modal.open('【产品档案】修改', 'technology/technologyProduct/update/' + item.id, {
-                        area: $(window).width() <= 750 ? '95%' : '40%',
+                        area: $(window).width() <= 750 ? '95%' : '50%',
                         btn: ['保存', '关闭'],
                         yes: function (index, layero) {
                             $('#productArchives-update').find('#submit').trigger('click');
@@ -296,7 +296,7 @@
                 layui.each(checkStatus.data, function (key, item) {
                     febs.modal.open('【产品档案】复制', 'technology/technologyProduct/copy/' + item.id, {
                         btn: ['保存','保存并新增', '关闭'],
-                        area: $(window).width() <= 750 ? '95%' : '40%',
+                        area: $(window).width() <= 750 ? '95%' : '50%',
                         yes: function (index, layero) {
                             $('#productArchives-copy').find('#submit').trigger('click');
                         },
@@ -423,7 +423,13 @@
                     {field: 'productInventoryQuantity', align:'center',title: '库存数量', minWidth: 90},
                     {field: 'productRecentWarehousing',align:'center', title: '最近入库', minWidth: 90},
                     {title: '状态', align:'center',templet: '#product-state'},
-                    {field: 'productViewPicture', title: '查看图片', minWidth: 100},
+                    {field: 'productViewPicture', title: '查看图片',minWidth: 130, unresize: true, sort: false,align: 'center',templet:function (d) {
+                            if (d.productViewPicture !=null)
+                                return '<div><img  onclick="showImg(this)" src="/file/uploadFile/'+d.productViewPicture+'", ' +
+                                    'style="width: 100px;height: 100px"></div>'
+                            else
+                                return ''
+                        }},
                     {field: 'productRemarks', title: '备注'},
                     {field: 'productFilingPerson', title: '建档人'},
                     {field: 'productCreatedDate', title: '建档日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.productCreatedDate, "yyyy-MM-dd HH:mm:ss") }}</div>', minWidth: 170, sort: true}
@@ -432,6 +438,14 @@
                 ]
             });
         }
+
+        /*回车快捷搜索*/
+        $(document).on('keydown', function (e) {
+            if (e.keyCode === 13) {
+                let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+                tableIns.reload({where: params, page: {curr: 1}});
+            }
+        });
 
         function getQueryParams() {
             let params = $searchForm.serializeJson();
@@ -446,6 +460,18 @@
             });
         }
 
-    })
-
+    });
+    //通过点击，使图片放大（方法）
+    function showImg(t) {
+        //Layui的弹出层
+        layer.open({
+            type: 1,
+            title: false,
+            closeBtn: 0,
+            area: '1200px',
+            skin: 'layui-layer-nobg', //没有背景色
+            shadeClose: true,
+            content: '<img style="display: inline-block; width: 100%; height: 100%;" src="'+t.src+'">'
+        });
+    }
 </script>

@@ -15,10 +15,10 @@
             AND tp.product_state = #{technologyProduct.productState}
         </if>
         <if test="technologyProduct.productName != null and technologyProduct.productName != ''">
-            AND tp.product_name = #{technologyProduct.productName}
+            AND tp.product_name like CONCAT('%',#{technologyProduct.productName},'%')
         </if>
          <if test="technologyProduct.productSpecificationModel != null and technologyProduct.productSpecificationModel != ''">
-            AND tp.product_specification_model = #{technologyProduct.productSpecificationModel}
+            AND tp.product_specification_model like CONCAT('%',#{technologyProduct.productSpecificationModel},'%')
         </if>
          <if test="technologyProduct.productSubclassId != null and technologyProduct.productSubclassId != ''">
             AND tp.product_subclass_id = #{technologyProduct.productSubclassId}
@@ -38,7 +38,7 @@
             tp.product_remarks,
             tp.product_filing_person,
             tp.product_created_date,
-            tp.product_view_picture,
+            CONCAT( tp.product_view_picture, sda.suffix ) AS productViewPicture,
             ppa.purchase_parameters_name productMaterial,
             ppb.purchase_parameters_name productMeteringCompany,
             tp.product_theoretical_weight,
@@ -50,12 +50,13 @@
             tp.product_recent_warehousing
         FROM
             jr_technology_product tp
-                LEFT JOIN jr_purchase_parameters ppa ON ( tp.product_material_id = ppa.id )
-                LEFT JOIN jr_purchase_parameters ppb ON ( tp.product_metering_company_id = ppb.id )
-                LEFT JOIN jr_technology_product_category tpca ON ( tp.product_subclass_id = tpca.id )
-                LEFT JOIN jr_technology_product_category tpcb ON ( tp.product_general_category_id = tpcb.id )
+            LEFT JOIN jr_purchase_parameters ppa ON ( tp.product_material_id = ppa.id )
+            LEFT JOIN jr_purchase_parameters ppb ON ( tp.product_metering_company_id = ppb.id )
+            LEFT JOIN jr_technology_product_category tpca ON ( tp.product_subclass_id = tpca.id )
+            LEFT JOIN jr_technology_product_category tpcb ON ( tp.product_general_category_id = tpcb.id )
+            LEFT JOIN jr_sale_documentfile sda ON ( tp.product_view_picture = sda.`name` )
         WHERE
-             1 = 1
+            1 = 1
         <if test="technologyProduct.productProcessStatus != null and technologyProduct.productProcessStatus != ''">
             AND tp.product_process_status = #{technologyProduct.productProcessStatus}
         </if>
@@ -63,10 +64,10 @@
             AND tp.product_state = #{technologyProduct.productState}
         </if>
         <if test="technologyProduct.productName != null and technologyProduct.productName != ''">
-            AND tp.product_name = #{technologyProduct.productName}
+            AND tp.product_name like CONCAT('%',#{technologyProduct.productName},'%')
         </if>
         <if test="technologyProduct.productSpecificationModel != null and technologyProduct.productSpecificationModel != ''">
-            AND tp.product_specification_model = #{technologyProduct.productSpecificationModel}
+            AND tp.product_specification_model like CONCAT('%',#{technologyProduct.productSpecificationModel},'%')
         </if>
         <if test="technologyProduct.productSubclassId != null and technologyProduct.productSubclassId != ''">
             AND tp.product_subclass_id = #{technologyProduct.productSubclassId}
@@ -125,7 +126,7 @@
             product_code, product_name, product_specification_model,
             product_material_id, product_brand, product_general_category_id, product_subclass_id ,
             product_metering_company_id, product_theoretical_weight, inventory_ceiling, inventory_lower_limit,
-            product_minimum_unit,product_state,product_filing_person,product_created_date,product_remarks
+            product_minimum_unit,product_state,product_filing_person,product_created_date,product_remarks,product_view_picture
             )
         VALUES
             (
@@ -144,7 +145,8 @@
              #{technologyProduct.productState},
              #{technologyProduct.productFilingPerson},
              #{technologyProduct.productCreatedDate},
-             #{technologyProduct.productRemarks}
+             #{technologyProduct.productRemarks},
+             #{technologyProduct.productViewPicture}
             )
     </insert>
   <!--修改回显查询-->
@@ -159,7 +161,8 @@
             tp.product_remarks,
             tp.product_filing_person,
             tp.product_created_date,
-            tp.product_view_picture,
+            tp.product_view_picture productPicture,
+            CONCAT( tp.product_view_picture, sda.suffix ) AS productViewPicture,
             tp.product_material_id productMaterial,
             tp.product_brand,
             tp.product_metering_company_id productMeteringCompany,
@@ -174,6 +177,7 @@
             tp.product_recent_warehousing
         FROM
             jr_technology_product tp
+            LEFT JOIN jr_sale_documentfile sda ON ( tp.product_view_picture = sda.`name` )
         WHERE
             tp.id = #{id}
     </select>
@@ -210,6 +214,8 @@
                 tp.product_filing_person =#{technologyProduct.productFilingPerson},</if>
             <if test="technologyProduct.productRemarks!=null">
                 tp.product_remarks =#{technologyProduct.productRemarks},</if>
+            <if test="technologyProduct.productViewPicture!=null">
+                tp.product_view_picture =#{technologyProduct.productViewPicture},</if>
         </trim>
         WHERE
             tp.id = #{technologyProduct.id}
