@@ -118,11 +118,6 @@
          </div>
      </div>
 </div>
-<script type="text/html" id="parameter-option">
-    {{# if(d.configureName != null){ }}
-    <a lay-event="see" shiro:hasPermission="saleApplication:dispose">查看</a>
-    {{# } }}
-</script>
 <script type="text/html" id="enclosure-name">
     {{# if(d.enclosureName != null){ }}
     <a lay-event="browse" shiro:hasPermission="saleApplication:browse">浏览</a>
@@ -224,7 +219,7 @@
                 layEvent = obj.event;
             let fileName = data.enclosureName;
                if (layEvent === 'see') {
-                  febs.modal.view('信息', 'sale/saleApplication/detail/' + data.id, {
+                  febs.modal.view(data.specificationModel, 'sale/saleApplication/detail/' + data.id, {
                       btn: ['关闭'],
                       area: $(window).width() <= 750 ? '95%' : '50%',
                       yes: function (index, layero) {
@@ -236,7 +231,7 @@
                    window.location.href = encodeURI("saleDocumentFile/down/?fileName="+fileName);
                }
                if (layEvent === 'browse') {
-                 alert(1)
+                   window.open("/saleDocumentFile/Preview?filePath="+ fileName  );
                }
                if (layEvent === 'design') {
                    febs.modal.view('【销售申请】设计回复', 'sale/saleApplication/design/' + data.id, {
@@ -565,9 +560,8 @@
                     {field: 'salesmanName', title: '业务员',align:'center', minWidth: 75},
                     {field: 'productName', title: '产品名称', minWidth: 95},
                     {field: 'specificationModel', title: '规格型号', minWidth: 90},
-                    {field: 'configureName', title: '配置', minWidth: 90,hide:true},
-                    {title: '配置', minWidth: 60,align:'center',toolbar: '#parameter-option'},
-                    {field: 'companyName', title: '单位', minWidth: 60,align:'center'},
+                    {field: 'configureName', title: '配置', minWidth: 90, templet: dispose},
+                    {field: 'companyName', title: '单位', minWidth: 50,align:'center'},
                     {field: 'quantityName', title: '数量', minWidth: 60,align:'center'},
                     {title: '附件', minWidth: 90,align:'center',toolbar: '#enclosure-name'},
                     {title: '设计回复', minWidth: 88,align:'center',toolbar: '#design-reply'},
@@ -618,6 +612,15 @@
         $(document).on("click", "td div.laytable-cell-checkbox div.layui-form-checkbox", function (e) {
             e.stopPropagation();
         });
+        function dispose(d) {
+            var dispose = d.configureName;
+            if ('' == dispose || null == dispose || undefined == dispose) {
+                return '';
+            }
+            if (dispose.length > 0) {
+                return '<a class="layui-table-link" href="javascript:void(0);" lay-event="see">查看</a>&nbsp;' + d.configureName +' ';
+            }
+        }
     })
     function dblclickCustomerName(){
         layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.purchase.mapper.PurchaseRequisitionMapper">
+    <sql id="countPurchaseRequisitionSql">
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_purchase_requisition pr
+        WHERE
+            1 = 1
+    </sql>
+    <sql id="findPurchaseRequisitionSql">
+        SELECT
+            pr.id,
+            pr.apply_state applyState,
+            pr.odd_numbers oddNumbers,
+            pr.purchase_requisition_date purchaseRequisitionDate,
+            pr.department_id departmentId,
+            pr.apply_code applyCode,
+            pr.apply_name applyName,
+            pr.apply_specifications applySpecifications,
+            pr.apply_quality applyQuality,
+            pr.apply_brand applyBrand,
+            pr.apply_company applyCompany,
+            pr.apply_quantity applyQuantity,
+            pr.delivery_date deliveryDate,
+            pr.apply_remarks applyRemarks,
+            pr.apply_preparer applyPreparer,
+            pr.apply_preparation_date applyPreparationDate
+        FROM
+            jr_purchase_requisition pr
+        WHERE
+            1 = 1
+    </sql>
+
+    <select id="countPurchaseRequisition" parameterType="com.erp.purchase.entity.PurchaseRequisition" resultType="long">
+        <include refid="countPurchaseRequisitionSql"/>
+    </select>
+
+    <select id="findPurchaseRequisitionPage" parameterType="com.erp.purchase.entity.PurchaseRequisition" resultType="com.erp.purchase.entity.PurchaseRequisition">
+        <include refid="findPurchaseRequisitionSql"/>
+    </select>
+</mapper>

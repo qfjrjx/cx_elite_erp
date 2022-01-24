@@ -40,7 +40,7 @@ public class ViewController {
     private final IPurchaseMaterialFileService purchaseMaterialFileService;
 
 
-    /*采购管理模块开始*/
+    /*采购管理模块-采购档案开始*/
     /*采购参数列表*/
     @GetMapping("purchaseParameters/list")
     @RequiresPermissions("purchaseParameters:view")
@@ -225,5 +225,35 @@ public class ViewController {
         List<PurchaseMaterialCategory> purchaseMaterialCategory  = purchaseMaterialCategoryService.queryMaterialSubclass(generalCategoryId);
         model.addAttribute("purchaseMaterialCategory",purchaseMaterialCategory);
     }
-    /*采购管理模块结束*/
+    /*采购管理模块-采购档案结束*/
+/*-----------------------------------------------------------------------------------------------------------------------------------------*/
+    /*采购管理模块-采购业务开始*/
+
+      /*采购申请列表*/
+      @GetMapping("purchaseRequisition/list")
+      @RequiresPermissions("purchaseRequisition:view")
+      public String purchaseRequisitionIndex(){
+          return FebsUtil.view("purchaseRequisition/purchaseRequisitionList");
+      }
+    //采购申请添加
+    @GetMapping("purchaseRequisition/add")
+      @RequiresPermissions("purchaseRequisition:add")
+      public String purchaseRequisitionAdd() {
+        return FebsUtil.view("purchaseRequisition/purchaseRequisitionAdd");
+      }
+     //采购申请修改
+     /*@GetMapping("purchaseParameters/update/{id}")
+     @RequiresPermissions("purchaseParameters:update")
+     public String purchaseParametersUpdate(@PathVariable Long id, Model model) {
+        purchaseParametersModel(id, model, false);
+        return FebsUtil.view("purchaseParameters/purchaseParametersUpdate");
+     }
+    //采购申请修改回填
+     private void purchaseParametersModel(Long id, Model model, Boolean transform) {
+        PurchaseParameters purchaseParameters = purchaseParametersService.findPurchaseParametersById(id);
+        model.addAttribute("purchaseParameters", purchaseParameters);
+     }*/
+
+
+    /*采购管理模块-采购业务结束*/
 }
