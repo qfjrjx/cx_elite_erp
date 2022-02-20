@@ -1,10 +1,10 @@
 <style>
-    #purchaseRequisition-add {
+    #purchaseRequisition-update {
         padding: 20px 25px 25px 0;
     }
 </style>
-<div class="layui-fluid" id="purchaseRequisition-add">
-    <form class="layui-form" action="" lay-filter="purchaseRequisition-add-form">
+<div class="layui-fluid" id="purchaseRequisition-update">
+    <form class="layui-form" action="" lay-filter="purchaseRequisition-update-form">
         <div class="layui-form-item febs-hide">
             <label class="layui-form-label febs-form-item-require">赋值参数：</label>
             <div class="layui-input-block">
@@ -13,32 +13,30 @@
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label febs-form-item-require" >单号</label>
-            <div class="layui-input-inline" style="width: 120px">
-                <input type="text" name="parameterValue" id="parameterValue" style="width: 120px"
+            <div class="layui-input-inline" style="width: 130px">
+                <input type="text" name="oddNumbers" id="oddNumbers" style="width: 130px"
                        autocomplete="off" class="layui-input" placeholder="为空时自动生成" readonly>
             </div>
             <label class="layui-form-label febs-form-item-require">日期</label>
             <div class="layui-input-inline" style="width: 120px">
-                <input type="text" name="transferData" id="transferData"
+                <input type="text" name="purchaseRequisitionDate" id="purchaseRequisitionDate"
                        autocomplete="off" class="layui-input createDate" readonly>
             </div>
             <label class="layui-form-label febs-form-item-require" >部门</label>
             <div class="layui-input-inline" id="purchase-add-dept" style="width: 170px"></div>
         </div>
-        <table class="layui-table layui-form" id="purchaseRequisition-table" lay-filter="purchaseRequisition-table"></table>
+        <table class="layui-table layui-form" id="purchaseRequisitionTableList" lay-filter="purchaseRequisitionTableList"></table>
         <div class="layui-form-item febs-hide">
-            <button class="layui-btn" lay-submit="" lay-filter="purchaseRequisition-add-form-submit" id="submit"></button>
+            <button class="layui-btn" lay-submit="" lay-filter="purchaseRequisition-update-form-submit" id="submit"></button>
             <button type="reset" class="layui-btn" id="reset"></button>
         </div>
     </form>
 </div>
 <script langguage="JavaScript">
-
     var now = new Date();
-    transferData.value=new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate();
     var deliveryDateTo = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate();
 </script>
-<script>
+<script data-th-inline="javascript">
     layui.use(['febs', 'form', 'validate','table', 'xmSelect','upload','laydate'], function () {
         let $ = layui.$,
             febs = layui.febs,
@@ -47,11 +45,21 @@
             laydate = layui.laydate,
             validate = layui.validate,
             table = layui.table,
+            purchaseRequisitionPositive = [[${purchaseRequisitionPositive}]],
+            purchaseRequisitionDate = [[${purchaseRequisitionDate}]],
             deptXmlSelect;
 
 
         form.verify(validate);
         form.render();
+        initPurchaseRequisitionCreatorValue();
+
+        function initPurchaseRequisitionCreatorValue() {
+            form.val("purchaseRequisition-update-form", {
+                "oddNumbers": purchaseRequisitionPositive.oddNumbers,
+                "purchaseRequisitionDate": purchaseRequisitionDate
+            });
+        }
 
         let userName = currentUser.username;
         $('#purchaseRequisitionCreator').val(userName);
@@ -81,9 +89,8 @@
         });
 
         febs.get(ctx + 'dept/select/tree', null, function (data) {
-            deptXmlSelect.update(
-                data
-            )
+            deptXmlSelect.update(data)
+            purchaseRequisitionPositive.departmentId && deptXmlSelect.setValue([purchaseRequisitionPositive.departmentId]);
         });
 
         //日期同时绑定多个
@@ -93,42 +100,50 @@
                 ,trigger: 'click'
             });
         });
-         table.render({
-                        elem: "#purchaseRequisition-table",
-                        data:[],
-                        even:true,
-                            cols: [
-                                     [
-                                        {type: 'checkbox'},
-                                        {field: 'applyCode',title: '编码', minWidth: 95,event:'choice'
-                                        },
-                                        {field: 'applyName', title: '名称', minWidth: 90},
-                                        {field: 'applySpecifications', title: '规格', minWidth: 90,event:'specification'
-                                        },
-                                        {field: 'applyQuality',title: '材质', minWidth: 55,align:'center'},
-                                        {field: 'applyBrand',title: '品牌', minWidth: 55,align:'center'},
-                                        {field: 'applyCompany',title: '单位', minWidth: 55,align:'center'},
-                                        {field: 'applyQuantity', edit:true,title: '申请数量', minWidth: 55,align:'center'},
-                                        {field: 'deliveryDate',title: '交货日期', minWidth: 55,align:'center',event: 'deliveryDateOne',templet:'<div>{{ layui.util.toDateString(d.deliveryDate, "yyyy-MM-dd") }}</div>'},
-                                        {field: 'applyRemarks',edit:true, title: '备注', minWidth: 72}
-                                     ]
-                                  ]
-                     });
-        table.on('tool(purchaseRequisition-table)', function (obj) {
+        let oddNumbersOne = document.getElementById("oddNumbers");
+        let oddNumbersTwo = oddNumbersOne.value;
+
+        var tableData=new Array(); // 用于存放表格数据
+        $.ajax({
+            url: 'purchaseRequisition/query/'
+            ,data:{"oddNumbers":oddNumbersTwo}
+            ,async:false
+            ,dataType:"json"
+            , success: function(data){
+                tableData=data.replies;
+            }
+        });
+        table.render({
+                elem: "#purchaseRequisitionTableList",
+                data:tableData,
+                cols: [
+                    [
+                        {type: 'checkbox'},
+                        {field: 'applyCode', title: '编码', minWidth: 95, event: 'choice'},
+                        {field: 'applyName', title: '名称', minWidth: 90},
+                        {field: 'applySpecifications', title: '规格', minWidth: 90},
+                        {field: 'applyQuality', title: '材质', minWidth: 55, align: 'center'},
+                        {field: 'applyBrand', title: '品牌', minWidth: 55, align: 'center'},
+                        {field: 'applyCompany', title: '单位', minWidth: 55, align: 'center'},
+                        {field: 'applyQuantity', edit: true, title: '申请数量', minWidth: 55, align: 'center'},
+                        {field: 'deliveryDate',title: '交货日期',minWidth: 55,align: 'center',event: 'deliveryDateOne',
+                            templet: '<div>{{ layui.util.toDateString(d.deliveryDate, "yyyy-MM-dd") }}</div>'
+                        },
+                        {field: 'applyRemarks', edit: true, title: '备注', minWidth: 72}
+                    ]
+                ]
+            });
+        table.on('tool(purchaseRequisitionTableList)', function (obj) {
             let data = obj.data,
                 layEvent = obj.event;
             if (layEvent === 'choice') {
-                var tableData = layui.table.cache['purchaseRequisition-table'];
+                var tableData = layui.table.cache['purchaseRequisitionTableList'];
                 var rowIndex = $(obj.tr).attr('data-index');//当前行的索引
                 if (tableData != ""){
                     $("#parameterIndex").val(rowIndex);//获取索引
-                    var quantityName  = tableData[rowIndex].quantityName;
-                    $("#parameterThree").val(quantityName);//数量
-                    var explainName  = tableData[rowIndex].explainName;
-                    $("#parameterFour").val(explainName);//说明
                     tableData.splice(rowIndex,1); //删除缓存的行
                 }
-                febs.modal.view('物料编码选择列表', "purchase/purchaseMaterialCodeList", {
+                febs.modal.view('物料编码选择列表', "purchase/purchaseMaterialCodeListUpdate", {
                     area:["65%","80%"]
                 });
             }
@@ -146,20 +161,12 @@
                 });
             }
         });
-        form.on('submit(purchaseRequisition-add-form-submit)', function (data) {
-            if (!data.field.departmentId) {
-                febs.alert.warn('请选择部门');
-                return false;
-            }else {
+        form.on('submit(purchaseRequisition-update-form-submit)', function (data) {
                 let dataThree = new Array();
-                let purchaseRequisitionTable =  table.cache["purchaseRequisition-table"];
-                if (purchaseRequisitionTable == ""){
-                    febs.alert.warn('请添加采购商品！');
-                    return false;
-                }else {
+                let purchaseRequisitionTable =  table.cache["purchaseRequisitionTableList"];
                     for (i=0;i<purchaseRequisitionTable.length;i++){
                         if (purchaseRequisitionTable[i].applyCode == ""){
-                            febs.alert.warn('请选择采购商品！');
+                            febs.alert.warn('采购商品不能为空！');
                             return false;
                         }else {
                             let dataOne={
@@ -177,9 +184,9 @@
                         }
                     }
                     $.ajax({
-                        url: '/purchaseRequisition/add',
+                        url: '/purchaseRequisition/update',
                         type:"post",
-                        data: {applyPreparer: data.field.applyPreparer,transferData: data.field.transferData,departmentId:data.field.departmentId,dataTable:JSON.stringify(dataThree)},
+                        data: {oddNumbers:data.field.oddNumbers,applyPreparer: data.field.applyPreparer,transferData: data.field.purchaseRequisitionDate,departmentId:data.field.departmentId,dataTable:JSON.stringify(dataThree)},
                         success : function(res) {
                             layer.closeAll();
                             $('#purchaseRequisition-list').find('#query').click();
@@ -189,9 +196,6 @@
                             });
                         }
                     });
-                }
-                return false;
-            }
             return false;
         });
 

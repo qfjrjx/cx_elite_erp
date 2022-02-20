@@ -15,12 +15,11 @@ import lombok.RequiredArgsConstructor;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
+import java.text.ParseException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -59,11 +58,11 @@ public class PurchaseRequisitionController extends BaseController {
     }
 
     @ControllerEndpoint(operation = "新增PurchaseRequisition", exceptionMessage = "新增PurchaseRequisition失败")
-    @PostMapping("purchaseRequisition")
+    @PostMapping("purchaseRequisition/add")
     @ResponseBody
     @RequiresPermissions("purchaseRequisition:add")
-    public FebsResponse addPurchaseRequisition(@Valid PurchaseRequisition purchaseRequisition) {
-        this.purchaseRequisitionService.createPurchaseRequisition(purchaseRequisition);
+    public FebsResponse addPurchaseRequisition(@RequestParam String applyPreparer,@RequestParam String transferData,@RequestParam Long departmentId,@RequestParam String dataTable) throws ParseException {
+        this.purchaseRequisitionService.createPurchaseRequisition(applyPreparer,transferData,departmentId,dataTable);
         return new FebsResponse().success();
     }
 
@@ -75,22 +74,49 @@ public class PurchaseRequisitionController extends BaseController {
         this.purchaseRequisitionService.deletePurchaseRequisition(purchaseRequisition);
         return new FebsResponse().success();
     }
-
+   /* @ControllerEndpoint(operation = "新增PurchaseRequisition", exceptionMessage = "新增PurchaseRequisition失败")
+    @PostMapping("purchaseRequisition/add")
+    @ResponseBody
+    @RequiresPermissions("purchaseRequisition:add")
+    public FebsResponse addPurchaseRequisition(@RequestParam String applyPreparer,@RequestParam String transferData,@RequestParam Long departmentId,@RequestParam String dataTable) throws ParseException {
+        this.purchaseRequisitionService.createPurchaseRequisition(applyPreparer,transferData,departmentId,dataTable);
+        return new FebsResponse().success();
+    }*/
     @ControllerEndpoint(operation = "修改PurchaseRequisition", exceptionMessage = "修改PurchaseRequisition失败")
     @PostMapping("purchaseRequisition/update")
     @ResponseBody
     @RequiresPermissions("purchaseRequisition:update")
-    public FebsResponse updatePurchaseRequisition(PurchaseRequisition purchaseRequisition) {
-        this.purchaseRequisitionService.updatePurchaseRequisition(purchaseRequisition);
+    public FebsResponse updatePurchaseRequisition(@RequestParam String oddNumbers,@RequestParam String applyPreparer,@RequestParam String transferData,@RequestParam Long departmentId,@RequestParam String dataTable) throws ParseException {
+        this.purchaseRequisitionService.updatePurchaseRequisition(oddNumbers,applyPreparer,transferData,departmentId,dataTable);
         return new FebsResponse().success();
     }
 
-    @ControllerEndpoint(operation = "修改PurchaseRequisition", exceptionMessage = "导出Excel失败")
+    @ControllerEndpoint(operation = "导出PurchaseRequisition", exceptionMessage = "导出Excel失败")
     @PostMapping("purchaseRequisition/excel")
     @ResponseBody
     @RequiresPermissions("purchaseRequisition:export")
     public void export(QueryRequest queryRequest, PurchaseRequisition purchaseRequisition, HttpServletResponse response) {
         List<PurchaseRequisition> purchaseRequisitions = this.purchaseRequisitionService.findPurchaseRequisitions(queryRequest, purchaseRequisition).getRecords();
         ExcelKit.$Export(PurchaseRequisition.class, response).downXlsx(purchaseRequisitions, false);
+    }
+    @GetMapping("purchaseRequisition/query")
+    @ResponseBody
+    public Map queryPurchaseRequisitions(@RequestParam String oddNumbers) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        try {
+            List<PurchaseRequisition> purchaseRequisitions = this.purchaseRequisitionService.queryPurchaseRequisitions(oddNumbers);
+            map.put("replies",purchaseRequisitions);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return map;
+    }
+
+    @GetMapping("purchaseRequisition/queryList/{oddNumbers}")
+    @ResponseBody
+    @RequiresPermissions("purchaseRequisition:view")
+    public FebsResponse purchaseRequisitionQueryList(QueryRequest request,@PathVariable String oddNumbers) {
+        Map<String, Object> dataTable = getDataTable(this.purchaseRequisitionService.queryPurchaseRequisitionsList(request,oddNumbers));
+        return new FebsResponse().success().data(dataTable);
     }
 }

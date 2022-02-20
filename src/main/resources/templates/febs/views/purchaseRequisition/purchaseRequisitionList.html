@@ -15,7 +15,7 @@
                 <div class="layui-card-body febs-table-full">
                     <form class="layui-form layui-table-form" lay-filter="parameter-table-form">
                         <div class="layui-row">
-                            <div class="layui-col-md8">
+                            <div class="layui-col-md12">
                                 <div class="layui-form-item">
                                     <div class="layui-inline">
                                         <label class="layui-form-label layui-form-label-sm">状态</label>
@@ -48,34 +48,50 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="layui-col-md4 layui-col-sm12 layui-col-xs12 table-action-area">
-                                <!--搜索按钮-->
-                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
-                                    <i class="layui-icon">&#xe848;</i>查询
-                                </div>
-                               <!-- 刷新表格按钮-->
-                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain table-action" id="reset">
-                                    <i class="layui-icon">&#xe79b;</i>刷新
-                                </div>
-                                <!--添加按钮-->
-                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
-                                     "shiro:hasAnyPermissions="purchaseRequisition:add" id="addTo">
-                                    <i class="layui-icon">&#xe78a;</i>新增
-                                </div>
-                                <!--修改按钮-->
-                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
-                                     shiro:hasAnyPermissions="purchaseRequisition:update" id="updateTo">
-                                    <i class="layui-icon">&#xe642;</i>修改
-                                </div>
-                                <!--删除按钮-->
-                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
-                                     "shiro:hasAnyPermissions="purchaseRequisition:delete" id="deleteTo">
-                                    <i class="layui-icon">&#xe8a1;</i>删除
-                                </div>
-                            </div>
                         </div>
                     </form>
-                    <table lay-filter="purchaseRequisitionTable" lay-data="{id: 'purchaseRequisitionTable'}"></table>
+                    <table lay-filter="purchaseRequisitionTable" id="purchaseRequisitionTable" lay-data="{id: 'purchaseRequisitionTable'}"></table>
+                    <div class="layui-col-md6">
+                        <div class="layui-form-item"></div>
+                    </div>
+                    <div class="layui-col-md6 layui-col-sm12 layui-col-xs12 table-action-area">
+                        <!--搜索按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                            <i class="layui-icon">&#xe848;</i>查询
+                        </div>
+                        <!-- 刷新表格按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain table-action" id="reset">
+                            <i class="layui-icon">&#xe79b;</i>刷新
+                        </div>
+                        <!--添加按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
+                                     "shiro:hasAnyPermissions="purchaseRequisition:add" id="addTo">
+                            <i class="layui-icon">&#xe78a;</i>新增
+                        </div>
+                        <!--修改按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="purchaseRequisition:update" id="updateTo">
+                            <i class="layui-icon">&#xe642;</i>修改
+                        </div>
+                        <!--确认按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
+                                     "shiro:hasAnyPermissions="purchaseRequisition:confirm" id="confirmTo">
+                            <i class="layui-icon layui-icon-ok-circle"></i>确认
+                        </div>
+                        <!--取消按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
+                                     "shiro:hasAnyPermissions="purchaseRequisition:cancel" id="cancelTo">
+                            <i class="layui-icon layui-icon-close"></i>取消
+                        </div>
+                        <!--删除按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
+                                     "shiro:hasAnyPermissions="purchaseRequisition:delete" id="deleteTo">
+                            <i class="layui-icon">&#xe8a1;</i>删除
+                        </div>
+                    </div>
+                    <br>
+                    <br>
+                    <table lay-filter="purchaseRequisitionTableOne" id="purchaseRequisitionTableOne" lay-data="{id: 'purchaseRequisitionTableOne'}"></table>
                 </div>
             </div>
         </div>
@@ -99,6 +115,9 @@
             class="layui-icon febs-edit-area febs-blue">&#xe7a4;</i></a>
     <a lay-event="del" shiro:hasPermission="purchaseRequisition:delete"><i class="layui-icon febs-edit-area febs-red">&#xe7f9;</i></a>
 </script>
+<script langguage="JavaScript">
+    var deliveryDateTo = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate();
+</script>
 <script data-th-inline="none" type="text/javascript">
     layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
         let $ = layui.jquery,
@@ -111,6 +130,8 @@
             $query = $view.find('#query'),
             $addTo = $view.find('#addTo'),
             $updateTo = $view.find('#updateTo'),
+            $confirmTo = $view.find('#confirmTo'),
+            $cancelTo = $view.find('#cancelTo'),
             $deleteTo = $view.find('#deleteTo'),
             $reset = $view.find('#reset'),
             $searchForm = $view.find('form'),
@@ -118,11 +139,7 @@
             tableIns;
 
         form.render();
-
         initPurchaseRequisitionTable();
-
-
-
         dropdownMenu.render({
             elem: $view.find('.action-more'),
             click: function (name, elem, event) {
@@ -146,7 +163,7 @@
                 })
             });
         });
-
+        var purchaseTableData = new Array(); // 用于存放表格数据
         $query.on('click', function () {
             let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
             tableIns.reload({where: params, page: {curr: 1}});
@@ -161,11 +178,65 @@
                 btn: ['增加行','删除行','删除整单','保存', '关闭'],
                 area: ["80%","60%"],
                 yes: function (index, layero) {
-                    $('#purchaseRequisition-add').find('#submit').trigger('click');
+                    var dataBak = [];
+                    var tableBak = layui.table.cache['purchaseRequisition-table'];
+                    console.log(tableBak);
+                    for (var i=0;i<tableBak.length; i++){
+                        dataBak.push(tableBak[i]);
+                    }
+                    dataBak.push({
+                        "applyCode":"",
+                        "applyName":"",
+                        "applySpecifications":"",
+                        "applyQuality":"",
+                        "applyBrand":"",
+                        "applyCompany":"",
+                        "applyQuantity":"",
+                        "deliveryDate":deliveryDateTo,
+                        "applyRemarks":"",
+                    });
+                    console.log(dataBak);
+                    layui.table.reload('purchaseRequisition-table',{
+                        data:dataBak
+                    });
                 },
                 btn2: function () {
-                    $('#purchaseRequisition-add').find('#reset').trigger('click');
+                    let checkStatus = table.checkStatus('purchaseRequisition-table')
+                        , demo = table.cache["purchaseRequisition-table"];//获取表格中的数据
+                    if (checkStatus.data.length < 1) {
+                        layer.alert("请选择一条数据操作");
+                        return false;
+                    }else {
+                        var tablelist = [];//存储未选中的数据
+                        //循环表格数据
+                        for (var i in demo) {
+                            //判断未选中数据
+                            if (!demo[i].LAY_CHECKED) {
+                                //存入数组
+                                tablelist.push(demo[i]);
+                            }
+                        }
+                        //重载表格
+                        table.reload('purchaseRequisition-table', {
+                            data: tablelist
+                        });
+
+                    }
                     return false;
+                },
+                btn3: function () {
+                    var dataBak = [];
+                    layui.table.reload('purchaseRequisition-table',{
+                        data:dataBak
+                    });
+                    return false;
+                },
+                btn4: function () {
+                    $('#purchaseRequisition-add').find('#submit').trigger('click');
+                    return false;
+                },
+                btn5: function () {
+                    layer.closeAll();
                 }
             });
         });
@@ -177,17 +248,99 @@
                 febs.alert.warn('请选择一条需要修改的数据');
             }else{
                 layui.each(checkStatus.data, function (key, item) {
-                    febs.modal.open('【采购参数】 修改', 'purchase/purchaseRequisition/update/' + item.id, {
-                        area:["35%","60%"],
-                        btn: ['保存', '关闭'],
+                    febs.modal.open('【采购申请】 修改', 'purchase/purchaseRequisition/update/' + item.id, {
+                        area: ["80%","60%"],
+                        btn: ['增加行','删除行','删除整单','保存', '关闭'],
                         yes: function (index, layero) {
-                            $('#purchaseRequisition-update').find('#submit').trigger('click');
+                            var buttonArr = [];
+                            var tableBak = layui.table.cache['purchaseRequisitionTableList'];//获取之前编辑过的全部数据，前提是编辑数据是要更新缓存，buttonList 为表格的id
+                            for (var i = 0; i < tableBak.length; i++) {
+                                buttonArr.push(tableBak[i]);      //将之前的数组存储
+                            }
+                            buttonArr.push({
+                                "applyCode":"",
+                                "applyName":"",
+                                "applySpecifications":"",
+                                "applyQuality":"",
+                                "applyBrand":"",
+                                "applyCompany":"",
+                                "applyQuantity":"",
+                                "deliveryDate":deliveryDateTo,
+                                "applyRemarks":"",
+                            });
+                            table.reload('purchaseRequisitionTableList',{
+                                data:buttonArr
+                            });
                         },
                         btn2: function () {
+                            let checkStatus = table.checkStatus('purchaseRequisitionTableList')
+                                , demo = table.cache["purchaseRequisitionTableList"];//获取表格中的数据
+                            if (checkStatus.data.length < 1) {
+                                layer.alert("请选择一条数据操作");
+                                return false;
+                            }else {
+                                var tablelist = [];//存储未选中的数据
+                                //循环表格数据
+                                for (var i in demo) {
+                                    //判断未选中数据
+                                    if (!demo[i].LAY_CHECKED) {
+                                        //存入数组
+                                        tablelist.push(demo[i]);
+                                    }
+                                }
+                                //重载表格
+                                table.reload('purchaseRequisitionTableList', {
+                                    data: tablelist
+                                });
+
+                            }
+                            return false;
+                        },
+                        btn3: function () {
+                            var dataBak = [];
+                            layui.table.reload('purchaseRequisitionTableList',{
+                                data:dataBak
+                            });
+                            return false;
+                        },
+                        btn4: function () {
+                            $('#purchaseRequisition-update').find('#submit').trigger('click');
+                            return false;
+                        },
+                        btn5: function () {
                             layer.closeAll();
                         }
                     });
                 });
+            }
+        });
+        $confirmTo.on('click', function () {
+            let checkStatus = table.checkStatus('purchaseRequisitionTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要确认的数据');
+            } else {
+                alert("确认")
+                /*layui.each(checkStatus.data, function (key, item) {
+                    $.ajax({
+                        url: ctx + '/ /',
+                        data: {
+                            "id": item.id
+                        },
+                        async: false,
+                        type: 'get',
+                        success: function (d) {
+                            (!d) && (result = '该用户名已存在')
+                        }
+                    });
+                });*/
+            }
+        });
+        $cancelTo.on('click', function () {
+            let checkStatus = table.checkStatus('purchaseRequisitionTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要取消的数据');
+            } else {
+                alert("取消")
             }
         });
         $deleteTo.on('click', function () {
@@ -207,25 +360,71 @@
 
         function initPurchaseRequisitionTable() {
             tableIns = febs.table.init({
-                elem: $view.find('table'),
+                elem: '#purchaseRequisitionTable',
                 id: 'purchaseRequisitionTable',
                 url: ctx + 'purchaseRequisition/list',
                 cols: [[
                     {type: 'checkbox'},
                     {field:'number',title:'序列号',align:'center',width:100,templet:function (d) {
                                         return d.LAY_INDEX;}},
-                    {title: '状态', templet: '#apply-state'},
+                    {title: '状态', templet: '#apply-state',align:'center'},
                     {field: 'purchaseRequisitionDate', title: '日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.purchaseRequisitionDate, "yyyy-MM-dd") }}</div>', minWidth: 170, sort: true},
-                    {field: 'oddNumbers', title: '单号', minWidth: 100},
-                    {field: 'departmentName', title: '部门', minWidth: 100},
-                    {field: 'applyQuantity', title: '数量', minWidth: 100},
-                    {field: 'applyPreparer', title: '制单人', minWidth: 100},
+                    {field: 'oddNumbers', title: '单号', minWidth: 100,align:'center'},
+                    {field: 'departmentName', title: '部门', minWidth: 100,align:'center'},
+                    {field: 'applyQuantity', title: '数量', minWidth: 100,align:'center'},
+                    {field: 'applyPreparer', title: '制单人', minWidth: 100,align:'center'},
                     {field: 'applyPreparationDate', title: '制单日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.applyPreparationDate, "yyyy-MM-dd HH:mm:ss") }}</div>', minWidth: 170, sort: true}
 
                 ]]
             });
         }
-``
+        table.on('row(purchaseRequisitionTable)', function (obj) {
+            let oddNumbers = obj.data.oddNumbers;
+            var dataBak = [];
+            layui.table.reload('purchaseRequisitionTableOne',{
+                data:dataBak
+            });
+            $.ajax({
+                url: '/purchaseRequisition/query',
+                data:{"oddNumbers":oddNumbers},
+                success : function(data) {
+                    var oldDataOne;
+                    var arr = data.replies;
+                    for(var i=0;i<data.replies.length;i++){
+                        var applyCode = arr[i].applyCode;
+                        var applyName = arr[i].applyName;
+                        var applySpecifications = arr[i].applySpecifications;
+                        var applyQuality = arr[i].applyQuality;
+                        var applyBrand = arr[i].applyBrand;
+                        var applyCompany = arr[i].applyCompany;
+                        var applyQuantity = arr[i].applyQuantity;
+                        var deliveryDate = arr[i].deliveryDate;
+                        var applyRemarks = arr[i].applyRemarks;
+                        var dataOne={"applyCode":applyCode,"applyName":applyName,"applySpecifications":applySpecifications,"applyQuality":applyQuality,"applyBrand":applyBrand,"applyCompany":applyCompany,"applyQuantity":applyQuantity,"deliveryDate":deliveryDate,"applyRemarks":applyRemarks};
+                        oldDataOne =  table.cache["purchaseRequisitionTableOne"];
+                        oldDataOne.push(dataOne);
+                    }
+                    layui.table.reload('purchaseRequisitionTableOne',{
+                        data : oldDataOne
+                    });
+                }
+            });
+        });
+       table.render({
+            elem:'#purchaseRequisitionTableOne',
+            data:purchaseTableData,
+            cols: [[
+                {field: 'applyCode',title: '编码', minWidth: 95},
+                {field: 'applyName', title: '名称', minWidth: 90},
+                {field: 'applySpecifications', title: '规格', minWidth: 90,event:'specification'},
+                {field: 'applyQuality',title: '材质', minWidth: 55,align:'center'},
+                {field: 'applyBrand',title: '品牌', minWidth: 55,align:'center'},
+                {field: 'applyCompany',title: '单位', minWidth: 55,align:'center'},
+                {field: 'applyQuantity',title: '申请数量', minWidth: 55,align:'center'},
+                {field: 'deliveryDate',title: '交货日期', minWidth: 55,align:'center',templet:'<div>{{ layui.util.toDateString(d.deliveryDate, "yyyy-MM-dd") }}</div>'},
+                {field: 'applyRemarks', title: '备注', minWidth: 72}
+            ]]
+        });
         function getQueryParams() {
             let params = $searchForm.serializeJson();
             params.invalidate_ie_cache = new Date();

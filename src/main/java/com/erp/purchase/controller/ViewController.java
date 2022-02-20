@@ -1,16 +1,11 @@
 package com.erp.purchase.controller;
 
 import com.erp.common.entity.FebsConstant;
+import com.erp.common.utils.DateUtil;
 import com.erp.common.utils.FebsUtil;
 import com.erp.enterprise.entity.EnterpriseResourcesParameters;
-import com.erp.purchase.entity.PurchaseMaterialCategory;
-import com.erp.purchase.entity.PurchaseMaterialFile;
-import com.erp.purchase.entity.PurchaseParameters;
-import com.erp.purchase.entity.PurchaseSupplier;
-import com.erp.purchase.service.IPurchaseMaterialCategoryService;
-import com.erp.purchase.service.IPurchaseMaterialFileService;
-import com.erp.purchase.service.IPurchaseParametersService;
-import com.erp.purchase.service.IPurchaseSupplierService;
+import com.erp.purchase.entity.*;
+import com.erp.purchase.service.*;
 import com.erp.technology.entity.TechnologyProductCategory;
 import com.erp.technology.service.ITechnologyProductCategoryService;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +33,8 @@ public class ViewController {
     private final IPurchaseMaterialCategoryService purchaseMaterialCategoryService;
     //物料档案表 Service接口
     private final IPurchaseMaterialFileService purchaseMaterialFileService;
+    //采购申请表 Service接口
+    private final IPurchaseRequisitionService purchaseRequisitionService;
 
 
     /*采购管理模块-采购档案开始*/
@@ -241,18 +238,37 @@ public class ViewController {
       public String purchaseRequisitionAdd() {
         return FebsUtil.view("purchaseRequisition/purchaseRequisitionAdd");
       }
+
+    //添加页面 点击编码跳转到采购申请下物料编码选择列表页面
+    @GetMapping("purchaseMaterialCodeList")
+    @RequiresPermissions("purchaseRequisition:view")
+    public String purchaseMaterialCodeIndex(Model model){
+        return FebsUtil.view("purchaseRequisition/purchaseMaterialCode");
+    }
+
+    //修改页面 点击编码跳转到采购申请下物料编码选择列表页面
+    @GetMapping("purchaseMaterialCodeListUpdate")
+    @RequiresPermissions("purchaseRequisition:view")
+    public String purchaseMaterialCodeUpdateIndex(Model model){
+        return FebsUtil.view("purchaseRequisition/purchaseMaterialCodeUpdate");
+    }
+
+
      //采购申请修改
-     /*@GetMapping("purchaseParameters/update/{id}")
-     @RequiresPermissions("purchaseParameters:update")
-     public String purchaseParametersUpdate(@PathVariable Long id, Model model) {
-        purchaseParametersModel(id, model, false);
-        return FebsUtil.view("purchaseParameters/purchaseParametersUpdate");
+     @GetMapping("purchaseRequisition/update/{id}")
+     @RequiresPermissions("purchaseRequisition:update")
+     public String purchaseRequisitionUpdate(@PathVariable Long id, Model model) {
+         purchaseRequisitionModel(id, model, false);
+        return FebsUtil.view("purchaseRequisition/purchaseRequisitionUpdate");
      }
     //采购申请修改回填
-     private void purchaseParametersModel(Long id, Model model, Boolean transform) {
-        PurchaseParameters purchaseParameters = purchaseParametersService.findPurchaseParametersById(id);
-        model.addAttribute("purchaseParameters", purchaseParameters);
-     }*/
+     private void purchaseRequisitionModel(Long id, Model model, Boolean transform) {
+         PurchaseRequisitionPositive purchaseRequisitionPositive = purchaseRequisitionService.findPurchaseRequisitionPositiveById(id);
+        model.addAttribute("purchaseRequisitionPositive", purchaseRequisitionPositive);
+         if (purchaseRequisitionPositive.getPurchaseRequisitionDate() != null) {
+             model.addAttribute("purchaseRequisitionDate", DateUtil.getDateFormat(purchaseRequisitionPositive.getPurchaseRequisitionDate(), DateUtil.FULL_TIME_SPLIT));
+         }
+     }
 
 
     /*采购管理模块-采购业务结束*/

@@ -15,22 +15,18 @@
             pr.apply_state applyState,
             pr.odd_numbers oddNumbers,
             pr.purchase_requisition_date purchaseRequisitionDate,
-            pr.department_id departmentId,
-            pr.apply_code applyCode,
-            pr.apply_name applyName,
-            pr.apply_specifications applySpecifications,
-            pr.apply_quality applyQuality,
-            pr.apply_brand applyBrand,
-            pr.apply_company applyCompany,
-            pr.apply_quantity applyQuantity,
-            pr.delivery_date deliveryDate,
-            pr.apply_remarks applyRemarks,
+            d.DEPT_NAME departmentName,
             pr.apply_preparer applyPreparer,
-            pr.apply_preparation_date applyPreparationDate
+            pr.apply_preparation_date applyPreparationDate,
+            sum( prs.apply_quantity ) applyQuantity
         FROM
             jr_purchase_requisition pr
+            LEFT JOIN t_dept d ON ( pr.department_id = d.dept_id )
+            LEFT JOIN jr_purchase_requisition_schedule prs ON ( pr.odd_numbers = prs.odd_numbers )
         WHERE
             1 = 1
+        GROUP BY
+            oddNumbers
     </sql>
 
     <select id="countPurchaseRequisition" parameterType="com.erp.purchase.entity.PurchaseRequisition" resultType="long">
@@ -40,4 +36,114 @@
     <select id="findPurchaseRequisitionPage" parameterType="com.erp.purchase.entity.PurchaseRequisition" resultType="com.erp.purchase.entity.PurchaseRequisition">
         <include refid="findPurchaseRequisitionSql"/>
     </select>
+
+    <!--查询出最后一个采购申请单号-->
+    <select id="queryPurchaseRequisition" resultType="com.erp.purchase.entity.PurchaseRequisition">
+        SELECT
+            pr.id,
+            pr.apply_state applyState,
+            pr.odd_numbers oddNumbers,
+            pr.purchase_requisition_date purchaseRequisitionDate,
+            pr.department_id departmentId,
+            pr.apply_preparer applyPreparer,
+            pr.apply_preparation_date applyPreparationDate
+        FROM
+            jr_purchase_requisition pr
+        WHERE
+            1 = 1
+        GROUP BY
+            pr.apply_preparation_date
+        ORDER BY
+            pr.apply_preparation_date DESC
+            LIMIT 1;
+    </select>
+
+    <!--点击上面的table展示下面的table数据-->
+    <select id="queryPurchaseRequisitions" parameterType="String" resultType="com.erp.purchase.entity.PurchaseRequisition">
+       SELECT
+            prs.odd_numbers oddNumbers,
+            prs.apply_code applyCode,
+            prs.apply_name applyName,
+            prs.apply_specifications applySpecifications,
+            prs.apply_quality applyQuality,
+            prs.apply_brand applyBrand,
+            prs.apply_company applyCompany,
+            prs.apply_quantity applyQuantity,
+            prs.delivery_date deliveryDate,
+            prs.apply_remarks applyRemarks
+        FROM
+            jr_purchase_requisition_schedule prs
+        WHERE
+            prs.odd_numbers = #{oddNumbers}
+    </select>
+
+    <insert id="savePurchaseRequisitionSchedule" parameterType="com.erp.purchase.entity.PurchaseRequisitionSchedule">
+        INSERT INTO jr_purchase_requisition_schedule (
+            odd_numbers, apply_code, apply_name,apply_specifications,apply_quality,apply_brand,apply_company
+            ,apply_quantity, delivery_date,apply_remarks)
+        VALUES
+            (#{oddNumbers},
+             #{applyCode},
+             #{applyName},
+             #{applySpecifications},
+             #{applyQuality},
+             #{applyBrand},
+             #{applyCompany},
+             #{applyQuantity},
+             #{deliveryDate},
+             #{applyRemarks}
+            )
+    </insert>
+
+    <insert id="savePurchaseRequisitionPositive" parameterType="com.erp.purchase.entity.PurchaseRequisitionPositive">
+        INSERT INTO jr_purchase_requisition (
+             odd_numbers, purchase_requisition_date,department_id,apply_preparer,apply_preparation_date)
+        VALUES
+            (
+             #{oddNumbers},
+             #{purchaseRequisitionDate},
+             #{departmentId},
+             #{applyPreparer},
+             #{applyPreparationDate}
+            )
+    </insert>
+
+    <!--修改回显数据-->
+    <select id="findPurchaseRequisitionPositiveById" parameterType="long" resultType="com.erp.purchase.entity.PurchaseRequisitionPositive">
+       SELECT
+            pr.id,
+            pr.apply_state applyState,
+            pr.odd_numbers oddNumbers,
+            pr.purchase_requisition_date purchaseRequisitionDate,
+            pr.department_id departmentId,
+            pr.apply_preparer applyPreparer,
+            pr.apply_preparation_date applyPreparationDate
+        FROM
+            jr_purchase_requisition pr
+        WHERE
+            pr.id = #{id}
+    </select>
+
+    <!--修改回显数据表格-->
+    <select id="queryPurchaseRequisitionsList" parameterType="String" resultType="com.erp.purchase.entity.PurchaseRequisition">
+       SELECT
+            prs.odd_numbers oddNumbers,
+            prs.apply_code applyCode,
+            prs.apply_name applyName,
+            prs.apply_specifications applySpecifications,
+            prs.apply_quality applyQuality,
+            prs.apply_brand applyBrand,
+            prs.apply_company applyCompany,
+            prs.apply_quantity applyQuantity,
+            prs.delivery_date deliveryDate,
+            prs.apply_remarks applyRemarks
+        FROM
+            jr_purchase_requisition_schedule prs
+        WHERE
+            prs.odd_numbers = #{oddNumbers}
+    </select>
+
+    <delete id="deletePurchaseRequisitionSchedule">
+        delete from jr_purchase_requisition_schedule  where odd_numbers = #{oddNumbers}
+    </delete>
 </mapper>

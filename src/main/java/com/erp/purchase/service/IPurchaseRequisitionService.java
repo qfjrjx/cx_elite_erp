@@ -5,7 +5,10 @@ import com.erp.purchase.entity.PurchaseRequisition;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.erp.purchase.entity.PurchaseRequisitionPositive;
+import com.erp.purchase.entity.PurchaseRequisitionSchedule;
 
+import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -35,21 +38,25 @@ public interface IPurchaseRequisitionService extends IService<PurchaseRequisitio
     /**
      * 新增
      *
-     * @param purchaseRequisition purchaseRequisition
+     * @param applyPreparer transferData departmentId dataTable
      */
-    void createPurchaseRequisition(PurchaseRequisition purchaseRequisition);
-
+    void createPurchaseRequisition(String applyPreparer,String transferData, Long departmentId, String dataTable) throws ParseException;
     /**
      * 修改
      *
-     * @param purchaseRequisition purchaseRequisition
+     * @param applyPreparer transferData departmentId dataTable
      */
-    void updatePurchaseRequisition(PurchaseRequisition purchaseRequisition);
-
+    void updatePurchaseRequisition(String oddNumbers,String applyPreparer, String transferData, Long departmentId, String dataTable) throws ParseException;
     /**
      * 删除
      *
      * @param purchaseRequisition purchaseRequisition
      */
     void deletePurchaseRequisition(PurchaseRequisition purchaseRequisition);
+
+    List<PurchaseRequisition> queryPurchaseRequisitions(String oddNumbers);
+
+    PurchaseRequisitionPositive findPurchaseRequisitionPositiveById(Long id);
+
+    IPage<PurchaseRequisitionSchedule> queryPurchaseRequisitionsList(QueryRequest request, String oddNumbers);
 }
