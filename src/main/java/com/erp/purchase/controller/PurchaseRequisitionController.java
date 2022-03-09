@@ -119,4 +119,14 @@ public class PurchaseRequisitionController extends BaseController {
         Map<String, Object> dataTable = getDataTable(this.purchaseRequisitionService.queryPurchaseRequisitionsList(request,oddNumbers));
         return new FebsResponse().success().data(dataTable);
     }
+
+
+    //采购申请选择列表
+    @GetMapping("orderPurchaseRequisition/list")
+    @ResponseBody
+    @RequiresPermissions("purchaseRequisition:view")
+    public FebsResponse orderPurchaseRequisition(QueryRequest request, PurchaseRequisition purchaseRequisition) {
+        Map<String, Object> dataTable = getDataTable(this.purchaseRequisitionService.findOrderPurchaseRequisitionPage(request, purchaseRequisition));
+        return new FebsResponse().success().data(dataTable);
+    }
 }

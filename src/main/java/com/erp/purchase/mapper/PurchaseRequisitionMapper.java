@@ -37,4 +37,6 @@ public interface PurchaseRequisitionMapper extends BaseMapper<PurchaseRequisitio
     IPage<PurchaseRequisitionSchedule> queryPurchaseRequisitionsList(Page<PurchaseRequisitionSchedule> page, String oddNumbers);
 
     void deletePurchaseRequisitionSchedule(@Param("oddNumbers") String oddNumbers);
+
+    IPage<PurchaseRequisition> findOrderPurchaseRequisitionPage(Page<PurchaseRequisition> page, PurchaseRequisition purchaseRequisition);
 }

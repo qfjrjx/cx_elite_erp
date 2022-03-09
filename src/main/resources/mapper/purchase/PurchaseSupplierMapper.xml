@@ -190,4 +190,32 @@
             ps.id = #{id}
     </select>
 
+    <select id="queryPurchaseSupplierList" parameterType="com.erp.purchase.entity.PurchaseSupplier" resultType="com.erp.purchase.entity.PurchaseSupplier">>
+          SELECT
+            ps.id,
+            ps.supplier_state supplierState,
+            ps.supplier_code supplierCode,
+            ps.supplier_full_name supplierFullName,
+            ps.supplier_abbreviation supplierAbbreviation,
+            ps.supplier_contacts supplierContacts,
+            ps.supplier_contact_number supplierContactNumber,
+            ps.work_telephone workTelephone,
+            ps.unit_fax unitFax,
+            ps.electronic_mailbox electronicMailbox,
+            ps.supplier_remarks supplierRemarks,
+            ps.creation_time creationTime,
+            ps.unit_address unitAddress,
+            ps.bank_of_deposit bankOfDeposit,
+            ps.contact_number contactNumber,
+            ps.duty_paragraph dutyParagraph,
+            ps.bank_account_number bankAccountNumber,
+            ps.invoice_address invoiceAddress,
+            ps.logistics_consignee logisticsConsignee,
+            ps.logistics_contact_number logisticsContactNumber,
+            ps.postal_code postalCode,
+            ps.receiving_address receivingAddress
+        FROM
+            jr_purchase_supplier ps
+    </select>
+
 </mapper>

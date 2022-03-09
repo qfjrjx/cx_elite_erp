@@ -4,8 +4,11 @@ import com.erp.common.entity.FebsConstant;
 import com.erp.common.utils.DateUtil;
 import com.erp.common.utils.FebsUtil;
 import com.erp.enterprise.entity.EnterpriseResourcesParameters;
+import com.erp.finance.entity.FinanceParameters;
+import com.erp.finance.service.IFinanceParametersService;
 import com.erp.purchase.entity.*;
 import com.erp.purchase.service.*;
+import com.erp.sale.entity.SaleBusinessPersonnel;
 import com.erp.technology.entity.TechnologyProductCategory;
 import com.erp.technology.service.ITechnologyProductCategoryService;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +38,8 @@ public class ViewController {
     private final IPurchaseMaterialFileService purchaseMaterialFileService;
     //采购申请表 Service接口
     private final IPurchaseRequisitionService purchaseRequisitionService;
+    //财务参数表 Service接口
+    private final IFinanceParametersService financeParametersService;
 
 
     /*采购管理模块-采购档案开始*/
@@ -232,8 +237,8 @@ public class ViewController {
       public String purchaseRequisitionIndex(){
           return FebsUtil.view("purchaseRequisition/purchaseRequisitionList");
       }
-    //采购申请添加
-    @GetMapping("purchaseRequisition/add")
+      //采购申请添加
+      @GetMapping("purchaseRequisition/add")
       @RequiresPermissions("purchaseRequisition:add")
       public String purchaseRequisitionAdd() {
         return FebsUtil.view("purchaseRequisition/purchaseRequisitionAdd");
@@ -270,6 +275,43 @@ public class ViewController {
          }
      }
 
+     /*采购订单列表*/
+     @GetMapping("purchaseOrder/list")
+     @RequiresPermissions("purchaseOrder:view")
+     public String purchaseOrderIndex(){
+         return FebsUtil.view("purchaseOrder/purchaseOrderRequisitionList");
+     }
+    //采购订单添加
+    @GetMapping("purchaseOrder/add")
+    @RequiresPermissions("purchaseOrder:add")
+    public String purchaseOrderAdd(Model model) {
+        //查询币种信息
+        List<FinanceParameters> currency  = financeParametersService.queryCurrencyInformation(FinanceParameters.CURRENCY);
+        model.addAttribute("currency",currency);
+        //查询税率信息
+        List<FinanceParameters> taxRate  = financeParametersService.queryCurrencyInformation(FinanceParameters.TAX_RATE);
+        model.addAttribute("taxRate",taxRate);
+        //查询供应商表
+        /*List<PurchaseSupplier> purchaseSuppliers  = purchaseSupplierService.queryPurchaseSupplierList();
+        model.addAttribute("purchaseSuppliers",purchaseSuppliers);*/
 
+        return FebsUtil.view("purchaseOrder/purchaseOrderAdd");
+    }
+
+    //供应商 双击跳到供应商选择列表页面  添加时用到
+    @GetMapping("purchaseSupplierSelectionList")
+    @RequiresPermissions("purchaseSupplier:view")
+    public String purchaseSupplierSelectionList(Model model) {
+
+        return FebsUtil.view("purchaseOrder/purchaseSupplierSelectionList");
+    }
+
+
+    //添加页面 点击申请单号跳转到采购申请
+    @GetMapping("purchaseRequisitionQueryList")
+    @RequiresPermissions("purchaseRequisition:view")
+    public String purchaseRequisitionQueryList(Model model){
+        return FebsUtil.view("purchaseOrder/orderPurchaseRequisitionList");
+    }
     /*采购管理模块-采购业务结束*/
 }

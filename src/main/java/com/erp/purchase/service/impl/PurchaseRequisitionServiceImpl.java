@@ -216,4 +216,12 @@ public class PurchaseRequisitionServiceImpl extends ServiceImpl<PurchaseRequisit
         page.setSearchCount(false);
         return baseMapper.queryPurchaseRequisitionsList(page,oddNumbers);
     }
+
+    @Override
+    public IPage<PurchaseRequisition> findOrderPurchaseRequisitionPage(QueryRequest request, PurchaseRequisition purchaseRequisition) {
+        Page<PurchaseRequisition> page = new Page<>(request.getPageNum(), request.getPageSize());
+        page.setSearchCount(false);
+        page.setTotal(baseMapper.countPurchaseRequisition(purchaseRequisition));
+        return baseMapper.findOrderPurchaseRequisitionPage(page,purchaseRequisition);
+    }
 }

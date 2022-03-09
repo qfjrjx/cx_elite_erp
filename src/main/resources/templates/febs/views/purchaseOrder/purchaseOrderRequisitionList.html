@@ -1,0 +1,469 @@
+<style>
+    #purchaseOrder-list xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #purchaseOrder-list xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="purchaseOrder-list" lay-title="采购订单">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="parameter-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md12">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid layui-form-label-sm">状态</label>
+                                        <div class="layui-input-inline">
+                                            <select name="purchaseRequisitionState">
+                                                <option value=""></option>
+                                                <option value="1">启用</option>
+                                                <option value="2">禁用</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid layui-form-label-sm">参数类别</label>
+                                        <div class="layui-input-inline">
+                                            <select name="applyState">
+                                                <option value=""></option>
+                                                <option value="1">材质</option>
+                                                <option value="2">订购类型</option>
+                                                <option value="3">付款方式</option>
+                                                <option value="4">计量单位</option>
+                                                <option value="5">物料类别</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-mid layui-form-label-sm">参数名称</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="purchaseRequisitionName" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="purchaseOrderTable" id="purchaseOrderTable" lay-data="{id: 'purchaseOrderTable'}"></table>
+                    <div class="layui-col-md6">
+                        <div class="layui-form-item"></div>
+                    </div>
+                    <div class="layui-col-md6 layui-col-sm12 layui-col-xs12 table-action-area">
+                        <!--搜索按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                            <i class="layui-icon">&#xe848;</i>查询
+                        </div>
+                        <!-- 刷新表格按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain table-action" id="reset">
+                            <i class="layui-icon">&#xe79b;</i>刷新
+                        </div>
+                        <!--添加按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
+                                     "shiro:hasAnyPermissions="purchaseOrder:add" id="addTo">
+                            <i class="layui-icon">&#xe78a;</i>新增
+                        </div>
+                        <!--修改按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="purchaseOrder:update" id="updateTo">
+                            <i class="layui-icon">&#xe642;</i>修改
+                        </div>
+                        <!--确认按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
+                                     "shiro:hasAnyPermissions="purchaseOrder:confirm" id="confirmTo">
+                            <i class="layui-icon layui-icon-ok-circle"></i>确认
+                        </div>
+                        <!--取消按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
+                                     "shiro:hasAnyPermissions="purchaseOrder:cancel" id="cancelTo">
+                            <i class="layui-icon layui-icon-close"></i>取消
+                        </div>
+                        <!--删除按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
+                                     "shiro:hasAnyPermissions="purchaseOrder:delete" id="deleteTo">
+                            <i class="layui-icon">&#xe8a1;</i>删除
+                        </div>
+                    </div>
+                    <br>
+                    <br>
+                    <table lay-filter="purchaseOrder-table" id="purchaseOrder-table" lay-data="{id: 'purchaseOrder-table'}"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="order-state">
+    {{#
+    let orderState = {
+    1: {title: '登记'},
+    2: {title: '确认'},
+    3: {title: '核准'}
+    }[d.orderState];
+    }}
+    <span>{{ orderState.title }}</span>
+</script>
+
+<script type="text/html" id="payment-method">
+    {{#
+    let paymentMethod = {
+    1: {title: '预付'},
+    2: {title: '到付'}
+    }[d.paymentMethod];
+    }}
+    <span>{{ paymentMethod.title }}</span>
+</script>
+<script type="text/html" id="invoice-billing-situation">
+    {{#
+    let invoiceBillingSituation = {
+    1: {title: '是'},
+    2: {title: '否'}
+    }[d.invoiceBillingSituation];
+    }}
+    <span>{{ invoiceBillingSituation.title }}</span>
+</script>
+<script type="text/html" id="parameter-option">
+    <span shiro:lacksPermission="purchaseOrder:view,purchaseOrder:update,purchaseOrder:delete">
+        <span class="layui-badge-dot febs-bg-orange"></span> 无权限
+    </span>
+    <a lay-event="edit" shiro:hasPermission="purchaseOrder:update"><i
+            class="layui-icon febs-edit-area febs-blue">&#xe7a4;</i></a>
+    <a lay-event="del" shiro:hasPermission="purchaseOrder:delete"><i class="layui-icon febs-edit-area febs-red">&#xe7f9;</i></a>
+</script>
+<script langguage="JavaScript">
+    var deliveryDateTo = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate();
+</script>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+            laydate = layui.laydate,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            dropdownMenu = layui.dropdownMenu,
+            $view = $('#purchaseOrder-list'),
+            $query = $view.find('#query'),
+            $addTo = $view.find('#addTo'),
+            $updateTo = $view.find('#updateTo'),
+            $confirmTo = $view.find('#confirmTo'),
+            $cancelTo = $view.find('#cancelTo'),
+            $deleteTo = $view.find('#deleteTo'),
+            $reset = $view.find('#reset'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'createTime', type: null},
+            tableIns;
+
+        form.render();
+        initPurchaseRequisitionTable();
+        dropdownMenu.render({
+            elem: $view.find('.action-more'),
+            click: function (name, elem, event) {
+                let checkStatus = table.checkStatus('purchaseOrderTable');
+            },
+            options: []
+        });
+
+        table.on('tool(purchaseOrderTable)', function (obj) {
+            let data = obj.data,
+                layEvent = obj.event;
+        });
+
+        table.on('sort(purchaseOrderTable)', function (obj) {
+            sortObject = obj;
+            tableIns.reload({
+                initSort: obj,
+                where: $.extend(getQueryParams(), {
+                    field: obj.field,
+                    order: obj.type
+                })
+            });
+        });
+        var purchaseTableData = new Array(); // 用于存放表格数据
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        $reset.on('click', function () {
+            $searchForm[0].reset();
+            tableIns.reload({where: getQueryParams(), page: {curr: 1}});
+        });
+        $addTo.on('click', function () {
+            febs.modal.open('【采购订单】 新增', 'purchase/purchaseOrder/add', {
+                btn: ['增加行','删除行','删除整单','保存', '关闭'],
+                area: ["80%","60%"],
+                yes: function (index, layero) {
+                    var dataBak = [];
+                    var tableBak = layui.table.cache['purchaseOrderRequisition-table'];
+                    for (var i=0;i<tableBak.length; i++){
+                        dataBak.push(tableBak[i]);
+                    }
+                    dataBak.push({
+                        "applicationNo":"",
+                        "orderCode":"",
+                        "materialName":"",
+                        "orderSpecifications":"",
+                        "orderQuality":"",
+                        "orderBrand":"",
+                        "orderCompany":"",
+                        "orderQuantity":"",
+                        "unitPrice":"0.00",
+                        "orderMoney":"0.00",
+                        "deliveryDate":deliveryDateTo,
+                        "orderRemarks":"",
+                    });
+                    console.log(dataBak);
+                    layui.table.reload('purchaseOrderRequisition-table',{
+                        data:dataBak
+                    });
+                },
+                btn2: function () {
+                    let checkStatus = table.checkStatus('purchaseOrderRequisition-table')
+                        , demo = table.cache["purchaseOrderRequisition-table"];//获取表格中的数据
+                    if (checkStatus.data.length < 1) {
+                        layer.alert("请选择一条数据操作");
+                        return false;
+                    }else {
+                        var tablelist = [];//存储未选中的数据
+                        //循环表格数据
+                        for (var i in demo) {
+                            //判断未选中数据
+                            if (!demo[i].LAY_CHECKED) {
+                                //存入数组
+                                tablelist.push(demo[i]);
+                            }
+                        }
+                        //重载表格
+                        table.reload('purchaseOrderRequisition-table', {
+                            data: tablelist
+                        });
+
+                    }
+                    return false;
+                },
+                btn3: function () {
+                    var dataBak = [];
+                    layui.table.reload('purchaseOrderRequisition-table',{
+                        data:dataBak
+                    });
+                    return false;
+                },
+                btn4: function () {
+                    $('#purchaseOrder-add').find('#submit').trigger('click');
+                    return false;
+                },
+                btn5: function () {
+                    layer.closeAll();
+                }
+            });
+        });
+        $updateTo.on('click', function () {
+            let checkStatus = table.checkStatus('purchaseOrderTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要修改的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要修改的数据');
+            }else{
+                layui.each(checkStatus.data, function (key, item) {
+                    febs.modal.open('【采购申请】 修改', 'purchase/purchaseOrder/update/' + item.id, {
+                        area: ["80%","60%"],
+                        btn: ['增加行','删除行','删除整单','保存', '关闭'],
+                        yes: function (index, layero) {
+                            var buttonArr = [];
+                            var tableBak = layui.table.cache['purchaseRequisitionTableList'];//获取之前编辑过的全部数据，前提是编辑数据是要更新缓存，buttonList 为表格的id
+                            for (var i = 0; i < tableBak.length; i++) {
+                                buttonArr.push(tableBak[i]);      //将之前的数组存储
+                            }
+                            buttonArr.push({
+                                "applyCode":"",
+                                "applyName":"",
+                                "applySpecifications":"",
+                                "applyQuality":"",
+                                "applyBrand":"",
+                                "applyCompany":"",
+                                "applyQuantity":"",
+                                "deliveryDate":deliveryDateTo,
+                                "applyRemarks":"",
+                            });
+                            table.reload('purchaseRequisitionTableList',{
+                                data:buttonArr
+                            });
+                        },
+                        btn2: function () {
+                            let checkStatus = table.checkStatus('purchaseRequisitionTableList')
+                                , demo = table.cache["purchaseRequisitionTableList"];//获取表格中的数据
+                            if (checkStatus.data.length < 1) {
+                                layer.alert("请选择一条数据操作");
+                                return false;
+                            }else {
+                                var tablelist = [];//存储未选中的数据
+                                //循环表格数据
+                                for (var i in demo) {
+                                    //判断未选中数据
+                                    if (!demo[i].LAY_CHECKED) {
+                                        //存入数组
+                                        tablelist.push(demo[i]);
+                                    }
+                                }
+                                //重载表格
+                                table.reload('purchaseRequisitionTableList', {
+                                    data: tablelist
+                                });
+
+                            }
+                            return false;
+                        },
+                        btn3: function () {
+                            var dataBak = [];
+                            layui.table.reload('purchaseRequisitionTableList',{
+                                data:dataBak
+                            });
+                            return false;
+                        },
+                        btn4: function () {
+                            $('#purchaseRequisition-update').find('#submit').trigger('click');
+                            return false;
+                        },
+                        btn5: function () {
+                            layer.closeAll();
+                        }
+                    });
+                });
+            }
+        });
+        $confirmTo.on('click', function () {
+            let checkStatus = table.checkStatus('purchaseOrderTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要确认的数据');
+            } else {
+                alert("确认")
+            }
+        });
+        $cancelTo.on('click', function () {
+            let checkStatus = table.checkStatus('purchaseOrderTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要取消的数据');
+            } else {
+                alert("取消")
+            }
+        });
+        $deleteTo.on('click', function () {
+            let checkStatus = table.checkStatus('purchaseOrderTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要删除的数据');
+            } else {
+                febs.modal.confirm('删除采购参数', '确定删除？', function () {
+                    let ids = [];
+                    layui.each(checkStatus.data, function (key, item) {
+                        ids.push(item.id)
+                    });
+                    deletePurchaseRequisition(ids.join(','));
+                });
+            }
+        });
+
+        function initPurchaseRequisitionTable() {
+            tableIns = febs.table.init({
+                elem: '#purchaseOrderTable',
+                id: 'purchaseOrderTable',
+                url: ctx + 'purchaseOrder/list',
+                cols: [[
+                    {type: 'checkbox'},
+                    {field:'number',title:'序号',align:'center',width:60,templet:function (d) {
+                                        return d.LAY_INDEX;}},
+                    {title: '状态', templet: '#order-state',align:'center',width:60},
+                    {field: 'purchaseRequisitionDate', title: '日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.purchaseRequisitionDate, "yyyy-MM-dd") }}</div>', minWidth: 110, sort: true},
+                    {field: 'orderNumber', title: '单号', minWidth: 145,align:'center'},
+                    {field: 'supplierName', title: '供应商', minWidth: 120,align:'center'},
+                    {field: 'orderQuantity', title: '订购数量', minWidth: 120,align:'center'},
+                    {field: 'orderMoney',title: '金额', minWidth: 55,align:'center'},
+                    {field: 'depositPaid', title: '已付定金', minWidth: 95,align:'center'},
+                    {field: 'currencyName', title: '币种', minWidth: 80,align:'center'},
+                    {field: 'taxRateName', title: '税率', minWidth: 80,align:'center'},
+                    {title: '付款方式', templet: '#payment-method',align:'center',width:90},
+                    {field: 'orderDeposit', title: '定金', minWidth: 90,align:'center'},
+                    {title: '是否开票', templet: '#invoice-billing-situation',align:'center',width:90},
+                    {field: 'orderPreparer', title: '制单人', minWidth: 95,align:'center'},
+                    {field: 'orderPreparationDate', title: '制单日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.orderPreparationDate, "yyyy-MM-dd HH:mm:ss") }}</div>', minWidth: 160, sort: true},
+                    {field: 'amountPaid', title: '已付金额', minWidth: 95,align:'center'},
+                    {field: 'unpaidAmount', title: '未付金额', minWidth: 95,align:'center'}
+                ]]
+            });
+        }
+        table.on('row(purchaseOrderTable)', function (obj) {
+            let oddNumbers = obj.data.orderNumber;
+            var dataBak = [];
+            layui.table.reload('purchaseOrder-table',{
+                data:dataBak
+            });
+            $.ajax({
+                url: '/purchaseOrder/query',
+                data:{"oddNumbers":oddNumbers},
+                success : function(data) {
+                    var oldDataOne;
+                    var arr = data.replies;
+                    for(var i=0;i<arr.length;i++){
+                        var applicationNo = arr[i].applicationNo;
+                        var orderCode = arr[i].orderCode;
+                        var materialName = arr[i].materialName;
+                        var orderSpecifications = arr[i].orderSpecifications;
+                        var orderQuality = arr[i].orderQuality;
+                        var orderBrand = arr[i].orderBrand;
+                        var orderCompany = arr[i].orderCompany;
+                        var orderQuantity = arr[i].orderQuantity;
+                        var unitPrice = arr[i].unitPrice;
+                        var orderMoney = arr[i].orderMoney;
+                        var deliveryDate = arr[i].deliveryDate;
+                        var orderRemarks = arr[i].orderRemarks;
+                        var dataOne={"applicationNo":applicationNo,"orderCode":orderCode,"materialName":materialName,"orderSpecifications":orderSpecifications,"orderQuality":orderQuality,"orderBrand":orderBrand,"orderCompany":orderCompany,
+                            "orderQuantity":orderQuantity,"unitPrice":unitPrice,"orderMoney":orderMoney,"deliveryDate":deliveryDate,"orderRemarks":orderRemarks};
+                        oldDataOne =  table.cache["purchaseOrder-table"];
+                        oldDataOne.push(dataOne);
+                    }
+                    layui.table.reload('purchaseOrder-table',{
+                        data : oldDataOne
+                    });
+                }
+            });
+        });
+       table.render({
+            elem:'#purchaseOrder-table',
+            data:purchaseTableData,
+            cols: [[
+                {field:'number',title:'序号',align:'center',width:60,templet:function (d) {
+                        return d.LAY_INDEX;}},
+                {field: 'applicationNo',title: '申请单号', minWidth: 145,align:'center'},
+                {field: 'orderCode',title: '编码', minWidth: 90,align:'center'},
+                {field: 'materialName', title: '名称', minWidth: 90,align:'center'},
+                {field: 'orderSpecifications', title: '规格', minWidth: 90,event:'specification',align:'center'},
+                {field: 'orderQuality',title: '材质', minWidth: 55,align:'center'},
+                {field: 'orderBrand',title: '品牌', minWidth: 55,align:'center'},
+                {field: 'orderCompany',title: '单位', minWidth: 55,align:'center'},
+                {field: 'orderQuantity',title: '订购数量', minWidth: 55,align:'center'},
+                /*{field: 'applyQuantity',title: '收货数量', minWidth: 55,align:'center'},*/
+                {field: 'unitPrice',title: '单价', minWidth: 55,align:'center'},
+                {field: 'orderMoney',title: '金额', minWidth: 55,align:'center'},
+                {field: 'deliveryDate',title: '交货日期', minWidth: 55,align:'center',templet:'<div>{{ layui.util.toDateString(d.deliveryDate, "yyyy-MM-dd") }}</div>'},
+                {field: 'orderRemarks', title: '备注', minWidth: 72}
+            ]]
+        });
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+
+        function deletePurchaseRequisition(ids) {
+            febs.get(ctx + 'purchaseRequisition/delete/' + ids, null, function () {
+                febs.alert.success('删除采购参数成功');
+                $query.click();
+            });
+        }
+
+    })
+
+</script>

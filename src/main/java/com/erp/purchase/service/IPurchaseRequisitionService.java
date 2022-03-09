@@ -59,4 +59,6 @@ public interface IPurchaseRequisitionService extends IService<PurchaseRequisitio
     PurchaseRequisitionPositive findPurchaseRequisitionPositiveById(Long id);
 
     IPage<PurchaseRequisitionSchedule> queryPurchaseRequisitionsList(QueryRequest request, String oddNumbers);
+
+    IPage<PurchaseRequisition> findOrderPurchaseRequisitionPage(QueryRequest request, PurchaseRequisition purchaseRequisition);
 }

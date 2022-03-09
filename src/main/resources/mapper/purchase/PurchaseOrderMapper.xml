@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.purchase.mapper.PurchaseOrderMapper">
+
+    <sql id="countPurchaseOrderSql">
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_purchase_order po
+        WHERE
+	1 = 1
+    </sql>
+    <sql id="findPurchaseOrderSql">
+        SELECT
+            po.id,
+            po.order_state,
+            po.purchase_requisition_date,
+            po.order_number,
+            po.supplier_name,
+            pos.order_money orderMoney,
+            fpa.finance_parameter_name currencyName,
+            fpb.finance_parameter_name taxRateName,
+            po.payment_method,
+            po.order_deposit,
+            po.invoice_billing_situation,
+            po.order_preparer,
+            po.order_preparation_date,
+            sum( pos.order_quantity ) orderQuantity
+        FROM
+            jr_purchase_order po
+            LEFT JOIN jr_purchase_order_schedule pos ON ( po.order_number = pos.odd_numbers )
+            LEFT JOIN jr_finance_parameters fpa ON ( po.currency_id = fpa.id )
+            LEFT JOIN jr_finance_parameters fpb ON ( po.tax_rate_id = fpb.id )
+        WHERE
+            1 = 1
+        GROUP BY
+	        po.order_number
+    </sql>
+
+    <select id="countPurchaseOrder" parameterType="com.erp.purchase.entity.PurchaseOrder" resultType="long">
+        <include refid="countPurchaseOrderSql"/>
+    </select>
+
+    <select id="findPurchaseOrderPage" parameterType="com.erp.purchase.entity.PurchaseOrder" resultType="com.erp.purchase.entity.PurchaseOrder">
+        <include refid="findPurchaseOrderSql"/>
+    </select>
+
+    <!--查询出最后一个采购订单单号-->
+    <select id="queryPurchaseOrder" resultType="com.erp.purchase.entity.PurchaseOrder">
+         SELECT
+            po.id,
+            po.order_state,
+            po.purchase_requisition_date,
+            po.order_number,
+            po.supplier_name,
+            po.currency_id,
+            po.tax_rate_id,
+            po.payment_method,
+            po.order_deposit,
+            po.invoice_billing_situation,
+            po.order_preparer,
+            po.order_preparation_date
+        FROM
+            jr_purchase_order po
+        WHERE
+            1 = 1
+        GROUP BY
+            po.order_preparation_date
+        ORDER BY
+            po.order_preparation_date DESC
+            LIMIT 1;
+    </select>
+
+    <!--向数据库添加采购订单数据-->
+    <insert id="savePurchaseOrderDate" parameterType="com.erp.purchase.entity.PurchaseOrder">
+        INSERT INTO
+            jr_purchase_order
+            (
+                purchase_requisition_date,
+                order_number,
+                supplier_name,
+                currency_id,
+                tax_rate_id,
+                payment_method,
+                order_deposit,
+                invoice_billing_situation,
+                order_preparer,
+                order_preparation_date
+             )
+        VALUES
+            (
+             #{purchaseRequisitionDate},
+             #{orderNumber},
+             #{supplierName},
+             #{currencyId},
+             #{taxRateId},
+             #{paymentMethod},
+             #{orderDeposit},
+             #{invoiceBillingSituation},
+             #{orderPreparer},
+             #{orderPreparationDate}
+            )
+    </insert>
+
+    <!--向数据库添加采购订单数据-->
+    <insert id="savePurchaseOrderSchedule" parameterType="com.erp.purchase.entity.PurchaseOrderSchedule">
+        INSERT INTO
+            jr_purchase_order_schedule
+            (
+                odd_numbers,
+                application_no,
+                order_code,
+                material_name,
+                order_specifications,
+                order_quality,
+                order_brand,
+                order_company,
+                order_quantity,
+                unit_price,
+                order_money,
+                delivery_date,
+                order_remarks
+             )
+        VALUES
+            (
+             #{oddNumbers},
+             #{applicationNo},
+             #{orderCode},
+             #{materialName},
+             #{orderSpecifications},
+             #{orderQuality},
+             #{orderBrand},
+             #{orderCompany},
+             #{orderQuantity},
+             #{unitPrice},
+             #{orderMoney},
+             #{deliveryDate},
+             #{orderRemarks}
+            )
+    </insert>
+
+    <!--点击上面的table展示下面的table数据-->
+    <select id="queryPurchaseOrderSchedule" parameterType="String" resultType="com.erp.purchase.entity.PurchaseOrderSchedule">
+       SELECT
+            pos.id,
+            pos.odd_numbers,
+            pos.application_no,
+            pos.order_code,
+            pos.material_name,
+            pos.order_specifications,
+            pos.order_quality,
+            pos.order_brand,
+            pos.order_company,
+            pos.order_quantity,
+            pos.unit_price,
+            pos.order_money,
+            pos.delivery_date,
+            pos.order_remarks
+        FROM
+            jr_purchase_order_schedule pos
+        WHERE
+            pos.odd_numbers = #{oddNumbers}
+    </select>
+
+</mapper>

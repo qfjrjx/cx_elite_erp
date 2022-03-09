@@ -119,4 +119,11 @@ public class PurchaseSupplierServiceImpl extends ServiceImpl<PurchaseSupplierMap
 
         return baseMapper.findPurchaseSupplierById(id);
     }
+
+    @Override
+    public List<PurchaseSupplier> queryPurchaseSupplierList() {
+
+        return baseMapper.queryPurchaseSupplierList();
+    }
+
 }

@@ -55,4 +55,6 @@ public interface IPurchaseSupplierService extends IService<PurchaseSupplier> {
     void deletePurchaseSupplier(String[] ids);
 
     PurchaseSupplier findPurchaseSupplierById(Long id);
+
+    List<PurchaseSupplier> queryPurchaseSupplierList();
 }

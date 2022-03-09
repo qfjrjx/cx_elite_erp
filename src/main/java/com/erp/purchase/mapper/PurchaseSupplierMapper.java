@@ -7,6 +7,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * 供货单位表 Mapper
  *
@@ -25,4 +27,6 @@ public interface PurchaseSupplierMapper extends BaseMapper<PurchaseSupplier> {
     PurchaseSupplier queryPurchaseSupplier();
 
     PurchaseSupplier findPurchaseSupplierById(@Param("id") Long id);
+
+    List<PurchaseSupplier> queryPurchaseSupplierList();
 }

@@ -29,12 +29,41 @@
             oddNumbers
     </sql>
 
+    <sql id="findOrderPurchaseRequisitionSql">
+        SELECT
+            pr.id,
+            pr.purchase_requisition_date purchaseRequisitionDate,
+            pr.odd_numbers oddNumbers,
+            d.DEPT_NAME departmentName,
+            prs.apply_code applyCode,
+            prs.apply_name applyName,
+            prs.apply_specifications applySpecifications,
+            prs.apply_quality applyQuality,
+            prs.apply_brand applyBrand,
+            prs.apply_company applyCompany,
+            prs.apply_quantity applyQuantity,
+            prs.delivery_date deliveryDate,
+            prs.apply_remarks applyRemarks,
+            pr.apply_preparer applyPreparer,
+            pr.apply_preparation_date applyPreparationDate
+        FROM
+            jr_purchase_requisition pr
+            LEFT JOIN t_dept d ON ( pr.department_id = d.dept_id )
+            LEFT JOIN jr_purchase_requisition_schedule prs ON ( pr.odd_numbers = prs.odd_numbers )
+        WHERE
+            1 = 1
+    </sql>
+
     <select id="countPurchaseRequisition" parameterType="com.erp.purchase.entity.PurchaseRequisition" resultType="long">
         <include refid="countPurchaseRequisitionSql"/>
     </select>
 
     <select id="findPurchaseRequisitionPage" parameterType="com.erp.purchase.entity.PurchaseRequisition" resultType="com.erp.purchase.entity.PurchaseRequisition">
         <include refid="findPurchaseRequisitionSql"/>
+    </select>
+
+    <select id="findOrderPurchaseRequisitionPage" parameterType="com.erp.purchase.entity.PurchaseRequisition" resultType="com.erp.purchase.entity.PurchaseRequisition">
+        <include refid="findOrderPurchaseRequisitionSql"/>
     </select>
 
     <!--查询出最后一个采购申请单号-->
