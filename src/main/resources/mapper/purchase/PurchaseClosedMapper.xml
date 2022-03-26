@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.purchase.mapper.PurchaseClosedMapper">
+    <sql id="countPurchaseClosed">
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_purchase_closed pc
+        WHERE
+            1 = 1
+    </sql>
+
+    <sql id="findPurchaseClosedSql">
+        SELECT
+            pc.id,
+            pc.closed_state,
+            pc.purchase_requisition_date,
+            pc.closed_number,
+            pc.supplier_name,
+            pc.warehouse_state,
+            sum( pos.order_quantity ) orderQuantity,
+            fpa.finance_parameter_name currencyName,
+            fpb.finance_parameter_name taxRateName,
+            sum( pos.order_money ) orderMoney,
+            pc.closed_storage,
+            pos.application_no,
+            pc.closed_storage_date
+        FROM
+            jr_purchase_closed pc
+                LEFT JOIN jr_purchase_order_schedule pos ON ( pc.closed_number = pos.odd_numbers )
+                LEFT JOIN jr_finance_parameters fpa ON ( pc.currency_id = fpa.id )
+                LEFT JOIN jr_finance_parameters fpb ON ( pc.tax_rate_id = fpb.id )
+        WHERE
+            1 = 1
+        GROUP BY
+            pc.closed_number
+    </sql>
+
+
+    <select id="countPurchaseClosed" parameterType="com.erp.purchase.entity.PurchaseClosed" resultType="long">
+        <include refid="countPurchaseClosed"/>
+    </select>
+
+    <select id="findPurchaseClosedPage" parameterType="com.erp.purchase.entity.PurchaseClosed" resultType="com.erp.purchase.entity.PurchaseClosed">
+        <include refid="findPurchaseClosedSql"/>
+    </select>
+
+    <!--查询出最后一个采购订单单号-->
+    <select id="queryPurchaseClosed" resultType="com.erp.purchase.entity.PurchaseClosed">
+        SELECT
+            pc.id,
+            pc.closed_state,
+            pc.purchase_requisition_date,
+            pc.closed_number,
+            pc.warehouse_state,
+            pc.closed_storage,
+            pc.closed_storage_date,
+            pc.supplier_name,
+            pc.currency_id,
+            pc.tax_rate_id
+        FROM
+            jr_purchase_closed pc
+        WHERE
+            1 = 1
+        GROUP BY
+            pc.closed_storage_date
+        ORDER BY
+            pc.closed_storage_date DESC
+            LIMIT 1;
+    </select>
+
+    <!--向数据库添加采购订单数据-->
+    <insert id="savePurchaseOrderSchedule" parameterType="com.erp.purchase.entity.PurchaseOrderSchedule">
+        INSERT INTO
+            jr_purchase_order_schedule
+        (
+            odd_numbers,
+            application_no,
+            order_code,
+            material_name,
+            order_specifications,
+            order_quality,
+            order_brand,
+            order_company,
+            order_quantity,
+            unit_price,
+            order_money,
+            delivery_date,
+            order_remarks
+        )
+        VALUES
+            (
+                #{oddNumbers},
+                #{applicationNo},
+                #{orderCode},
+                #{materialName},
+                #{orderSpecifications},
+                #{orderQuality},
+                #{orderBrand},
+                #{orderCompany},
+                #{orderQuantity},
+                #{unitPrice},
+                #{orderMoney},
+                #{deliveryDate},
+                #{orderRemarks}
+            )
+    </insert>
+
+    <!--向数据库添加采购收货数据-->
+    <insert id="savePurchaseClosedDate" parameterType="com.erp.purchase.entity.PurchaseClosed">
+        INSERT INTO
+            jr_purchase_closed
+        (
+            closed_state,
+            purchase_requisition_date,
+            closed_number,
+            warehouse_state,
+            closed_storage,
+            closed_storage_date,
+            supplier_name,
+            currency_id,
+            tax_rate_id
+        )
+        VALUES
+            (
+                #{closedState},
+                #{purchaseRequisitionDate},
+                #{closedNumber},
+                #{warehouseState},
+                #{closedStorage},
+                #{closedStorageDate},
+                #{supplierName},
+                #{currencyId},
+                #{taxRateId}
+            )
+    </insert>
+
+    <!-- 修改回显数据 -->
+    <select id="queryPurchaseClosedList" parameterType="Long" resultType="com.erp.purchase.entity.PurchaseClosed">
+        SELECT
+            pc.id,
+            pc.closed_state closedState,
+            pc.purchase_requisition_date purchaseRequisitionDate,
+            pc.closed_number closedNumber,
+            pc.warehouse_state warehouseState,
+            pc.currency_id currencyId,
+            pc.tax_rate_id tax_rateId,
+            pc.closed_storage_date closedStorageDate,
+            pc.closed_storage closedStorage,
+            pc.supplier_name supplierName
+        FROM
+            jr_purchase_closed pc
+        WHERE
+            pc.id = #{id}
+    </select>
+
+    <delete id="deletePurchaseOrderSchedule">
+        delete from jr_purchase_order_schedule  where odd_numbers = #{orderNumber}
+    </delete>
+
+</mapper>

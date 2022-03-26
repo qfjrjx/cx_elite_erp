@@ -1,0 +1,90 @@
+<style>
+    #purchaseInspection-queryup {
+        padding: 20px 25px 25px 0;
+    }
+</style>
+<div class="layui-fluid" id="purchaseInspection-queryup">
+    <form class="layui-form" action="" lay-filter="purchaseClosed-update-form">
+        <div class="layui-form-item">
+            <div class="layui-input-inline" style="width: 115px">
+                <input type="text" name="inspectionNumber" id="inspectionNumber" style='display:none'>
+            </div>
+    <table lay-filter="purchaseInspectionQueryup" id="purchaseInspectionQueryup" lay-data="{id: 'purchaseInspectionQueryup'}"></table>
+        </div>
+    </form>
+</div>
+<script type="text/html" id="inspection-state">
+    {{#
+    let inspectionState = {
+    1: {title: '登记'},
+    2: {title: '确认'},
+    3: {title: '检验'},
+    4: {title: '送库'}
+    }[d.inspectionState];
+    }}
+    <span>{{ inspectionState.title }}</span>
+</script>
+
+<script data-th-inline="javascript">
+    layui.use(['febs', 'form', 'validate','table', 'xmSelect','upload','laydate'], function () {
+        let $ = layui.$,
+            form = layui.form,
+            validate = layui.validate,
+            table = layui.table,
+            purchaseInspection = [[${purchaseInspection}]],
+            purchaseRequisitionDate = [[${purchaseRequisitionDate}]];
+
+
+        form.verify(validate);
+        form.render();
+        initPurchaseRequisitionCreatorValue();
+
+
+
+        function initPurchaseRequisitionCreatorValue() {
+            form.val("purchaseInspectionQueryup", {
+                "orderNumbers": purchaseInspection.inspectionNumber,
+                "purchaseRequisitionDate": purchaseRequisitionDate
+            });
+        }
+
+        var tableData=new Array(); // 用于存放表格数据
+        $.ajax({
+            url: 'PurchaseInspectionSchedule/query'
+            ,data:{"oddNumbers":purchaseInspection.inspectionNumber}
+            ,async:false
+            ,dataType:"json"
+            , success: function(data){
+                tableData=data.replies;
+            }
+        });
+
+        table.render({
+            elem: "#purchaseInspectionQueryup",
+            data:tableData,
+            cols: [
+                [
+                    {field:'number',title:'序号',align:'center',width:60,templet:function (d) {
+                            return d.LAY_INDEX;}},
+                    {title: '状态', templet: '#inspection-state',align:'center',width:60},
+                    {field: 'orderNumbers',title: '采购订单',align:'center', minWidth: 145,event:'choice'},
+                    {field: 'materialName', title: '物料名称',align:'center', minWidth: 90},
+                    {field: 'inspectionrSpecifications', title: '规格型号', align:'center',minWidth: 90},
+                    {field: 'inspectionCompany',title: '单位', minWidth: 55,align:'center'},
+                    {field: 'orderQuantity',title: '订购数', minWidth: 55,align:'center'},
+                    {field: 'inspectionrGoods',title: '来货数', minWidth: 55,align:'center'},
+                    {field: 'inspectionrQualified',title: '合格数', minWidth: 50,align:'center'},
+                    {field: 'inspectionrStorage',title: '入库数', minWidth: 50,align:'center'},
+                    {field: 'unitPrice', edit:true,title: '单价',minWidth: 55,align:'center',align:'center',templet:function (data) {
+                            var price = parseFloat(data.unitPrice).toFixed(2); //设置小数点后个数
+                            return price;}},
+                    {field: 'inspectionMoney',title: '金额', minWidth: 55,align:'center',templet:function (data) {
+                            var price = parseFloat(data.inspectionMoney).toFixed(2); //设置小数点后个数
+                            return price;}},
+                    {field: 'inspectionRemarks', title: '备注', minWidth: 72}
+                ]
+            ]
+        });
+    });
+
+</script>

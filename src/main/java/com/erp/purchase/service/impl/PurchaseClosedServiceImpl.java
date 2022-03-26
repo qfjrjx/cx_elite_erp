@@ -1,5 +1,6 @@
 package com.erp.purchase.service.impl;
 
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -8,11 +9,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.erp.common.entity.QueryRequest;
-import com.erp.purchase.entity.PurchaseOrder;
+import com.erp.purchase.entity.PurchaseClosed;
 import com.erp.purchase.entity.PurchaseOrderSchedule;
-import com.erp.purchase.entity.PurchaseParameters;
-import com.erp.purchase.mapper.PurchaseOrderMapper;
-import com.erp.purchase.service.IPurchaseOrderService;
+import com.erp.purchase.mapper.PurchaseClosedMapper;
+import com.erp.purchase.service.IPurchaseClosedService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -21,42 +21,46 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 /**
- * 采购订单表 Service实现
+ * 采购收货表 Service实现
  *
  * @author qiufeng
- * @date 2022-02-20 14:25:03
+ * @date 2022-03-19 09:44:35
  */
 @Service
 @RequiredArgsConstructor
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-public class PurchaseOrderServiceImpl extends ServiceImpl<PurchaseOrderMapper, PurchaseOrder> implements IPurchaseOrderService {
+public class PurchaseClosedServiceImpl extends ServiceImpl<PurchaseClosedMapper, PurchaseClosed> implements IPurchaseClosedService {
 
-    private final PurchaseOrderMapper purchaseOrderMapper;
+    private final PurchaseClosedMapper purchaseClosedMapper;
 
     @Override
-    public IPage<PurchaseOrder> findPurchaseOrders(QueryRequest request, PurchaseOrder purchaseOrder) {
-        Page<PurchaseParameters> page = new Page<>(request.getPageNum(), request.getPageSize());
+    public IPage<PurchaseClosed> findPurchaseCloseds(QueryRequest request, PurchaseClosed purchaseClosed) {
+        Page<PurchaseClosed> page = new Page<>(request.getPageNum(), request.getPageSize());
         page.setSearchCount(false);
-        page.setTotal(baseMapper.countPurchaseOrder(purchaseOrder));
-        return baseMapper.findPurchaseOrderPage(page,purchaseOrder);
+        page.setTotal(baseMapper.countPurchaseClosed(purchaseClosed));
+        return baseMapper.findPurchaseClosedPage(page,purchaseClosed);
     }
 
     @Override
-    public List<PurchaseOrder> findPurchaseOrders(PurchaseOrder purchaseOrder) {
-	    LambdaQueryWrapper<PurchaseOrder> queryWrapper = new LambdaQueryWrapper<>();
+    public List<PurchaseClosed> findPurchaseCloseds(PurchaseClosed purchaseClosed) {
+	    LambdaQueryWrapper<PurchaseClosed> queryWrapper = new LambdaQueryWrapper<>();
 		// TODO 设置查询条件
 		return this.baseMapper.selectList(queryWrapper);
     }
 
     @Override
-    public void createPurchaseOrder(String purchaseOrder, String dataTable) throws ParseException {
+    @Transactional(rollbackFor = Exception.class)
+    public void createPurchaseClosed(String purchaseClosed, String dataTable) throws ParseException {
         SimpleDateFormat simpleDateFormatOne = new SimpleDateFormat("yyyy-MM-dd");//设置日期格式
-        PurchaseOrder purchaseOrderDate = new PurchaseOrder();
-        /*单号案例 LWLCG22020155*/
-        String initials = "LWLCG";
+        PurchaseClosed purchaseClosedDate = new PurchaseClosed();
+        /*单号案例 LLHRK22030187*/
+        String initials = "LLHRK";
         String generateDocNo = null;
         Date date = new Date();
         //获取当前年
@@ -65,21 +69,18 @@ public class PurchaseOrderServiceImpl extends ServiceImpl<PurchaseOrderMapper, P
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM");
         //格式化当前月
         String month = simpleDateFormat.format(date);
-
-        JSONObject object = JSON.parseObject(purchaseOrder);
+        JSONObject object = JSON.parseObject(purchaseClosed);
         String  userName =  object.getString("userName");
         String  purchaseRequisitionDate =  object.getString("purchaseRequisitionDate");
         String  supplierName =  object.getString("supplierName");
         String  currencyId =  object.getString("currencyId");
         String  taxRateId =  object.getString("taxRateId");
-        String  paymentMethod =  object.getString("paymentMethod");
-        String  orderDeposit =  object.getString("orderDeposit");
-        String  invoiceBillingSituation =  object.getString("invoiceBillingSituation");
-       //查询出最后一个工作安排单号
-        PurchaseOrder purchaseOrderOne = null;
-        purchaseOrderOne = baseMapper.queryPurchaseOrder();
-        if (purchaseOrderOne != null){
-            String oddNumbers = purchaseOrderOne.getOrderNumber();
+        String  warehouseState =  object.getString("warehouseState");
+        //查询出最后一个工作安排单号
+        PurchaseClosed purchaseClosedOne = null;
+        purchaseClosedOne = baseMapper.queryPurchaseClosed();
+        if (purchaseClosedOne != null){
+            String oddNumbers = purchaseClosedOne.getClosedNumber();
             /*单号案例 LWLCG22020155*/
             String oddNumbersOne = oddNumbers.substring(9,13);
             int oddNumber = Integer.parseInt(oddNumbersOne);
@@ -88,41 +89,36 @@ public class PurchaseOrderServiceImpl extends ServiceImpl<PurchaseOrderMapper, P
                 oddNumberOne = String.format("%04d",oddNumber+1);
             }
             generateDocNo = initials+yearLast+month+oddNumberOne;
-            purchaseOrderDate.setOrderNumber(generateDocNo);
+            purchaseClosedDate.setClosedNumber(generateDocNo);
             //System.out.println("第一"+initials+yearLast+month+oddNumberOne);
         }else {
             for (int i=1;i<10000;i++){
                 String oddNumberThree = String.format("%04d",i);
                 generateDocNo = initials+yearLast+month+oddNumberThree;
-                purchaseOrderDate.setOrderNumber(generateDocNo);
+                purchaseClosedDate.setClosedNumber(generateDocNo);
                 // System.out.println("第二"+initials+yearLast+month+oddNumberThree);
                 break;
             }
         }
-        //制单人
-        purchaseOrderDate.setOrderPreparer(userName);
+        //入库人
+        purchaseClosedDate.setClosedStorage(userName);
         SimpleDateFormat simpleDateFormatTwo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
         String dates = simpleDateFormatTwo.format(new Date());//系统当前时间
         Date today = simpleDateFormatTwo.parse(dates);//格式化系统当前时间
-        //制单日期
-        purchaseOrderDate.setOrderPreparationDate(today);//把获取系统当前时间赋值给实体对象
+        purchaseClosedDate.setClosedStorageDate(today);
+        //入库日期
         Date purchaseRequisitionDateOne = simpleDateFormatOne.parse(purchaseRequisitionDate);//格式化系统当前时间
-        purchaseOrderDate.setPurchaseRequisitionDate(purchaseRequisitionDateOne);
-        purchaseOrderDate.setSupplierName(supplierName);
-        purchaseOrderDate.setCurrencyId(Long.parseLong(currencyId));
-        purchaseOrderDate.setTaxRateId(Long.parseLong(taxRateId));
-        purchaseOrderDate.setPaymentMethod(paymentMethod);
-        if (!orderDeposit.equals("")) {
-            BigDecimal orderDepositTo = new BigDecimal(orderDeposit);
-            purchaseOrderDate.setOrderDeposit(orderDepositTo);
-        }
-        purchaseOrderDate.setInvoiceBillingSituation(invoiceBillingSituation);
-        //PurchaseRequisitionSchedule采购申请表
+        purchaseClosedDate.setPurchaseRequisitionDate(purchaseRequisitionDateOne);
+        purchaseClosedDate.setSupplierName(supplierName);
+        purchaseClosedDate.setCurrencyId(Long.parseLong(currencyId));
+        purchaseClosedDate.setTaxRateId(Long.parseLong(taxRateId));
+        purchaseClosedDate.setWarehouseState(warehouseState);
+        purchaseClosedDate.setClosedState("1");
         JSONArray jsonArrayOne = JSONArray.parseArray(dataTable);
         PurchaseOrderSchedule purchaseOrderSchedule = new PurchaseOrderSchedule();
-        for(int i = 0; i < jsonArrayOne.size(); i++){
+        for(int i = 0; i < jsonArrayOne.size(); i++) {
             purchaseOrderSchedule.setOddNumbers(generateDocNo);
-            String applicationNo = jsonArrayOne.getJSONObject(i).getString("applicationNo");
+            purchaseOrderSchedule.setDeliveryDate(purchaseRequisitionDateOne);
             String orderCode = jsonArrayOne.getJSONObject(i).getString("orderCode");
             String materialName = jsonArrayOne.getJSONObject(i).getString("materialName");
             String orderSpecifications = jsonArrayOne.getJSONObject(i).getString("orderSpecifications");
@@ -132,53 +128,65 @@ public class PurchaseOrderServiceImpl extends ServiceImpl<PurchaseOrderMapper, P
             String orderQuantity = jsonArrayOne.getJSONObject(i).getString("orderQuantity");
             String unitPrice = jsonArrayOne.getJSONObject(i).getString("unitPrice");
             String orderMoney = jsonArrayOne.getJSONObject(i).getString("orderMoney");
-            String deliveryDate = jsonArrayOne.getJSONObject(i).getString("deliveryDate");
             String orderRemarks = jsonArrayOne.getJSONObject(i).getString("orderRemarks");
-            if (!applicationNo.equals("")) {
+            String applicationNo = jsonArrayOne.getJSONObject(i).getString("orderNumber");
+            if (!applicationNo.equals("")){
                 purchaseOrderSchedule.setApplicationNo(applicationNo);
-            }if (!orderCode.equals("")) {
+            }
+            if (!orderCode.equals("")) {
                 purchaseOrderSchedule.setOrderCode(orderCode);
-            }if (!materialName.equals("")) {
+            }
+            if (!materialName.equals("")) {
                 purchaseOrderSchedule.setMaterialName(materialName);
-            }if (orderSpecifications != null && orderSpecifications != "") {
+            }
+            if (orderSpecifications != null && orderSpecifications != "") {
                 purchaseOrderSchedule.setOrderSpecifications(orderSpecifications);
-            }if (!orderQuality.equals("")) {
+            }
+            if (!orderQuality.equals("")) {
                 purchaseOrderSchedule.setOrderQuality(orderQuality);
-            }if (!orderBrand.equals("")) {
+            }
+            if (!orderBrand.equals("")) {
                 purchaseOrderSchedule.setOrderBrand(orderBrand);
-            }if (!orderCompany.equals("") && !orderCompany.equals(null)) {
+            }
+            if (!orderCompany.equals("") && !orderCompany.equals(null)) {
                 purchaseOrderSchedule.setOrderCompany(orderCompany);
-            }if (orderQuantity != null && orderQuantity != "") {
+            }
+            if (orderQuantity != null && orderQuantity != "") {
                 purchaseOrderSchedule.setOrderQuantity(Integer.parseInt(orderQuantity));
-            }if (unitPrice != null && unitPrice  != "") {
+            }
+            if (unitPrice != null && unitPrice != "") {
                 BigDecimal unitPriceTo = new BigDecimal(unitPrice);
                 purchaseOrderSchedule.setUnitPrice(unitPriceTo);
-            }if (orderMoney != null && orderMoney != "") {
+            }
+            if (orderMoney != null && orderMoney != "") {
                 BigDecimal orderMoneyTo = new BigDecimal(orderMoney);
                 purchaseOrderSchedule.setOrderMoney(orderMoneyTo);
-            }if (!deliveryDate.equals("")) {
-                Date deliveryDateOne = simpleDateFormatOne.parse(deliveryDate);//格式化系统当前时间
-                purchaseOrderSchedule.setDeliveryDate(deliveryDateOne);
-            }if (orderRemarks != null && orderRemarks != "") {
+            }
+            if (orderRemarks != null && orderRemarks != "") {
                 purchaseOrderSchedule.setOrderRemarks(orderRemarks);
             }
             //添加到数据库
             baseMapper.savePurchaseOrderSchedule(purchaseOrderSchedule);
         }
         //添加到数据库
-        baseMapper.savePurchaseOrderDate(purchaseOrderDate);
+        baseMapper.savePurchaseClosedDate(purchaseClosedDate);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void updatePurchaseOrder(String orderNumber, String dataTable) throws ParseException  {
-        baseMapper.deletePurchaseOrderSchedule(orderNumber);
+    public void updatePurchaseClosed(String closedNumber, String dataTable) throws ParseException{
+        baseMapper.deletePurchaseOrderSchedule(closedNumber);
         SimpleDateFormat simpleDateFormatOne = new SimpleDateFormat("yyyy-MM-dd");//设置日期格式
         JSONArray jsonArrayOne = JSONArray.parseArray(dataTable);
         PurchaseOrderSchedule purchaseOrderSchedule = new PurchaseOrderSchedule();
         for(int i = 0; i < jsonArrayOne.size(); i++){
-            purchaseOrderSchedule.setOddNumbers(orderNumber);
-            String applicationNo = jsonArrayOne.getJSONObject(i).getString("applicationNo");
+            purchaseOrderSchedule.setOddNumbers(closedNumber);
+            //取当前时间
+            SimpleDateFormat simpleDateFormatTwo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
+            String dates = simpleDateFormatTwo.format(new Date());//系统当前时间
+            Date today = simpleDateFormatTwo.parse(dates);//格式化系统当前时间
+            purchaseOrderSchedule.setDeliveryDate(today);
+            String applicationNo = jsonArrayOne.getJSONObject(i).getString("orderNumber");
             String orderCode = jsonArrayOne.getJSONObject(i).getString("orderCode");
             String materialName = jsonArrayOne.getJSONObject(i).getString("materialName");
             String orderSpecifications = jsonArrayOne.getJSONObject(i).getString("orderSpecifications");
@@ -212,9 +220,6 @@ public class PurchaseOrderServiceImpl extends ServiceImpl<PurchaseOrderMapper, P
             }if (orderMoney != null && orderMoney != "") {
                 BigDecimal orderMoneyTo = new BigDecimal(orderMoney);
                 purchaseOrderSchedule.setOrderMoney(orderMoneyTo);
-            }if (!deliveryDate.equals("")) {
-                Date deliveryDateOne = simpleDateFormatOne.parse(deliveryDate);//格式化系统当前时间
-                purchaseOrderSchedule.setDeliveryDate(deliveryDateOne);
             }if (orderRemarks != null && orderRemarks != "") {
                 purchaseOrderSchedule.setOrderRemarks(orderRemarks);
             }
@@ -225,58 +230,15 @@ public class PurchaseOrderServiceImpl extends ServiceImpl<PurchaseOrderMapper, P
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deletePurchaseOrder(String[] ids) {
-        List<String> list = Arrays.asList(ids);
-        baseMapper.deleteBatchIds(list);
+    public void deletePurchaseClosed(PurchaseClosed purchaseClosed) {
+        LambdaQueryWrapper<PurchaseClosed> wrapper = new LambdaQueryWrapper<>();
+	    // TODO 设置删除条件
+	    this.remove(wrapper);
 	}
 
     @Override
-    public List<PurchaseOrderSchedule> queryPurchaseOrderSchedule(String oddNumbers) {
+    public PurchaseClosed queryPurchaseClosedList(Long id) {
 
-
-        return baseMapper.queryPurchaseOrderSchedule(oddNumbers);
-    }
-
-    @Override
-    public PurchaseOrder queryPurchaseOrderList(Long id) {
-
-        return baseMapper.queryPurchaseOrderList(id);
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void confirmPurchaseOrder(String ids) {
-        baseMapper.confirmPurchaseOrder(ids);
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void cancelPurchaseOrder(String ids) {
-        baseMapper.cancelPurchaseOrder(ids);
-    }
-
-    @Override
-    public IPage<PurchaseOrder> findPurchaseClosedQueryPage(QueryRequest request, PurchaseOrder purchaseOrder) {
-        Page<PurchaseOrder> page = new Page<>(request.getPageNum(), request.getPageSize());
-        page.setSearchCount(false);
-        page.setTotal(baseMapper.countPurchaseOrder(purchaseOrder));
-        return baseMapper.findPurchaseClosedQueryPage(page,purchaseOrder);
-    }
-
-    //删除整单
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void deletePurchaseRequisitionOrderNumber(String orderNumber) {
-        baseMapper.deletePurchaseOrderSchedule(orderNumber);
-        baseMapper.deletePurchaseRequisitionOrderNumber(orderNumber);
-    }
-
-    //根据供应商名称查询订单
-    @Override
-    public IPage<PurchaseOrder> queryPurchaseInspectionOrder(QueryRequest request, String supplierName) {
-        Page<PurchaseParameters> page = new Page<>(request.getPageNum(), request.getPageSize());
-        page.setSearchCount(false);
-        page.setTotal(baseMapper.countPurchaseInspectionOrder(supplierName));
-        return baseMapper.queryPurchaseInspectionOrder(page,supplierName);
+        return baseMapper.queryPurchaseClosedList(id);
     }
 }

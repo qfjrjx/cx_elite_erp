@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.purchase.mapper.PurchaseInspectionMapper">
+    <sql id="countPurchaseInspection">
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_purchase_inspection_schedule
+        WHERE
+            1 = 1
+    </sql>
+
+    <sql id="findPurchaseInspectionPage">
+        SELECT
+            pi.id,
+            pi.inspection_state,
+            pi.purchase_requisition_date,
+            pi.inspection_number,
+            pi.supplier_name,
+            pi.inspection_type,
+            pis.order_quantity,
+            pi.inspection_preparer,
+            pi.inspection_preparation_date,
+            pi.inspection_quality,
+            pis.inspection_remarks
+        FROM
+            jr_purchase_inspection pi
+                LEFT JOIN jr_purchase_inspection_schedule pis ON ( pi.inspection_number = pis.inspection_number )
+        WHERE
+            1 = 1
+        GROUP BY
+            pi.inspection_number
+    </sql>
+
+    <sql id="findPurchaseInspectionQueryPage">
+        SELECT
+            pi.inspection_state,
+            pi.inspection_remarks,
+            pi.inspection_number
+        FROM
+            jr_purchase_inspection pi
+        WHERE
+            pi.inspection_number = #{inspectionNumber}
+
+
+    </sql>
+
+
+    <select id="countPurchaseInspection" parameterType="com.erp.purchase.entity.PurchaseInspection" resultType="long">
+        <include refid="countPurchaseInspection"/>
+    </select>
+
+    <select id="findPurchaseInspectionPage" parameterType="com.erp.purchase.entity.PurchaseInspection" resultType="com.erp.purchase.entity.PurchaseInspection">
+        <include refid="findPurchaseInspectionPage"/>
+    </select>
+
+    <!-- 来货检验查询数据 -->
+    <select id="findPurchaseInspectionQueryPage" parameterType="com.erp.purchase.entity.PurchaseInspectionSchedule" resultType="com.erp.purchase.entity.PurchaseInspectionSchedule">
+        <include refid="findPurchaseInspectionQueryPage"/>
+    </select>
+
+    <!--修改回显-->
+    <select id="queryPurchaseInspectionSchedule" parameterType="String" resultType="com.erp.purchase.entity.PurchaseInspectionSchedule">
+        SELECT
+            pi.inspection_state,
+            pis.order_numbers,
+            pis.material_name,
+            pis.inspectionr_specifications,
+            pis.inspection_company,
+            pis.order_quantity,
+            pis.unit_price,
+            pis.inspection_money,
+            pis.inspection_remarks,
+            pi.inspection_number
+        FROM
+            jr_purchase_inspection pi
+                LEFT JOIN jr_purchase_inspection_schedule pis ON ( pi.inspection_number = pis.inspection_number )
+        WHERE
+            pis.inspection_number = #{oddNumbers}
+    </select>
+
+    <delete id="deletePurchaseInspectionSchedule">
+        delete from jr_purchase_inspection_schedule  where inspection_number = #{inspectionNumber}
+    </delete>
+
+    <delete id="deletePurchaseInspection">
+        delete from jr_purchase_inspection  where inspection_number = #{inspectionNumber}
+    </delete>
+
+    <!--向数据库添加采购收货数据-->
+    <insert id="savePurchaseInspectionSchedule" parameterType="com.erp.purchase.entity.PurchaseInspectionSchedule">
+        INSERT INTO
+            jr_purchase_inspection_schedule
+        (
+            order_numbers,
+            material_name,
+            inspectionr_specifications,
+            inspection_company,
+            order_quantity,
+            unit_price,
+            inspection_money,
+            inspection_number,
+            inspection_remarks
+        )
+        VALUES
+            (
+                #{orderNumbers},
+                #{materialName},
+                #{inspectionrSpecifications},
+                #{inspectionCompany},
+                #{orderQuantity},
+                #{unitPrice},
+                #{inspectionMoney},
+                #{inspectionNumber},
+                #{inspectionRemarks}
+            )
+    </insert>
+
+    <!--向数据库添加采购收货数据-->
+    <insert id="savePurchaseInspectionScheduleDate" parameterType="com.erp.purchase.entity.PurchaseInspection">
+        INSERT INTO
+            jr_purchase_inspection
+        (
+            inspection_state,
+            purchase_requisition_date,
+            inspection_number,
+            supplier_name,
+            inspection_type,
+            order_quantity,
+            inspection_preparer,
+            inspection_preparation_date,
+            inspection_quality,
+            inspection_remarks
+        )
+        VALUES
+            (
+                #{inspectionState},
+                #{purchaseRequisitionDate},
+                #{inspectionNumber},
+                #{supplierName},
+                #{inspectionType},
+                #{orderQuantity},
+                #{inspectionPreparer},
+                #{inspectionPreparationDate},
+                #{inspectionQuality},
+                #{inspectionRemarks}
+            )
+    </insert>
+
+    <!--查询出最后一个来货检验单号-->
+    <select id="queryPurchaseInspection" resultType="com.erp.purchase.entity.PurchaseInspection">
+        SELECT
+            pi.id,
+            pi.inspection_state,
+            pi.purchase_requisition_date,
+            pi.inspection_number,
+            pi.supplier_name,
+            pi.inspection_type,
+            pi.order_quantity,
+            pi.inspection_preparer,
+            pi.inspection_preparation_date,
+            pi.inspection_quality,
+            pi.inspection_remarks
+        FROM
+            jr_purchase_inspection pi
+        WHERE
+            1 = 1
+        GROUP BY
+            pi.inspection_preparation_date
+        ORDER BY
+            pi.inspection_preparation_date DESC
+            LIMIT 1;
+    </select>
+
+    <update id="confirmPurchaseInspection"  parameterType="com.erp.purchase.entity.PurchaseInspection">
+        UPDATE
+            jr_purchase_inspection
+        set inspection_state = 2
+        WHERE id = #{ids}
+    </update>
+
+    <update id="cancelPurchaseInspection"  parameterType="com.erp.purchase.entity.PurchaseInspection">
+        UPDATE
+            jr_purchase_inspection
+        set inspection_state = 1
+        WHERE id = #{ids}
+    </update>
+</mapper>

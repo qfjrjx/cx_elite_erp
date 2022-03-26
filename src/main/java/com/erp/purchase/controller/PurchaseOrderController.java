@@ -5,26 +5,24 @@ import com.erp.common.controller.BaseController;
 import com.erp.common.entity.FebsConstant;
 import com.erp.common.entity.FebsResponse;
 import com.erp.common.entity.QueryRequest;
+import com.erp.common.entity.Strings;
 import com.erp.common.utils.FebsUtil;
 import com.erp.purchase.entity.PurchaseOrder;
 import com.erp.purchase.entity.PurchaseOrderSchedule;
-import com.erp.purchase.entity.PurchaseRequisition;
 import com.erp.purchase.service.IPurchaseOrderService;
 import com.wuwenze.poi.ExcelKit;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
-import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
-
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
@@ -74,11 +72,11 @@ public class PurchaseOrderController extends BaseController {
     }
 
     @ControllerEndpoint(operation = "删除PurchaseOrder", exceptionMessage = "删除PurchaseOrder失败")
-    @GetMapping("purchaseOrder/delete")
+    @GetMapping("purchaseOrder/delete/{ids}")
     @ResponseBody
     @RequiresPermissions("purchaseOrder:delete")
-    public FebsResponse deletePurchaseOrder(PurchaseOrder purchaseOrder) {
-        this.purchaseOrderService.deletePurchaseOrder(purchaseOrder);
+    public FebsResponse deletePurchaseOrder(@NotBlank(message = "{required}") @PathVariable String ids) {
+        this.purchaseOrderService.deletePurchaseOrder(StringUtils.split(ids, Strings.COMMA));
         return new FebsResponse().success();
     }
 
@@ -86,8 +84,8 @@ public class PurchaseOrderController extends BaseController {
     @PostMapping("purchaseOrder/update")
     @ResponseBody
     @RequiresPermissions("purchaseOrder:update")
-    public FebsResponse updatePurchaseOrder(PurchaseOrder purchaseOrder) {
-        this.purchaseOrderService.updatePurchaseOrder(purchaseOrder);
+    public FebsResponse updatePurchaseOrder(@RequestBody String orderNumber,@RequestBody String dataTable) throws ParseException {
+        this.purchaseOrderService.updatePurchaseOrder(orderNumber,dataTable);
         return new FebsResponse().success();
     }
 
@@ -113,5 +111,49 @@ public class PurchaseOrderController extends BaseController {
         return map;
     }
 
+    @ControllerEndpoint(operation = "确认", exceptionMessage = "确认失败")
+    @GetMapping("purchaseOrder/confirm/{ids}")
+    @ResponseBody
+    @RequiresPermissions("purchaseOrder:confirm")
+    public FebsResponse confirmPurchaseOrder(@PathVariable String ids) {
+        this.purchaseOrderService.confirmPurchaseOrder(ids);
+        return new FebsResponse().success();
+    }
 
+    @ControllerEndpoint(operation = "反审", exceptionMessage = "反审失败")
+    @GetMapping("purchaseOrder/cancel/{ids}")
+    @ResponseBody
+    @RequiresPermissions(value = {"purchaseOrder:cancel", "purchaseOrder:umpire"}, logical = Logical.OR)
+    public FebsResponse cancelPurchaseOrder(@PathVariable String ids) {
+        this.purchaseOrderService.cancelPurchaseOrder(ids);
+        return new FebsResponse().success();
+    }
+
+
+    //采购收货选择列表
+    @GetMapping("purchaseClosedQuery/list")
+    @ResponseBody
+    @RequiresPermissions("purchaseClosed:view")
+    public FebsResponse purchaseClosedQuery(QueryRequest request, PurchaseOrder purchaseOrder) {
+        Map<String, Object> dataTable = getDataTable(this.purchaseOrderService.findPurchaseClosedQueryPage(request, purchaseOrder));
+        return new FebsResponse().success().data(dataTable);
+    }
+
+    //删除整单接口
+    @ControllerEndpoint(operation = "删除PurchaseOrder", exceptionMessage = "删除PurchaseOrder失败")
+    @GetMapping("purchaseOrder/delete/orderNumber/{orderNumber}")
+    @ResponseBody
+    @RequiresPermissions("purchaseOrder:delete")
+    public FebsResponse deletePurchaseRequisitionOrderNumber(@NotBlank(message = "{required}") @PathVariable String orderNumber) {
+        this.purchaseOrderService.deletePurchaseRequisitionOrderNumber(orderNumber);
+        return new FebsResponse().success();
+    }
+
+    //根据供应商名称查询订单
+    @GetMapping("purchaseInspectionOrder/query")
+    @ResponseBody
+    public FebsResponse completionStatusList(QueryRequest request, String supplierName) {
+        Map<String, Object> dataTable = getDataTable(this.purchaseOrderService.queryPurchaseInspectionOrder(request, supplierName));
+        return new FebsResponse().success().data(dataTable);
+    }
 }

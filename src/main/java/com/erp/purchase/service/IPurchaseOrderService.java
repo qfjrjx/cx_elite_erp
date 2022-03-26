@@ -1,10 +1,9 @@
 package com.erp.purchase.service;
 
-import com.erp.common.entity.QueryRequest;
-import com.erp.purchase.entity.PurchaseOrder;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.erp.common.entity.QueryRequest;
+import com.erp.purchase.entity.PurchaseOrder;
 import com.erp.purchase.entity.PurchaseOrderSchedule;
 
 import java.text.ParseException;
@@ -43,16 +42,28 @@ public interface IPurchaseOrderService extends IService<PurchaseOrder> {
     /**
      * 修改
      *
-     * @param purchaseOrder purchaseOrder
+     * @param orderNumber purchaseOrder
      */
-    void updatePurchaseOrder(PurchaseOrder purchaseOrder);
+    void updatePurchaseOrder(String orderNumber, String dataTable) throws ParseException;
 
     /**
      * 删除
      *
-     * @param purchaseOrder purchaseOrder
+     * @param
      */
-    void deletePurchaseOrder(PurchaseOrder purchaseOrder);
+    void deletePurchaseOrder(String[] ids);
 
     List<PurchaseOrderSchedule> queryPurchaseOrderSchedule(String oddNumbers);
+
+    PurchaseOrder queryPurchaseOrderList(Long id);
+
+    void confirmPurchaseOrder(String ids);
+
+    void cancelPurchaseOrder(String ids);
+
+    IPage<PurchaseOrder> findPurchaseClosedQueryPage(QueryRequest request, PurchaseOrder purchaseOrder);
+
+    void deletePurchaseRequisitionOrderNumber(String orderNumber);
+
+    IPage<PurchaseOrder> queryPurchaseInspectionOrder(QueryRequest request, String supplierName);
 }

@@ -3,14 +3,10 @@ package com.erp.purchase.controller;
 import com.erp.common.entity.FebsConstant;
 import com.erp.common.utils.DateUtil;
 import com.erp.common.utils.FebsUtil;
-import com.erp.enterprise.entity.EnterpriseResourcesParameters;
 import com.erp.finance.entity.FinanceParameters;
 import com.erp.finance.service.IFinanceParametersService;
 import com.erp.purchase.entity.*;
 import com.erp.purchase.service.*;
-import com.erp.sale.entity.SaleBusinessPersonnel;
-import com.erp.technology.entity.TechnologyProductCategory;
-import com.erp.technology.service.ITechnologyProductCategoryService;
 import lombok.RequiredArgsConstructor;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.stereotype.Controller;
@@ -40,6 +36,12 @@ public class ViewController {
     private final IPurchaseRequisitionService purchaseRequisitionService;
     //财务参数表 Service接口
     private final IFinanceParametersService financeParametersService;
+    //采购订单表 Service接口
+    private final IPurchaseOrderService purchaseOrderService;
+    //采购收货表 Service接口
+    private final IPurchaseClosedService purchaseClosedService;
+    //来货检验表 Service接口
+    private final IPurchaseInspectionService purchaseInspectionService;
 
 
     /*采购管理模块-采购档案开始*/
@@ -313,5 +315,173 @@ public class ViewController {
     public String purchaseRequisitionQueryList(Model model){
         return FebsUtil.view("purchaseOrder/orderPurchaseRequisitionList");
     }
+
+
+    //采购订单修改
+    @GetMapping("purchaseOrder/update/{id}")
+    @RequiresPermissions("purchaseRequisition:update")
+    public String purchaseOrderUpdate(@PathVariable Long id, Model model) {
+        //查询币种信息
+        List<FinanceParameters> currency  = financeParametersService.queryCurrencyInformation(FinanceParameters.CURRENCY);
+        model.addAttribute("currency",currency);
+        //查询税率信息
+        List<FinanceParameters> taxRate  = financeParametersService.queryCurrencyInformation(FinanceParameters.TAX_RATE);
+        model.addAttribute("taxRate",taxRate);
+        purchaseOrderModel(id, model, false);
+        return FebsUtil.view("purchaseOrder/purchaseOrderUpdate");
+    }
+
+
+    //采购订单修改回填
+    private void purchaseOrderModel(Long id, Model model, Boolean transform) {
+        PurchaseOrder purchaseOrderPositive = purchaseOrderService.queryPurchaseOrderList(id);
+        model.addAttribute("purchaseOrderPositive", purchaseOrderPositive);
+        if (purchaseOrderPositive.getPurchaseRequisitionDate() != null) {
+            model.addAttribute("purchaseRequisitionDate", DateUtil.getDateFormat(purchaseOrderPositive.getPurchaseRequisitionDate(), DateUtil.FULL_TIME_SPLIT));
+        }
+    }
+
+    //修改页面 点击编码跳转到采购申请下物料编码选择列表页面
+    @GetMapping("purchaseOrderlCodeListUpdate")
+    @RequiresPermissions("purchaseRequisition:view")
+    public String purchaseOrderCodeUpdateIndex(Model model){
+        return FebsUtil.view("purchaseOrder/purchaseOrderCodeUpdate");
+    }
+
     /*采购管理模块-采购业务结束*/
+
+    /*-----------------------------------------------------------------------------------------------------------------------------------------*/
+    /*采购管理模块-采购收货开始*/
+
+    /*采购收货列表*/
+    @GetMapping("purchaseClosed/list")
+    @RequiresPermissions("purchaseClosed:view")
+    public String purchaseClosedIndex(){
+        return FebsUtil.view("purchaseClosed/purchaseClosedList");
+    }
+
+    /*采购收货添加*/
+    @GetMapping("purchaseClosed/add")
+    @RequiresPermissions("purchaseClosed:add")
+    public String purchaseClosedAdd(Model model){
+        //查询币种信息
+        List<FinanceParameters> currency  = financeParametersService.queryCurrencyInformation(FinanceParameters.CURRENCY);
+        model.addAttribute("currency",currency);
+        //查询税率信息
+        List<FinanceParameters> taxRate  = financeParametersService.queryCurrencyInformation(FinanceParameters.TAX_RATE);
+        model.addAttribute("taxRate",taxRate);
+        return FebsUtil.view("purchaseClosed/purchaseClosedAdd");
+    }
+
+    //添加页面 点击申请单号跳转到采购申请
+    @GetMapping("purchaseClosedQueryList")
+    @RequiresPermissions("purchaseClosed:view")
+    public String purchaseClosedQueryList(Model model){
+        return FebsUtil.view("purchaseClosed/purchaseClosedQueryAdd");
+    }
+
+    /*采购收货修改*/
+    @GetMapping("purchaseClosed/update/{id}")
+    @RequiresPermissions("purchaseClosed:update")
+    public String purchaseClosedUpdate(@PathVariable Long id,Model model){
+        //查询币种信息
+        List<FinanceParameters> currency  = financeParametersService.queryCurrencyInformation(FinanceParameters.CURRENCY);
+        model.addAttribute("currency",currency);
+        //查询税率信息
+        List<FinanceParameters> taxRate  = financeParametersService.queryCurrencyInformation(FinanceParameters.TAX_RATE);
+        model.addAttribute("taxRate",taxRate);
+        purchaseClosedModel(id, model, false);
+        return FebsUtil.view("purchaseClosed/purchaseClosedUpdate");
+    }
+
+    //采购订单修改回填
+    private void purchaseClosedModel(Long id, Model model, Boolean transform) {
+        PurchaseClosed purchaseClosedPositive = purchaseClosedService.queryPurchaseClosedList(id);
+        model.addAttribute("purchaseClosedPositive", purchaseClosedPositive);
+        if (purchaseClosedPositive.getPurchaseRequisitionDate() != null) {
+            model.addAttribute("purchaseRequisitionDate", DateUtil.getDateFormat(purchaseClosedPositive.getPurchaseRequisitionDate(), DateUtil.FULL_TIME_SPLIT));
+        }
+    }
+
+    //修改页面 点击编码跳转到采购申请下物料编码选择列表页面
+    @GetMapping("purchaseClodeListUpdate")
+    @RequiresPermissions("purchaseClosed:view")
+    public String purchaseClosedUpdateIndex(Model model){
+        //查询币种信息
+        List<FinanceParameters> currency  = financeParametersService.queryCurrencyInformation(FinanceParameters.CURRENCY);
+        model.addAttribute("currency",currency);
+        //查询税率信息
+        List<FinanceParameters> taxRate  = financeParametersService.queryCurrencyInformation(FinanceParameters.TAX_RATE);
+        model.addAttribute("taxRate",taxRate);
+        return FebsUtil.view("purchaseClosed/purchaseClosedCodeUpdate");
+    }
+
+    /*采购管理模块-采购收货结束*/
+
+    /*采购管理模块-来货检验结束*/
+
+    /*来货检验列表*/
+    @GetMapping("purchaseInspection/list")
+    @RequiresPermissions("purchaseInspection:view")
+    public String purchaseInspectionIndex(){
+        return FebsUtil.view("purchaseInspection/purchaseInspectionList");
+    }
+
+    /*来货检验添加*/
+    @GetMapping("purchaseInspection/add")
+    @RequiresPermissions("purchaseInspection:add")
+    public String purchaseInspectionIndexAdd(Model model){
+        //查询币种信息
+        List<FinanceParameters> currency  = financeParametersService.queryCurrencyInformation(FinanceParameters.CURRENCY);
+        model.addAttribute("currency",currency);
+        //查询税率信息
+        List<FinanceParameters> taxRate  = financeParametersService.queryCurrencyInformation(FinanceParameters.TAX_RATE);
+        model.addAttribute("taxRate",taxRate);
+        return FebsUtil.view("purchaseInspection/purchaseInspectionAdd");
+    }
+
+    //添加页面 点击申请单号跳转到采购申请
+    @GetMapping("purchaseInspectionQueryList")
+    @RequiresPermissions("purchaseInspection:view")
+    public String purchaseInspectionIndexList(Model model){
+        return FebsUtil.view("purchaseInspection/purchaseInspectionQueryAdd");
+    }
+
+    //供应商 双击跳到供应商选择列表页面  添加时用到
+    @GetMapping("purchaseInspectionList")
+    @RequiresPermissions("purchaseInspection:view")
+    public String purchaseInspectionList(Model model) {
+
+        return FebsUtil.view("purchaseInspection/purchaseInspectionAddList");
+    }
+
+    /*来货检验查阅*/
+    @GetMapping("purchaseInspection/queryup/{inspectionNumber}")
+    @RequiresPermissions("purchaseInspection:view")
+    public String purchaseInspectionQueryupList(@PathVariable String inspectionNumber,Model model){
+        purchaseClosedModel(inspectionNumber, model, false);
+        return FebsUtil.view("purchaseInspection/purchaseInspectionQueryup");
+    }
+
+    //来货检验查阅回填
+    private void purchaseClosedModel(String inspectionNumber, Model model, Boolean transform) {
+        PurchaseInspectionSchedule purchaseInspection = this.purchaseInspectionService.findPurchaseInspectionQueryPage(inspectionNumber);
+        model.addAttribute("purchaseInspection", purchaseInspection);
+    }
+
+    /*来货检验修改*/
+    @GetMapping("purchaseInspection/update/{inspectionNumber}")
+    @RequiresPermissions("purchaseInspection:view")
+    public String purchaseInspectionUpdate(@PathVariable String inspectionNumber,Model model){
+        purchaseInspectionModel(inspectionNumber, model, false);
+        return FebsUtil.view("purchaseInspection/purchaseInspectionUpdate");
+    }
+
+    //来货检验查阅回填
+    private void purchaseInspectionModel(String inspectionNumber, Model model, Boolean transform) {
+        PurchaseInspectionSchedule purchaseInspection = this.purchaseInspectionService.findPurchaseInspectionQueryPage(inspectionNumber);
+        model.addAttribute("purchaseInspection", purchaseInspection);
+    }
+
+    /*采购管理模块-来货检验结束*/
 }

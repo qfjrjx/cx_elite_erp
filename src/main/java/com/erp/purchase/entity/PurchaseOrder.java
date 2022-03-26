@@ -1,13 +1,13 @@
 package com.erp.purchase.entity;
 
-import java.util.Date;
-import java.math.BigDecimal;
-
-import lombok.Data;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
+
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * 采购订单表 Entity
@@ -119,5 +119,48 @@ public class PurchaseOrder {
      * 已付定金
      */
     private BigDecimal depositPaid;
+
+
+    /**
+     * 编码
+     */
+    private String orderCode;
+
+    /**
+     * 物料名称
+     */
+    private String materialName;
+
+    /**
+     * 规格
+     */
+    private String orderSpecifications;
+
+    /**
+     * 材质
+     */
+    private String orderQuality;
+
+    /**
+     * 品牌
+     */
+    private String orderBrand;
+
+    /**
+     * 单位
+     */
+    private String orderCompany;
+
+
+    /**
+     * 单价
+     */
+    private BigDecimal unitPrice;
+
+
+    /**
+     * 备注
+     */
+    private String orderRemarks;
 
 }

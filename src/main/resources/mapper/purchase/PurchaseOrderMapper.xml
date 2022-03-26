@@ -10,6 +10,16 @@
         WHERE
 	1 = 1
     </sql>
+
+    <sql id="countPurchaseInspectionOrderSql">
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_purchase_order po
+        WHERE
+            1 = 1
+    </sql>
+
     <sql id="findPurchaseOrderSql">
         SELECT
             po.id,
@@ -37,8 +47,48 @@
 	        po.order_number
     </sql>
 
+    <sql id="findPurchaseClosedQueryPage">
+        SELECT
+            po.order_number,
+            pos.order_code,
+            pos.material_name,
+            pos.order_specifications,
+            pos.order_quality,
+            pos.order_brand,
+            pos.order_company,
+            pos.order_quantity,
+            pos.unit_price,
+            pos.order_money,
+            pos.order_remarks
+        FROM
+            jr_purchase_order po
+            LEFT JOIN jr_purchase_order_schedule pos ON ( po.order_number = pos.odd_numbers )
+    </sql>
+
+    <sql id="queryPurchaseInspectionOrderSql">
+        SELECT
+            po.id,
+            po.order_number,
+            pos.material_name,
+            pos.order_specifications,
+            pos.order_company,
+            pos.order_quantity,
+            pos.unit_price,
+            pos.order_money,
+            pos.order_remarks
+        FROM
+            jr_purchase_order po
+                LEFT JOIN jr_purchase_order_schedule pos ON ( po.order_number = pos.odd_numbers )
+        WHERE
+            po.order_state = '3'
+    </sql>
+
     <select id="countPurchaseOrder" parameterType="com.erp.purchase.entity.PurchaseOrder" resultType="long">
         <include refid="countPurchaseOrderSql"/>
+    </select>
+
+    <select id="countPurchaseInspectionOrder" parameterType="com.erp.purchase.entity.PurchaseOrder" resultType="long">
+        <include refid="countPurchaseInspectionOrderSql"/>
     </select>
 
     <select id="findPurchaseOrderPage" parameterType="com.erp.purchase.entity.PurchaseOrder" resultType="com.erp.purchase.entity.PurchaseOrder">
@@ -139,7 +189,7 @@
             )
     </insert>
 
-    <!--点击上面的table展示下面的table数据-->
+
     <select id="queryPurchaseOrderSchedule" parameterType="String" resultType="com.erp.purchase.entity.PurchaseOrderSchedule">
        SELECT
             pos.id,
@@ -160,6 +210,59 @@
             jr_purchase_order_schedule pos
         WHERE
             pos.odd_numbers = #{oddNumbers}
+    </select>
+
+    <!--修改回显-->
+    <select id="queryPurchaseOrderList" parameterType="Long" resultType="com.erp.purchase.entity.PurchaseOrder">
+        SELECT
+            pr.id,
+            pr.order_state orderState,
+            pr.purchase_requisition_date purchaseRequisitionDate,
+            pr.order_number orderNumber,
+            pr.supplier_name supplierName,
+            pr.currency_id currencyId,
+            pr.tax_rate_id tax_rateId,
+            pr.payment_method paymentMethod,
+            pr.order_deposit orderDeposit,
+            pr.invoice_billing_situation invoiceBillingSituation,
+            pr.order_preparer orderPreparer,
+            pr.order_preparation_date orderPreparationDate
+        FROM
+            jr_purchase_order pr
+        WHERE
+            pr.id = #{id}
+    </select>
+
+    <delete id="deletePurchaseOrderSchedule">
+        delete from jr_purchase_order_schedule  where odd_numbers = #{orderNumber}
+    </delete>
+
+    <delete id="deletePurchaseRequisitionOrderNumber">
+        delete from jr_purchase_order  where order_number = #{orderNumber}
+    </delete>
+
+
+    <update id="confirmPurchaseOrder"  parameterType="com.erp.purchase.entity.PurchaseOrder">
+        UPDATE
+            jr_purchase_order
+        set order_state=2
+        WHERE id=#{ids}
+    </update>
+
+    <update id="cancelPurchaseOrder"  parameterType="com.erp.purchase.entity.PurchaseOrder">
+        UPDATE
+            jr_purchase_order
+        set order_state=1
+        WHERE id=#{ids}
+    </update>
+
+    <!-- 采购收货查询数据 -->
+    <select id="findPurchaseClosedQueryPage" parameterType="com.erp.purchase.entity.PurchaseOrder" resultType="com.erp.purchase.entity.PurchaseOrder">
+        <include refid="findPurchaseClosedQueryPage"/>
+    </select>
+
+    <select id="queryPurchaseInspectionOrder" parameterType="com.erp.purchase.entity.PurchaseOrder" resultType="com.erp.purchase.entity.PurchaseOrder">
+        <include refid="queryPurchaseInspectionOrderSql"/>
     </select>
 
 </mapper>

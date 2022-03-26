@@ -1,9 +1,9 @@
 package com.erp.purchase.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.erp.purchase.entity.PurchaseOrder;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.erp.purchase.entity.PurchaseOrderSchedule;
 import com.erp.purchase.entity.PurchaseParameters;
 import org.apache.ibatis.annotations.Mapper;
@@ -31,4 +31,20 @@ public interface PurchaseOrderMapper extends BaseMapper<PurchaseOrder> {
     void savePurchaseOrderDate(PurchaseOrder purchaseOrderDate);
 
     List<PurchaseOrderSchedule> queryPurchaseOrderSchedule(@Param("oddNumbers") String oddNumbers);
+
+    PurchaseOrder queryPurchaseOrderList(@Param("id") Long id);
+
+    void deletePurchaseOrderSchedule(@Param("orderNumber") String orderNumber);
+
+    void confirmPurchaseOrder(String ids);
+
+    void cancelPurchaseOrder(String ids);
+
+    IPage<PurchaseOrder> findPurchaseClosedQueryPage(Page<PurchaseOrder> page, PurchaseOrder purchaseOrder);
+
+    void deletePurchaseRequisitionOrderNumber(@Param("orderNumber") String orderNumber);
+
+    IPage<PurchaseOrder> queryPurchaseInspectionOrder(Page<PurchaseParameters> page,@Param("supplierName") String supplierName);
+
+    long countPurchaseInspectionOrder(@Param("supplierName") String supplierName);
 }
