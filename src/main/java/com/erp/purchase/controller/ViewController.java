@@ -42,6 +42,8 @@ public class ViewController {
     private final IPurchaseClosedService purchaseClosedService;
     //来货检验表 Service接口
     private final IPurchaseInspectionService purchaseInspectionService;
+    //采购退货表 Service接口
+    private final IPurchaseRefundService purchaseRefundService;
 
 
     /*采购管理模块-采购档案开始*/
@@ -394,7 +396,7 @@ public class ViewController {
         return FebsUtil.view("purchaseClosed/purchaseClosedUpdate");
     }
 
-    //采购订单修改回填
+    //采购收货修改回填
     private void purchaseClosedModel(Long id, Model model, Boolean transform) {
         PurchaseClosed purchaseClosedPositive = purchaseClosedService.queryPurchaseClosedList(id);
         model.addAttribute("purchaseClosedPositive", purchaseClosedPositive);
@@ -414,6 +416,14 @@ public class ViewController {
         List<FinanceParameters> taxRate  = financeParametersService.queryCurrencyInformation(FinanceParameters.TAX_RATE);
         model.addAttribute("taxRate",taxRate);
         return FebsUtil.view("purchaseClosed/purchaseClosedCodeUpdate");
+    }
+
+    //供应商 双击跳到供应商选择列表页面  添加时用到
+    @GetMapping("purchaseClosedAddName")
+    @RequiresPermissions("purchaseSupplier:view")
+    public String purchaseClosedAddName(Model model) {
+
+        return FebsUtil.view("purchaseClosed/purchaseSupplierSelectionList");
     }
 
     /*采购管理模块-采购收货结束*/
@@ -484,4 +494,74 @@ public class ViewController {
     }
 
     /*采购管理模块-来货检验结束*/
+
+    /*采购管理模块-采购退货开始*/
+
+    /*采购退货列表*/
+    @GetMapping("purchaseRefund/list")
+    @RequiresPermissions("purchaseRefund:view")
+    public String purchaseRefundIndex(){
+        return FebsUtil.view("purchaseRefund/purchaseRefundList");
+    }
+
+    /*采购退货新增*/
+    @GetMapping("purchaseRefund/add")
+    @RequiresPermissions("purchaseRefund:add")
+    public String purchaseRefundAdd(Model model){
+        //查询币种信息
+        List<FinanceParameters> currency  = financeParametersService.queryCurrencyInformation(FinanceParameters.CURRENCY);
+        model.addAttribute("currency",currency);
+        //查询税率信息
+        List<FinanceParameters> taxRate  = financeParametersService.queryCurrencyInformation(FinanceParameters.TAX_RATE);
+        model.addAttribute("taxRate",taxRate);
+        return FebsUtil.view("purchaseRefund/purchaseRefundAdd");
+    }
+
+    /*采购退货修改*/
+    @GetMapping("purchaseRefund/update/{id}")
+    @RequiresPermissions("purchaseRefund:update")
+    public String purchaseRefundUpdate(@PathVariable Long id,Model model){
+        //查询币种信息
+        List<FinanceParameters> currency  = financeParametersService.queryCurrencyInformation(FinanceParameters.CURRENCY);
+        model.addAttribute("currency",currency);
+        //查询税率信息
+        List<FinanceParameters> taxRate  = financeParametersService.queryCurrencyInformation(FinanceParameters.TAX_RATE);
+        model.addAttribute("taxRate",taxRate);
+        purchaseRefundModel(id, model, false);
+        return FebsUtil.view("purchaseRefund/purchaseRefundUpdate");
+    }
+
+    //采购退货回填
+    private void purchaseRefundModel(Long id, Model model, Boolean transform) {
+        PurchaseRefund purchaseRefund = this.purchaseRefundService.findPurchaseRefundQueryPage(id);
+        model.addAttribute("purchaseRefund", purchaseRefund);
+    }
+
+    //供应商 双击跳到供应商选择列表页面  添加时用到
+    @GetMapping("purchaseRefundAddName")
+    @RequiresPermissions("purchaseSupplier:view")
+    public String purchaseRefundAddName(Model model) {
+
+        return FebsUtil.view("purchaseRefund/purchaseSupplierSelectionList");
+    }
+
+    /*采购管理模块-采购退货结束*/
+
+    /*采购管理模块-采购结算开始*/
+
+    @GetMapping("purchaseSettlement/list")
+    @RequiresPermissions("purchaseSettlement:view")
+    public String purchaseSettlementIndex(){
+        return FebsUtil.view("purchaseSettlement/purchaseSettlementList");
+    }
+
+    //供应商 双击跳到供应商选择列表页面  添加时用到
+    @GetMapping("purchaseSettlementName")
+    @RequiresPermissions("purchaseSettlement:view")
+    public String purchaseSettlementName(Model model) {
+
+        return FebsUtil.view("purchaseSettlement/purchaseSupplierSelectionList");
+    }
+
+    /*采购管理模块-采购结算结束*/
 }

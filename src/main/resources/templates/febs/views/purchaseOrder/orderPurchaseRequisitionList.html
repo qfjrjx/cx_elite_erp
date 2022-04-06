@@ -171,6 +171,8 @@
              var applyQuantity = data.applyQuantity;
              var deliveryDate = data.deliveryDate;
              var applyRemarks = data.applyRemarks;
+            var applySubclass = data.applySubclass;
+            var applyCategory = data.applyCategory;
             $.ajax({
                 url: '/saleOrder/random',
                 success : function(data) {
@@ -181,7 +183,7 @@
                         "applyName":applyName,"applySpecifications":applySpecifications,
                         "applyQuality":applyQuality,"applyBrand":applyBrand,
                         "applyCompany":applyCompany,"applyQuantity":applyQuantity,"deliveryDate":deliveryDate,
-                        "applyRemarks":applyRemarks};
+                        "applyRemarks":applyRemarks, "applySubclass":applySubclass ,"applyCategory":applyCategory};
                     oldData.push(dataOne);
                     layui.table.reload('orderPurchaseRequisition-table',{
                         data : oldData
@@ -203,7 +205,8 @@
                             "orderQuality":oldData[i].applyQuality,"orderBrand":oldData[i].applyBrand,
                             "orderCompany":oldData[i].applyCompany,"orderQuantity":oldData[i].applyQuantity,
                             "unitPrice":3,"orderMoney":oldData[i].applyQuantity * 3,
-                            "deliveryDate":oldData[i].deliveryDate,"orderRemarks":oldData[i].applyRemarks};
+                            "deliveryDate":oldData[i].deliveryDate,"orderRemarks":oldData[i].applyRemarks,
+                            "orderSubclass":oldData[i].applySubclass,"orderCategory":oldData[i].applyCategory};
                         oldDataOne =  table.cache["purchaseOrderRequisition-table"];
                         oldDataOne.push(dataOne);
                     }

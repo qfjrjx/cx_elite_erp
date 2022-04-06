@@ -1,13 +1,13 @@
 package com.erp.purchase.entity;
 
-import java.util.Date;
-import java.math.BigDecimal;
-
-import lombok.Data;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
+
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  *  Entity
@@ -101,4 +101,15 @@ public class PurchaseOrderSchedule {
     @TableField("order_remarks")
     private String orderRemarks;
 
+    /**
+     * 小类
+     */
+    @TableField("order_subclass")
+    private String orderSubclass;
+
+    /**
+     * 大类
+     */
+    @TableField("order_category")
+    private String orderCategory;
 }

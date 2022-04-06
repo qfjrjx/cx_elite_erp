@@ -121,6 +121,8 @@ public class PurchaseInspectionServiceImpl extends ServiceImpl<PurchaseInspectio
             String unitPrice = jsonArrayOne.getJSONObject(i).getString("unitPrice");
             String inspectionMoney = jsonArrayOne.getJSONObject(i).getString("orderMoney");
             String inspectionRemarks = jsonArrayOne.getJSONObject(i).getString("orderRemarks");
+            String inspectionSubclass = jsonArrayOne.getJSONObject(i).getString("orderSubclass");
+            String inspectionCategory = jsonArrayOne.getJSONObject(i).getString("orderCategory");
             purchaseInspectionSchedule.setInspectionRemarks(inspectionRemarks);
             BigDecimal inspectionMoneyTo = new BigDecimal(inspectionMoney);
             purchaseInspectionSchedule.setInspectionMoney(inspectionMoneyTo);
@@ -142,6 +144,10 @@ public class PurchaseInspectionServiceImpl extends ServiceImpl<PurchaseInspectio
             if (!unitPrice.equals("")){
                 BigDecimal unitPriceTo = new BigDecimal(unitPrice);
                 purchaseInspectionSchedule.setUnitPrice(unitPriceTo);
+            }if (!inspectionSubclass.equals("")){
+                purchaseInspectionSchedule.setInspectionSubclass(inspectionSubclass);
+            }if (!inspectionCategory.equals("")){
+                purchaseInspectionSchedule.setInspectionCategory(inspectionCategory);
             }
             //添加到数据库
             baseMapper.savePurchaseInspectionSchedule(purchaseInspectionSchedule);
@@ -166,6 +172,8 @@ public class PurchaseInspectionServiceImpl extends ServiceImpl<PurchaseInspectio
             String unitPrice = jsonArrayOne.getJSONObject(i).getString("unitPrice");
             String inspectionMoney = jsonArrayOne.getJSONObject(i).getString("orderMoney");
             String inspectionRemarks = jsonArrayOne.getJSONObject(i).getString("inspectionRemarks");
+            String inspectionSubclass = jsonArrayOne.getJSONObject(i).getString("orderSubclass");
+            String inspectionCategory = jsonArrayOne.getJSONObject(i).getString("orderCategory");
             purchaseInspectionSchedule.setInspectionRemarks(inspectionRemarks);
             BigDecimal inspectionMoneyTo = new BigDecimal(inspectionMoney);
             purchaseInspectionSchedule.setInspectionMoney(inspectionMoneyTo);
@@ -187,6 +195,10 @@ public class PurchaseInspectionServiceImpl extends ServiceImpl<PurchaseInspectio
             if (!unitPrice.equals("")){
                 BigDecimal unitPriceTo = new BigDecimal(unitPrice);
                 purchaseInspectionSchedule.setUnitPrice(unitPriceTo);
+            }if (!inspectionSubclass.equals("")){
+                purchaseInspectionSchedule.setInspectionSubclass(inspectionSubclass);
+            }if (!inspectionCategory.equals("")){
+                purchaseInspectionSchedule.setInspectionCategory(inspectionCategory);
             }
             //添加到数据库
             baseMapper.savePurchaseInspectionSchedule(purchaseInspectionSchedule);

@@ -75,7 +75,9 @@
             pos.order_quantity,
             pos.unit_price,
             pos.order_money,
-            pos.order_remarks
+            pos.order_remarks,
+            pos.order_subclass,
+            pos.order_category
         FROM
             jr_purchase_order po
                 LEFT JOIN jr_purchase_order_schedule pos ON ( po.order_number = pos.odd_numbers )
@@ -169,7 +171,9 @@
                 unit_price,
                 order_money,
                 delivery_date,
-                order_remarks
+                order_remarks,
+                order_subclass,
+                order_category
              )
         VALUES
             (
@@ -185,7 +189,9 @@
              #{unitPrice},
              #{orderMoney},
              #{deliveryDate},
-             #{orderRemarks}
+             #{orderRemarks},
+             #{orderSubclass},
+             #{orderCategory}
             )
     </insert>
 

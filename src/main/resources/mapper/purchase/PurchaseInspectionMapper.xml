@@ -5,7 +5,7 @@
         SELECT
             COUNT( 1 )
         FROM
-            jr_purchase_inspection_schedule
+            jr_purchase_inspection
         WHERE
             1 = 1
     </sql>
@@ -28,6 +28,18 @@
                 LEFT JOIN jr_purchase_inspection_schedule pis ON ( pi.inspection_number = pis.inspection_number )
         WHERE
             1 = 1
+            <if test="purchaseInspection.supplierName != null and purchaseInspection.supplierName != ''">
+                AND pi.supplier_name = #{purchaseInspection.supplierName}
+            </if>
+            <if test="purchaseInspection.inspectionState != null and purchaseInspection.inspectionState != ''">
+                AND pi.inspection_state = #{purchaseInspection.inspectionState}
+            </if>
+            <if test="purchaseInspection.inspectionNumber != null and purchaseInspection.inspectionNumber != ''">
+                AND pi.inspection_number = #{purchaseInspection.inspectionNumber}
+            </if>
+            <if test="purchaseInspection.inspectionType != null and purchaseInspection.inspectionType != ''">
+                AND pi.inspection_type = #{purchaseInspection.inspectionType}
+            </if>
         GROUP BY
             pi.inspection_number
     </sql>
@@ -100,7 +112,9 @@
             unit_price,
             inspection_money,
             inspection_number,
-            inspection_remarks
+            inspection_remarks,
+            inspection_subclass,
+            inspection_category
         )
         VALUES
             (
@@ -112,7 +126,9 @@
                 #{unitPrice},
                 #{inspectionMoney},
                 #{inspectionNumber},
-                #{inspectionRemarks}
+                #{inspectionRemarks},
+                #{inspectionSubclass},
+                #{inspectionCategory}
             )
     </insert>
 

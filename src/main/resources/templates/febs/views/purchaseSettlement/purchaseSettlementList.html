@@ -1,0 +1,328 @@
+<style>
+    #purchaseSettlement-list xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #purchaseSettlement-list xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="purchaseSettlement-list" lay-title="采购结算">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="parameter-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md12">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid layui-form-label-sm">状态</label>
+                                        <div class="layui-input-inline">
+                                            <select name="settlementState">
+                                                <option value=""></option>
+                                                <option value="1">登记</option>
+                                                <option value="2">入库</option>
+                                                <option value="3">出库</option>
+                                                <option value="4">结算</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-mid layui-form-label-sm">单号</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="settlementNumbers" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-mid layui-form-label-sm">供应商</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="settlementSupplier" id="settlementSupplier" lay-verify="required" ondblclick="purchaseSettlementName()"
+                                                   autocomplete="off" class="layui-input" placeholder="双击选择" style="width: 145px"  readonly>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid layui-form-label-sm">库房</label>
+                                        <div class="layui-input-inline">
+                                            <select name="settlementLibrary">
+                                                <option value=""></option>
+                                                <option value="1">外购库</option>
+                                                <option value="2">机加库</option>
+                                                <option value="3">废品库</option>
+                                                <option value="4">资产库</option>
+                                                <option value="5">成品库</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="purchaseSettlementList" id="purchaseSettlementList" lay-data="{id: 'purchaseSettlementList'}"></table>
+                    <div class="layui-col-md6">
+                        <div class="layui-form-item"></div>
+                    </div>
+                    <div class="layui-col-md6 layui-col-sm12 layui-col-xs12 table-action-area">
+                        <!--搜索按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                            <i class="layui-icon">&#xe848;</i>查询
+                        </div>
+                        <!-- 结算按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain table-action" id="settlement">
+                            <i class="layui-icon">&#xe79b;</i>结算
+                        </div>
+                        <!--取消按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="cancel">
+                            <i class="layui-icon">&#xe8a1;</i>取消
+                        </div>
+                    </div>
+                    <br>
+                    <br>
+                    <table lay-filter="purchaseSettlementTable" id="purchaseSettlementTable" lay-data="{id: 'purchaseSettlementTable'}"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="settlement-state">
+    {{#
+    let settlementState = {
+    1: {title: '登记'},
+    2: {title: '入库'},
+    3: {title: '出库'},
+    4: {title: '结算'}
+    }[d.settlementState];
+    }}
+    <span>{{ settlementState.title }}</span>
+</script>
+
+<script type="text/html" id="settlementLibrary-state">
+    {{#
+    let settlementLibrary = {
+    1: {title: '外购库'},
+    2: {title: '机加库'},
+    3: {title: '废品库'},
+    4: {title: '资产库'},
+    5: {title: '成品库'}
+    }[d.settlementLibrary];
+    }}
+    <span>{{ settlementLibrary.title }}</span>
+</script>
+
+<script type="text/html" id="settlementUse-state">
+    {{#
+    let settlementUse = {
+    1: {title: '采购退货'},
+    2: {title: '采购入库'}
+    }[d.settlementUse];
+    }}
+    <span>{{ settlementUse.title }}</span>
+</script>
+
+<script type="text/html" id="settlementInvoice-state">
+    {{#
+    let settlementInvoice = {
+    1: {title: '未开票'},
+    2: {title: '已开票'}
+    }[d.settlementInvoice];
+    }}
+    <span>{{ settlementInvoice.title }}</span>
+</script>
+
+<script type="text/html" id="settlementCategory-state">
+    {{#
+    let settlementCategory = {
+    1: {title: '资产'},
+    2: {title: '外购件'}
+    }[d.settlementCategory];
+    }}
+    <span>{{ settlementCategory.title }}</span>
+</script>
+
+<script type="text/html" id="settlementSubclass-state">
+    {{#
+    let settlementSubclass = {
+    1: {title: '键盘'},
+    2: {title: '电脑'}
+    }[d.settlementSubclass];
+    }}
+    <span>{{ settlementSubclass.title }}</span>
+</script>
+<script data-th-inline="none" type="text/javascript">
+    layui.use([ 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            $view = $('#purchaseSettlement-list'),
+            $query = $view.find('#query'),
+            $settlement = $view.find('#settlement'),
+            $cancel = $view.find('#cancel'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'createTime', type: null},
+            tableIns;
+
+        form.render();
+        initPurchaseRequisitionTable();
+        var purchaseTableData = new Array(); // 用于存放表格数据
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        function initPurchaseRequisitionTable() {
+            tableIns = febs.table.init({
+                elem: '#purchaseSettlementList',
+                id: 'purchaseSettlementList',
+                url: ctx + 'purchaseSettlement/list',
+                cols: [[
+                    {type: 'checkbox'},
+                    {field:'number',title:'序号',align:'center',width:60,templet:function (d) {
+                            return d.LAY_INDEX;}},
+                    {title: '状态', templet: '#settlement-state',align:'center',width:60},
+                    {field: 'settlementDate', title: '日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.settlementDate, "yyyy-MM-dd") }}</div>', minWidth: 110, sort: true},
+                    {field: 'settlementNumbers', title: '单号', minWidth: 145,align:'center'},
+                    {title: '口径', templet: '#settlementUse-state',align:'center',width:150},
+                    {field: 'settlementSupplier', title: '供应商', minWidth: 120,align:'center'},
+                    {title: '库房', templet: '#settlementLibrary-state',align:'center',width:120},
+                    {field: 'settlementQuantity',title: '数量', minWidth: 55,align:'center'},
+                    {field: 'settlementMoney', title: '金额', minWidth: 95,align:'center'},
+                    {field: 'refundPreparer', title: '不含税金额', minWidth: 95,align:'center'},
+                    {field: 'currencyName', title: '币种', minWidth: 80,align:'center'},
+                    {title: '是否开票', templet: '#settlementInvoice-state',align:'center',width:150},
+                    {field: 'taxRateName', title: '税率', minWidth: 80,align:'center'}
+                ]]
+            });
+        }
+        table.on('row(purchaseSettlementList)', function (obj) {
+
+            let oddNumbers = obj.data.settlementNumbers;
+            var dataBak = [];
+            layui.table.reload('purchaseSettlementTable',{
+                data:dataBak
+            });
+            $.ajax({
+                url: '/purchaseSettlement/query',
+                data:{"oddNumbers":oddNumbers},
+                success : function(data) {
+                    var oldDataOne;
+                    var arr = data.replies;
+                    for(var i=0;i<arr.length;i++){
+                        var settlementCode = arr[i].settlementCode;
+                        var settlementName = arr[i].settlementName;
+                        var settlementSpecifications = arr[i].settlementSpecifications;
+                        var settlementQuality = arr[i].settlementQuality;
+                        var settlementBrand = arr[i].settlementBrand;
+                        var settlementCompany = arr[i].settlementCompany;
+                        var settlementQuantity = arr[i].settlementQuantity;
+                        var settlementPrice = arr[i].settlementPrice;
+                        var settlementMoney = arr[i].settlementMoney;
+                        var settlementCategory = arr[i].settlementCategory;
+                        var settlementSubclass = arr[i].settlementSubclass;
+                        var settlementRemarks = arr[i].settlementRemarks;
+                        var dataOne={"settlementCode":settlementCode,"settlementName":settlementName,"settlementSpecifications":settlementSpecifications,
+                            "settlementQuality":settlementQuality,"settlementBrand":settlementBrand,"settlementCompany":settlementCompany,"settlementQuantity":settlementQuantity,
+                            "settlementPrice":settlementPrice,"settlementMoney":settlementMoney,"settlementCategory":settlementCategory,"settlementSubclass":settlementSubclass,"settlementRemarks":settlementRemarks};
+                        oldDataOne =  table.cache["purchaseSettlementTable"];
+                        oldDataOne.push(dataOne);
+                    }
+                    layui.table.reload('purchaseSettlementTable',{
+                        data : oldDataOne
+                    });
+                }
+            });
+        });
+        table.render({
+            elem:'#purchaseSettlementTable',
+            data:purchaseTableData,
+            cols: [[
+                {field:'number',title:'序号',align:'center',width:60,templet:function (d) {
+                        return d.LAY_INDEX;}},
+                {field: 'settlementCode',title: '编码', minWidth: 90,align:'center'},
+                {field: 'settlementName', title: '名称', minWidth: 90,align:'center'},
+                {field: 'settlementSpecifications', title: '规格', minWidth: 90,event:'specification',align:'center'},
+                {field: 'settlementQuality',title: '材质', minWidth: 55,align:'center'},
+                {field: 'settlementBrand',title: '品牌', minWidth: 55,align:'center'},
+                {field: 'settlementCompany',title: '单位', minWidth: 55,align:'center'},
+                /*{field: 'orderQuantity',title: '订购数量', minWidth: 55,align:'center'},*/
+                {field: 'settlementQuantity',title: '数量', minWidth: 55,align:'center'},
+                {field: 'settlementPrice',title: '单价', minWidth: 55,align:'center'},
+                {field: 'settlementMoney',title: '金额', minWidth: 55,align:'center'},
+                {title: '大类', templet: '#settlementCategory-state',align:'center',width:150},
+                {title: '小类', templet: '#settlementSubclass-state',align:'center',width:150},
+                {field: 'settlementRemarks', title: '备注', minWidth: 72}
+            ]]
+        });
+
+        $settlement.on('click', function () {
+            let checkStatus = table.checkStatus('purchaseSettlementList');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要结算的数据');
+            } else {
+                let ids = [];
+                layui.each(checkStatus.data, function (key, item) {
+                    ids.push(item.id)
+                    if(item.settlementState == 4){
+                        febs.alert.warn('该状态无法结算');
+                    }else {
+                        febs.modal.confirm('取消来货检验', '是否取消？', function () {
+                            settlementPurchaseRequisition(ids);
+                        });
+                    }
+                });
+            }
+        });
+
+        $cancel.on('click', function () {
+            let checkStatus = table.checkStatus('purchaseSettlementList');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要取消的数据');
+            } else {
+                let ids = [];
+                layui.each(checkStatus.data, function (key, item) {
+                    ids.push(item.id)
+                    if(item.settlementState == 1){
+                        febs.alert.warn('该状态无法取消');
+                    }else {
+                        febs.modal.confirm('取消来货检验', '是否取消？', function () {
+                            cancelPurchaseRequisition(ids.join(','));
+                        });
+                    }
+                });
+            }
+        });
+
+        function settlementPurchaseRequisition(ids) {
+            febs.get(ctx + 'purchaseSettlement/settlement/' + ids, null, function () {
+                febs.alert.success('采购结算成功');
+                $query.click();
+            });
+        }
+
+        function cancelPurchaseRequisition(ids) {
+            febs.get(ctx + 'purchaseSettlement/cancel/' + ids, null, function () {
+                febs.alert.success('取消采购结算成功');
+                $query.click();
+            });
+        }
+
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+    });
+    function purchaseSettlementName(){
+        layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
+            let $ = layui.$,
+                febs = layui.febs;
+            febs.modal.open('供应商选择列表', 'purchase/purchaseSettlementName', {
+                area:["55%","60%"],
+                yes: function (index, layero) {
+                }
+
+            });
+        });
+    }
+</script>

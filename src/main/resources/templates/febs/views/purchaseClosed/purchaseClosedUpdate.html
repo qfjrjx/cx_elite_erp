@@ -18,7 +18,7 @@
             </div>
             <label class="layui-form-mid">供应商&nbsp;<b>:</b></label>
             <div class="layui-input-inline" style="width: 145px">
-                <input type="text" name="supplierName" id="supplierName" lay-verify="required" ondblclick="dblclickCustomerName()"
+                <input type="text" name="supplierName" id="supplierName" lay-verify="required" ondblclick="purchaseClosedUpdateName()"
                        autocomplete="off" class="layui-input" placeholder="双击选择" style="width: 145px"  readonly>
             </div>
             <label class="layui-form-mid">币&nbsp;种&nbsp;<b>:</b></label>
@@ -258,7 +258,7 @@
         });
 
     });
-    function dblclickCustomerName(){
+    function purchaseClosedUpdateName(){
         layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
             let $ = layui.$,
                 febs = layui.febs;

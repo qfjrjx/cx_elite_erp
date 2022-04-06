@@ -32,12 +32,12 @@
                                     <div class="layui-inline" >
                                         <label class="layui-form-mid layui-form-label-sm">单号</label>
                                         <div class="layui-input-inline">
-                                            <input type="text" name="closedNumber" autocomplete="off" class="layui-input">
+                                            <input type="text" name="inspectionNumber" autocomplete="off" class="layui-input">
                                         </div>
                                     </div>
                                     <label class="layui-form-mid">供应商&nbsp;<b>:</b></label>
                                     <div class="layui-input-inline" style="width: 145px">
-                                        <input type="text" name="supplierName" id="supplierName" lay-verify="required" ondblclick="dblclickCustomerName()"
+                                        <input type="text" name="supplierName" id="supplierName" lay-verify="required" ondblclick="dblclickCustomerNameList()"
                                                autocomplete="off" class="layui-input" placeholder="双击选择" style="width: 145px"  readonly>
                                     </div>
                                     <div class="layui-inline">
@@ -363,7 +363,7 @@
 
     })
 
-    function dblclickCustomerName(){
+    function dblclickCustomerNameList(){
         layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
             let $ = layui.$,
                 febs = layui.febs;

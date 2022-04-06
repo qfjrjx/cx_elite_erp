@@ -163,4 +163,14 @@ public class PurchaseOrder {
      */
     private String orderRemarks;
 
+    /**
+     * 小类
+     */
+    private String orderSubclass;
+
+    /**
+     * 大类
+     */
+    private String orderCategory;
+
 }

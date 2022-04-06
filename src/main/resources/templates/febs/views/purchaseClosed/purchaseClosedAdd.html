@@ -24,7 +24,7 @@
             </div>
             <label class="layui-form-mid">供应商&nbsp;<b>:</b></label>
             <div class="layui-input-inline" style="width: 145px">
-                <input type="text" name="supplierName" id="supplierName" lay-verify="required" ondblclick="dblclickCustomerName()"
+                <input type="text" name="supplierNameClosed" id="supplierNameClosed" lay-verify="required" ondblclick="purchaseClosedAddName()"
                        autocomplete="off" class="layui-input" placeholder="双击选择" style="width: 145px"  readonly>
             </div>
             <label class="layui-form-mid">库房&nbsp;<b>:</b></label>
@@ -203,7 +203,7 @@
                 };
                 dataThree.push(dataOne);
             }
-            let entity = {userName:userName,purchaseRequisitionDate: data.field.purchaseRequisitionDate,supplierName:data.field.supplierName,currencyId: data.field.currencyName,
+            let entity = {userName:userName,purchaseRequisitionDate: data.field.purchaseRequisitionDate,supplierName:data.field.supplierNameClosed,currencyId: data.field.currencyName,
                 taxRateId: data.field.taxRateName,paymentMethod: data.field.paymentMethod,orderDeposit: data.field.orderDeposit,warehouseState: data.field.warehouseState}
             $.ajax({
                 url: '/purchaseClosed/add',
@@ -244,11 +244,11 @@
         });
 
     });
-    function dblclickCustomerName(){
+    function purchaseClosedAddName(){
         layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
             let $ = layui.$,
                 febs = layui.febs;
-            febs.modal.open('供应商选择列表', 'purchase/purchaseSupplierSelectionList', {
+            febs.modal.open('供应商选择列表', 'purchase/purchaseClosedAddName', {
                 area:["55%","60%"],
                 yes: function (index, layero) {
                 }

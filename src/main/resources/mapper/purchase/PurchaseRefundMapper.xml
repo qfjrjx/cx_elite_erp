@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.purchase.mapper.PurchaseRefundMapper">
+
+    <sql id="countPurchaseRefundSql">
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_purchase_refund pr
+        WHERE
+            1 = 1
+    </sql>
+
+    <sql id="countPurchaseRefundAddQuerySql">
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_warehouse_storage ws
+        WHERE
+            1 = 1
+    </sql>
+
+    <sql id="findPurchaseRefundPageSql">
+        SELECT
+            pr.id,
+            pr.refund_state,
+            pr.refund_date,
+            pr.refund_number,
+            pr.supplier_name,
+            pr.refund_library,
+            sum(prs.refund_quantity) refundQuantity,
+            sum(prs.refund_money) refundMoney,
+            pr.refund_preparer,
+            pr.refund_preparation_date,
+            pr.refund_outbound,
+            pr.refund_outbound_date,
+            pr.order_number,
+            fpa.finance_parameter_name currencyName,
+            fpb.finance_parameter_name taxRateName
+        FROM
+            jr_purchase_refund pr
+                LEFT JOIN jr_purchase_refund_schedule prs ON ( pr.refund_number = prs.refund_number )
+                LEFT JOIN jr_finance_parameters fpa ON ( pr.currency_id = fpa.id )
+                LEFT JOIN jr_finance_parameters fpb ON ( pr.tax_rate_id = fpb.id )
+        WHERE
+            1 = 1
+            <if test="purchaseRefund.refundState != null and purchaseRefund.refundState != ''">
+                AND pr.refund_state = #{purchaseRefund.refundState}
+            </if>
+            <if test="purchaseRefund.refundNumber != null and purchaseRefund.refundNumber != ''">
+                AND pr.refund_number = #{purchaseRefund.refundNumber}
+            </if>
+            <if test="purchaseRefund.supplierName != null and purchaseRefund.supplierName != ''">
+                AND pr.supplier_name = #{purchaseRefund.supplierName}
+            </if>
+            <if test="purchaseRefund.refundLibrary != null and purchaseRefund.refundLibrary != ''">
+                AND pr.refund_library = #{purchaseRefund.refundLibrary}
+            </if>
+        GROUP BY
+            pr.refund_number
+    </sql>
+
+    <sql id="findPurchaseRefundQueryPageSql">
+        SELECT
+            pr.id,
+            pr.refund_state,
+            pr.refund_date,
+            pr.refund_number,
+            pr.supplier_name,
+            pr.refund_library,
+            pr.refund_preparer,
+            pr.refund_preparation_date,
+            pr.refund_outbound,
+            pr.refund_outbound_date,
+            pr.order_number
+        FROM
+            jr_purchase_refund pr
+        WHERE
+            pr.id = #{id}
+
+
+    </sql>
+
+    <select id="countPurchaseRefundAddQuery" parameterType="com.erp.purchase.entity.WarehouseStorage" resultType="long">
+        <include refid="countPurchaseRefundAddQuerySql"/>
+    </select>
+
+    <select id="countPurchaseRefund" parameterType="com.erp.purchase.entity.PurchaseRefund" resultType="long">
+        <include refid="countPurchaseRefundSql"/>
+    </select>
+
+    <select id="findPurchaseRefundPage" parameterType="com.erp.purchase.entity.PurchaseRefund" resultType="com.erp.purchase.entity.PurchaseRefund">
+        <include refid="findPurchaseRefundPageSql"/>
+    </select>
+    <!-- 采购退货查询数据 -->
+    <select id="findPurchaseRefundQueryPage" parameterType="com.erp.purchase.entity.PurchaseRefund" resultType="com.erp.purchase.entity.PurchaseRefund">
+        <include refid="findPurchaseRefundQueryPageSql"/>
+    </select>
+
+    <select id="queryPurchaseRefundSchedule" parameterType="String" resultType="com.erp.purchase.entity.PurchaseRefundSchedule">
+        SELECT
+            prs.id,
+            prs.refund_code,
+            prs.refund_name,
+            prs.refund_specifications,
+            prs.refund_quality,
+            prs.refund_brand,
+            prs.refund_company,
+            prs.refund_quantity,
+            prs.refund_price,
+            prs.refund_money,
+            prs.order_number,
+            prs.supplier_name,
+            prs.refund_library,
+            prs.refund_remarks
+        FROM
+            jr_purchase_refund_schedule prs
+        WHERE
+            prs.refund_number = #{oddNumbers}
+    </select>
+
+    <select id="findPurchaseRefundAddQueryPage" parameterType="String" resultType="com.erp.purchase.entity.WarehouseStorageSchedule">
+        SELECT
+            ws.supplier_name,
+            ws.order_number,
+            ws.storage_library,
+            ws.storage_numbers,
+            wss.storage_code,
+            wss.storage_name,
+            wss.storage_specifications,
+            wss.storage_quality,
+            wss.storage_company,
+            wss.storage_quantity,
+            wss.unit_price,
+            wss.storage_money,
+            wss.storage_remarks,
+            wss.storage_brand,
+            wss.storage_subclass,
+            wss.storage_category
+        FROM
+            jr_warehouse_storage ws
+        LEFT JOIN jr_warehouse_storage_schedule wss ON ( ws.order_number = wss.order_numbers )
+        WHERE
+            1 = 1
+            <if test="warehouseStorage.supplierName != null and warehouseStorage.supplierName != ''">
+                AND ws.supplier_name = #{warehouseStorage.supplierName}
+            </if>
+            <if test="warehouseStorage.storageLibrary != null and warehouseStorage.storageLibrary != ''">
+                AND ws.storage_library = #{warehouseStorage.storageLibrary}
+            </if>
+            <if test="warehouseStorage.storageNumbers != null and warehouseStorage.storageNumbers != ''">
+                AND ws.storage_numbers = #{warehouseStorage.storageNumbers}
+            </if>
+            <if test="warehouseStorage.storageCode != null and warehouseStorage.storageCode != ''">
+                AND wss.storage_code = #{warehouseStorage.storageCode}
+            </if>
+            <if test="warehouseStorage.storageName != null and warehouseStorage.storageName != ''">
+                AND wss.storage_name = #{warehouseStorage.storageName}
+            </if>
+            <if test="warehouseStorage.storageSpecifications != null and warehouseStorage.storageSpecifications != ''">
+                AND wss.storage_specifications = #{warehouseStorage.storageSpecifications}
+            </if>
+            <if test="warehouseStorage.storageSubclass != null and warehouseStorage.storageSubclass != ''">
+                AND wss.storage_subclass = #{warehouseStorage.storageSubclass}
+            </if>
+    </select>
+
+    <!--查询出最后一个采购订单单号-->
+    <select id="queryPurchaseRefund" resultType="com.erp.purchase.entity.PurchaseRefund">
+        SELECT
+            pr.id,
+            pr.refund_state,
+            pr.refund_date,
+            pr.refund_number,
+            pr.supplier_name,
+            pr.refund_library,
+            pr.refund_quantity,
+            pr.refund_money,
+            pr.currency_id,
+            pr.tax_rate_id,
+            pr.refund_preparer,
+            pr.refund_preparation_date,
+            pr.refund_outbound,
+            pr.refund_outbound_date,
+            pr.order_number
+        FROM
+            jr_purchase_refund pr
+        WHERE
+            1 = 1
+        GROUP BY
+            pr.refund_date
+        ORDER BY
+            pr.refund_date DESC
+            LIMIT 1;
+    </select>
+
+    <!--向数据库添加采购订单数据-->
+    <insert id="savePurchaseRefundDate" parameterType="com.erp.purchase.entity.PurchaseRefund">
+        INSERT INTO
+            jr_purchase_refund
+        (
+            refund_state,
+            refund_date,
+            refund_number,
+            supplier_name,
+            refund_library,
+            refund_quantity,
+            refund_money,
+            currency_id,
+            tax_rate_id,
+            refund_preparer,
+            refund_preparation_date,
+            refund_outbound,
+            refund_outbound_date,
+            order_number
+        )
+        VALUES
+            (
+                #{refundState},
+                #{refundDate},
+                #{refundNumber},
+                #{supplierName},
+                #{refundLibrary},
+                #{refundQuantity},
+                #{refundMoney},
+                #{currencyId},
+                #{taxRateId},
+                #{refundPreparer},
+                #{refundPreparationDate},
+                #{refundOutbound},
+                #{refundOutboundDate},
+                #{orderNumber}
+            )
+    </insert>
+
+    <!--向数据库添加采购订单数据-->
+    <insert id="savePurchaseRefundSchedule" parameterType="com.erp.purchase.entity.PurchaseRefundSchedule">
+        INSERT INTO
+            jr_purchase_refund_schedule
+        (
+            refund_code,
+            refund_name,
+            refund_specifications,
+            refund_quality,
+            refund_brand,
+            refund_company,
+            refund_quantity,
+            refund_price,
+            refund_money,
+            order_number,
+            refund_remarks,
+            refund_number,
+            refund_library,
+            supplier_name,
+            refund_subclass,
+            refund_category
+        )
+        VALUES
+            (
+                #{refundCode},
+                #{refundName},
+                #{refundSpecifications},
+                #{refundQuality},
+                #{refundBrand},
+                #{refundCompany},
+                #{refundQuantity},
+                #{refundPrice},
+                #{refundMoney},
+                #{orderNumber},
+                #{refundRemarks},
+                #{refundNumber},
+                #{refundLibrary},
+                #{supplierName},
+                #{refundSubclass},
+                #{refundCategory}
+            )
+    </insert>
+
+    <!-- 删除附表数据 -->
+    <delete id="deletePurchaseRefundSchedule">
+        delete from jr_purchase_refund_schedule  where refund_number = #{refundNumber}
+    </delete>
+
+    <delete id="deletePurchaseRefund">
+        delete from jr_purchase_refund  where refund_number = #{refundNumber}
+    </delete>
+
+</mapper>

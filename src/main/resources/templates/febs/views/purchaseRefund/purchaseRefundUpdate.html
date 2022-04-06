@@ -1,0 +1,376 @@
+<style>
+    #purchaseRefund-update {
+        padding: 20px 25px 25px 0;
+    }
+</style>
+<div class="layui-fluid" id="purchaseRefund-update">
+    <form class="layui-form" action="" lay-filter="purchaseRefund-update-form">
+        <div class="layui-form-item">
+            <label class="layui-form-mid" >单号&nbsp;<b>:</b></label>
+            <div class="layui-input-inline" style="width: 130px">
+                <input type="text" name="refundNumber" id="refundNumber" style="width: 130px"
+                       autocomplete="off" class="layui-input" placeholder="为空时自动生成" readonly>
+            </div>
+            <label class="layui-form-mid">日期&nbsp;<b>:</b></label>
+            <div class="layui-input-inline" style="width: 150px">
+                <input type="text" name="refundPreparationDate" id="refundPreparationDate"
+                       autocomplete="off" class="layui-input createDate" readonly>
+            </div>
+            <label class="layui-form-mid">供应商&nbsp;<b>:</b></label>
+            <div class="layui-input-inline" style="width: 145px">
+                <input type="text" name="supplierName" id="supplierName" lay-verify="required" ondblclick="dblclickCustomerName()"
+                       autocomplete="off" class="layui-input" placeholder="双击选择" style="width: 145px"  readonly>
+            </div>
+            <label class="layui-form-mid">库房&nbsp;<b>:</b></label>
+            <div class="layui-input-inline" style="width: 100px">
+                <select name="refundLibrary" id="refundLibrary">
+                    <option value="1">外购库</option>
+                    <option value="2">机加库</option>
+                    <option value="3">废品库</option>
+                    <option value="4">资产库</option>
+                    <option value="5">成品库</option>
+                </select>
+            </div>
+            <label class="layui-form-mid">币&nbsp;种&nbsp;<b>:</b></label>
+            <div class="layui-input-inline" style="width: 90px">
+                <select id="currencyName"  name="currencyName" lay-verify="required" class="layui-form-select" >
+                    <option th:each="currency:${currency}" th:value="${currency.id}">[[${currency.financeParameterName}]]</option>
+                </select>
+            </div>
+            <label class="layui-form-mid">税&nbsp;率&nbsp;<b>:</b></label>
+            <div class="layui-input-inline" style="width: 85px">
+                <select id="taxRateName"  name="taxRateName" lay-verify="required" class="layui-form-select" >
+                    <option th:each="taxRate:${taxRate}" th:value="${taxRate.id}">[[${taxRate.financeParameterName}]]</option>
+                </select>
+            </div>
+
+            <label class="layui-form-mid">入库单&nbsp;<b>:</b></label>
+            <div class="layui-input-inline" style="width: 120px">
+                <input type="text"  name="storageNumbers" autocomplete="off" class="layui-input">
+            </div>
+            <label class="layui-form-mid">编码&nbsp;<b>:</b></label>
+            <div class="layui-input-inline" style="width: 120px">
+                <input type="text" id="storageCode" name="storageCode" autocomplete="off" class="layui-input">
+            </div>
+            <label class="layui-form-mid">名称&nbsp;<b>:</b></label>
+            <div class="layui-input-inline" style="width: 120px">
+                <input type="text" name="storageName" autocomplete="off" class="layui-input">
+            </div>
+            <label class="layui-form-mid">规格&nbsp;<b>:</b></label>
+            <div class="layui-input-inline" style="width: 120px">
+                <input type="text" name="storageSpecifications" autocomplete="off" class="layui-input">
+            </div>
+            <label class="layui-form-mid">小类&nbsp;<b>:</b></label>
+            <div class="layui-input-inline" style="width: 100px">
+                <select name="storageSubclass" id="storageSubclass">
+                    <option value=""></option>
+                    <option value="1">键盘</option>
+                    <option value="2">电脑</option>
+                </select>
+            </div>
+            <div class="layui-col-md2 layui-col-sm12 layui-col-xs12 table-action-area">
+                <!--搜索按钮-->
+                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                    <i class="layui-icon">&#xe848;</i>查询
+                </div>
+                <!--添加按钮-->
+                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action " id="addTo">
+                    <i class="layui-icon">&#xe78a;</i>确定
+                </div>
+            </div>
+        </div>
+        <table lay-filter="purchaseRefundUpdate" id="purchaseRefundUpdate" lay-data="{id: 'purchaseRefundUpdate'}"></table>
+        <br>
+        <table class="layui-table layui-form" id="purchaseRefundRequisitionList" lay-filter="purchaseRefundRequisitionList"></table>
+        <div class="layui-form-item febs-hide">
+            <button class="layui-btn" lay-submit="" lay-filter="purchaseRefund-update-form-submit" id="submit"></button>
+            <button type="reset" class="layui-btn" id="reset"></button>
+        </div>
+    </form>
+</div>
+<script type="text/html" id="refundLibrary-state">
+    {{#
+    let refundLibrary = {
+    1: {title: '外购库'},
+    2: {title: '机加库'},
+    3: {title: '废品库'},
+    4: {title: '资产库'},
+    5: {title: '成品库'}
+    }[d.refundLibrary];
+    }}
+    <span>{{ refundLibrary.title }}</span>
+</script>
+<script type="text/html" id="storageLibrary-state">
+    {{#
+    let storageLibrary = {
+    1: {title: '外购库'},
+    2: {title: '机加库'},
+    3: {title: '废品库'},
+    4: {title: '资产库'},
+    5: {title: '成品库'}
+    }[d.storageLibrary];
+    }}
+    <span>{{ storageLibrary.title }}</span>
+</script>
+<script data-th-inline="javascript">
+    layui.use(['febs', 'form', 'validate','table', 'xmSelect','upload','laydate'], function () {
+        let $ = layui.$,
+            febs = layui.febs,
+            layer = layui.layer,
+            form = layui.form,
+            laydate = layui.laydate,
+            $view = $('#purchaseRefund-update'),
+            $query = $view.find('#query'),
+            $searchForm = $view.find('form'),
+            validate = layui.validate,
+            table = layui.table,
+            sortObject = {field: 'createDate', type: null},
+            purchaseRefund = [[${purchaseRefund}]],
+            purchaseRequisitionDate = [[${purchaseRequisitionDate}]],
+            tableIns;
+
+
+        form.verify(validate);
+        form.render();
+        initTable();
+        initPurchaseRequisitionCreatorValue();
+
+        function initPurchaseRequisitionCreatorValue() {
+            form.val("purchaseRefund-update-form", {
+                "refundNumber": purchaseRefund.refundNumber,
+                "supplierName": purchaseRefund.supplierName,
+                "refundPreparationDate": purchaseRefund.refundPreparationDate,
+                "purchaseRequisitionDate": purchaseRequisitionDate,
+            });
+        }
+
+        let refundNumberOne = document.getElementById("refundNumber");
+        let refundNumberTwo = refundNumberOne.value;
+
+        var tableData=new Array(); // 用于存放表格数据
+        $.ajax({
+            url: 'purchaseRefund/query'
+            ,data:{"oddNumbers":refundNumberTwo}
+            ,async:false
+            ,dataType:"json"
+            , success: function(data){
+                tableData=data.replies;
+            }
+        });
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            alert(params);
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+        table.on('sort(purchaseRefundUpdate)', function (obj) {
+            sortObject = obj;
+            tableIns.reload({
+                initSort: obj,
+                where: $.extend(getQueryParams(), {
+                    field: obj.field,
+                    order: obj.type
+                })
+            });
+        });
+
+        table.on('rowDouble(purchaseRefundUpdate)', function (obj) {
+            var data = obj.data;
+            var storageLibrary = data.storageLibrary;
+            var supplierName = data.supplierName;
+            var storageCode = data.storageCode;
+            var storageName = data.storageName;
+            var storageSpecifications = data.storageSpecifications;
+            var storageQuality = data.storageQuality;
+            var storageCompany = data.storageCompany;
+            var refundQuantity = data.refundQuantity;
+            var refundAmount = data.refundQuantity;
+            var unitPrice = data.unitPrice;
+            var storageMoney = data.storageMoney;
+            var storageRemarks = data.storageRemarks;
+            var orderNumber = data.orderNumber;
+            var storageBrand = data.storageBrand;
+            $.ajax({
+                url: '/saleOrder/random',
+                success : function(data) {
+                    var random = data.data;
+                    var oldData =  table.cache["purchaseRefundRequisitionList"];
+                    var dataOne={"refundLibrary":storageLibrary,
+                        "supplierName":supplierName,"refundCode":storageCode,
+                        "refundName":storageName,"refundSpecifications":storageSpecifications,
+                        "refundQuality":storageQuality,"refundCompany":storageCompany,
+                        "refundPrice":unitPrice,"refundQuantity":refundQuantity,"refundAmount":refundAmount,"refundMoney":storageMoney,
+                        "refundRemarks":storageRemarks, "orderNumber":orderNumber, "refundBrand":storageBrand};
+                    oldData.push(dataOne);
+                    layui.table.reload('purchaseRefundRequisitionList',{
+                        data : oldData
+                    });
+                }
+            });
+        });
+
+        function initTable() {
+            tableIns = febs.table.init({
+                elem: '#purchaseRefundUpdate',
+                id: 'purchaseRefundUpdate',
+                url: ctx + 'purchaseRefundAdd/list',
+                where:{
+                    supplierName:$('#supplierName').val()
+                },
+                cols: [
+                    [
+                        {type: 'checkbox'},
+                        {title: '库房', templet: '#storageLibrary-state',align:'center',width:120},
+                        {field: 'supplierName', title: '供应商',align:'center', minWidth: 120},
+                        {field: 'storageCode', title: '编码',align:'center', minWidth: 100},
+                        {field: 'storageName', title: '名称',align:'center', minWidth: 100},
+                        {field: 'storageSpecifications', title: '规格',align:'center', minWidth: 100},
+                        {field: 'storageQuality', title: '材质',align:'center', minWidth: 100},
+                        {field: 'storageCompany', title: '单位',align:'center', minWidth: 60},
+                        {field: 'storageQuantity', title: '库存数量',align:'center', minWidth: 100},
+                        /* {field: 'meteringCompany', title: '最近采购单价',align:'center', minWidth: 100},*/
+                        {field: 'refundQuantity', title: '退货数',align:'center',minWidth: 80,edit: true},
+                        {
+                            field: 'unitPrice',
+                            title: '单价',
+                            minWidth: 55,
+                            align: 'center',
+                            templet: function (data) {
+                                var price = parseFloat(data.unitPrice).toFixed(2); //设置小数点后个数
+                                return price;
+                            }
+                        },
+                        //{field: 'refundMoney', title: '金额',align:'center', minWidth: 80},
+                        {
+                            field: 'storageMoney',
+                            title: '金额',
+                            minWidth: 55,
+                            align: 'center',
+                            templet: function (data) {
+                                var price = parseFloat(data.storageMoney).toFixed(2); //设置小数点后个数
+                                return price;
+                            }
+                        },
+                        {field: 'storageRemarks', title: '备注',align:'center', minWidth: 80}
+                    ]
+                ]
+            });
+        };
+
+        table.render({
+            elem: "#purchaseRefundRequisitionList",
+            data:tableData,
+            cols: [
+                [
+                    {type: 'checkbox'},
+                    {title: '库房', templet: '#refundLibrary-state',align:'center',width:120},
+                    {field: 'supplierName', title: '供应商',align:'center', minWidth: 120},
+                    {field: 'refundCode', title: '编码',align:'center', minWidth: 100},
+                    {field: 'refundName', title: '名称',align:'center', minWidth: 100},
+                    {field: 'refundSpecifications', title: '规格',align:'center', minWidth: 100},
+                    {field: 'refundQuality', title: '材质',align:'center', minWidth: 100},
+                    {field: 'refundCompany', title: '单位',align:'center', minWidth: 60},
+                    {field: 'refundQuantity', title: '退货数',align:'center',minWidth: 80,edit: true},
+                    //{field: 'refundPrice', title: '单价',align:'center', minWidth: 80},
+                    {
+                        field: 'refundPrice',
+                        title: '单价',
+                        minWidth: 55,
+                        align: 'center',
+                        templet: function (data) {
+                            var price = parseFloat(data.refundPrice).toFixed(2); //设置小数点后个数
+                            return price;
+                        }
+                    },
+                    //{field: 'refundMoney', title: '金额',align:'center', minWidth: 80},
+                    {
+                        field: 'refundMoney',
+                        title: '金额',
+                        minWidth: 55,
+                        align: 'center',
+                        templet: function (data) {
+                            var price = parseFloat(data.refundMoney).toFixed(2); //设置小数点后个数
+                            return price;
+                        }
+                    },
+                    {field: 'refundRemarks', title: '备注',align:'center', minWidth: 80,edit: true}
+                ]
+            ]
+        });
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+        //监听行单击事件  给每一行数据绑定点击事件T
+        //row(tableBigType)  表格的id
+        table.on('edit(purchaseRefundRequisitionList)', function(obj){
+            trDataMoney = obj.data
+            var tdOrderQuantity =  trDataMoney.refundQuantity;
+            if (tdOrderQuantity !="" && tdOrderQuantity != undefined && tdOrderQuantity != null){
+                var tdUnitPrice = trDataMoney.refundPrice;
+                var money  = parseInt(tdOrderQuantity) * parseInt(tdUnitPrice);
+                trDataMoney.refundMoney = money;
+                obj.update(obj.data);
+            }
+        });
+
+        //监听行单击事件  给每一行数据绑定点击事件T
+        //row(tableBigType)  表格的id
+        table.on('edit(purchaseRefundUpdate)', function(obj){
+            trDataMoney = obj.data
+            var tdOrderQuantity =  trDataMoney.refundQuantity;
+            if (tdOrderQuantity !="" && tdOrderQuantity != undefined && tdOrderQuantity != null){
+                var tdUnitPrice = trDataMoney.unitPrice;
+                var money  = parseInt(tdOrderQuantity) * parseInt(tdUnitPrice);
+                trDataMoney.storageMoney = money;
+                obj.update(obj.data);
+            }
+            var tdOrderQuantity =  trDataMoney.refundQuantity;
+            if (tdOrderQuantity !="" && tdOrderQuantity != undefined && tdOrderQuantity != null){
+                var tdStorageQuantity = trDataMoney.storageQuantity;
+                var storageQuantity  = parseInt(tdStorageQuantity) - parseInt(tdOrderQuantity);
+                trDataMoney.storageQuantity = storageQuantity;
+                obj.update(obj.data);
+            }
+        });
+
+        form.on('submit(purchaseRefund-update-form-submit)', function (data) {
+            let dataThree = new Array();
+            let purchaseRefundUpdateTable =  table.cache["purchaseRefundRequisitionList"];
+            for (i=0;i<purchaseRefundUpdateTable.length;i++){
+                let dataOne={
+                    "refundLibrary":purchaseRefundUpdateTable[i].refundLibrary,
+                    "supplierName":purchaseRefundUpdateTable[i].supplierName,
+                    "refundCode":purchaseRefundUpdateTable[i].refundCode,
+                    "refundName":purchaseRefundUpdateTable[i].refundName,
+                    "refundSpecifications":purchaseRefundUpdateTable[i].refundSpecifications,
+                    "refundQuality":purchaseRefundUpdateTable[i].refundQuality,
+                    "refundCompany":purchaseRefundUpdateTable[i].refundCompany,
+                    "refundPrice":purchaseRefundUpdateTable[i].refundPrice,
+                    "refundQuantity":purchaseRefundUpdateTable[i].refundQuantity,
+                    "refundAmount":purchaseRefundUpdateTable[i].refundAmount,
+                    "refundMoney":purchaseRefundUpdateTable[i].refundMoney,
+                    "refundRemarks":purchaseRefundUpdateTable[i].refundRemarks,
+                    "orderNumber":purchaseRefundUpdateTable[i].orderNumber,
+                    "refundBrand":purchaseRefundUpdateTable[i].refundBrand
+                };
+                dataThree.push(dataOne);
+            }
+
+            $.ajax({
+                url: '/purchaseRefund/update',
+                type:"post",
+                data: {refundNumber:purchaseRefund.refundNumber,dataTable:JSON.stringify(dataThree)},
+                success : function(res) {
+                    layer.closeAll();
+                    $('#purchaseRefund-list').find('#query').click();
+                    var dataBak = [];
+                    layui.table.reload('purchaseRefundTable',{
+                        data:dataBak
+                    });
+                }
+            });
+            return false;
+        });
+    })
+</script>

@@ -86,7 +86,8 @@
             unit_price,
             order_money,
             delivery_date,
-            order_remarks
+            order_remarks,
+            order_subclass
         )
         VALUES
             (
@@ -102,7 +103,8 @@
                 #{unitPrice},
                 #{orderMoney},
                 #{deliveryDate},
-                #{orderRemarks}
+                #{orderRemarks},
+                #{orderSubclass}
             )
     </insert>
 

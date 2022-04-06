@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.purchase.mapper.PurchaseSettlementMapper">
+    <sql id="countPurchaseSettlementSql">
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_purchase_settlement ps
+        WHERE
+            1 = 1
+    </sql>
+
+    <sql id="findPurchaseSettlementSql">
+        SELECT
+            ps.id,
+            ps.settlement_state,
+            ps.settlement_date,
+            ps.settlement_numbers,
+            ps.settlement_use,
+            ps.settlement_supplier,
+            ps.settlement_library,
+            sum(pss.settlement_quantity) settlementQuantity,
+            sum(pss.settlement_money) settlementMoney,
+            ps.settlement_no_money,
+            ps.settlement_invoice,
+            fpa.finance_parameter_name currencyName,
+            fpb.finance_parameter_name taxRateName
+        FROM
+            jr_purchase_settlement ps
+                LEFT JOIN jr_purchase_settlement_schedule pss ON ( ps.settlement_numbers = pss.settlement_number )
+                LEFT JOIN jr_finance_parameters fpa ON ( ps.currency_id = fpa.id )
+                LEFT JOIN jr_finance_parameters fpb ON ( ps.tax_rate_id = fpb.id )
+        WHERE
+            1 = 1
+            <if test="purchaseSettlement.settlementState != null and purchaseSettlement.settlementState != ''">
+                AND ps.settlement_state = #{purchaseSettlement.settlementState}
+            </if>
+            <if test="purchaseSettlement.settlementNumbers != null and purchaseSettlement.settlementNumbers != ''">
+                AND ps.settlement_numbers = #{purchaseSettlement.settlementNumbers}
+            </if>
+            <if test="purchaseSettlement.settlementSupplier != null and purchaseSettlement.settlementSupplier != ''">
+                AND ps.settlement_supplier = #{purchaseSettlement.settlementSupplier}
+            </if>
+            <if test="purchaseSettlement.settlementLibrary != null and purchaseSettlement.settlementLibrary != ''">
+                AND ps.settlement_library = #{purchaseSettlement.settlementLibrary}
+            </if>
+        GROUP BY
+            ps.settlement_numbers
+    </sql>
+
+    <select id="countPurchaseSettlement" parameterType="com.erp.purchase.entity.PurchaseSettlement" resultType="long">
+        <include refid="countPurchaseSettlementSql"/>
+    </select>
+
+    <select id="findPurchaseSettlement" parameterType="com.erp.purchase.entity.PurchaseSettlement" resultType="com.erp.purchase.entity.PurchaseSettlement">
+        <include refid="findPurchaseSettlementSql"/>
+    </select>
+
+    <!--向数据库添加采购订单数据-->
+    <insert id="savePurchaseSettlementDate" parameterType="com.erp.purchase.entity.PurchaseSettlement">
+        INSERT INTO
+            jr_purchase_settlement
+        (
+            settlement_state,
+            settlement_date,
+            settlement_numbers,
+            settlement_use,
+            settlement_supplier,
+            settlement_library,
+            currency_id,
+            tax_rate_id,
+            settlement_invoice
+        )
+        VALUES
+            (
+                #{settlementState},
+                #{settlementDate},
+                #{settlementNumbers},
+                #{settlementUse},
+                #{settlementSupplier},
+                #{settlementLibrary},
+                #{currencyId},
+                #{taxRateId},
+                #{settlementInvoice}
+            )
+    </insert>
+
+    <!--向数据库添加采购订单数据-->
+    <insert id="savePurchaseSettlementSchedule" parameterType="com.erp.purchase.entity.PurchaseSettlementSchedule">
+        INSERT INTO
+            jr_purchase_settlement_schedule
+        (
+            settlement_code,
+            settlement_name,
+            settlement_specifications,
+            settlement_quality,
+            settlement_brand,
+            settlement_company,
+            settlement_quantity,
+            settlement_price,
+            settlement_money,
+            settlement_category,
+            settlement_subclass,
+            settlement_remarks,
+            settlement_number
+        )
+        VALUES
+            (
+                #{settlementCode},
+                #{settlementName},
+                #{settlementSpecifications},
+                #{settlementQuality},
+                #{settlementBrand},
+                #{settlementCompany},
+                #{settlementQuantity},
+                #{settlementPrice},
+                #{settlementMoney},
+                #{settlementCategory},
+                #{settlementSubclass},
+                #{settlementRemarks},
+                #{settlementNumber}
+            )
+    </insert>
+
+    <select id="queryPurchaseSettlementSchedule" parameterType="String" resultType="com.erp.purchase.entity.PurchaseSettlementSchedule">
+        SELECT
+            pss.id,
+            pss.settlement_code,
+            pss.settlement_name,
+            pss.settlement_specifications,
+            pss.settlement_quality,
+            pss.settlement_brand,
+            pss.settlement_company,
+            pss.settlement_quantity,
+            pss.settlement_price,
+            pss.settlement_money,
+            pss.settlement_category,
+            pss.settlement_subclass,
+            pss.settlement_remarks,
+            pss.settlement_number
+        FROM
+            jr_purchase_settlement_schedule pss
+        WHERE
+            pss.settlement_number = #{oddNumbers}
+    </select>
+
+    <update id="settlementPurchaseSettlement"  parameterType="com.erp.purchase.entity.PurchaseSettlement">
+        UPDATE
+            jr_purchase_settlement
+        set settlement_state = 4
+        WHERE id = #{ids}
+    </update>
+
+    <update id="cancelPurchaseSettlement"  parameterType="com.erp.purchase.entity.PurchaseSettlement">
+        UPDATE
+            jr_purchase_settlement
+        set settlement_state = 1
+        WHERE id = #{ids}
+    </update>
+
+</mapper>

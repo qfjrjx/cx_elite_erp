@@ -193,7 +193,9 @@
                         "orderQuantity": item.orderQuantity,
                         "unitPrice": item.unitPrice,
                         "orderMoney": item.orderMoney,
-                        "orderRemarks": item.orderRemarks
+                        "orderRemarks": item.orderRemarks,
+                        "orderSubclass": item.orderSubclass,
+                        "orderCategory": item.orderCategory
                     };
                     dataThree.push(dataOne);
                 }
@@ -201,7 +203,6 @@
             }
             let entity = {userName:userName,purchaseRequisitionDate: data.field.purchaseRequisitionDate,supplierName:data.field.supplierNameAdd,currencyId: data.field.currencyName,
                 taxRateId: data.field.taxRateName,paymentMethod: data.field.paymentMethod,orderDeposit: data.field.orderDeposit,warehouseState: data.field.warehouseState}
-
             $.ajax({
                 url: '/purchaseInspection/add',
                 type:"post",

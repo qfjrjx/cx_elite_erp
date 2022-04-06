@@ -44,6 +44,8 @@
             prs.apply_quantity applyQuantity,
             prs.delivery_date deliveryDate,
             prs.apply_remarks applyRemarks,
+            prs.apply_subclass applySubclass,
+            prs.apply_category applyCategory,
             pr.apply_preparer applyPreparer,
             pr.apply_preparation_date applyPreparationDate
         FROM
@@ -109,7 +111,7 @@
     <insert id="savePurchaseRequisitionSchedule" parameterType="com.erp.purchase.entity.PurchaseRequisitionSchedule">
         INSERT INTO jr_purchase_requisition_schedule (
             odd_numbers, apply_code, apply_name,apply_specifications,apply_quality,apply_brand,apply_company
-            ,apply_quantity, delivery_date,apply_remarks)
+            ,apply_quantity, delivery_date,apply_remarks,apply_subclass,apply_category)
         VALUES
             (#{oddNumbers},
              #{applyCode},
@@ -120,7 +122,9 @@
              #{applyCompany},
              #{applyQuantity},
              #{deliveryDate},
-             #{applyRemarks}
+             #{applyRemarks},
+             #{applySubclass},
+             #{applyCategory}
             )
     </insert>
 

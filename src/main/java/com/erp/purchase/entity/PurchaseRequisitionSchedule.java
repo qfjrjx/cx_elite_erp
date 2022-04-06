@@ -1,10 +1,10 @@
 package com.erp.purchase.entity;
 
-import java.util.Date;
-
-import lombok.Data;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
+
+import java.util.Date;
 
 /**
  * 采购申请表附表 Entity
@@ -75,5 +75,17 @@ public class PurchaseRequisitionSchedule {
      */
     @TableField("apply_remarks")
     private String applyRemarks;
+
+    /**
+     * 小类
+     */
+    @TableField("apply_subclass")
+    private String applySubclass;
+
+    /**
+     * 大类
+     */
+    @TableField("apply_category")
+    private String applyCategory;
 
 }

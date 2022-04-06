@@ -134,6 +134,8 @@ public class PurchaseOrderServiceImpl extends ServiceImpl<PurchaseOrderMapper, P
             String orderMoney = jsonArrayOne.getJSONObject(i).getString("orderMoney");
             String deliveryDate = jsonArrayOne.getJSONObject(i).getString("deliveryDate");
             String orderRemarks = jsonArrayOne.getJSONObject(i).getString("orderRemarks");
+            String orderSubclass = jsonArrayOne.getJSONObject(i).getString("orderSubclass");
+            String orderCategory = jsonArrayOne.getJSONObject(i).getString("orderCategory");
             if (!applicationNo.equals("")) {
                 purchaseOrderSchedule.setApplicationNo(applicationNo);
             }if (!orderCode.equals("")) {
@@ -161,6 +163,10 @@ public class PurchaseOrderServiceImpl extends ServiceImpl<PurchaseOrderMapper, P
                 purchaseOrderSchedule.setDeliveryDate(deliveryDateOne);
             }if (orderRemarks != null && orderRemarks != "") {
                 purchaseOrderSchedule.setOrderRemarks(orderRemarks);
+            }if (orderSubclass != null && orderSubclass != "") {
+                purchaseOrderSchedule.setOrderSubclass(orderSubclass);
+            }if (orderCategory != null && orderSubclass != "") {
+                purchaseOrderSchedule.setOrderCategory(orderCategory);
             }
             //添加到数据库
             baseMapper.savePurchaseOrderSchedule(purchaseOrderSchedule);
@@ -190,6 +196,8 @@ public class PurchaseOrderServiceImpl extends ServiceImpl<PurchaseOrderMapper, P
             String orderMoney = jsonArrayOne.getJSONObject(i).getString("orderMoney");
             String deliveryDate = jsonArrayOne.getJSONObject(i).getString("deliveryDate");
             String orderRemarks = jsonArrayOne.getJSONObject(i).getString("orderRemarks");
+            String orderSubclass = jsonArrayOne.getJSONObject(i).getString("orderSubclass");
+            String orderCategory = jsonArrayOne.getJSONObject(i).getString("orderCategory");
             if (!applicationNo.equals("")) {
                 purchaseOrderSchedule.setApplicationNo(applicationNo);
             }if (!orderCode.equals("")) {
@@ -217,6 +225,10 @@ public class PurchaseOrderServiceImpl extends ServiceImpl<PurchaseOrderMapper, P
                 purchaseOrderSchedule.setDeliveryDate(deliveryDateOne);
             }if (orderRemarks != null && orderRemarks != "") {
                 purchaseOrderSchedule.setOrderRemarks(orderRemarks);
+            }if (orderSubclass != null && orderSubclass != "") {
+                purchaseOrderSchedule.setOrderSubclass(orderSubclass);
+            }if (orderCategory != null && orderSubclass != "") {
+                purchaseOrderSchedule.setOrderCategory(orderCategory);
             }
             //添加到数据库
             baseMapper.savePurchaseOrderSchedule(purchaseOrderSchedule);

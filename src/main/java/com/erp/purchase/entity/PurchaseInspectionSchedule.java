@@ -79,6 +79,18 @@ public class PurchaseInspectionSchedule {
     private String inspectionRemarks;
 
     /**
+     * 小类
+     */
+    @TableField("inspection_subclass")
+    private String inspectionSubclass;
+
+    /**
+     * 大类
+     */
+    @TableField("inspection_category")
+    private String inspectionCategory;
+
+    /**
      * 状态
      */
     private String inspectionState;

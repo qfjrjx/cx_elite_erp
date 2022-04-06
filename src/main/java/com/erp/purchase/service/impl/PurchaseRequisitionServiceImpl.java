@@ -1,22 +1,20 @@
 package com.erp.purchase.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.erp.common.entity.QueryRequest;
 import com.erp.purchase.entity.PurchaseRequisition;
 import com.erp.purchase.entity.PurchaseRequisitionPositive;
 import com.erp.purchase.entity.PurchaseRequisitionSchedule;
 import com.erp.purchase.mapper.PurchaseRequisitionMapper;
 import com.erp.purchase.service.IPurchaseRequisitionService;
-import com.erp.sale.entity.SaleApplication;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.annotation.Propagation;
 import lombok.RequiredArgsConstructor;
-
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -118,6 +116,8 @@ public class PurchaseRequisitionServiceImpl extends ServiceImpl<PurchaseRequisit
             String applyQuantity = jsonArrayOne.getJSONObject(i).getString("applyQuantity");
             String deliveryDate = jsonArrayOne.getJSONObject(i).getString("deliveryDate");
             String applyRemarks = jsonArrayOne.getJSONObject(i).getString("applyRemarks");
+            String applySubclass = jsonArrayOne.getJSONObject(i).getString("applySubclass");
+            String applyCategory = jsonArrayOne.getJSONObject(i).getString("applyCategory");
             if (!applyCode.equals("")) {
                 purchaseRequisitionSchedule.setApplyCode(applyCode);
             }if (!applyName.equals("")) {
@@ -137,6 +137,10 @@ public class PurchaseRequisitionServiceImpl extends ServiceImpl<PurchaseRequisit
                 purchaseRequisitionSchedule.setDeliveryDate(deliveryDateOne);
             }if (applyRemarks != null && applyQuantity != "") {
                 purchaseRequisitionSchedule.setApplyRemarks(applyRemarks);
+            }if (!applySubclass.equals("")) {
+                purchaseRequisitionSchedule.setApplySubclass(applySubclass);
+            }if (!applyCategory.equals("")) {
+                purchaseRequisitionSchedule.setApplyCategory(applyCategory);
             }
             //添加到数据库
             baseMapper.savePurchaseRequisitionSchedule(purchaseRequisitionSchedule);
@@ -163,6 +167,8 @@ public class PurchaseRequisitionServiceImpl extends ServiceImpl<PurchaseRequisit
             String applyQuantity = jsonArrayOne.getJSONObject(i).getString("applyQuantity");
             String deliveryDate = jsonArrayOne.getJSONObject(i).getString("deliveryDate");
             String applyRemarks = jsonArrayOne.getJSONObject(i).getString("applyRemarks");
+            String applySubclass = jsonArrayOne.getJSONObject(i).getString("applySubclass");
+            String applyCategory = jsonArrayOne.getJSONObject(i).getString("applyCategory");
             if (!applyCode.equals("")) {
                 purchaseRequisitionSchedule.setApplyCode(applyCode);
             }if (!applyName.equals("")) {
@@ -182,6 +188,10 @@ public class PurchaseRequisitionServiceImpl extends ServiceImpl<PurchaseRequisit
                 purchaseRequisitionSchedule.setDeliveryDate(deliveryDateOne);
             }if (applyRemarks != null && applyQuantity != "") {
                 purchaseRequisitionSchedule.setApplyRemarks(applyRemarks);
+            }if (!applySubclass.equals("")) {
+                purchaseRequisitionSchedule.setApplySubclass(applySubclass);
+            }if (!applyCategory.equals("")) {
+                purchaseRequisitionSchedule.setApplyCategory(applyCategory);
             }
             //添加到数据库
             baseMapper.savePurchaseRequisitionSchedule(purchaseRequisitionSchedule);

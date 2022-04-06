@@ -166,6 +166,7 @@
              var materialBrand = data.materialBrand;
              var meteringCompany = data.meteringCompany;
              var materialSubclass = data.materialSubclass;
+            var generalCategory = data.generalCategory;
              var materialRemarks = data.materialRemarks;
              var materialState = data.materialState;
             $.ajax({
@@ -173,7 +174,7 @@
                 success : function(data) {
                     var random = data.data;
                     var oldData =  table.cache["purchaseMaterialCode-table"];
-                    var dataOne={"materialCode":materialCode,"materialName":materialName,"specificationsModel":specificationsModel,"materialQuality":materialQuality,"materialBrand":materialBrand,"meteringCompany":meteringCompany,"materialSubclass":materialSubclass,"materialRemarks":materialRemarks,"materialState":materialState};
+                    var dataOne={"materialCode":materialCode,"materialName":materialName,"specificationsModel":specificationsModel,"materialQuality":materialQuality,"materialBrand":materialBrand,"meteringCompany":meteringCompany,"materialSubclass":materialSubclass,"generalCategory":generalCategory,"materialRemarks":materialRemarks,"materialState":materialState};
                     oldData.push(dataOne);
                     layui.table.reload('purchaseMaterialCode-table',{
                         data : oldData
@@ -190,7 +191,9 @@
                     var oldDataOne;
                     var oldData =  table.cache["purchaseMaterialCode-table"];
                     for (i=0;i<oldData.length;i++){
-                        var dataOne={"applyCode":oldData[i].materialCode,"applyName":oldData[i].materialName,"applySpecifications":oldData[i].specificationsModel,"applyQuality":oldData[i].materialQuality,"applyBrand":oldData[i].materialBrand,"applyCompany":oldData[i].meteringCompany,"applyQuantity":0,"applyRemarks":oldData[i].materialRemarks};
+                        var dataOne={"applyCode":oldData[i].materialCode,"applyName":oldData[i].materialName,"applySpecifications":oldData[i].specificationsModel,
+                            "applyQuality":oldData[i].materialQuality,"applyBrand":oldData[i].materialBrand,"applyCompany":oldData[i].meteringCompany,"applyQuantity":0,
+                            "applyRemarks":oldData[i].materialRemarks,"applySubclass":oldData[i].materialSubclass,"applyCategory":oldData[i].generalCategory};
                         oldDataOne =  table.cache["purchaseRequisition-table"];
                         oldDataOne.push(dataOne);
                     }
