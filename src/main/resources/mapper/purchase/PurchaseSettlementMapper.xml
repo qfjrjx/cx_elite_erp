@@ -48,12 +48,50 @@
             ps.settlement_numbers
     </sql>
 
+    <sql id="countPurchaseSettlementAddQuerySql">
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_purchase_settlement_schedule
+        WHERE
+            1 = 1
+    </sql>
+
+    <sql id="purchaseSettlementAddQuerySql">
+        SELECT
+            ps.settlement_date,
+            pss.settlement_number,
+            ps.settlement_use,
+            pss.settlement_code,
+            pss.settlement_specifications,
+            pss.settlement_quantity,
+            pss.settlement_price,
+            pss.settlement_money
+        FROM
+            jr_purchase_settlement_schedule pss
+                LEFT JOIN jr_purchase_settlement ps ON ( ps.settlement_numbers = pss.settlement_number )
+                LEFT JOIN jr_finance_parameters fpa ON ( ps.currency_id = fpa.id )
+                LEFT JOIN jr_finance_parameters fpb ON ( ps.tax_rate_id = fpb.id )
+        WHERE
+            1 = 1
+        AND ps.settlement_supplier = #{purchaseSettlementSchedule.settlementSupplier}
+    </sql>
+
     <select id="countPurchaseSettlement" parameterType="com.erp.purchase.entity.PurchaseSettlement" resultType="long">
         <include refid="countPurchaseSettlementSql"/>
     </select>
 
     <select id="findPurchaseSettlement" parameterType="com.erp.purchase.entity.PurchaseSettlement" resultType="com.erp.purchase.entity.PurchaseSettlement">
         <include refid="findPurchaseSettlementSql"/>
+    </select>
+
+    <!--采购发票查询-->
+    <select id="countPurchaseSettlementAddQuery" parameterType="com.erp.purchase.entity.PurchaseSettlementSchedule" resultType="long">
+        <include refid="countPurchaseSettlementAddQuerySql"/>
+    </select>
+    <!--采购发票查询-->
+    <select id="purchaseSettlementAddQuery" parameterType="com.erp.purchase.entity.PurchaseSettlementSchedule" resultType="com.erp.purchase.entity.PurchaseSettlementSchedule">
+        <include refid="purchaseSettlementAddQuerySql"/>
     </select>
 
     <!--向数据库添加采购订单数据-->

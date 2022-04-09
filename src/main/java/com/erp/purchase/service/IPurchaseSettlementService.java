@@ -59,4 +59,6 @@ public interface IPurchaseSettlementService extends IService<PurchaseSettlement>
     void settlementPurchaseSettlement(String ids);
 
     void cancelPurchaseSettlement(String ids);
+
+    IPage<PurchaseSettlementSchedule> purchaseSettlementAddQuery(QueryRequest request, PurchaseSettlementSchedule purchaseSettlementSchedule);
 }

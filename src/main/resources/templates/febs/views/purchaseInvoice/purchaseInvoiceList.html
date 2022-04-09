@@ -1,0 +1,299 @@
+<style>
+    #purchaseInvoice-list xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #purchaseInvoice-list xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="purchaseInvoice-list" lay-title="采购发票">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="parameter-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md12">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid layui-form-label-sm">状态</label>
+                                        <div class="layui-input-inline">
+                                            <select name="invoiceState">
+                                                <option value=""></option>
+                                                <option value="1">登记</option>
+                                                <option value="2">确认</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <div class="layui-input-inline">
+                                            <select name="invoiceState">
+                                                <option value="1">登记日期</option>
+                                                <option value="2">开票日期</option>
+                                            </select>
+                                        </div>
+                                        <div class="layui-input-inline" style="width: 100px">
+                                            <input type="text" name="purchaseRequisitionDate" id="purchaseRequisitionDate"
+                                                   autocomplete="off" class="layui-input createDate" readonly>
+                                        </div>
+                                        <label class="layui-form-mid">至&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 100px">
+                                            <input type="text" name="purchaseRequisitionDate" id="purchaseRequisitionDate1"
+                                                   autocomplete="off" class="layui-input createDate" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid">单位&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <input type="text" name="invoiceSupplier" id="invoiceSupplier" lay-verify="required" ondblclick="dblclickInvoiceSupplierList()"
+                                                   autocomplete="off" class="layui-input" placeholder="双击选择" style="width: 145px"  readonly>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-mid layui-form-label-sm">发票号</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="invoiceNumbers" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid">币&nbsp;种&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 90px">
+                                            <select id="currencyName"  name="currencyName" lay-verify="required" class="layui-form-select" >
+                                                <option th:each="currency:${currency}" th:value="${currency.id}">[[${currency.financeParameterName}]]</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid">税&nbsp;率&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 85px">
+                                            <select id="taxRateName"  name="taxRateName" lay-verify="required" class="layui-form-select" >
+                                                <option th:each="taxRate:${taxRate}" th:value="${taxRate.id}">[[${taxRate.financeParameterName}]]</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="purchaseInvoiceTable" id="purchaseInvoiceTable" lay-data="{id: 'purchaseInvoiceTable'}"></table>
+                    <div class="layui-col-md6">
+                        <div class="layui-form-item"></div>
+                    </div>
+                    <div class="layui-col-md6 layui-col-sm12 layui-col-xs12 table-action-area">
+                        <!--查询按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                            <i class="layui-icon">&#xe848;</i>查询
+                        </div>
+                        <!--查阅按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="queryup">
+                            <i class="layui-icon">&#xe848;</i>查阅
+                        </div>
+                        <!-- 刷新表格按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain table-action" id="reset">
+                            <i class="layui-icon">&#xe79b;</i>刷新
+                        </div>
+                        <!--添加按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
+                                     "shiro:hasAnyPermissions="purchaseInvoice:add" id="addTo">
+                            <i class="layui-icon">&#xe78a;</i>新增
+                        </div>
+                        <!--修改按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="purchaseInvoice:update" id="updateTo">
+                            <i class="layui-icon">&#xe642;</i>修改
+                        </div>
+                        <!--删除按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
+                                     "shiro:hasAnyPermissions="purchaseInvoice:delete" id="deleteTo">
+                            <i class="layui-icon layui-icon-close"></i>删除
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="invoiceState-state">
+    {{#
+    let invoiceState = {
+    1: {title: '登记'},
+    2: {title: '确认'}
+    }[d.invoiceState];
+    }}
+    <span>{{ invoiceState.title }}</span>
+</script>
+
+<script type="text/html" id="inspectionType-state">
+    {{#
+    let inspectionType = {
+    1: {title: '采购'},
+    2: {title: '委外加工'}
+    }[d.inspectionType];
+    }}
+    <span>{{ inspectionType.title }}</span>
+</script>
+<script type="text/html" id="parameter-option">
+    <span shiro:lacksPermission="purchaseInvoice:view,purchaseInvoice:update">
+        <span class="layui-badge-dot febs-bg-orange"></span> 无权限
+    </span>
+    <a lay-event="edit" shiro:hasPermission="purchaseInvoice:update"><i
+            class="layui-icon febs-edit-area febs-blue">&#xe7a4;</i></a>
+</script>
+<script langguage="JavaScript">
+
+    var now = new Date();
+    purchaseRequisitionDate.value=new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate();
+    purchaseRequisitionDate1.value=new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate();
+    var deliveryDateTo = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate();
+</script>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+            laydate = layui.laydate,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            $view = $('#purchaseInvoice-list'),
+            $query = $view.find('#query'),
+            $queryup = $view.find('#queryup'),
+            $addTo = $view.find('#addTo'),
+            $updateTo = $view.find('#updateTo'),
+            $deleteTo = $view.find('#deleteTo'),
+            $reset = $view.find('#reset'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'createTime', type: null},
+            tableIns;
+
+        form.render();
+        initPurchaseRequisitionTable();
+
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        $reset.on('click', function () {
+            $searchForm[0].reset();
+            tableIns.reload({where: getQueryParams(), page: {curr: 1}});
+        });
+
+        $addTo.on('click', function () {
+            febs.modal.open('【采购发票】 新增', 'purchase/purchaseInvoice/add', {
+                btn: ['保存', '关闭'],
+                area: ["80%","70%"],
+                yes: function (index, layero) {
+                    $('#purchaseInvoice-add').find('#submit').trigger('click');
+                    return false;
+                },
+                btn2: function () {
+                    layer.closeAll();
+                }
+            });
+        });
+        $updateTo.on('click', function () {
+            let checkStatus = table.checkStatus('purchaseInvoiceTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要修改的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要修改的数据');
+            }else{
+                layui.each(checkStatus.data, function (key, item) {
+                    febs.modal.open('【采购订单】 修改', 'purchase/purchaseInvoice/update/' + item.invoiceNumbers, {
+                        btn: ['保存', '关闭'],
+                        area: ["80%","70%"],
+                        yes: function (index, layero) {
+                            $('#purchaseInvoice-update').find('#submit').trigger('click');
+                            return false;
+                        },
+                        btn2: function () {
+                            layer.closeAll();
+                        }
+                    });
+                });
+            }
+        });
+
+        $queryup.on('click', function () {
+            let checkStatus = table.checkStatus('purchaseInvoiceTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要查阅的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要查阅的数据');
+            }else{
+                layui.each(checkStatus.data, function (key, item) {
+                    febs.modal.open('【采购发票】 明细查看', 'purchase/purchaseInvoice/queryup/' + item.invoiceNumbers, {
+                        area: ["80%","60%"],
+                    });
+                });
+            }
+        });
+
+        $deleteTo.on('click', function () {
+            let checkStatus = table.checkStatus('purchaseInvoiceTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要删除的数据');
+            } else {
+                febs.modal.confirm('删除采购参数', '确定删除？', function () {
+                    let invoiceNumbers = [];
+                    layui.each(checkStatus.data, function (key, item) {
+                        invoiceNumbers.push(item.invoiceNumbers)
+                    });
+                    deletePurchaseInvoice(invoiceNumbers.join(','));
+                });
+            }
+        });
+
+        function initPurchaseRequisitionTable() {
+            tableIns = febs.table.init({
+                elem: '#purchaseInvoiceTable',
+                id: 'purchaseInvoiceTable',
+                url: ctx + 'purchaseInvoice/list',
+                cols: [[
+                    {type: 'checkbox'},
+                    {field:'number',title:'序号',align:'center',width:60,templet:function (d) {
+                            return d.LAY_INDEX;}},
+                    {title: '状态', templet: '#invoiceState-state',align:'center',width:60},
+                    {field: 'invoiceDate', title: '开票日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.invoiceDate, "yyyy-MM-dd") }}</div>', minWidth: 110, sort: true},
+                    {field: 'invoiceNumbers', title: '发票号', minWidth: 145,align:'center'},
+                    {field: 'invoiceSupplier', title: '单位', minWidth: 120,align:'center'},
+                    {field: 'invoiceMoney', title: '金额', minWidth: 95,align:'center'},
+                    {field: 'currencyName', title: '币种', minWidth: 80,align:'center'},
+                    {field: 'taxRateName', title: '税率', minWidth: 120,align:'center'},
+                    {field: 'taxRateMoney', title: '税额', minWidth: 120,align:'center'},
+                    {field: 'registration', title: '登记人', minWidth: 95,align:'center'},
+                    {field: 'registrationDate', title: '登记日期', align:'center',templet:'<div>{{ layui.util.toDateString(d.registrationDate, "yyyy-MM-dd HH:mm:ss") }}</div>', minWidth: 160, sort: true},
+                    {field: 'invoiceRemarks', title: '备注',minWidth: 80,align:'center'}
+                ]]
+            });
+        }
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+
+        function deletePurchaseInvoice(invoiceNumbers) {
+            febs.get(ctx + 'purchaseInvoice/delete/' + invoiceNumbers, null, function () {
+                febs.alert.success('删除采购参数成功');
+                $query.click();
+            });
+        }
+
+    })
+
+    function dblclickInvoiceSupplierList(){
+        layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
+            let $ = layui.$,
+                febs = layui.febs;
+            febs.modal.open('供应商选择列表', 'purchase/dblclickInvoiceSupplierList', {
+                area:["55%","60%"],
+                yes: function (index, layero) {
+                }
+
+            });
+        });
+    }
+
+</script>

@@ -80,4 +80,12 @@ public class PurchaseSettlementServiceImpl extends ServiceImpl<PurchaseSettlemen
     public void cancelPurchaseSettlement(String ids) {
         baseMapper.cancelPurchaseSettlement(ids);
     }
+
+    @Override
+    public IPage<PurchaseSettlementSchedule> purchaseSettlementAddQuery(QueryRequest request, PurchaseSettlementSchedule purchaseSettlementSchedule) {
+        Page<PurchaseSettlementSchedule> page = new Page<>(request.getPageNum(), request.getPageSize());
+        page.setSearchCount(false);
+        page.setTotal(baseMapper.countPurchaseSettlementAddQuery(purchaseSettlementSchedule));
+        return baseMapper.purchaseSettlementAddQuery(page,purchaseSettlementSchedule);
+    }
 }

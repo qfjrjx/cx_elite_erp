@@ -32,4 +32,8 @@ public interface PurchaseSettlementMapper extends BaseMapper<PurchaseSettlement>
     void settlementPurchaseSettlement(String ids);
 
     void cancelPurchaseSettlement(String ids);
+
+    long countPurchaseSettlementAddQuery(@Param("purchaseSettlementSchedule") PurchaseSettlementSchedule purchaseSettlementSchedule);
+
+    IPage<PurchaseSettlementSchedule> purchaseSettlementAddQuery(@Param("purchaseSettlementSchedule") Page<PurchaseSettlementSchedule> page, PurchaseSettlementSchedule purchaseSettlementSchedule);
 }

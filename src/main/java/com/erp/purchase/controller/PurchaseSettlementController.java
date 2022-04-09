@@ -124,4 +124,18 @@ public class PurchaseSettlementController extends BaseController {
         this.purchaseSettlementService.cancelPurchaseSettlement(ids);
         return new FebsResponse().success();
     }
+
+    /**
+     * 采购发票，根据供应商进行查询
+     * @param request
+     * @param purchaseSettlementSchedule
+     * @return
+     */
+    @GetMapping("purchaseSettlement/listQuery")
+    @ResponseBody
+    @RequiresPermissions("purchaseSettlement:view")
+    public FebsResponse purchaseSettlementAddQuery(QueryRequest request, PurchaseSettlementSchedule purchaseSettlementSchedule) {
+        Map<String, Object> dataTable = getDataTable(this.purchaseSettlementService.purchaseSettlementAddQuery(request,purchaseSettlementSchedule));
+        return new FebsResponse().success().data(dataTable);
+    }
 }

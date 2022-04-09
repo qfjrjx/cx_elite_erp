@@ -1,0 +1,342 @@
+<style>
+    #purchaseInvoice-add xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="purchaseInvoice-add" lay-title="采购发票">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="purchaseInvoice-add-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md10">
+                                <div class="layui-form-item">
+                                    <label class="layui-form-mid">单位&nbsp;<b>:</b></label>
+                                    <div class="layui-input-inline" style="width: 145px">
+                                        <input type="text" name="invoiceSupplierAdd" id="invoiceSupplierAdd" lay-verify="required" ondblclick="dblclickInvoiceSupplierList()"
+                                               autocomplete="off" class="layui-input" placeholder="双击选择" style="width: 145px"  readonly>
+                                    </div>
+                                    <label class="layui-form-mid">日期</label>
+                                    <div class="layui-input-inline" style="width: 100px">
+                                        <input type="text" name="purchaseRequisitionDate" id="purchaseRequisitionDate"
+                                               autocomplete="off" class="layui-input createDate" readonly>
+                                    </div>
+                                    <label class="layui-form-mid">发票号&nbsp;<b>:</b></label>
+                                    <div class="layui-input-inline" style="width: 145px">
+                                        <input type="text" id="invoiceNumbers" name="invoiceNumbers" autocomplete="off" class="layui-input">
+                                    </div>
+                                    <label class="layui-form-mid">币&nbsp;种&nbsp;<b>:</b></label>
+                                    <div class="layui-input-inline" style="width: 90px">
+                                        <select id="currencyNameAdd"  name="currencyNameAdd" lay-verify="required" class="layui-form-select" >
+                                            <option th:each="currency:${currency}" th:value="${currency.id}">[[${currency.financeParameterName}]]</option>
+                                        </select>
+                                    </div>
+                                    <label class="layui-form-mid">税&nbsp;率&nbsp;<b>:</b></label>
+                                    <div class="layui-input-inline" style="width: 85px">
+                                        <select id="taxRateNameAdd"  name="taxRateNameAdd" lay-verify="required" class="layui-form-select" >
+                                            <option th:each="taxRate:${taxRate}" th:value="${taxRate.id}">[[${taxRate.financeParameterName}]]</option>
+                                        </select>
+                                    </div>
+                                    <label class="layui-form-mid">发票数量&nbsp;<b>:</b></label>
+                                    <div class="layui-input-inline" style="width: 120px">
+                                        <input type="text" id="invoiceAmount"  name="invoiceAmount" autocomplete="off" class="layui-input">
+                                    </div>
+                                    <br>
+                                    <br>
+                                    <label class="layui-form-mid">发票金额&nbsp;<b>:</b></label>
+                                    <div class="layui-input-inline" style="width: 120px">
+                                        <input type="text" id="invoiceMoney" name="invoiceMoney" autocomplete="off" class="layui-input">
+                                    </div>
+                                    <label class="layui-form-mid">选择数量&nbsp;<b>:</b></label>
+                                    <div class="layui-input-inline" style="width: 120px">
+                                        <input type="text" name="storageName" autocomplete="off" class="layui-input">
+                                    </div>
+                                    <label class="layui-form-mid">选择金额&nbsp;<b>:</b></label>
+                                    <div class="layui-input-inline" style="width: 120px">
+                                        <input type="text" name="storageSpecifications" autocomplete="off" class="layui-input">
+                                    </div>
+                                    <label class="layui-form-mid">税额&nbsp;<b>:</b></label>
+                                    <div class="layui-input-inline" style="width: 120px">
+                                        <input type="text" name="storageSpecifications" autocomplete="off" class="layui-input">
+                                    </div>
+                                    <label class="layui-form-mid">发票备注&nbsp;<b>:</b></label>
+                                    <div class="layui-input-inline" style="width: 200px">
+                                        <input type="text" id="invoiceRemarks" name="invoiceRemarks" autocomplete="off" class="layui-input">
+                                    </div>
+                                    <br>
+                                    <br>
+                                    <label class="layui-form-mid layui-form-label-sm">口径</label>
+                                    <div class="layui-input-inline">
+                                        <select name="invoiceState">
+                                            <option value=""></option>
+                                            <option value="1">采购退回</option>
+                                            <option value="2">采购入库</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md2 layui-col-sm12 layui-col-xs12 table-action-area">
+                                <!--搜索按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                                    <i class="layui-icon">&#xe848;</i>查询
+                                </div>
+                                <!--添加按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action " id="addTo">
+                                    <i class="layui-icon">&#xe78a;</i>确定
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="purchaseInvoiceAdd" id="purchaseInvoiceAdd" lay-data="{id: 'purchaseInvoiceAdd'}"></table>
+                    <br>
+                    <table lay-filter="purchaseInvoiceAdd-table" id="purchaseInvoiceAdd-table" lay-data="{id: 'purchaseInvoiceAdd-table'}"></table>
+                    <div class="layui-form-item febs-hide">
+                        <button class="layui-btn" lay-submit="" lay-filter="purchaseInvoice-add-form-submit" id="submit"></button>
+                        <button type="reset" class="layui-btn" id="reset"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="invoiceUse-state">
+    {{#
+    let invoiceUse = {
+    1: {title: '采购退回'},
+    2: {title: '采购入库'}
+    }[d.invoiceUse];
+    }}
+    <span>{{ invoiceUse.title }}</span>
+</script>
+<script type="text/html" id="settlementUse-state">
+    {{#
+    let settlementUse = {
+    1: {title: '采购退回'},
+    2: {title: '采购入库'}
+    }[d.settlementUse];
+    }}
+    <span>{{ settlementUse.title }}</span>
+</script>
+<script langguage="JavaScript">
+    var now = new Date();
+    purchaseRequisitionDate.value=new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate();
+    var deliveryDateTo = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate();
+</script>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect' , 'validate'], function () {
+        let $ = layui.jquery,
+            laydate = layui.laydate,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            layer = layui.layer,
+            $view = $('#purchaseInvoice-add'),
+            $query = $view.find('#query'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'createDate', type: null},
+            createdDateFrom,
+            createdDateTo,
+            tableIns;
+
+        form.render();
+
+        initTable();
+
+        let userName = currentUser.username;
+
+        $query.on('click', function () {
+            layui.table(initTable());
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        table.on('rowDouble(purchaseInvoiceAdd)', function (obj) {
+            var data = obj.data;
+            var settlementDate = data.settlementDate;
+            var settlementNumber = data.settlementNumber;
+            var settlementUse = data.settlementUse;
+            var settlementCode = data.settlementCode;
+            var settlementSpecifications = data.settlementSpecifications;
+            var settlementQuantity = data.settlementQuantity;
+            var settlementPrice = data.settlementPrice;
+            var settlementMoney = data.settlementMoney;
+            $.ajax({
+                url: '/saleOrder/random',
+                success : function(data) {
+                    var random = data.data;
+                    var oldData =  table.cache["purchaseInvoiceAdd-table"];
+                    var dataOne={"invoiceDate":settlementDate,
+                        "invoiceCode":settlementNumber,"invoiceUse":settlementUse,
+                        "invoiceName":settlementCode,"invoiceSpecifications":settlementSpecifications,
+                        "invoiceQuantity":settlementQuantity,"taxPrice":settlementPrice,
+                        "invoiceMoney":settlementMoney};
+                    oldData.push(dataOne);
+                    layui.table.reload('purchaseInvoiceAdd-table',{
+                        data : oldData
+                    });
+                }
+            });
+        });
+        var tableData=new Array(); // 用于存放表格数据
+        function initTable() {
+            tableIns = febs.table.init({
+                elem: '#purchaseInvoiceAdd',
+                id: 'purchaseInvoiceAdd',
+                url: ctx + 'purchaseSettlement/listQuery/',
+                where:{
+                    settlementSupplier:$('#invoiceSupplierAdd').val()
+                },
+                cols: [
+                    [
+                        {type: 'checkbox'},
+                        {field: 'settlementDate', title: '日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.settlementDate, "yyyy-MM-dd") }}</div>', minWidth: 180},
+                        {field: 'settlementNumber', title: '单号',align:'center', minWidth: 150},
+                        {title: '口径', templet: '#settlementUse-state',align:'center',width:100},
+                        {field: 'settlementCode', title: '物料名称',align:'center', minWidth: 150},
+                        {field: 'settlementSpecifications', title: '规格型号',align:'center', minWidth: 100},
+                        {field: 'settlementQuantity', title: '数量',align:'center', minWidth: 60},
+                        {field: 'settlementPrice', title: '含税单价',align:'center', minWidth: 100},
+                        /* {field: 'meteringCompany', title: '最近采购单价',align:'center', minWidth: 100},*/
+                        {field: 'settlementMoney', title: '含税金额',align:'center',minWidth: 80,edit: true},
+                        {
+                            field: 'settlementPrice',
+                            title: '不含税单价',
+                            minWidth: 55,
+                            align: 'center',
+                            templet: function (data) {
+                                var price = parseFloat(data.settlementPrice).toFixed(2); //设置小数点后个数
+                                return price;
+                            }
+                        },
+                        //{field: 'refundMoney', title: '金额',align:'center', minWidth: 80},
+                        {
+                            field: 'settlementMoney',
+                            title: '不含税金额',
+                            minWidth: 55,
+                            align: 'center',
+                            templet: function (data) {
+                                var price = parseFloat(data.settlementMoney).toFixed(2); //设置小数点后个数
+                                return price;
+                            }
+                        },
+                        {field: 'settlementQuantity', title: '开票数量',align:'center', minWidth: 80},
+                        {field: 'settlementMoney', title: '开票金额',align:'center', minWidth: 80}
+                    ]
+                ]
+            });
+        };
+
+        table.render({
+            elem:'#purchaseInvoiceAdd-table',
+            data:tableData,
+            cols: [[
+                {type: 'checkbox'},
+                {field: 'invoiceDate', title: '日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.settlementDate, "yyyy-MM-dd") }}</div>', minWidth: 180},
+                {field: 'invoiceCode', title: '单号',align:'center', minWidth: 150},
+                {title: '口径', templet: '#invoiceUse-state',align:'center',width:100},
+                {field: 'invoiceName', title: '物料名称',align:'center', minWidth: 150},
+                {field: 'invoiceSpecifications', title: '规格型号',align:'center', minWidth: 100},
+                {field: 'invoiceQuantity', title: '数量',align:'center', minWidth: 60},
+                {field: 'taxPrice', title: '含税单价',align:'center', minWidth: 100},
+                /* {field: 'meteringCompany', title: '最近采购单价',align:'center', minWidth: 100},*/
+                {field: 'invoiceMoney', title: '含税金额',align:'center',minWidth: 80,edit: true},
+                {
+                    field: 'taxPrice',
+                    title: '不含税单价',
+                    minWidth: 55,
+                    align: 'center',
+                    templet: function (data) {
+                        var price = parseFloat(data.taxPrice).toFixed(2); //设置小数点后个数
+                        return price;
+                    }
+                },
+                //{field: 'refundMoney', title: '金额',align:'center', minWidth: 80},
+                {
+                    field: 'invoiceMoney',
+                    title: '不含税金额',
+                    minWidth: 55,
+                    align: 'center',
+                    templet: function (data) {
+                        var price = parseFloat(data.invoiceMoney).toFixed(2); //设置小数点后个数
+                        return price;
+                    }
+                },
+                {field: 'invoiceQuantity', title: '开票数量',align:'center', minWidth: 80},
+                {field: 'invoiceMoney', title: '开票金额',align:'center', minWidth: 80}
+            ]]
+        });
+
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            let signedTime = params.signedTime;
+            if (signedTime) {
+                createdDateFrom = signedTime.split(' - ')[0];
+                createdDateTo = signedTime.split(' - ')[1];
+            }
+            params.createdDateFrom = createdDateFrom;
+            params.createdDateTo = createdDateTo;
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+
+        form.on('submit(purchaseInvoice-add-form-submit)', function (data) {
+            var invoiceSupplier = $('#invoiceSupplierAdd').val();
+            var purchaseRequisitionDate = $('#purchaseRequisitionDate').val();
+            var currencyName = $('#currencyNameAdd').val();
+            var taxRateName = $('#taxRateNameAdd').val();
+            var invoiceAmount = $('#invoiceAmount').val();
+            var invoiceMoney = $('#invoiceMoney').val();
+            var invoiceRemarks = $('#invoiceRemarks').val();
+            var invoiceNumbers = $('#invoiceNumbers').val();
+            let dataThree = new Array();
+            let purchaseRefundTable =  table.cache["purchaseInvoiceAdd-table"];
+            for (i=0;i<purchaseRefundTable.length;i++){
+                let dataOne={
+                    "invoiceDate":purchaseRefundTable[i].invoiceDate,
+                    "invoiceCode":purchaseRefundTable[i].invoiceCode,
+                    "invoiceUse":purchaseRefundTable[i].invoiceUse,
+                    "invoiceName":purchaseRefundTable[i].invoiceName,
+                    "invoiceSpecifications":purchaseRefundTable[i].invoiceSpecifications,
+                    "invoiceQuantity":purchaseRefundTable[i].invoiceQuantity,
+                    "taxPrice":purchaseRefundTable[i].taxPrice,
+                    "invoiceMoney":purchaseRefundTable[i].invoiceMoney
+                };
+                dataThree.push(dataOne);
+            }
+            let entity = {userName:userName,invoiceSupplier: invoiceSupplier,purchaseRequisitionDate:purchaseRequisitionDate,
+                currencyName: currencyName,taxRateName:taxRateName,invoiceAmount:invoiceAmount,invoiceMoney:invoiceMoney,
+                invoiceRemarks:invoiceRemarks,invoiceNumbers:invoiceNumbers}
+            $.ajax({
+                url: '/purchaseInvoice/add',
+                type:"post",
+                data: {purchaseInvoice:JSON.stringify(entity),dataTable:JSON.stringify(dataThree)},
+                success : function(res) {
+                    layer.closeAll();
+                    $('#purchaseInvoice-list').find('#query').click();
+                    var dataBak = [];
+                    layui.table.reload('purchaseInvoiceTable',{
+                        data:dataBak
+                    });
+                }
+            });
+            return false;
+        });
+
+
+    })
+
+    function dblclickInvoiceSupplierList(){
+        layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
+            let $ = layui.$,
+                febs = layui.febs;
+            febs.modal.open('供应商选择列表', 'purchase/dblclickInvoiceSupplierList', {
+                area:["55%","60%"],
+                yes: function (index, layero) {
+                }
+
+            });
+        });
+    }
+</script>

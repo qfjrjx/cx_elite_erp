@@ -44,6 +44,8 @@ public class ViewController {
     private final IPurchaseInspectionService purchaseInspectionService;
     //采购退货表 Service接口
     private final IPurchaseRefundService purchaseRefundService;
+    //采购发票表 Service接口
+    private final IPurchaseInvoiceService purchaseInvoiceService;
 
 
     /*采购管理模块-采购档案开始*/
@@ -564,4 +566,63 @@ public class ViewController {
     }
 
     /*采购管理模块-采购结算结束*/
+
+    /*采购管理模块-采购发票开始*/
+
+    @GetMapping("purchaseInvoice/list")
+    @RequiresPermissions("purchaseInvoice:view")
+    public String purchaseInvoiceIndex(){
+        return FebsUtil.view("purchaseInvoice/purchaseInvoiceList");
+    }
+
+    //供应商 双击跳到供应商选择列表页面  添加时用到
+    @GetMapping("dblclickInvoiceSupplierList")
+    @RequiresPermissions("purchaseSettlement:view")
+    public String dblclickInvoiceSupplierList(Model model) {
+
+        return FebsUtil.view("purchaseInvoice/purchaseSupplierSelectionList");
+    }
+
+    /*采购发票查阅*/
+    @GetMapping("purchaseInvoice/queryup/{invoiceNumbers}")
+    @RequiresPermissions("purchaseInvoice:reading")
+    public String purchaseInvoiceQueryupList(@PathVariable String invoiceNumbers,Model model){
+        purchaseInvoiceModel(invoiceNumbers, model, false);
+        return FebsUtil.view("purchaseInvoice/purchaseInvoiceQueryup");
+    }
+
+    //采购发票查阅回填
+    private void purchaseInvoiceModel(String invoiceNumbers, Model model, Boolean transform) {
+        PurchaseInvoice purchaseInvoice = this.purchaseInvoiceService.findPurchaseInvoiceQueryPage(invoiceNumbers);
+        model.addAttribute("purchaseInvoice", purchaseInvoice);
+    }
+
+    /*采购发票新增*/
+    @GetMapping("purchaseInvoice/add")
+    @RequiresPermissions("purchaseInvoice:add")
+    public String purchaseInvoiceAdd(Model model){
+        //查询币种信息
+        List<FinanceParameters> currency  = financeParametersService.queryCurrencyInformation(FinanceParameters.CURRENCY);
+        model.addAttribute("currency",currency);
+        //查询税率信息
+        List<FinanceParameters> taxRate  = financeParametersService.queryCurrencyInformation(FinanceParameters.TAX_RATE);
+        model.addAttribute("taxRate",taxRate);
+        return FebsUtil.view("purchaseInvoice/purchaseInvoiceAdd");
+    }
+
+    //采购发票修改
+    @GetMapping("purchaseInvoice/update/{invoiceNumbers}")
+    @RequiresPermissions("purchaseInvoice:update")
+    public String purchaseInvoiceUpdate(@PathVariable String invoiceNumbers, Model model) {
+        //查询币种信息
+        List<FinanceParameters> currency  = financeParametersService.queryCurrencyInformation(FinanceParameters.CURRENCY);
+        model.addAttribute("currency",currency);
+        //查询税率信息
+        List<FinanceParameters> taxRate  = financeParametersService.queryCurrencyInformation(FinanceParameters.TAX_RATE);
+        model.addAttribute("taxRate",taxRate);
+        purchaseInvoiceModel(invoiceNumbers, model, false);
+        return FebsUtil.view("purchaseInvoice/purchaseInvoiceUpdate");
+    }
+
+    /*采购管理模块-采购发票结束*/
 }

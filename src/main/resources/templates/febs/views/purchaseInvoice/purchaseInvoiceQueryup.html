@@ -1,0 +1,142 @@
+<style>
+    #purchaseInvoice-queryup {
+        padding: 20px 25px 25px 0;
+    }
+</style>
+<div class="layui-fluid" id="purchaseInvoice-queryup">
+    <form class="layui-form" action="" lay-filter="purchaseInvoice-queryup-form">
+        <div class="layui-form-item">
+            <label class="layui-form-mid" >供应商&nbsp;<b>:</b></label>
+            <div class="layui-input-inline" style="width: 115px">
+                <input type="text" name="invoiceSupplier" id="invoiceSupplier" style="width: 115px"
+                       autocomplete="off" class="layui-input" placeholder="为空时自动生成" readonly>
+            </div>
+            <label class="layui-form-mid" >日期&nbsp;<b>:</b></label>
+            <div class="layui-input-inline" style="width: 115px">
+                <input type="text" name="invoiceDate" id="invoiceDate" style="width: 115px"
+                       autocomplete="off" class="layui-input" placeholder="为空时自动生成" readonly>
+            </div>
+            <label class="layui-form-mid" >发票号&nbsp;<b>:</b></label>
+            <div class="layui-input-inline" style="width: 115px">
+                <input type="text" name="invoiceNumbers" id="invoiceNumbers" style="width: 115px"
+                       autocomplete="off" class="layui-input" placeholder="为空时自动生成" readonly>
+            </div>
+            <label class="layui-form-mid" >币种&nbsp;<b>:</b></label>
+            <div class="layui-input-inline" style="width: 115px">
+                <input type="text" name="currencyName" id="currencyName" style="width: 115px"
+                       autocomplete="off" class="layui-input" placeholder="为空时自动生成" readonly>
+            </div>
+            <label class="layui-form-mid" >税率&nbsp;<b>:</b></label>
+            <div class="layui-input-inline" style="width: 115px">
+                <input type="text" name="taxRateName" id="taxRateName" style="width: 115px"
+                       autocomplete="off" class="layui-input" placeholder="为空时自动生成" readonly>
+            </div>
+            <label class="layui-form-mid" >发票数量&nbsp;<b>:</b></label>
+            <div class="layui-input-inline" style="width: 115px">
+                <input type="text" name="invoiceAmount" id="invoiceAmount" style="width: 115px"
+                       autocomplete="off" class="layui-input" placeholder="为空时自动生成" readonly>
+            </div>
+            <label class="layui-form-mid" >发票金额&nbsp;<b>:</b></label>
+            <div class="layui-input-inline" style="width: 115px">
+                <input type="text" name="taxMoneySum" id="taxMoneySum" style="width: 115px"
+                       autocomplete="off" class="layui-input" placeholder="为空时自动生成" readonly>
+            </div>
+            <label class="layui-form-mid" >选择数量&nbsp;<b>:</b></label>
+            <div class="layui-input-inline" style="width: 115px">
+                <input type="text" name="invoiceQuantitySum" id="invoiceQuantitySum" style="width: 115px"
+                       autocomplete="off" class="layui-input" placeholder="为空时自动生成" readonly>
+            </div>
+            <label class="layui-form-mid" >选择金额&nbsp;<b>:</b></label>
+            <div class="layui-input-inline" style="width: 115px">
+                <input type="text" name="taxMoney" id="taxMoney" style="width: 115px"
+                       autocomplete="off" class="layui-input" placeholder="为空时自动生成" readonly>
+            </div>
+            <label class="layui-form-mid" >税额&nbsp;<b>:</b></label>
+            <div class="layui-input-inline" style="width: 115px">
+                <input type="text" name="" id="" style="width: 115px"
+                       autocomplete="off" class="layui-input" placeholder="为空时自动生成" readonly>
+            </div>
+            <br>
+            <br>
+        </div>
+        <table lay-filter="purchaseInvoiceQueryup" id="purchaseInvoiceQueryup" lay-data="{id: 'purchaseInvoiceQueryup'}"></table>
+    </form>
+</div>
+<script type="text/html" id="invoiceUse-state">
+    {{#
+    let invoiceUse = {
+    1: {title: '采购入库'},
+    2: {title: '委外加工'}
+    }[d.invoiceUse];
+    }}
+    <span>{{ invoiceUse.title }}</span>
+</script>
+<script data-th-inline="javascript">
+    layui.use(['form', 'validate','table'], function () {
+        let $ = layui.$,
+            form = layui.form,
+            validate = layui.validate,
+            table = layui.table,
+            purchaseInvoice = [[${purchaseInvoice}]],
+            purchaseRequisitionDate = [[${purchaseRequisitionDate}]];
+
+        form.verify(validate);
+        form.render();
+        initPurchaseRequisitionCreatorValue();
+
+        var invoiceDateTurn = layui.util.toDateString(purchaseInvoice.invoiceDate, "yyyy-MM-dd")
+
+        function initPurchaseRequisitionCreatorValue() {
+            form.val("purchaseInvoice-queryup-form", {
+                "invoiceNumbers": purchaseInvoice.invoiceNumbers,
+                "invoiceSupplier":purchaseInvoice.invoiceSupplier,
+                "currencyName":purchaseInvoice.currencyName,
+                "taxRateName":purchaseInvoice.taxRateName,
+                "invoiceDate":purchaseInvoice.invoiceDate,
+                "invoiceAmount": purchaseInvoice.invoiceAmount,
+                "taxMoneySum":purchaseInvoice.taxMoneySum,
+                "taxMoney":purchaseInvoice.taxMoneySum,
+                "invoiceQuantitySum":purchaseInvoice.invoiceQuantitySum,
+                "purchaseRequisitionDate": purchaseRequisitionDate
+            });
+        }
+
+        var tableData= new Array(); // 用于存放表格数据
+        $.ajax({
+            url: 'purchaseInvoice/query'
+            ,data:{"invoiceNumbers":purchaseInvoice.invoiceNumbers}
+            ,async:false
+            ,dataType:"json"
+            , success: function(data){
+                tableData=data.replies;
+            }
+        });
+
+        table.render({
+            elem: "#purchaseInvoiceQueryup",
+            data:tableData,
+            cols: [
+                [
+                    {field:'number',title:'序号',align:'center',width:60,templet:function (d) {
+                            return d.LAY_INDEX;}},
+                    {field: 'invoiceDate',title: '入库日期',align:'center', minWidth: 145,event:'choice'},
+                    {field: 'invoiceCode', title: '入库单号',align:'center', minWidth: 90},
+                    {title: '口径', templet: '#invoiceUse-state',align:'center',width:150},
+                    {field: 'invoiceName',title: '物料名称', minWidth: 55,align:'center'},
+                    {field: 'invoiceSpecifications',title: '规格型号', minWidth: 55,align:'center'},
+                    {field: 'invoiceQuantity',title: '入库数量', minWidth: 55,align:'center'},
+                    {field: 'taxPrice',title: '结算单价', minWidth: 50,align:'center',templet:function (data) {
+                            var price = parseFloat(data.taxPrice).toFixed(2); //设置小数点后个数
+                            return price;}},
+                    {field: 'taxMoney',title: '结算金额', minWidth: 50,align:'center',templet:function (data) {
+                            var price = parseFloat(data.taxMoney).toFixed(2); //设置小数点后个数
+                            return price;}},
+                    {field: 'invoiceAmount', edit:true,title: '开票数量',minWidth: 55,align:'center',align:'center'},
+                    {field: 'invoiceMoney',title: '开票金额', minWidth: 55,align:'center',templet:function (data) {
+                            var price = parseFloat(data.invoiceMoney).toFixed(2); //设置小数点后个数
+                            return price;}}
+                ]
+            ]
+        });
+    })
+</script>

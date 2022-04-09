@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.purchase.mapper.PurchaseInvoiceMapper">
+
+    <sql id="countPurchaseInvoicesSql">
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_purchase_invoice
+        WHERE
+            1 = 1
+    </sql>
+
+    <sql id="findPurchaseInvoicesPageSql">
+        SELECT
+            pi.id,
+            sum(pis.invoice_quantity) invoiceQuantitySum,
+            sum(pis.tax_money)taxMoneySum,
+            pis.invoice_amount,
+            pi.invoice_state,
+            pi.invoice_date,
+            pi.invoice_numbers,
+            pi.invoice_supplier,
+            sum(pis.invoice_money) invoiceMoney,
+            fpa.finance_parameter_name currencyName,
+            fpb.finance_parameter_name taxRateName,
+            pi.tax_rate_money,
+            pi.registration,
+            pi.registration_date,
+            pi.invoice_remarks
+        FROM
+            jr_purchase_invoice pi
+                LEFT JOIN jr_purchase_invoice_schedule pis ON ( pi.invoice_numbers = pis.invoice_numbers )
+                LEFT JOIN jr_finance_parameters fpa ON ( pi.currency_id = fpa.id )
+                LEFT JOIN jr_finance_parameters fpb ON ( pi.tax_rate_id = fpb.id )
+        WHERE
+            1 = 1
+        <if test="purchaseInvoice.invoiceState != null and purchaseInvoice.invoiceState != ''">
+            AND pi.invoice_state = #{purchaseInvoice.invoiceState}
+        </if>
+        <if test="purchaseInvoice.invoiceNumbers != null and purchaseInvoice.invoiceNumbers != ''">
+            AND pi.invoice_numbers = #{purchaseInvoice.invoiceNumbers}
+        </if>
+        <if test="purchaseInvoice.invoiceSupplier != null and purchaseInvoice.invoiceSupplier != ''">
+            AND pi.invoice_supplier = #{purchaseInvoice.invoiceSupplier}
+        </if>
+        <if test="purchaseInvoice.currencyId != null and purchaseInvoice.currencyId != ''">
+            AND pi.currency_id = #{purchaseInvoice.currencyId}
+        </if>
+        <if test="purchaseInvoice.taxRateId != null and purchaseInvoice.taxRateId != ''">
+            AND pi.tax_rate_id = #{purchaseInvoice.taxRateId}
+        </if>
+        GROUP BY
+            pi.invoice_numbers
+    </sql>
+
+    <select id="countPurchaseInvoice" parameterType="com.erp.purchase.entity.PurchaseInvoice" resultType="long">
+        <include refid="countPurchaseInvoicesSql"/>
+    </select>
+
+    <select id="findPurchaseInvoicePage" parameterType="com.erp.purchase.entity.PurchaseInvoice" resultType="com.erp.purchase.entity.PurchaseInvoice">
+        <include refid="findPurchaseInvoicesPageSql"/>
+    </select>
+
+    <!--查阅回显-->
+    <select id="findPurchaseInvoiceQueryPage" parameterType="String" resultType="com.erp.purchase.entity.PurchaseInvoice">
+        SELECT
+            pi.id,
+            sum(pis.invoice_quantity) invoiceQuantitySum,
+            sum(pis.tax_money)taxMoneySum,
+            sum(pis.invoice_amount)invoiceAmount,
+            pi.invoice_state,
+            pi.invoice_date,
+            pi.invoice_numbers,
+            pi.invoice_supplier,
+            sum(pis.invoice_money) invoiceMoney,
+            fpa.finance_parameter_name currencyName,
+            fpb.finance_parameter_name taxRateName,
+            pi.tax_rate_money,
+            pi.registration,
+            pi.registration_date,
+            pi.invoice_remarks
+        FROM
+            jr_purchase_invoice pi
+                LEFT JOIN jr_purchase_invoice_schedule pis ON ( pi.invoice_numbers = pis.invoice_numbers )
+                LEFT JOIN jr_finance_parameters fpa ON ( pi.currency_id = fpa.id )
+                LEFT JOIN jr_finance_parameters fpb ON ( pi.tax_rate_id = fpb.id )
+        WHERE
+            1 = 1
+        AND pi.invoice_numbers = #{invoiceNumbers}
+        GROUP BY
+            pi.invoice_numbers
+    </select>
+
+
+    <select id="queryPurchaseInvoiceSchedule" parameterType="String" resultType="com.erp.purchase.entity.PurchaseInvoiceSchedule">
+        SELECT
+            pis.id,
+            pis.invoice_date,
+            pis.invoice_code,
+            pis.invoice_use,
+            pis.invoice_name,
+            pis.invoice_specifications,
+            pis.invoice_quantity,
+            pis.tax_price,
+            pis.tax_money,
+            pis.tax_no_price,
+            pis.tax_no_money,
+            pis.invoice_amount,
+            pis.invoice_money,
+            pis.invoice_numbers
+        FROM
+            jr_purchase_invoice_schedule pis
+        WHERE
+            pis.invoice_numbers = #{invoiceNumbers}
+    </select>
+
+    <insert id="savePurchaseInvoiceData" parameterType="com.erp.purchase.entity.PurchaseInvoice">
+        INSERT INTO
+            jr_purchase_invoice
+        (
+            invoice_state,
+            invoice_date,
+            invoice_numbers,
+            invoice_supplier,
+            currency_id,
+            tax_rate_id,
+            tax_rate_money,
+            registration,
+            registration_date,
+            invoice_remarks
+        )
+        VALUES
+            (
+                #{invoiceState},
+                #{invoiceDate},
+                #{invoiceNumbers},
+                #{invoiceSupplier},
+                #{currencyId},
+                #{taxRateId},
+                #{taxRateMoney},
+                #{registration},
+                #{registrationDate},
+                #{invoiceRemarks}
+            )
+    </insert>
+
+    <insert id="savePurchaseInvoiceSchedule" parameterType="com.erp.purchase.entity.PurchaseInvoiceSchedule">
+        INSERT INTO
+            jr_purchase_invoice_schedule
+        (
+            invoice_date,
+            invoice_code,
+            invoice_use,
+            invoice_name,
+            invoice_specifications,
+            invoice_quantity,
+            tax_price,
+            tax_money,
+            tax_no_price,
+            tax_no_money,
+            invoice_amount,
+            invoice_money,
+            invoice_numbers
+        )
+        VALUES
+            (
+                #{invoiceDate},
+                #{invoiceCode},
+                #{invoiceUse},
+                #{invoiceName},
+                #{invoiceSpecifications},
+                #{invoiceQuantity},
+                #{taxPrice},
+                #{taxMoney},
+                #{taxNoPrice},
+                #{taxNoMoney},
+                #{invoiceAmount},
+                #{invoiceMoney},
+                #{invoiceNumbers}
+            )
+    </insert>
+
+    <!-- 删除附表数据 -->
+    <delete id="deletePurchaseInvoiceSchedule">
+        delete from jr_purchase_invoice_schedule  where invoice_numbers = #{invoiceNumbers}
+    </delete>
+
+    <!-- 删除数据 -->
+    <delete id="deletePurchaseInvoice">
+        delete from jr_purchase_invoice  where invoice_numbers = #{invoiceNumbers}
+    </delete>
+</mapper>

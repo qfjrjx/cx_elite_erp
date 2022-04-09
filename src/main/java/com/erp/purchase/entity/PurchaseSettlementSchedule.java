@@ -1,12 +1,12 @@
 package com.erp.purchase.entity;
 
-import java.math.BigDecimal;
-
-import lombok.Data;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
+
+import java.math.BigDecimal;
 
 /**
  * 采购结算_附表 Entity
@@ -100,4 +100,18 @@ public class PurchaseSettlementSchedule {
     @TableField("settlement_number")
     private String settlementNumber;
 
+    /**
+     *日期
+     */
+    private String settlementDate;
+
+    /**
+     *口径
+     */
+    private String settlementUse;
+
+    /**
+     *供应商
+     */
+    private String settlementSupplier;
 }
