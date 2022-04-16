@@ -2,8 +2,6 @@ package com.erp.sale.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.erp.common.entity.QueryRequest;
-import com.erp.personnel.entity.PersonnelDormitory;
-import com.erp.sale.entity.SaleApplication;
 import com.erp.sale.entity.SaleOrder;
 import com.erp.sale.mapper.SaleOrderMapper;
 import com.erp.sale.service.ISaleOrderService;
@@ -26,7 +24,7 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * 销售订单表 Service实现
+ * saleApplicationAll-table表 Service实现
  *
  * @author qiufeng
  * @date 2021-10-14 09:39:45

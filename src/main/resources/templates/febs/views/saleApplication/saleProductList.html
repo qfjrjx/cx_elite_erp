@@ -1,9 +1,9 @@
 <style>
-    #febs-saleProduct xm-select {
+    #update-saleProduct xm-select {
         min-height: 30px;
         line-height: 30px;
     }
-    #febs-saleProduct xm-select > .xm-label .scroll .label-content {
+    #update-saleProduct xm-select > .xm-label .scroll .label-content {
         display: flex;
         padding: 0 30px 0 10px;
     }
@@ -11,12 +11,19 @@
         width: 160px;
     }
 </style>
-<div class="layui-fluid layui-anim febs-anim" id="febs-saleProduct" lay-title="产品信息">
+<div class="layui-fluid layui-anim febs-anim" id="update-saleProduct" lay-title="产品信息">
     <div class="layui-row febs-container">
         <div class="layui-col-md12">
             <div class="layui-card">
                 <div class="layui-card-body febs-table-full">
                     <form class="layui-form layui-table-form" lay-filter="parameter-table-form">
+                        <div class="layui-form-item febs-hide">
+                            <label class="layui-form-label febs-form-item-require">赋值索引</label>
+                            <div class="layui-input-inline" style="width: 120px">
+                                <input type="text" name="rowIndex" id="rowIndex" data-th-value="${rowIndex}"
+                                       autocomplete="off" class="layui-input" readonly>
+                            </div>
+                        </div>
                         <div class="layui-row">
                             <div class="layui-col-md10">
                                 <div class="layui-form-item">
@@ -89,7 +96,7 @@
             form = layui.form,
             table = layui.table,
             dropdownMenu = layui.dropdownMenu,
-            $view = $('#febs-saleProduct'),
+            $view = $('#update-saleProduct'),
             $query = $view.find('#query'),
             $reset = $view.find('#reset'),
             $addTo = $view.find('#addTo'),
@@ -114,17 +121,7 @@
             click: function (name, elem, event) {
                 let checkStatus = table.checkStatus('saleProductTable');
                 if (name === 'delete') {
-                    if (!checkStatus.data.length) {
-                        febs.alert.warn('请选择需要删除的数据');
-                    } else {
-                        febs.modal.confirm('删除领取记录信息', '确定删除？', function () {
-                            let ids = [];
-                            layui.each(checkStatus.data, function (key, item) {
-                                ids.push(item.id)
-                            });
-                            deleteSaleProduct(ids.join(','));
-                        });
-                    }
+
                 }
             },
             options: []
@@ -164,14 +161,13 @@
             tableIns.reload({where: params, page: {curr: 1}});
         });
         $addTo.on('click', function () {
-            var oldDatas;
-            var parameterProductName = document.getElementById("parameterProductName");//获取产品名称
+            var parameterProductName = document.getElementById("applicationProductName");//获取产品名称
             var parameterProductNames = parameterProductName.value;
-            var parameterOnes = document.getElementById("parameterOne");
-            var parameterTwo = document.getElementById("parameterTwo");
-            var parameterThree = document.getElementById("parameterThree");
-            var parameterFour = document.getElementById("parameterFour");
-            oldDataDel =  table.cache["deviceweihu-table"];
+            var parameterOnes = document.getElementById("applicationParameterOneTo");//获取配置
+            var parameterTwo = document.getElementById("applicationParameterTwoTo");//获取单位
+            var parameterThree = document.getElementById("applicationParameterThreeTo");//获取数量
+            var parameterFour = document.getElementById("applicationParameterFourTo");//获取说明
+            oldDataDel =  table.cache["saleApplicationUpdate-table"];
             var dateList = [];//存储未选中的数据
             //循环表格数据
             for (var i in oldDataDel) {
@@ -182,21 +178,21 @@
                 }
             }
             //重载表格
-            table.reload('deviceweihu-table', {
+            table.reload('saleApplicationUpdate-table', {
                 data: dateList
             });
             var oldData =  table.cache["saleProduct-table"];
-            var dataOneAdd;
-            var oldDatas =  table.cache["deviceweihu-table"];
+            var dataOneUpdate;
+            let oldDatas =  table.cache["saleApplicationUpdate-table"];
             for (i=0;i<oldData.length;i++){
-                if (parameterProductNames !=null && parameterProductNames != "" &&　i < 1){
-                    dataOneAdd={"productName":oldData[i].productNames,"specificationModel":oldData[i].specificationModels,"parameterOption":parameterOnes.value,"companyName":parameterTwo.value,"quantityName":parameterThree.value,"explainName":parameterFour.value};
+                if(parameterProductNames !=null && parameterProductNames != "" &&　i < 1){
+                    dataOneUpdate={"productName":oldData[i].productNames,"specificationModel":oldData[i].specificationModels,"configureName":parameterOnes.value,"companyName":parameterTwo.value,"quantityName":parameterThree.value,"explainName":parameterFour.value};
                 }else {
-                    dataOneAdd={"productName":oldData[i].productNames,"specificationModel":oldData[i].specificationModels,"parameterOption":"","companyName":"","quantityName":"","explainName":""};
+                    dataOneUpdate={"productName":oldData[i].productNames,"specificationModel":oldData[i].specificationModels,"configureName":"","companyName":"","quantityName":"","explainName":""};
                 }
-                oldDatas.push(dataOneAdd);
+                oldDatas.push(dataOneUpdate);
             }
-            layui.table.reload('deviceweihu-table',{
+            layui.table.reload('saleApplicationUpdate-table',{
                 data : oldDatas
             });
             parent.layer.close(layer.index)

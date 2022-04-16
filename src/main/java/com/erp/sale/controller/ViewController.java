@@ -5,7 +5,6 @@ import com.erp.common.utils.DateUtil;
 import com.erp.common.utils.FebsUtil;
 import com.erp.finance.entity.FinanceParameters;
 import com.erp.finance.service.IFinanceParametersService;
-import com.erp.personnel.entity.PersonnelParameters;
 import com.erp.sale.entity.*;
 import com.erp.sale.service.*;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -224,8 +222,8 @@ public class ViewController {
     //销售申请页面配置信息回填
     private void saleApplicationConfigureViewModel(Long id, Model model, Boolean transform) {
 
-        SaleApplication saleApplication = saleApplicationService.findSaleApplicationConfigureViewById(id);
-        model.addAttribute("saleApplicationConfigureView", saleApplication);
+        SaleApplicationSchedule saleApplicationSchedule = saleApplicationService.findSaleApplicationConfigureViewById(id);
+        model.addAttribute("saleApplicationConfigureView", saleApplicationSchedule);
     }
     //跳转到销售订单页面
     @GetMapping("saleOrderList")
@@ -290,6 +288,11 @@ public class ViewController {
         if (saleApplicationOne.getRequestedDeliveryDate() != null) {
             model.addAttribute("deliveryDate", DateUtil.getDateFormat(saleApplicationOne.getRequestedDeliveryDate(), DateUtil.FULL_TIME_SPLIT));
         }
+    }
+    //跳转到销售申请修改下产品编码选择列表页面
+    @GetMapping("saleProductListUpdate")
+    public String saleProductListUpdate(Model model){
+        return FebsUtil.view("saleApplication/saleProductList");
     }
 
     //销售申请设计回复

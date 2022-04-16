@@ -12,7 +12,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
  * 销售申请表 Entity
  *
  * @author qiufeng
- * @date 2021-10-14 09:51:32
+ * @date 2022-03-23 17:37:36
  */
 @Data
 @TableName("jr_sale_application")
@@ -30,8 +30,6 @@ public class SaleApplication {
     @TableField("requested_delivery_date")
     private Date requestedDeliveryDate;
 
-    private transient String signedDateFrom;
-    private transient String signedDateTo;
     /**
      * 申请单号
      */
@@ -57,42 +55,16 @@ public class SaleApplication {
     private String salesmanName;
 
     /**
-     * 
-
-产品名称
-     */
-    @TableField("product_name")
-    private String productName;
-
-    /**
-     * 规格型号
-     */
-    @TableField("specification_model")
-    private String specificationModel;
-
-    /**
-     * 配置
-     */
-    @TableField("configure_name")
-    private String configureName;
-
-    /**
-     * 单位
-     */
-    @TableField("company_name")
-    private String companyName;
-
-    /**
-     * 数量
-     */
-    @TableField("quantity_name")
-    private Integer quantityName;
-
-    /**
      * 附件
      */
     @TableField("enclosure_name")
     private String enclosureName;
+
+    /**
+     * 创建时间
+     */
+    @TableField("create_date")
+    private Date createDate;
 
     /**
      * 设计交期
@@ -141,69 +113,5 @@ public class SaleApplication {
      */
     @TableField("assembling_reply")
     private String assemblingReply;
-
-    /**
-     * 说明
-     */
-    @TableField("explain_name")
-    private String explainName;
-
-    /**
-     * 机器要求
-     */
-    @TableField("machine_requirements")
-    private String machineRequirements;
-
-    /**
-     * 电脑配置
-     */
-    @TableField("computer_configuration")
-    private String computerConfiguration;
-
-    /**
-     * 刀具大小
-     */
-    @TableField("tool_size")
-    private String toolSize;
-    /**
-     * 每小时产量
-     */
-    @TableField("hourly_production")
-    private String hourlyProduction;
-    /**
-     * 加工工序
-     */
-    @TableField("processing_procedure")
-    private String processingProcedure;
-
-    /**
-     * 夹具要求
-     */
-    @TableField("fixture_requirements")
-    private String fixtureRequirements;
-
-    /**
-     * 产品形状
-     */
-    @TableField("product_shape")
-    private String productShape;
-
-    /**
-     * 产品尺寸
-     */
-    @TableField("product_size")
-    private String productSize;
-
-    /**
-     * 其他要求
-     */
-    @TableField("other_requirements")
-    private String otherRequirements;
-
-    /**
-     * 创建日期
-     */
-    @TableField("create_date")
-    private Date createDate;
 
 }

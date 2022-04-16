@@ -1,7 +1,6 @@
 package com.erp.technology.service.impl;
 
 import com.erp.common.entity.QueryRequest;
-import com.erp.sale.entity.SaleApplication;
 import com.erp.technology.entity.TechnologyProductCategory;
 import com.erp.technology.mapper.TechnologyProductCategoryMapper;
 import com.erp.technology.service.ITechnologyProductCategoryService;

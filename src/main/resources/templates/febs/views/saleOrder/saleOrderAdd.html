@@ -195,7 +195,7 @@
                             cols: [
                                      [
                                          {type: 'checkbox'},
-                                         {field: 'uniqueNumber',title: '唯一编号',hide:true,minWidth: 95},
+                                         {field: 'uniqueNumber',title: '唯一编号',minWidth: 95},
                                          {field: 'productName',title: '产品名称', minWidth: 95,event:'choice'},
                                          {field: 'specificationModel', title: '规格型号', minWidth: 90},
                                          {field: 'configureName', title: '配置', minWidth: 90,event:'specificationTo'
@@ -402,26 +402,13 @@
             }
         });
         form.on('submit(saleOrderAdd-add-form-submit)', function (data) {
-           var dataBak = [];
-           var tableBak = layui.table.cache['saleOrder-table'];
-           console.log(tableBak);
-           for (var i=0;i<tableBak.length; i++){
-               dataBak.push(tableBak[i]);
-           }
-           dataBak.push({
-               "productName":"",
-               "specificationModel":"",
-               "configureName":"",
-               "companyName":"",
-               "quantityName":"0",
-               "unitPrice":"0.00",
-               "amountMoney":"0.00",
-               "deliveryTime":deliveryDateTo,
-               "orderRemarks":"",
-           });
-           console.log(dataBak);
+            var timestamp = new Date().getTime();
+           var oldDate = layui.table.cache['saleOrder-table'];
+          var dataNew = { "uniqueNumber":timestamp, "productName":"","specificationModel":"","configureName":"","companyName":"",
+              "quantityName":"0", "unitPrice":"0.00","amountMoney":"0.00","deliveryTime":deliveryDateTo,"orderRemarks":"",};
+            oldDate.push(dataNew);
            layui.table.reload('saleOrder-table',{
-               data:dataBak
+               data:oldDate
            });
             return false;
 

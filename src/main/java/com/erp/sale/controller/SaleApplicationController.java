@@ -5,7 +5,7 @@ import com.erp.common.entity.FebsConstant;
 import com.erp.common.entity.FebsResponse;
 import com.erp.common.entity.QueryRequest;
 import com.erp.common.utils.FebsUtil;
-import com.erp.sale.entity.SaleApplication;
+import com.erp.sale.entity.SaleApplicationAll;
 import com.erp.sale.service.ISaleApplicationService;
 import com.wuwenze.poi.ExcelKit;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.text.ParseException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,23 +44,23 @@ public class SaleApplicationController extends BaseController {
     @GetMapping("saleApplication")
     @ResponseBody
     @RequiresPermissions("saleApplication:list")
-    public FebsResponse getAllSaleApplications(SaleApplication saleApplication) {
-        return new FebsResponse().success().data(saleApplicationService.findSaleApplications(saleApplication));
+    public FebsResponse getAllSaleApplications(SaleApplicationAll saleApplicationAll) {
+        return new FebsResponse().success().data(saleApplicationService.findSaleApplications(saleApplicationAll));
     }
     //列表查询
     @GetMapping("saleApplication/list")
     @ResponseBody
     @RequiresPermissions("saleApplication:view")
-    public FebsResponse saleApplicationList(QueryRequest request, SaleApplication saleApplication) {
-        Map<String, Object> dataTable = getDataTable(this.saleApplicationService.findSaleApplications(request, saleApplication));
+    public FebsResponse saleApplicationList(QueryRequest request, SaleApplicationAll saleApplicationAll) {
+        Map<String, Object> dataTable = getDataTable(this.saleApplicationService.findSaleApplications(request, saleApplicationAll));
         return new FebsResponse().success().data(dataTable);
     }
 
     @ControllerEndpoint(operation = "新增SaleApplication", exceptionMessage = "新增SaleApplication失败")
     @PostMapping("saleApplication/add")
     @ResponseBody
-    public FebsResponse addSaleApplication (@RequestParam String requestedDeliveryDate,@RequestParam String customerName,@RequestParam String salesmanName,@RequestParam String dataTable,@RequestParam String contImg) throws Exception {
-        this.saleApplicationService.addSaleApplication(requestedDeliveryDate,customerName,salesmanName,dataTable,contImg);
+    public FebsResponse addSaleApplication (@RequestParam String saleApplication,@RequestParam String dataTable,@RequestParam String contImg) throws Exception {
+        this.saleApplicationService.addSaleApplication(saleApplication,dataTable,contImg);
         return new FebsResponse().success();
     }
 
@@ -67,8 +68,8 @@ public class SaleApplicationController extends BaseController {
     @GetMapping("saleApplication/delete")
     @ResponseBody
     @RequiresPermissions("saleApplication:delete")
-    public FebsResponse deleteSaleApplication(SaleApplication saleApplication) {
-        this.saleApplicationService.deleteSaleApplication(saleApplication);
+    public FebsResponse deleteSaleApplication(SaleApplicationAll saleApplicationAll) {
+        this.saleApplicationService.deleteSaleApplication(saleApplicationAll);
         return new FebsResponse().success();
     }
 
@@ -76,8 +77,8 @@ public class SaleApplicationController extends BaseController {
     @PostMapping("saleApplication/update")
     @ResponseBody
     @RequiresPermissions("saleApplication:update")
-    public FebsResponse updateSaleApplication(SaleApplication saleApplication) {
-        this.saleApplicationService.updateSaleApplication(saleApplication);
+    public FebsResponse updateSaleApplication(@RequestParam String saleApplicationData,@RequestParam String dataTable,@RequestParam String contImg) throws ParseException {
+        this.saleApplicationService.updateSaleApplication(saleApplicationData,dataTable,contImg);
         return new FebsResponse().success();
     }
 
@@ -85,17 +86,23 @@ public class SaleApplicationController extends BaseController {
     @PostMapping("saleApplication/excel")
     @ResponseBody
     @RequiresPermissions("saleApplication:export")
-    public void export(QueryRequest queryRequest, SaleApplication saleApplication, HttpServletResponse response) {
-        List<SaleApplication> saleApplications = this.saleApplicationService.findSaleApplications(queryRequest, saleApplication).getRecords();
-        ExcelKit.$Export(SaleApplication.class, response).downXlsx(saleApplications, false);
+    public void export(QueryRequest queryRequest, SaleApplicationAll saleApplicationAll, HttpServletResponse response) {
+        List<SaleApplicationAll> saleApplicationAlls = this.saleApplicationService.findSaleApplications(queryRequest, saleApplicationAll).getRecords();
+        ExcelKit.$Export(SaleApplicationAll.class, response).downXlsx(saleApplicationAlls, false);
     }
 
-    @GetMapping("saleApplications/list/{applicationNoTwo}")
+    @GetMapping("saleApplications/list")
     @ResponseBody
     @RequiresPermissions("saleApplication:view")
-    public FebsResponse saleApplicationsList(QueryRequest request,@PathVariable String applicationNoTwo) {
-        Map<String, Object> dataTable = getDataTable(this.saleApplicationService.saleApplicationsList(request, applicationNoTwo));
-        return new FebsResponse().success().data(dataTable);
+    public Map saleApplicationsList(@RequestParam String applicationNoTwo) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        try {
+            List<SaleApplicationAll> saleApplicationAlls = this.saleApplicationService.saleApplicationsList(applicationNoTwo);
+            map.put("replies", saleApplicationAlls);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return map;
     }
 
     @ControllerEndpoint(operation = "设计回复SaleApplication", exceptionMessage = "设计回复SaleApplication失败")

@@ -1,11 +1,9 @@
 package com.erp.enterprise.service.impl;
 
 import com.erp.common.entity.QueryRequest;
-import com.erp.enterprise.entity.EnterpriseDocumentAnnouncement;
 import com.erp.enterprise.entity.EnterprisePerformanceDaily;
 import com.erp.enterprise.mapper.EnterprisePerformanceDailyMapper;
 import com.erp.enterprise.service.IEnterprisePerformanceDailyService;
-import com.erp.sale.entity.SaleApplication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.annotation.Propagation;

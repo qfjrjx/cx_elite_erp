@@ -1,9 +1,9 @@
 <style>
-    #febs-saleApplication xm-select {
+    #febs-saleApplicationAll xm-select {
         min-height: 30px;
         line-height: 30px;
     }
-    #febs-saleApplication xm-select > .xm-label .scroll .label-content {
+    #febs-saleApplicationAll xm-select > .xm-label .scroll .label-content {
         display: flex;
         padding: 0 30px 0 10px;
     }
@@ -11,7 +11,7 @@
         width: 160px;
     }
 </style>
-<div class="layui-fluid layui-anim febs-anim" id="febs-saleApplication" lay-title="销售申请">
+<div class="layui-fluid layui-anim febs-anim" id="febs-saleApplicationAll" lay-title="销售申请">
     <div class="layui-row febs-container">
         <div class="layui-col-md12">
             <div class="layui-card">
@@ -54,15 +54,15 @@
                                     <i class="layui-icon">&#xe79b;</i>刷新
                                 </div>
                                 <!--添加按钮-->
-                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "shiro:hasAnyPermissions="saleApplication:add" id="addTo">
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "shiro:hasAnyPermissions="saleApplicationAll:add" id="addTo">
                                     <i class="layui-icon">&#xe78a;</i>添加
                                 </div>
                                 <!--删除按钮-->
-                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "shiro:hasAnyPermissions="saleApplication:delete" id="deleteTo">
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "shiro:hasAnyPermissions="saleApplicationAll:delete" id="deleteTo">
                                     <i class="layui-icon">&#xe8a1;</i>删除
                                 </div>
                                 <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action action-more"
-                                     shiro:hasAnyPermissions="saleApplication:export" id="exportTo">
+                                     shiro:hasAnyPermissions="saleApplicationAll:export" id="exportTo">
                                     <i class="layui-icon">&#xe7a8;</i>导出
                                 </div>
                             </div>
@@ -93,12 +93,12 @@
     <span class="layui-badge febs-bg-{{salaryState.color}}">{{ salaryState.title }}</span>
 </script>
 <script type="text/html" id="parameter-option">
-    <span shiro:lacksPermission="saleApplication:list,saleApplication:update,saleApplication:delete">
+    <span shiro:lacksPermission="saleApplicationAll:list,saleApplicationAll:update,saleApplicationAll:delete">
         <span class="layui-badge-dot febs-bg-orange"></span> 无权限
     </span>
-    <a lay-event="edit" shiro:hasPermission="saleApplication:update"><i
+    <a lay-event="edit" shiro:hasPermission="saleApplicationAll:update"><i
             class="layui-icon febs-edit-area febs-blue">&#xe7a4;</i></a>
-    <a lay-event="del" shiro:hasPermission="saleApplication:delete"><i class="layui-icon febs-edit-area febs-red">&#xe7f9;</i></a>
+    <a lay-event="del" shiro:hasPermission="saleApplicationAll:delete"><i class="layui-icon febs-edit-area febs-red">&#xe7f9;</i></a>
 </script>
 <script data-th-inline="none" type="text/javascript">
     layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
@@ -108,7 +108,7 @@
             form = layui.form,
             table = layui.table,
             dropdownMenu = layui.dropdownMenu,
-            $view = $('#febs-saleApplication'),
+            $view = $('#febs-saleApplicationAll'),
             $query = $view.find('#query'),
             $addTo = $view.find('#addTo'),
             $deleteTo = $view.find('#deleteTo'),
@@ -151,11 +151,11 @@
             options: [{
                 name: 'add',
                 title: '新增',
-                perms: 'saleApplication:add'
+                perms: 'saleApplicationAll:add'
             }, {
                 name: 'delete',
                 title: '删除',
-                perms: 'saleApplication:delete'
+                perms: 'saleApplicationAll:delete'
             }]
         });
         table.on('tool(saleApplicationTable)', function (obj) {
@@ -167,11 +167,11 @@
                 });
             }
             if (layEvent === 'edit') {
-                febs.modal.open('修改领取记录信息', 'personnel/saleApplication/update/' + data.contractId, {
+                febs.modal.open('修改领取记录信息', 'personnel/saleApplicationAll/update/' + data.contractId, {
                     area: $(window).width() <= 750 ? '90%' : '30%',
                     btn: ['提交', '取消'],
                     yes: function (index, layero) {
-                        $('#saleApplication-update').find('#submit').trigger('click');
+                        $('#saleApplicationAll-update').find('#submit').trigger('click');
                     },
                     btn2: function () {
                         layer.closeAll();
@@ -201,15 +201,15 @@
             tableIns.reload({where: getQueryParams(), page: {curr: 1}});
         });
         $addTo.on('click', function () {
-            febs.modal.open('新增员工调薪记录', 'personnel/saleApplication/add', {
+            febs.modal.open('新增员工调薪记录', 'personnel/saleApplicationAll/add', {
                 type:1,
                 btn: ['提交', '重置'],
                 area: $(window).width() <= 750 ? '95%' : '40%',
                 yes: function (index, layero) {
-                    $('#saleApplication-add').find('#submit').trigger('click');
+                    $('#saleApplicationAll-add').find('#submit').trigger('click');
                 },
                 btn2: function () {
-                    $('#saleApplication-add').find('#reset').trigger('click');
+                    $('#saleApplicationAll-add').find('#reset').trigger('click');
                     $("#mobilityUserId").attr("value","");
                     $("#mobilityGender").attr("value","");
                     $("#mobilityJobNumber").attr("value","");
@@ -240,13 +240,13 @@
             let params = getQueryParams();
             params.pageSize = $view.find(".layui-laypage-limits option:selected").val();
             params.pageNum = $view.find(".layui-laypage-em").next().html();
-            febs.download(ctx + 'saleApplication/excel', params, '员工合同表.xlsx');
+            febs.download(ctx + 'saleApplicationAll/excel', params, '员工合同表.xlsx');
         });
         function initTable() {
             tableIns = febs.table.init({
                 elem: $view.find('table'),
                 id: 'saleApplicationTable',
-                url: ctx + 'saleApplication/list',
+                url: ctx + 'saleApplicationAll/list',
                 cols: [[
                     {type: 'checkbox'},
                     {field:'number',title:'序列号',align:'center',width:80,templet:function (d) {
@@ -279,7 +279,7 @@
 
 
         function deleteSaleApplication(ids) {
-            febs.get(ctx + 'saleApplication/delete/' + ids, null, function () {
+            febs.get(ctx + 'saleApplicationAll/delete/' + ids, null, function () {
                 febs.alert.success('删除调薪记录成功');
                 $query.click();
             });

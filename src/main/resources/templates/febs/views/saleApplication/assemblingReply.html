@@ -1,10 +1,10 @@
 <style>
-    #saleApplication-assemblingReply {
+    #saleApplicationAll-assemblingReply {
         padding: 20px 25px 25px 0;
     }
 </style>
-<div class="layui-fluid" id="saleApplication-assemblingReply">
-    <form class="layui-form" action="" lay-filter="saleApplication-assemblingReply-form">
+<div class="layui-fluid" id="saleApplicationAll-assemblingReply">
+    <form class="layui-form" action="" lay-filter="saleApplicationAll-assemblingReply-form">
         <div class="layui-form-item">
             <label class="layui-form-label febs-form-item-require" >单号</label>
             <div class="layui-input-inline" style="width: 120px">
@@ -40,7 +40,7 @@
         </div>
         <table class="layui-table layui-form" id="assemblingReplyTables" lay-filter="assemblingReplyTables"></table>
         <div class="layui-form-item febs-hide">
-            <button class="layui-btn" lay-submit="" lay-filter="saleApplication-assemblingReply-form-submit" id="submit"></button>
+            <button class="layui-btn" lay-submit="" lay-filter="saleApplicationAll-assemblingReply-form-submit" id="submit"></button>
             <button type="reset" class="layui-btn" id="reset"></button>
         </div>
     </form>
@@ -102,14 +102,21 @@
                 });
             }
         });
-        initSaleApplicationTable();
-        function initSaleApplicationTable() {
-            let applicationNoOne = document.getElementById("applicationNo");
-            let applicationNoTwo = applicationNoOne.value;
-            tableSaleApplication = febs.table.init({
+        var tableData = new Array(); // 用于存放表格数据
+        let applicationNoOne = document.getElementById("applicationNo");
+        let applicationNoTwo = applicationNoOne.value;
+        $.ajax({
+            url: 'saleApplications/list/'
+            ,data:{"applicationNoTwo":applicationNoTwo}
+            ,async:false
+            ,dataType:"json"
+            , success: function(data){
+                tableData=data.replies;
+            }
+        });
+        table.render({
                 elem: "#assemblingReplyTables",
-                id:'assemblingReplyTables',
-                url: ctx + 'saleApplications/list/'+applicationNoTwo,
+                data:tableData,
                 even: true,
                 page:false,
                 cols: [
@@ -126,7 +133,6 @@
                     ]
                 ]
             });
-        }
         table.on('tool(assemblingReplyTables)', function (obj) {
             let data = obj.data,
                 layEvent = obj.event;

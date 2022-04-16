@@ -4,8 +4,6 @@ import com.erp.common.entity.QueryRequest;
 import com.erp.enterprise.entity.EnterpriseDocumentAnnouncement;
 import com.erp.enterprise.mapper.EnterpriseDocumentAnnouncementMapper;
 import com.erp.enterprise.service.IEnterpriseDocumentAnnouncementService;
-import com.erp.finance.entity.FinanceParameters;
-import com.erp.sale.entity.SaleApplication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.annotation.Propagation;

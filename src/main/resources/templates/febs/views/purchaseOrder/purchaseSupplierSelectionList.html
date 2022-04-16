@@ -128,6 +128,7 @@
                         if (supplierName!=null && supplierName!=""){
                             $("#supplierName").attr("value","");
                         }
+                        window.parent.initPurchaseRequisitionTable();
                         $("#supplierName").attr("value",obj.supplierFullName);/*供应商添加回填*/
                         parent.layer.close(layer.index)
                     })

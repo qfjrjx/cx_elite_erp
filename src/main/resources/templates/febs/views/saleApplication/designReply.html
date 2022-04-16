@@ -1,10 +1,10 @@
 <style>
-    #saleApplication-designReply {
+    #saleApplicationAll-designReply {
         padding: 20px 25px 25px 0;
     }
 </style>
-<div class="layui-fluid" id="saleApplication-designReply">
-    <form class="layui-form" action="" lay-filter="saleApplication-designReply-form">
+<div class="layui-fluid" id="saleApplicationAll-designReply">
+    <form class="layui-form" action="" lay-filter="saleApplicationAll-designReply-form">
         <div class="layui-form-item">
             <label class="layui-form-label febs-form-item-require" >单号</label>
             <div class="layui-input-inline" style="width: 120px">
@@ -40,7 +40,7 @@
         </div>
         <table class="layui-table layui-form" id="designReplyTables" lay-filter="designReplyTables"></table>
         <div class="layui-form-item febs-hide">
-            <button class="layui-btn" lay-submit="" lay-filter="saleApplication-designReply-form-submit" id="submit"></button>
+            <button class="layui-btn" lay-submit="" lay-filter="saleApplicationAll-designReply-form-submit" id="submit"></button>
             <button type="reset" class="layui-btn" id="reset"></button>
         </div>
     </form>
@@ -102,32 +102,38 @@
                 });
             }
         });
-        initSaleApplicationTable();
-        function initSaleApplicationTable() {
-            let applicationNoOne = document.getElementById("applicationNo");
-            let applicationNoTwo = applicationNoOne.value;
-            tableSaleApplication = febs.table.init({
-                elem: "#designReplyTables",
-                id:'designReplyTables',
-                url: ctx + 'saleApplications/list/'+applicationNoTwo,
-                even: true,
-                page:false,
-                cols: [
-                    [
-                        {type: 'checkbox'},
-                        {field: 'id', title: '编号',hide:true,sort: true},
-                        {field: 'productName', title: '产品名称', minWidth: 95, event: 'choice'},
-                        {field: 'specificationModel', title: '规格型号', minWidth: 90},
-                        {field: 'configureName', edit: 'text', title: '配置', minWidth: 90, event: 'specification'},
-                        {field: 'companyName', edit: true, title: '单位', minWidth: 55, align: 'center'},
-                        {field: 'quantityName', edit: true, title: '数量', minWidth: 55, align: 'center'},
-                        {field: 'explainName', edit: true, title: '说明', minWidth: 72},
-                        {field: 'designDate',title: '设计交期', minWidth: 72,event: 'designDateOne',templet:'<div>{{ layui.util.toDateString(d.designDate, "yyyy-MM-dd") }}</div>'},
-                        {field: 'designReply', edit: true, title: '设计回复', minWidth: 72}
-                    ]
+        var tableData = new Array(); // 用于存放表格数据
+        let applicationNoOne = document.getElementById("applicationNo");
+        let applicationNoTwo = applicationNoOne.value;
+        $.ajax({
+            url: 'saleApplications/list/'
+            ,data:{"applicationNoTwo":applicationNoTwo}
+            ,async:false
+            ,dataType:"json"
+            , success: function(data){
+                tableData=data.replies;
+            }
+        });
+        table.render({
+            elem: "#designReplyTables",
+            data:tableData,
+            even: true,
+            page:false,
+            cols: [
+                [
+                    {type: 'checkbox'},
+                    {field: 'id', title: '编号',hide:true,sort: true},
+                    {field: 'productName', title: '产品名称', minWidth: 95, event: 'choice'},
+                    {field: 'specificationModel', title: '规格型号', minWidth: 90},
+                    {field: 'configureName', edit: 'text', title: '配置', minWidth: 90, event: 'specification'},
+                    {field: 'companyName', edit: true, title: '单位', minWidth: 55, align: 'center'},
+                    {field: 'quantityName', edit: true, title: '数量', minWidth: 55, align: 'center'},
+                    {field: 'explainName', edit: true, title: '说明', minWidth: 72},
+                    {field: 'designDate',title: '设计交期', minWidth: 72,event: 'designDateOne',templet:'<div>{{ layui.util.toDateString(d.designDate, "yyyy-MM-dd") }}</div>'},
+                    {field: 'designReply', edit: true, title: '设计回复', minWidth: 72}
                 ]
-            });
-        }
+            ]
+        });
         table.on('tool(designReplyTables)', function (obj) {
               let data = obj.data,
                  layEvent = obj.event;

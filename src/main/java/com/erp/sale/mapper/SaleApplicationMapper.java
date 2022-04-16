@@ -2,12 +2,15 @@ package com.erp.sale.mapper;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.erp.personnel.entity.PersonnelDormitory;
 import com.erp.sale.entity.SaleApplication;
+import com.erp.sale.entity.SaleApplicationAll;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.erp.sale.entity.SaleApplicationReply;
+import com.erp.sale.entity.SaleApplicationSchedule;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * 销售申请表 Mapper
@@ -16,23 +19,21 @@ import org.apache.ibatis.annotations.Param;
  * @date 2021-10-14 09:51:32
  */
 @Mapper
-public interface SaleApplicationMapper extends BaseMapper<SaleApplication> {
+public interface SaleApplicationMapper extends BaseMapper<SaleApplicationAll> {
 
-    long countSaleApplication(@Param("saleApplication") SaleApplication saleApplication);
+    long countSaleApplication(@Param("saleApplicationAll") SaleApplicationAll saleApplicationAll);
 
-    IPage<SaleApplication> findSaleApplicationPage(Page<SaleApplication> page,@Param("saleApplication") SaleApplication saleApplication);
+    IPage<SaleApplicationAll> findSaleApplicationPage(Page<SaleApplicationAll> page, @Param("saleApplicationAll") SaleApplicationAll saleApplicationAll);
 
-    void addSaleApplication(SaleApplication saleApplication);
+    void addSaleApplicationSchedule(SaleApplicationSchedule saleApplicationSchedule);
+
+    void addSaleApplication(SaleApplication saleApplicationDate);
 
     int quantityNameStatistics();
 
-    SaleApplication findSaleApplicationConfigureViewById(@Param("id") Long id);
+    SaleApplicationSchedule findSaleApplicationConfigureViewById(@Param("id") Long id);
 
     SaleApplication findSaleApplicationById(@Param("id") Long id);
-
-    long countSaleApplicationsList(@Param("applicationNoTwo") String applicationNoTwo);
-
-    IPage<SaleApplication> findSaleApplicationsPage(Page<SaleApplication> page,@Param("applicationNoTwo") String applicationNoTwo);
 
     void addSaleApplicationReply(SaleApplicationReply saleApplicationReply);
 
@@ -49,6 +50,14 @@ public interface SaleApplicationMapper extends BaseMapper<SaleApplication> {
     void saleApplicationProductionReply(@Param("id")String id,@Param("productionDate") String productionDate,@Param("productionReply") String productionReply);
     //根据得到的参数修改数据库表 装配回复
     void saleApplicationAssemblingReply(@Param("id")String id,@Param("assemblingDate") String assemblingDate,@Param("assemblingReply") String assemblingReply);
+    //修改回显
+    List<SaleApplicationAll> saleApplicationsList(@Param("applicationNoTwo") String applicationNoTwo);
     //查询出最后一个销售申请单号
     SaleApplication querySaleApplication();
+    //修改之前删除附表数据
+    void deleteSaleApplication(@Param("applicationNo") String applicationNo);
+    //删除之前的数据之后，点击修改添加新的数据
+    void saveSaleApplicationSchedule(SaleApplicationSchedule saleApplicationSchedule);
+    //修改销售申请数据库主表
+    void updateSaleApplication(SaleApplication saleApplication);
 }

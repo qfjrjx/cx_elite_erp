@@ -219,7 +219,7 @@
                 layEvent = obj.event;
             let fileName = data.enclosureName;
                if (layEvent === 'see') {
-                  febs.modal.view(data.specificationModel, 'sale/saleApplication/detail/' + data.id, {
+                  febs.modal.view(data.specificationModel, 'sale/saleApplication/detail/' + data.scheduleId, {
                       btn: ['关闭'],
                       area: $(window).width() <= 750 ? '95%' : '50%',
                       yes: function (index, layero) {
@@ -234,7 +234,7 @@
                    window.open("/saleDocumentFile/Preview?filePath="+ fileName  );
                }
                if (layEvent === 'design') {
-                   febs.modal.view('【销售申请】设计回复', 'sale/saleApplication/design/' + data.id, {
+                   febs.modal.view('【销售申请】设计回复', 'sale/saleApplication/design/' + data.scheduleId, {
                        btn: ['关闭'],
                        area: $(window).width() <= 750 ? '95%' : '30%',
                        yes: function (index, layero) {
@@ -243,7 +243,7 @@
                    });
                }
                if (layEvent === 'purchaseReply') {
-                   febs.modal.view('【销售申请】采购回复', 'sale/saleApplication/purchase/' + data.id, {
+                   febs.modal.view('【销售申请】采购回复', 'sale/saleApplication/purchase/' + data.scheduleId, {
                        btn: ['关闭'],
                        area: $(window).width() <= 750 ? '95%' : '30%',
                        yes: function (index, layero) {
@@ -252,7 +252,7 @@
                    });
                }
                if (layEvent === 'productionReply') {
-                   febs.modal.view('【销售申请】生产回复', 'sale/saleApplication/production/' + data.id, {
+                   febs.modal.view('【销售申请】生产回复', 'sale/saleApplication/production/' + data.scheduleId, {
                        btn: ['关闭'],
                        area: $(window).width() <= 750 ? '95%' : '30%',
                        yes: function (index, layero) {
@@ -261,7 +261,7 @@
                    });
                }
                if (layEvent === 'assemblingReply') {
-                   febs.modal.view('【销售申请】装配回复', 'sale/saleApplication/assembling/' + data.id, {
+                   febs.modal.view('【销售申请】装配回复', 'sale/saleApplication/assembling/' + data.scheduleId, {
                        btn: ['关闭'],
                        area: $(window).width() <= 750 ? '95%' : '30%',
                        yes: function (index, layero) {
@@ -333,27 +333,9 @@
                     });
                   return false;
                 },
-                btn4: function () {
-                    var salesmanNames = document.getElementById("personnelNameOne");
-                    var contImg = document.getElementById("span-img").innerText;
-                    var dataThree = new Array();
-                    var transferData = document.getElementById("transferData");
-                    var customerNameTwo = document.getElementById("customerNameTwo");
-                    var deviceweihuTable =  table.cache["deviceweihu-table"];
-                    for (i=0;i<deviceweihuTable.length;i++){
-                        var dataOne={"productName":deviceweihuTable[i].productName,"specificationModel":deviceweihuTable[i].specificationModel,"parameterOption":deviceweihuTable[i].parameterOption,"companyName":deviceweihuTable[i].companyName,"quantityName":deviceweihuTable[i].quantityName,"explainName":deviceweihuTable[i].explainName};
-                        dataThree.push(dataOne);
-                    }
-                    $.ajax({
-                        url: '/saleApplication/add',
-                        type:"post",
-                        data: {requestedDeliveryDate: transferData.value,customerName:customerNameTwo.value,salesmanName:salesmanNames.value,dataTable:JSON.stringify(dataThree),contImg:contImg},
-                        success : function(res) {
-                            //$query.click();
-                            parent.location.reload();
-                        }
-                    });
-                    layer.closeAll();
+                btn4: function (index, layero) {
+                    $('#saleApplication-add').find('#submitData').trigger('click');
+                    return false;
                 },
                 btn5: function () {
                     layer.closeAll();
@@ -372,26 +354,44 @@
                         area: ["80%","60%"],
                         btn: ['增加行','删除行','全部删除','保存', '关闭'],
                         yes: function (index, layero) {
-                            var dataBak = [];   //定义一个空数组,用来存储之前编辑过的数据已经存放新数据
-                            var tableBak =  table.cache["saleApplication-table"]; //获取之前编辑过的全部数据，前提是编辑数据是要更新缓存，stock_add_table 为表格的id
-                            for (var i = 0; i < tableBak.length; i++) {
-                                dataBak.push(tableBak[i]);      //将之前的数组备份
-                            }
-                            //在尾部新增一行空数据，实现增行效果
-                            dataBak.push({
-                                "productName":"",
-                                "specificationModel":"",
-                                "configureName":"",
-                                "companyName":"",
-                                "quantityName":"",
-                                "explainName":""
-                            });
-                            table.reload("saleApplication-table",{
-                                data:dataBak   // 将新数据重新载入表格
-                            })
-                            return false;
+                            $('#saleApplication-update').find('#submit').trigger('click');
                         },
                         btn2: function () {
+                            let checkStatus = table.checkStatus('saleApplicationUpdate-table')
+                                , checkStatusDate = table.cache["saleApplicationUpdate-table"];//获取表格中的数据
+                            if (checkStatus.data.length < 1) {
+                                layer.alert("请选择一条数据操作");
+                                return false;
+                            }else {
+                                var dateList = [];//存储未选中的数据
+                                //循环表格数据
+                                for (var i in checkStatusDate) {
+                                    //判断未选中数据
+                                    if (!checkStatusDate[i].LAY_CHECKED) {
+                                        //存入数组
+                                        dateList.push(checkStatusDate[i]);
+                                    }
+                                }
+                                //重载表格
+                                table.reload('saleApplicationUpdate-table', {
+                                    data: dateList
+                                });
+
+                            }
+                            return false;
+                        },
+                        btn3: function () {
+                            var dataBak = [];
+                            layui.table.reload('saleApplicationUpdate-table',{
+                                data:dataBak
+                            });
+                            return false;
+                        },
+                        btn4: function () {
+                            $('#saleApplication-update').find('#submitData').trigger('click');
+                            return false;
+                        },
+                        btn5: function () {
                             layer.closeAll();
                         }
                     });
@@ -415,7 +415,7 @@
                             var designReply = new Array();
                              let designReplyTables =  table.cache["designReplyTables"];
                             for (i=0;i<designReplyTables.length;i++){
-                                var dataFour={"id":designReplyTables[i].id,"designDate":designReplyTables[i].designDate,"designReply":designReplyTables[i].designReply};
+                                var dataFour={"id":designReplyTables[i].scheduleId,"designDate":designReplyTables[i].designDate,"designReply":designReplyTables[i].designReply};
                                 designReply.push(dataFour);
                             }
                             $.ajax({
@@ -451,7 +451,7 @@
                             var purchaseReply = new Array();
                             let purchaseReplyTables =  table.cache["purchaseReplyTables"];
                             for (i=0;i<purchaseReplyTables.length;i++){
-                                var dataFour={"id":purchaseReplyTables[i].id,"purchaseDate":purchaseReplyTables[i].purchaseDate,"purchaseReply":purchaseReplyTables[i].purchaseReply};
+                                var dataFour={"id":purchaseReplyTables[i].scheduleId,"purchaseDate":purchaseReplyTables[i].purchaseDate,"purchaseReply":purchaseReplyTables[i].purchaseReply};
                                 purchaseReply.push(dataFour);
                             }
                             $.ajax({
@@ -487,7 +487,7 @@
                             var productionReply = new Array();
                             let productionReplyTables =  table.cache["productionReplyTables"];
                             for (i=0;i<productionReplyTables.length;i++){
-                                var dataSeven={"id":productionReplyTables[i].id,"productionDate":productionReplyTables[i].productionDate,"productionReply":productionReplyTables[i].productionReply};
+                                var dataSeven={"id":productionReplyTables[i].scheduleId,"productionDate":productionReplyTables[i].productionDate,"productionReply":productionReplyTables[i].productionReply};
                                 productionReply.push(dataSeven);
                             }
                             $.ajax({
@@ -523,7 +523,7 @@
                             var assemblingReply = new Array();
                             let assemblingReplyTables =  table.cache["assemblingReplyTables"];
                             for (i=0;i<assemblingReplyTables.length;i++){
-                                var dataSix={"id":assemblingReplyTables[i].id,"assemblingDate":assemblingReplyTables[i].assemblingDate,"assemblingReply":assemblingReplyTables[i].assemblingReply};
+                                var dataSix={"id":assemblingReplyTables[i].scheduleId,"assemblingDate":assemblingReplyTables[i].assemblingDate,"assemblingReply":assemblingReplyTables[i].assemblingReply};
                                 assemblingReply.push(dataSix);
                             }
                             $.ajax({
@@ -551,7 +551,7 @@
                 page: true,
                 cols: [[
                     {type: 'checkbox'},
-                    {field:'number',title:'', minWidth: 30,align:'center',templet:function (d) {
+                    {field:'number',title:'序号', minWidth: 30,align:'center',templet:function (d) {
                             return d.LAY_INDEX;}},
                     {field: 'id', title: '编号',hide:true,sort: true},
                     {field: 'requestedDeliveryDate', title: '申请交货日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.requestedDeliveryDate, "yyyy-MM-dd") }}</div>', minWidth: 115},
@@ -562,7 +562,7 @@
                     {field: 'specificationModel', title: '规格型号', minWidth: 90},
                     {field: 'configureName', title: '配置', minWidth: 90, templet: dispose},
                     {field: 'companyName', title: '单位', minWidth: 50,align:'center'},
-                    {field: 'quantityName', title: '数量', minWidth: 60,align:'center'},
+                    {field: 'quantityName', title: '数量', minWidth: 50,align:'center'},
                     {title: '附件', minWidth: 90,align:'center',toolbar: '#enclosure-name'},
                     {title: '设计回复', minWidth: 88,align:'center',toolbar: '#design-reply'},
                     {title: '采购回复', minWidth: 88,align:'center',toolbar: '#purchase-reply'},
@@ -593,25 +593,6 @@
             });
         }
 
-        //单击行勾选checkbox事件
-        $(document).on("click",".layui-table-body table.layui-table tbody tr", function () {
-            var index = $(this).attr('data-index');
-            var tableBox = $(this).parents('.layui-table-box');
-            //存在固定列
-            if (tableBox.find(".layui-table-fixed.layui-table-fixed-l").length>0) {
-                tableDiv = tableBox.find(".layui-table-fixed.layui-table-fixed-l");
-            } else {
-                tableDiv = tableBox.find(".layui-table-body.layui-table-main");
-            }
-            var checkCell = tableDiv.find("tr[data-index=" + index + "]").find("td div.laytable-cell-checkbox div.layui-form-checkbox I");
-            if (checkCell.length>0) {
-                checkCell.click();
-            }
-        });
-
-        $(document).on("click", "td div.laytable-cell-checkbox div.layui-form-checkbox", function (e) {
-            e.stopPropagation();
-        });
         function dispose(d) {
             var dispose = d.configureName;
             if ('' == dispose || null == dispose || undefined == dispose) {
