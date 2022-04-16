@@ -98,4 +98,38 @@ public class PurchaseInvoiceSchedule {
      */
     @TableField("invoice_numbers")
     private String invoiceNumbers;
+
+    /**
+     * 已付定金
+     */
+    @TableField("invoice_deposit")
+    private BigDecimal invoiceDeposit;
+
+    /**
+     * 采购订单
+     */
+    @TableField("order_number")
+    private String orderNumber;
+
+    /**
+     * 品牌
+     */
+    @TableField("invoice_brand")
+    private String invoiceBrand;
+
+    /**
+     * 单位
+     */
+    @TableField("invoice_company")
+    private String invoiceCompany;
+
+    /**
+     * 物料编码
+     */
+    @TableField("invoice_coding")
+    private String invoiceCoding;
+
+    private String invoiceSupplier;
+
+    private String invoiceRemarks;
 }

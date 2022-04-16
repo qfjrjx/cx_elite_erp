@@ -235,6 +235,7 @@
             var storageBrand = data.storageBrand;
             var storageSubclass = data.storageSubclass;
             var storageCategory = data.storageCategory;
+            var storageDeposit = data.storageDeposit;
             $.ajax({
                 url: '/saleOrder/random',
                 success : function(data) {
@@ -246,7 +247,7 @@
                         "refundQuality":storageQuality,"refundCompany":storageCompany,
                         "refundPrice":unitPrice,"refundQuantity":storageQuantity,"refundAmount":refundAmount,"refundMoney":storageMoney,
                         "refundRemarks":storageRemarks, "orderNumber":orderNumber, "refundBrand":storageBrand,
-                        "refundSubclass":storageSubclass, "refundCategory":storageCategory};
+                        "refundSubclass":storageSubclass, "refundCategory":storageCategory , "refundDeposit":storageDeposit};
                     oldData.push(dataOne);
                     layui.table.reload('purchaseRefundAdd-table',{
                         data : oldData
@@ -269,7 +270,7 @@
                     "orderQuality":oldData[i].orderQuality,"orderBrand":oldData[i].orderBrand,
                     "orderCompany":oldData[i].orderCompany,"orderQuantity":oldData[i].orderQuantity,
                     "unitPrice":3,"orderMoney":oldData[i].orderMoney,"orderRemarks":oldData[i].orderRemarks,
-                    "refundSubclass":oldData[i].refundSubclass,"refundCategory":oldData[i].refundCategory};
+                    "refundSubclass":oldData[i].refundSubclass,"refundCategory":oldData[i].refundCategory,"refundDeposit":oldData[i].refundDeposit};
                 oldDataOne =  table.cache["purchaseClosedRequisitionList"];
                 oldDataOne.push(dataOne);
             }
@@ -449,7 +450,8 @@
                     "orderNumber":purchaseRefundTable[i].orderNumber,
                     "refundBrand":purchaseRefundTable[i].refundBrand,
                     "refundSubclass":purchaseRefundTable[i].refundSubclass,
-                    "refundCategory":purchaseRefundTable[i].refundCategory
+                    "refundCategory":purchaseRefundTable[i].refundCategory,
+                    "refundDeposit":purchaseRefundTable[i].refundDeposit
                 };
                 dataThree.push(dataOne);
             }

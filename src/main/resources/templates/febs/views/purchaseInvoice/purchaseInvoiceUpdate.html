@@ -176,10 +176,15 @@
             var settlementNumber = data.settlementNumber;
             var settlementUse = data.settlementUse;
             var settlementCode = data.settlementCode;
+            var settlementName = data.settlementName;
+            var settlementBrand = data.settlementBrand;
+            var settlementCompany = data.settlementCompany;
             var settlementSpecifications = data.settlementSpecifications;
             var settlementQuantity = data.settlementQuantity;
             var settlementPrice = data.settlementPrice;
             var settlementMoney = data.settlementMoney;
+            var settlementDeposit = data.settlementDeposit;
+            var orderNumber = data.orderNumber;
             $.ajax({
                 url: '/saleOrder/random',
                 success : function(data) {
@@ -187,9 +192,10 @@
                     var oldData =  table.cache["purchaseInvoiceUpdateList"];
                     var dataOne={"invoiceDate":settlementDate,
                         "invoiceCode":settlementNumber,"invoiceUse":settlementUse,
-                        "invoiceName":settlementCode,"invoiceSpecifications":settlementSpecifications,
+                        "invoiceName":settlementName,"invoiceSpecifications":settlementSpecifications,
                         "invoiceQuantity":settlementQuantity,"taxPrice":settlementPrice,
-                        "invoiceMoney":settlementMoney};
+                        "invoiceMoney":settlementMoney,"invoiceDeposit":settlementDeposit,"orderNumber":orderNumber,
+                        "invoiceBrand":settlementBrand,"invoiceCompany":settlementCompany,"invoiceCoding":settlementCode};
                     oldData.push(dataOne);
                     layui.table.reload('purchaseInvoiceUpdateList',{
                         data : oldData
@@ -309,7 +315,12 @@
                     "invoiceSpecifications":purchaseRefundTable[i].invoiceSpecifications,
                     "invoiceQuantity":purchaseRefundTable[i].invoiceQuantity,
                     "taxPrice":purchaseRefundTable[i].taxPrice,
-                    "invoiceMoney":purchaseRefundTable[i].invoiceMoney
+                    "invoiceMoney":purchaseRefundTable[i].invoiceMoney,
+                    "invoiceDeposit":purchaseRefundTable[i].invoiceDeposit,
+                    "orderNumber":purchaseRefundTable[i].orderNumber,
+                    "invoiceBrand":purchaseRefundTable[i].invoiceBrand,
+                    "invoiceCompany":purchaseRefundTable[i].invoiceCompany,
+                    "invoiceCoding":purchaseRefundTable[i].invoiceCoding
                 };
                 dataThree.push(dataOne);
             }

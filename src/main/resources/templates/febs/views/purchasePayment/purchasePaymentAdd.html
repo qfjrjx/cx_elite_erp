@@ -1,0 +1,336 @@
+<style>
+    #purchasePayment-add {
+        padding: 20px 25px 25px 0;
+    }
+</style>
+<div class="layui-fluid" id="purchasePayment-add">
+    <form class="layui-form" action="" lay-filter="purchasePayment-add-form">
+        <div class="layui-form-item">
+            <label class="layui-form-mid" >付款单号&nbsp;<b>:</b></label>
+            <div class="layui-input-inline" style="width: 115px">
+                <input type="text" name="orderNumber" id="orderNumber" style="width: 115px"
+                       autocomplete="off" class="layui-input" placeholder="为空时自动生成" readonly>
+            </div>
+            <label class="layui-form-mid">付款日期&nbsp;<b>:</b></label>
+            <div class="layui-input-inline" style="width: 100px">
+                <input type="text" name="purchaseRequisitionDate" id="purchaseRequisitionDate"
+                       autocomplete="off" class="layui-input createDate" readonly>
+            </div>
+            <label class="layui-form-mid">单位&nbsp;<b>:</b></label>
+            <div class="layui-input-inline" style="width: 145px">
+                <input type="text" name="paymentSupplier" id="paymentSupplier" lay-verify="required" ondblclick="dblclickPaymentSupplierName()"
+                       autocomplete="off" class="layui-input" placeholder="双击选择" style="width: 145px"  readonly>
+            </div>
+            <label class="layui-form-mid">采购单号&nbsp;<b>:</b></label>
+            <div class="layui-input-inline" style="width: 200px">
+                <input type="text" id="paymentCode" name="paymentCode" autocomplete="off" class="layui-input">
+            </div>
+            <label class="layui-form-mid">付款类型&nbsp;<b>:</b></label>
+            <div class="layui-input-inline" style="width: 85px">
+                <select id="paymentTypeOnt"  name="paymentTypeOnt">
+                    <option value="1">预付</option>
+                    <option value="2">到付</option>
+                </select>
+            </div>
+            <label class="layui-form-mid">付款方式&nbsp;<b>:</b></label>
+            <div class="layui-input-inline" style="width: 85px">
+                <select id="paymentWayOnt"  name="paymentWayOnt">
+                    <option value="1">中行</option>
+                    <option value="2">农行</option>
+                </select>
+            </div>
+            <label class="layui-form-mid">币&nbsp;种&nbsp;<b>:</b></label>
+            <div class="layui-input-inline" style="width: 90px">
+                <select id="currencyNameOnt"  name="currencyNameOnt" lay-verify="required" class="layui-form-select" >
+                    <option th:each="currency:${currency}" th:value="${currency.id}">[[${currency.financeParameterName}]]</option>
+                </select>
+            </div>
+            <br>
+            <br>
+            <br>
+            <label class="layui-form-mid">付款金额&nbsp;<b>:</b></label>
+            <div class="layui-input-inline" style="width: 200px">
+                <input type="text" id="paymentMoney" name="paymentMoney" autocomplete="off" class="layui-input">
+            </div>
+            <label class="layui-form-mid">是否开票&nbsp;<b>:</b></label>
+            <div class="layui-input-inline" style="width: 80px">
+                <select name="paymentInvoice" id="paymentInvoice">
+                    <option value="1">是</option>
+                    <option value="2">否</option>
+                </select>
+            </div>
+            <label class="layui-form-mid">备注&nbsp;<b>:</b></label>
+            <div class="layui-input-inline" style="width: 200px">
+                <input type="text" id="paymentRemarks" name="paymentRemarks" autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-col-md2 layui-col-sm12 layui-col-xs12 table-action-area">
+                <!--搜索按钮-->
+                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                    <i class="layui-icon">&#xe848;</i>查询
+                </div>
+                <!--添加按钮-->
+                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action " id="addTo">
+                    <i class="layui-icon">&#xe78a;</i>确定
+                </div>
+            </div>
+        </div>
+    </form>
+    <table lay-filter="purchasePaymentAdd" id="purchasePaymentAdd" lay-data="{id: 'purchasePaymentAdd'}"></table>
+    <br>
+    <table class="layui-table layui-form" id="purchasePaymentAdd-table" lay-filter="purchasePaymentAdd-table"></table>
+    <div class="layui-form-item febs-hide">
+        <button class="layui-btn" lay-submit="" lay-filter="purchasePayment-add-form-submit" id="submit"></button>
+        <button type="reset" class="layui-btn" id="reset"></button>
+    </div>
+</div>
+<script langguage="JavaScript">
+    var now = new Date();
+    purchaseRequisitionDate.value=new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate();
+    var deliveryDateTo = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate();
+</script>
+<script>
+    layui.use(['jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect' , 'validate'], function () {
+        let $ = layui.jquery,
+            laydate = layui.laydate,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            layer = layui.layer,
+            $view = $('#purchasePayment-add'),
+            $query = $view.find('#query'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'createDate', type: null},
+            createdDateFrom,
+            createdDateTo,
+            tableIns;
+
+        form.render();
+
+        initTable();
+
+        let userName = currentUser.username;
+
+        var tableData=new Array(); // 用于存放表格数据
+        $query.on('click', function () {
+            layui.table(initTable());
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        table.on('rowDouble(purchasePaymentAdd)', function (obj) {
+            var data = obj.data;
+            var invoiceDate = data.invoiceDate;
+            var invoiceNumbers = data.invoiceNumbers;
+            var invoiceMoney = data.invoiceMoney;
+            var invoiceDeposit = data.invoiceDeposit;
+            var thePayment = data.thePayment;
+            var orderNumber = data.orderNumber;
+            var invoiceName = data.invoiceName;
+            var invoiceCoding = data.invoiceCoding;
+            var invoiceBrand = data.invoiceBrand;
+            var invoiceSpecifications = data.invoiceSpecifications;
+            var invoiceCompany = data.invoiceCompany;
+            var invoiceQuantity = data.invoiceQuantity;
+            var taxPrice = data.taxPrice;
+            var taxMoney = data.taxMoney;
+            var invoiceRemarks = data.invoiceRemarks;
+            $.ajax({
+                url: '/saleOrder/random',
+                success : function(data) {
+                    var random = data.data;
+                    var oldData =  table.cache["purchasePaymentAdd-table"];
+                    var dataOne={"invoiceDate":invoiceDate,
+                        "invoiceNumbers":invoiceNumbers,"invoiceMoney":invoiceMoney,
+                        "prepaidMoney":invoiceDeposit,"thePayment":thePayment,"orderNumber":orderNumber,
+                        "invoiceName":invoiceName,"invoiceCoding":invoiceCoding,"invoiceBrand":invoiceBrand,
+                        "invoiceSpecifications":invoiceSpecifications,"invoiceCompany":invoiceCompany,"invoiceQuantity":invoiceQuantity,
+                        "taxPrice":taxPrice,"taxMoney":taxMoney,"invoiceRemarks":invoiceRemarks};
+                    oldData.push(dataOne);
+                    layui.table.reload('purchasePaymentAdd-table',{
+                        data : oldData
+                    });
+                }
+            });
+        });
+
+        function initTable() {
+            tableIns = febs.table.init({
+                elem: '#purchasePaymentAdd',
+                id: 'purchasePaymentAdd',
+                url: ctx + 'purchasePayment/listQuery/',
+                where:{
+                    invoiceSupplier:$('#paymentSupplier').val()
+                },
+                cols: [
+                    [
+                        {type: 'checkbox'},
+                        {field: 'invoiceDate', title: '日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.settlementDate, "yyyy-MM-dd") }}</div>', minWidth: 180},
+                        {field: 'invoiceNumbers', title: '发票号',align:'center', minWidth: 150},
+                        {
+                            field: 'invoiceMoney',
+                            title: '发票金额',
+                            minWidth: 55,
+                            align: 'center',
+                            templet: function (data) {
+                                var price = parseFloat(data.invoiceMoney).toFixed(2); //设置小数点后个数
+                                return price;
+                            }
+                        },
+                        {
+                            field: 'invoiceDeposit',
+                            title: '已付金额',
+                            minWidth: 55,
+                            align: 'center',
+                            templet: function (data) {
+                                var price = parseFloat(data.invoiceDeposit).toFixed(2); //设置小数点后个数
+                                return price;
+                            }
+                        },
+                        {
+                            field: 'thePayment',
+                            title: '本次付款',
+                            minWidth: 55,
+                            align: 'center',
+                            edit: true,
+                            templet: function (data) {
+                                var price = parseFloat(data.thePayment).toFixed(2); //设置小数点后个数
+                                return price;
+                            }
+                        }
+                    ]
+                ]
+            });
+        };
+
+        table.render({
+            elem:'#purchasePaymentAdd-table',
+            data:tableData,
+            cols: [
+                [
+                {type: 'checkbox'},
+                {field: 'invoiceDate', title: '日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.settlementDate, "yyyy-MM-dd") }}</div>', minWidth: 180},
+                {field: 'invoiceNumbers', title: '发票号',align:'center', minWidth: 150},
+                {
+                    field: 'invoiceMoney',
+                    title: '发票金额',
+                    minWidth: 55,
+                    align: 'center',
+                    templet: function (data) {
+                        var price = parseFloat(data.invoiceMoney).toFixed(2); //设置小数点后个数
+                        return price;
+                    }
+                },
+                {
+                    field: 'prepaidMoney',
+                    title: '已付金额',
+                    minWidth: 55,
+                    align: 'center',
+                    templet: function (data) {
+                        var price = parseFloat(data.prepaidMoney).toFixed(2); //设置小数点后个数
+                        return price;
+                    }
+                },
+                {
+                    field: 'thePayment',
+                    title: '本次付款',
+                    minWidth: 55,
+                    align: 'center',
+                    edit: true,
+                    templet: function (data) {
+                        var price = parseFloat(data.thePayment).toFixed(2); //设置小数点后个数
+                        return price;
+                    }
+                }
+            ]
+            ]
+        });
+
+        table.on('rowDouble(purchasePaymentAdd-table)', function (obj) {
+            var data = obj.data;
+            var oldData =  table.cache["purchasePaymentAdd-table"];
+            if (obj.tr.data('index') != -1) {
+                oldData.splice(obj.tr.data('index'), 1)//根据索引删除当前行
+                layui.table.reload('purchasePaymentAdd-table',{
+                    data: oldData
+                });
+            }
+        });
+
+        form.on('submit(purchasePayment-add-form-submit)', function (data) {
+            alert($('#currencyNameOnt').val())
+            var paymentSupplier = $('#paymentSupplier').val();
+            var purchaseRequisitionDate = $('#purchaseRequisitionDate').val();
+            var paymentCode = $('#paymentCode').val();
+            var currencyName = $('#currencyNameOnt').val();
+            var paymentType = $('#paymentTypeOnt').val();
+            var paymentWay = $('#paymentWayOnt').val();
+            var paymentMoney = $('#paymentMoney').val();
+            var paymentInvoice = $('#paymentInvoice').val();
+            var paymentRemarks = $('#paymentRemarks').val();
+            let dataThree = new Array();
+            let purchaseRefundTable =  table.cache["purchasePaymentAdd-table"];
+            for (i=0;i<purchaseRefundTable.length;i++){
+                let dataOne={
+                    "invoiceDate":purchaseRefundTable[i].invoiceDate,
+                    "invoiceNumbers":purchaseRefundTable[i].invoiceNumbers,
+                    "invoiceMoney":purchaseRefundTable[i].invoiceMoney,
+                    "prepaidMoney":purchaseRefundTable[i].prepaidMoney,
+                    "thePayment":purchaseRefundTable[i].thePayment,
+                    "orderNumber":purchaseRefundTable[i].orderNumber,
+                    "invoiceName":purchaseRefundTable[i].invoiceName,
+                    "invoiceCoding":purchaseRefundTable[i].invoiceCoding,
+                    "invoiceBrand":purchaseRefundTable[i].invoiceBrand,
+                    "invoiceSpecifications":purchaseRefundTable[i].invoiceSpecifications,
+                    "invoiceCompany":purchaseRefundTable[i].invoiceCompany,
+                    "invoiceQuantity":purchaseRefundTable[i].invoiceQuantity,
+                    "taxPrice":purchaseRefundTable[i].taxPrice,
+                    "taxMoney":purchaseRefundTable[i].taxMoney,
+                    "invoiceRemarks":purchaseRefundTable[i].invoiceRemarks
+                };
+                dataThree.push(dataOne);
+            }
+            let entity = {userName:userName,paymentSupplier: paymentSupplier,purchaseRequisitionDate:purchaseRequisitionDate,
+                currencyName: currencyName,paymentCode:paymentCode,paymentType:paymentType,paymentWay:paymentWay,
+                paymentMoney:paymentMoney,paymentInvoice:paymentInvoice,paymentRemarks:paymentRemarks}
+            $.ajax({
+                url: '/purchasePayment/add',
+                type:"post",
+                data: {purchasePayment:JSON.stringify(entity),dataTable:JSON.stringify(dataThree)},
+                success : function(res) {
+                    layer.closeAll();
+                    $('#purchasePayment-list').find('#query').click();
+                    var dataBak = [];
+                    layui.table.reload('purchasePaymentTable',{
+                        data:dataBak
+                    });
+                }
+            });
+            return false;
+        });
+
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            let signedTime = params.signedTime;
+            if (signedTime) {
+                createdDateFrom = signedTime.split(' - ')[0];
+                createdDateTo = signedTime.split(' - ')[1];
+            }
+            params.createdDateFrom = createdDateFrom;
+            params.createdDateTo = createdDateTo;
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+    })
+    function dblclickPaymentSupplierName(){
+        layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
+            let $ = layui.$,
+                febs = layui.febs;
+            febs.modal.open('供应商选择列表', 'purchase/dblclickPaymentSupplierName', {
+                area:["55%","60%"],
+                yes: function (index, layero) {
+                }
+
+            });
+        });
+    }
+</script>

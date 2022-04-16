@@ -1,0 +1,424 @@
+<style>
+    #purchasePayment-list xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #purchasePayment-list xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="purchasePayment-list" lay-title="采购付款">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="parameter-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md12">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid layui-form-label-sm">状态</label>
+                                        <div class="layui-input-inline">
+                                            <select name="paymentState">
+                                                <option value=""></option>
+                                                <option value="1">登记</option>
+                                                <option value="2">确认</option>
+                                                <option value="3">会计</option>
+                                                <option value="4">核准</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-mid">日期&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 100px">
+                                            <input type="text" name="purchaseRequisitionDate" id="test1"
+                                                   autocomplete="off" class="layui-input createDate" readonly>
+                                        </div>
+                                        <label class="layui-form-mid">至&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 100px">
+                                            <input type="text" name="purchaseRequisitionDate" id="test2"
+                                                   autocomplete="off" class="layui-input createDate" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid">单位&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <input type="text" name="invoiceSupplier" id="invoiceSupplier" lay-verify="required" ondblclick="dblclickInvoiceSupplierList()"
+                                                   autocomplete="off" class="layui-input" placeholder="双击选择" style="width: 145px"  readonly>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid">币&nbsp;种&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 90px">
+                                            <select id="currencyName"  name="currencyName" lay-verify="required" class="layui-form-select" >
+                                                <option value=""></option>
+                                                <option value="1">人民币</option>
+                                                <option value="2">美元</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid">付款类型&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 90px">
+                                            <select id="paymentType"  name="paymentType" lay-verify="required" class="layui-form-select" >
+                                                <option value=""></option>
+                                                <option value="1">预付</option>
+                                                <option value="2">结算</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid">付款方式&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 90px">
+                                            <select id="paymentWay"  name="paymentWay" lay-verify="required" class="layui-form-select" >
+                                                <option value=""></option>
+                                                <option value="1">中行</option>
+                                                <option value="2">农行</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="purchasePaymentTable" id="purchasePaymentTable" lay-data="{id: 'purchasePaymentTable'}"></table>
+                    <div class="layui-col-md6">
+                        <div class="layui-form-item"></div>
+                    </div>
+                    <div class="layui-col-md6 layui-col-sm12 layui-col-xs12 table-action-area">
+                        <!--查询按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                            <i class="layui-icon">&#xe848;</i>查询
+                        </div>
+                        <!--查阅按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="queryTo">
+                            <i class="layui-icon">&#xe848;</i>查阅
+                        </div>
+                        <!-- 刷新表格按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain table-action" id="reset">
+                            <i class="layui-icon">&#xe79b;</i>刷新
+                        </div>
+                        <!--添加按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
+                                     "shiro:hasAnyPermissions="purchasePayment:add" id="addTo">
+                            <i class="layui-icon">&#xe78a;</i>新增
+                        </div>
+                        <!--修改按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="purchasePayment:update" id="updateTo">
+                            <i class="layui-icon">&#xe642;</i>修改
+                        </div>
+                        <!--删除按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
+                                     "shiro:hasAnyPermissions="purchasePayment:delete" id="deleteTo">
+                            <i class="layui-icon layui-icon-close"></i>删除
+                        </div>
+                        <!--确认按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
+                                     "shiro:hasAnyPermissions="purchasePayment:confirm" id="confirmTo">
+                            <i class="layui-icon">&#xe642;</i>确认
+                        </div>
+                        <!--取消按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
+                                     "shiro:hasAnyPermissions="purchasePayment:cancel" id="cancelTo">
+                            <i class="layui-icon layui-icon-close"></i>取消
+                        </div>
+                        <!--已付款按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain table-action
+                                     "shiro:hasAnyPermissions="purchasePayment:payment" id="paymentTo">
+                            <i class="layui-icon">&#xe642;</i>已付款
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="parameter-option">
+    <span shiro:lacksPermission="purchasePayment:view,purchasePayment:update">
+        <span class="layui-badge-dot febs-bg-orange"></span> 无权限
+    </span>
+    <a lay-event="edit" shiro:hasPermission="purchasePayment:update"><i
+            class="layui-icon febs-edit-area febs-blue">&#xe7a4;</i></a>
+</script>
+<script>
+    layui.use('laydate', function(){
+        var laydate = layui.laydate;
+        //常规用法
+        laydate.render({
+            elem: '#test1'
+        });
+    });
+</script>
+<script>
+    layui.use('laydate', function(){
+        var laydate = layui.laydate;
+        //常规用法
+        laydate.render({
+            elem: '#test2'
+        });
+    });
+</script>
+<script type="text/html" id="paymentState-state">
+    {{#
+    let paymentState = {
+    1: {title: '登记'},
+    2: {title: '确认'},
+    3: {title: '会计'},
+    3: {title: '核准'}
+    }[d.paymentState];
+    }}
+    <span>{{ paymentState.title }}</span>
+</script>
+<script type="text/html" id="paymentType-state">
+    {{#
+    let paymentType = {
+    1: {title: '预付'},
+    2: {title: '结算'}
+    }[d.paymentType];
+    }}
+    <span>{{ paymentType.title }}</span>
+</script>
+<script type="text/html" id="paymentWay-state">
+    {{#
+    let paymentWay = {
+    1: {title: '中行'},
+    2: {title: '农行'}
+    }[d.paymentWay];
+    }}
+    <span>{{ paymentWay.title }}</span>
+</script>
+<script type="text/html" id="paymentInvoice-state">
+    {{#
+    let paymentInvoice = {
+    1: {title: '是'},
+    2: {title: '否'}
+    }[d.paymentInvoice];
+    }}
+    <span>{{ paymentInvoice.title }}</span>
+</script>
+<script type="text/html" id="paymentShape-state">
+    {{#
+    let paymentShape = {
+    1: {title: '是'},
+    2: {title: '否'}
+    }[d.paymentShape];
+    }}
+    <span>{{ paymentShape.title }}</span>
+</script>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+            laydate = layui.laydate,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            $view = $('#purchasePayment-list'),
+            $query = $view.find('#query'),
+            $queryTo = $view.find('#queryTo'),
+            $addTo = $view.find('#addTo'),
+            $updateTo = $view.find('#updateTo'),
+            $deleteTo = $view.find('#deleteTo'),
+            $confirmTo = $view.find('#confirmTo'),
+            $cancelTo = $view.find('#cancelTo'),
+            $paymentTo = $view.find('#paymentTo'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'createTime', type: null},
+            tableIns;
+
+        form.render();
+        initPurchaseRequisitionTable();
+
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        $addTo.on('click', function () {
+            febs.modal.open('【采购付款】 新增', 'purchase/purchasePayment/add', {
+                btn: ['保存', '关闭'],
+                area: ["80%","60%"],
+                yes: function (index, layero) {
+                    $('#purchasePayment-add').find('#submit').trigger('click');
+                    return false;
+                },
+                btn2: function () {
+                    layer.closeAll();
+                }
+            });
+        });
+
+        $updateTo.on('click', function () {
+            let checkStatus = table.checkStatus('purchasePaymentTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要修改的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要修改的数据');
+            }else{
+                layui.each(checkStatus.data, function (key, item) {
+                    febs.modal.open('【采购订单】 修改', 'purchase/purchasePayment/update/' + item.id, {
+                        btn: ['保存', '关闭'],
+                        area: ["80%","70%"],
+                        yes: function (index, layero) {
+                            $('#purchasePayment-update').find('#submit').trigger('click');
+                            return false;
+                        },
+                        btn2: function () {
+                            layer.closeAll();
+                        }
+                    });
+                });
+            }
+        });
+
+        function initPurchaseRequisitionTable() {
+            tableIns = febs.table.init({
+                elem: '#purchasePaymentTable',
+                id: 'purchasePaymentTable',
+                url: ctx + 'purchasePayment/list',
+                cols: [[
+                    {type: 'checkbox'},
+                    {field:'number',title:'序号',align:'center',width:60,templet:function (d) {
+                            return d.LAY_INDEX;}},
+                    {title: '状态', templet: '#paymentState-state',align:'center',width:60},
+                    {field: 'paymentDate', title: '日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.paymentDate, "yyyy-MM-dd") }}</div>', minWidth: 110},
+                    {field: 'paymentCode', title: '采购单号', minWidth: 145,align:'center'},
+                    {field: 'paymentSupplier', title: '单位', minWidth: 120,align:'center'},
+                    {field: 'paymentMoney', title: '金额', minWidth: 60,align:'center'},
+                    {field: 'currencyName', title: '币种', minWidth: 60,align:'center'},
+                    {title: '付款类型', templet: '#paymentType-state',align:'center',width:90},
+                    {title: '付款方式', templet: '#paymentWay-state',align:'center',width:90},
+                    {title: '是否开票', templet: '#paymentInvoice-state',align:'center',width:90},
+                    {field: 'paymentOperation', title: '操作人', align:'center', minWidth: 160},
+                    {field: 'paymentOperationDate', title: '操作日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.paymentOperationDate, "yyyy-MM-dd") }}</div>', minWidth: 110},
+                    {field: 'paymentRemarks', title: '备注',minWidth: 80,align:'center'},
+                    {title: '付款状态', templet: '#paymentShape-state',align:'center',width:90},
+                    {field: 'paymentShapeDate', title: '确认付款时间',align:'center',templet:'<div>{{ layui.util.toDateString(d.paymentShapeDate, "yyyy-MM-dd HH:mm:ss") }}</div>', minWidth: 110}
+                ]]
+            });
+        }
+
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+
+        $queryTo.on('click', function () {
+            let checkStatus = table.checkStatus('purchasePaymentTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要查阅的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要查阅的数据');
+            }else{
+                layui.each(checkStatus.data, function (key, item) {
+                    febs.modal.open('【采购付款】 明细查看', 'purchase/purchasePayment/queryUp/' + item.id, {
+                        area: ["80%","60%"],
+                    });
+                });
+            }
+        });
+
+        $deleteTo.on('click', function () {
+            let checkStatus = table.checkStatus('purchasePaymentTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要删除的数据');
+            } else {
+                febs.modal.confirm('删除采购付款', '确定删除？', function () {
+                    let paymentNumber = [];
+                    layui.each(checkStatus.data, function (key, item) {
+                        paymentNumber.push(item.paymentNumber)
+                    });
+                    deletePurchasePayment(paymentNumber.join(','));
+                });
+            }
+        });
+
+        $confirmTo.on('click', function () {
+            let checkStatus = table.checkStatus('purchasePaymentTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要确认的数据');
+            } else {
+                let ids = [];
+                layui.each(checkStatus.data, function (key, item) {
+                    ids.push(item.id)
+                    if(item.paymentState == 2){
+                        febs.alert.warn('请勿重复确认');
+                    }else {
+                        febs.modal.confirm('确认采购付款', '是否确认？', function () {
+                            confirmPurchasePayment(ids.join(','));
+                        });
+                    }
+                });
+            }
+        });
+
+        $cancelTo.on('click', function () {
+            let checkStatus = table.checkStatus('purchasePaymentTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要取消的数据');
+            } else {
+                let ids = [];
+                layui.each(checkStatus.data, function (key, item) {
+                    ids.push(item.id)
+                    if(item.paymentState == 1){
+                        febs.alert.warn('请勿重复取消');
+                    }else {
+                        febs.modal.confirm('取消采购付款', '是否确认？', function () {
+                            cancelPurchasePayment(ids.join(','));
+                        });
+                    }
+                });
+            }
+        });
+
+        $paymentTo.on('click', function () {
+            let checkStatus = table.checkStatus('purchasePaymentTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择已付款的数据');
+            } else {
+                let ids = [];
+                layui.each(checkStatus.data, function (key, item) {
+                    ids.push(item.id)
+                    if(item.paymentShape == 1){
+                        febs.alert.warn('请勿重复操作');
+                    }else {
+                        febs.modal.confirm('已付款', '是否确认？', function () {
+                            paymentPurchasePayment(ids.join(','));
+                        });
+                    }
+                });
+            }
+        });
+
+        function deletePurchasePayment(paymentNumber) {
+            febs.get(ctx + 'purchasePayment/delete/' + paymentNumber, null, function () {
+                febs.alert.success('删除采购付款成功');
+                $query.click();
+            });
+        }
+
+        function confirmPurchasePayment(ids) {
+            febs.get(ctx + 'purchasePayment/confirm/' + ids, null, function () {
+                febs.alert.success('确认采购付款成功');
+                $query.click();
+            });
+        }
+
+        function cancelPurchasePayment(ids) {
+            febs.get(ctx + 'purchasePayment/cancel/' + ids, null, function () {
+                febs.alert.success('取消采购付款成功');
+                $query.click();
+            });
+        }
+
+        function paymentPurchasePayment(ids) {
+            febs.get(ctx + 'purchasePayment/payment/' + ids, null, function () {
+                febs.alert.success('已付款状态修改成功');
+                $query.click();
+            });
+        }
+
+    })
+</script>

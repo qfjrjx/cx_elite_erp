@@ -284,7 +284,7 @@
                 layui.each(checkStatus.data, function (key, item) {
                     ids.push(item.id)
                     if(item.inspectionState == 2){
-                        febs.alert.warn('该状态无法确认');
+                        febs.alert.warn('请勿重复确认');
                     }else {
                         febs.modal.confirm('确认来货检验', '是否确认？', function () {
                             confirmPurchaseRequisition(ids.join(','));
@@ -302,7 +302,7 @@
                 layui.each(checkStatus.data, function (key, item) {
                     ids.push(item.id)
                     if(item.inspectionState == 4){
-                        febs.alert.warn('该状态无法取消');
+                        febs.alert.warn('请勿重复取消');
                     }else {
                         febs.modal.confirm('取消来货检验', '是否取消？', function () {
                             deletePurchaseRequisition(ids.join(','));

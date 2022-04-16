@@ -46,6 +46,8 @@ public class ViewController {
     private final IPurchaseRefundService purchaseRefundService;
     //采购发票表 Service接口
     private final IPurchaseInvoiceService purchaseInvoiceService;
+    //采购付款 Service接口
+    private final IPurchasePaymentService purchasePaymentService;
 
 
     /*采购管理模块-采购档案开始*/
@@ -625,4 +627,64 @@ public class ViewController {
     }
 
     /*采购管理模块-采购发票结束*/
+
+    /*采购管理模块-采购付款开始*/
+    @GetMapping("purchasePayment/list")
+    @RequiresPermissions("purchasePayment:view")
+    public String purchasePaymentIndex(){
+        return FebsUtil.view("purchasePayment/purchasePaymentList");
+    }
+
+    //采购付款新增
+    @GetMapping("purchasePayment/add")
+    @RequiresPermissions("purchasePayment:add")
+    public String purchasePaymentAdd(Model model){
+        //查询币种信息
+        List<FinanceParameters> currency  = financeParametersService.queryCurrencyInformation(FinanceParameters.CURRENCY);
+        model.addAttribute("currency",currency);
+        //查询税率信息
+        List<FinanceParameters> taxRate  = financeParametersService.queryCurrencyInformation(FinanceParameters.TAX_RATE);
+        model.addAttribute("taxRate",taxRate);
+        return FebsUtil.view("purchasePayment/purchasePaymentAdd");
+    }
+
+    //供应商 双击跳到供应商选择列表页面  添加时用到
+    @GetMapping("dblclickPaymentSupplierName")
+    @RequiresPermissions("purchasePayment:view")
+    public String dblclickPaymentSupplierName(Model model) {
+
+        return FebsUtil.view("purchasePayment/purchaseSupplierSelectionList");
+    }
+
+    //采购付款修改
+    @GetMapping("purchasePayment/update/{id}")
+    @RequiresPermissions("purchasePayment:update")
+    public String purchasePaymentUpdate(@PathVariable String id, Model model) {
+        //查询币种信息
+        List<FinanceParameters> currency  = financeParametersService.queryCurrencyInformation(FinanceParameters.CURRENCY);
+        model.addAttribute("currency",currency);
+        //查询税率信息
+        List<FinanceParameters> taxRate  = financeParametersService.queryCurrencyInformation(FinanceParameters.TAX_RATE);
+        model.addAttribute("taxRate",taxRate);
+        purchasePaymentModel(id, model, false);
+        return FebsUtil.view("purchasePayment/purchasePaymentUpdate");
+    }
+
+    //采购发票回填
+    private void purchasePaymentModel(String id, Model model, Boolean transform) {
+        PurchasePayment purchasePayment = this.purchasePaymentService.findPurchasePaymentQueryPage(id);
+        model.addAttribute("purchasePayment", purchasePayment);
+        if (purchasePayment.getPaymentDate()!= null) {
+            model.addAttribute("paymentDate", DateUtil.getDateFormat(purchasePayment.getPaymentDate(), DateUtil.FULL_TIME_SPLIT));
+        }
+    }
+
+    /*采购发票查阅*/
+    @GetMapping("purchasePayment/queryUp/{id}")
+    @RequiresPermissions("purchasePayment:refer")
+    public String purchasePaymentQueryUpList(@PathVariable String id,Model model) {
+        purchasePaymentModel(id, model, false);
+        return FebsUtil.view("purchasePayment/purchasePaymentQueryUp");
+    }
+    /*采购管理模块-采购付款结束*/
 }

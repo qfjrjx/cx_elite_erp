@@ -136,7 +136,8 @@
             wss.storage_remarks,
             wss.storage_brand,
             wss.storage_subclass,
-            wss.storage_category
+            wss.storage_category,
+            wss.storage_deposit
         FROM
             jr_warehouse_storage ws
         LEFT JOIN jr_warehouse_storage_schedule wss ON ( ws.order_number = wss.order_numbers )
@@ -253,7 +254,8 @@
             refund_library,
             supplier_name,
             refund_subclass,
-            refund_category
+            refund_category,
+            refund_deposit
         )
         VALUES
             (
@@ -272,7 +274,8 @@
                 #{refundLibrary},
                 #{supplierName},
                 #{refundSubclass},
-                #{refundCategory}
+                #{refundCategory},
+                #{refundDeposit}
             )
     </insert>
 

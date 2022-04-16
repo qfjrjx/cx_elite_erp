@@ -20,8 +20,7 @@
                                     </div>
                                     <label class="layui-form-mid">日期</label>
                                     <div class="layui-input-inline" style="width: 100px">
-                                        <input type="text" name="purchaseRequisitionDate" id="purchaseRequisitionDate"
-                                               autocomplete="off" class="layui-input createDate" readonly>
+                                        <input type="text" class="layui-input" id="test1" placeholder="yyyy-MM-dd">
                                     </div>
                                     <label class="layui-form-mid">发票号&nbsp;<b>:</b></label>
                                     <div class="layui-input-inline" style="width: 145px">
@@ -119,6 +118,15 @@
     }}
     <span>{{ settlementUse.title }}</span>
 </script>
+<script>
+    layui.use('laydate', function(){
+        var laydate = layui.laydate;
+        //常规用法
+        laydate.render({
+            elem: '#test1'
+        });
+    });
+</script>
 <script langguage="JavaScript">
     var now = new Date();
     purchaseRequisitionDate.value=new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate();
@@ -158,10 +166,15 @@
             var settlementNumber = data.settlementNumber;
             var settlementUse = data.settlementUse;
             var settlementCode = data.settlementCode;
+            var settlementName = data.settlementName;
+            var settlementBrand = data.settlementBrand;
+            var settlementCompany = data.settlementCompany;
             var settlementSpecifications = data.settlementSpecifications;
             var settlementQuantity = data.settlementQuantity;
             var settlementPrice = data.settlementPrice;
             var settlementMoney = data.settlementMoney;
+            var settlementDeposit = data.settlementDeposit;
+            var orderNumber = data.orderNumber;
             $.ajax({
                 url: '/saleOrder/random',
                 success : function(data) {
@@ -169,9 +182,10 @@
                     var oldData =  table.cache["purchaseInvoiceAdd-table"];
                     var dataOne={"invoiceDate":settlementDate,
                         "invoiceCode":settlementNumber,"invoiceUse":settlementUse,
-                        "invoiceName":settlementCode,"invoiceSpecifications":settlementSpecifications,
+                        "invoiceName":settlementName,"invoiceSpecifications":settlementSpecifications,
                         "invoiceQuantity":settlementQuantity,"taxPrice":settlementPrice,
-                        "invoiceMoney":settlementMoney};
+                        "invoiceMoney":settlementMoney,"invoiceDeposit":settlementDeposit,"orderNumber":orderNumber,
+                        "invoiceBrand":settlementBrand,"invoiceCompany":settlementCompany,"invoiceCoding":settlementCode};
                     oldData.push(dataOne);
                     layui.table.reload('purchaseInvoiceAdd-table',{
                         data : oldData
@@ -194,12 +208,12 @@
                         {field: 'settlementDate', title: '日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.settlementDate, "yyyy-MM-dd") }}</div>', minWidth: 180},
                         {field: 'settlementNumber', title: '单号',align:'center', minWidth: 150},
                         {title: '口径', templet: '#settlementUse-state',align:'center',width:100},
-                        {field: 'settlementCode', title: '物料名称',align:'center', minWidth: 150},
+                        {field: 'settlementName', title: '物料名称',align:'center', minWidth: 150},
                         {field: 'settlementSpecifications', title: '规格型号',align:'center', minWidth: 100},
                         {field: 'settlementQuantity', title: '数量',align:'center', minWidth: 60},
                         {field: 'settlementPrice', title: '含税单价',align:'center', minWidth: 100},
                         /* {field: 'meteringCompany', title: '最近采购单价',align:'center', minWidth: 100},*/
-                        {field: 'settlementMoney', title: '含税金额',align:'center',minWidth: 80,edit: true},
+                        {field: 'settlementMoney', title: '含税金额',align:'center',minWidth: 80},
                         {
                             field: 'settlementPrice',
                             title: '不含税单价',
@@ -221,8 +235,8 @@
                                 return price;
                             }
                         },
-                        {field: 'settlementQuantity', title: '开票数量',align:'center', minWidth: 80},
-                        {field: 'settlementMoney', title: '开票金额',align:'center', minWidth: 80}
+                        {field: 'settlementQuantity', title: '开票数量',align:'center', minWidth: 80,edit: true},
+                        {field: 'settlementMoney', title: '开票金额',align:'center', minWidth: 80,edit: true}
                     ]
                 ]
             });
@@ -241,7 +255,7 @@
                 {field: 'invoiceQuantity', title: '数量',align:'center', minWidth: 60},
                 {field: 'taxPrice', title: '含税单价',align:'center', minWidth: 100},
                 /* {field: 'meteringCompany', title: '最近采购单价',align:'center', minWidth: 100},*/
-                {field: 'invoiceMoney', title: '含税金额',align:'center',minWidth: 80,edit: true},
+                {field: 'invoiceMoney', title: '含税金额',align:'center',minWidth: 80},
                 {
                     field: 'taxPrice',
                     title: '不含税单价',
@@ -301,7 +315,12 @@
                     "invoiceSpecifications":purchaseRefundTable[i].invoiceSpecifications,
                     "invoiceQuantity":purchaseRefundTable[i].invoiceQuantity,
                     "taxPrice":purchaseRefundTable[i].taxPrice,
-                    "invoiceMoney":purchaseRefundTable[i].invoiceMoney
+                    "invoiceMoney":purchaseRefundTable[i].invoiceMoney,
+                    "invoiceDeposit":purchaseRefundTable[i].invoiceDeposit,
+                    "orderNumber":purchaseRefundTable[i].orderNumber,
+                    "invoiceBrand":purchaseRefundTable[i].invoiceBrand,
+                    "invoiceCompany":purchaseRefundTable[i].invoiceCompany,
+                    "invoiceCoding":purchaseRefundTable[i].invoiceCoding
                 };
                 dataThree.push(dataOne);
             }

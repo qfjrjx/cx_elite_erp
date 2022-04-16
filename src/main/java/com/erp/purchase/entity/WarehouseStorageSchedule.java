@@ -114,6 +114,12 @@ public class WarehouseStorageSchedule {
     private String storageCategory;
 
     /**
+     * 已付定金
+     */
+    @TableField("storage_deposit")
+    private BigDecimal storageDeposit;
+
+    /**
      * 收货单号
      */
     private String storageNumbers;

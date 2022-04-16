@@ -101,6 +101,19 @@ public class PurchaseSettlementSchedule {
     private String settlementNumber;
 
     /**
+     * 已付定金
+     */
+    @TableField("settlement_deposit")
+    private BigDecimal settlementDeposit;
+
+    /**
+     * 采购结算单号
+     */
+    @TableField("order_number")
+    private String orderNumber;
+
+
+    /**
      *日期
      */
     private String settlementDate;

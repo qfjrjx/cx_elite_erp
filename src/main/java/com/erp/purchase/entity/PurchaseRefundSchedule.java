@@ -120,4 +120,10 @@ public class PurchaseRefundSchedule {
      */
     @TableField("refund_category")
     private String refundCategory;
+
+    /**
+     *已付定金
+     */
+    @TableField("refund_deposit")
+    private BigDecimal refundDeposit;
 }

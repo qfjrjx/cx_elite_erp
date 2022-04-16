@@ -271,4 +271,20 @@
         <include refid="queryPurchaseInspectionOrderSql"/>
     </select>
 
+    <!--根据物料名称进行查询上次采购单价-->
+    <select id="queryPaymentPurchaseOrderSchedule" parameterType="String" resultType="com.erp.purchase.entity.PurchaseOrderSchedule">
+        SELECT
+            unit_price,
+            delivery_date
+        FROM
+            jr_purchase_order_schedule pos
+        WHERE
+            1 = 1
+            AND
+            pos.material_name = #{invoiceName}
+        ORDER BY
+            pos.delivery_date DESC
+            LIMIT 1,1;
+    </select>
+
 </mapper>

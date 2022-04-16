@@ -108,4 +108,18 @@ public class PurchaseInvoiceController extends BaseController {
         }
         return map;
     }
+
+    /**
+     * 采购付款，根据供应商进行查询
+     * @param request
+     * @param purchaseInvoiceSchedule
+     * @return
+     */
+    @GetMapping("purchasePayment/listQuery")
+    @ResponseBody
+    @RequiresPermissions("purchasePayment:view")
+    public FebsResponse purchaseSettlementAddQuery(QueryRequest request, PurchaseInvoiceSchedule purchaseInvoiceSchedule) {
+        Map<String, Object> dataTable = getDataTable(this.purchaseInvoiceService.purchasePaymentAddQuery(request,purchaseInvoiceSchedule));
+        return new FebsResponse().success().data(dataTable);
+    }
 }

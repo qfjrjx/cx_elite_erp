@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.purchase.mapper.PurchasePaymentMapper">
+    <sql id="countPurchasePaymentSql">
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_purchase_payment
+        WHERE
+            1 = 1
+    </sql>
+
+    <sql id="findPurchasePaymentPageSql">
+        SELECT
+            pp.id,
+            pp.payment_state,
+            pp.payment_date,
+            pp.payment_supplier,
+            sum(pps.invoice_money) paymentMoney,
+            fpa.finance_parameter_name currencyName,
+            pp.payment_type,
+            pp.payment_way,
+            pp.payment_invoice,
+            pp.payment_operation,
+            pp.payment_operation_date,
+            pp.payment_remarks,
+            pp.payment_shape,
+            pp.payment_shape_date,
+            pp.payment_code,
+            pp.payment_number
+        FROM
+            jr_purchase_payment pp
+                LEFT JOIN jr_purchase_payment_schedule pps ON ( pp.payment_number = pps.payment_number )
+                LEFT JOIN jr_finance_parameters fpa ON ( pp.currency_id = fpa.id )
+        WHERE
+            1 = 1
+        GROUP BY
+        pp.payment_number
+    </sql>
+
+    <select id="countPurchasePayment" parameterType="com.erp.purchase.entity.PurchasePayment" resultType="long">
+        <include refid="countPurchasePaymentSql"/>
+    </select>
+
+    <select id="findPurchasePaymentPage" parameterType="com.erp.purchase.entity.PurchasePayment" resultType="com.erp.purchase.entity.PurchasePayment">
+        <include refid="findPurchasePaymentPageSql"/>
+    </select>
+
+    <!--查询出最后一个采购订单单号-->
+    <select id="queryPurchasePayment" resultType="com.erp.purchase.entity.PurchasePayment">
+        SELECT
+            pp.id,
+            pp.payment_number
+        FROM
+            jr_purchase_payment pp
+        WHERE
+            1 = 1
+        ORDER BY
+            pp.payment_number DESC
+            LIMIT 1;
+    </select>
+
+    <insert id="savePurchasePaymentSchedule" parameterType="com.erp.purchase.entity.PurchasePaymentSchedule">
+        INSERT INTO
+            jr_purchase_payment_schedule
+        (
+            invoice_date,
+            invoice_numbers,
+            invoice_money,
+            payment_code,
+            prepaid_money,
+            the_payment,
+            payment_number,
+            invoice_name,
+            invoice_coding,
+            invoice_brand,
+            invoice_specifications,
+            invoice_company,
+            invoice_quantity,
+            tax_price,
+            tax_money,
+            invoice_remarks,
+            procurement_price
+        )
+        VALUES
+            (
+                #{invoiceDate},
+                #{invoiceNumbers},
+                #{invoiceMoney},
+                #{paymentCode},
+                #{prepaidMoney},
+                #{thePayment},
+                #{paymentNumber},
+                #{invoiceName},
+                #{invoiceCoding},
+                #{invoiceBrand},
+                #{invoiceSpecifications},
+                #{invoiceCompany},
+                #{invoiceQuantity},
+                #{taxPrice},
+                #{taxMoney},
+                #{invoiceRemarks},
+                #{procurementPrice}
+            )
+    </insert>
+
+    <insert id="savePurchasePaymentData" parameterType="com.erp.purchase.entity.PurchasePayment">
+        INSERT INTO
+            jr_purchase_payment
+        (
+            payment_state,
+            payment_date,
+            payment_supplier,
+            payment_money,
+            currency_id,
+            payment_type,
+            payment_way,
+            payment_invoice,
+            payment_operation,
+            payment_operation_date,
+            payment_remarks,
+            payment_code,
+            payment_number,
+            payment_shape
+        )
+        VALUES
+            (
+                #{paymentState},
+                #{paymentDate},
+                #{paymentSupplier},
+                #{paymentMoney},
+                #{currencyId},
+                #{paymentType},
+                #{paymentWay},
+                #{paymentInvoice},
+                #{paymentOperation},
+                #{paymentOperationDate},
+                #{paymentRemarks},
+                #{paymentCode},
+                #{paymentNumber},
+                #{paymentShape}
+            )
+    </insert>
+
+    <!--修改回显数据-->
+    <select id="findPurchasePaymentQueryPage" resultType="com.erp.purchase.entity.PurchasePayment">
+        SELECT
+            pp.payment_date,
+            pp.payment_supplier,
+            fpa.finance_parameter_name currencyName,
+            pp.payment_type,
+            pp.payment_way,
+            pp.payment_invoice,
+            pp.payment_money,
+            pp.payment_remarks,
+            PP.payment_number,
+            pp.payment_code
+        FROM
+            jr_purchase_payment pp
+                LEFT JOIN jr_purchase_payment_schedule pps ON ( pp.payment_number = pps.payment_number )
+                LEFT JOIN jr_finance_parameters fpa ON ( pp.currency_id = fpa.id )
+        WHERE
+            1 = 1
+          AND pp.id = #{id}
+        GROUP BY
+            pp.payment_number
+    </select>
+
+    <select id="queryPurchasePaymentSchedule" parameterType="String" resultType="com.erp.purchase.entity.PurchasePaymentSchedule">
+        SELECT
+            pps.id,
+            pps.invoice_date,
+            pps.invoice_numbers,
+            pps.invoice_money,
+            pps.prepaid_money,
+            pps.the_payment,
+            pps.payment_code,
+            pps.invoice_name,
+            pps.invoice_coding,
+            pps.invoice_brand,
+            pps.invoice_specifications,
+            pps.invoice_company,
+            pps.invoice_quantity,
+            pps.tax_price,
+            pps.tax_money,
+            pps.invoice_remarks,
+            pps.procurement_price
+        FROM
+            jr_purchase_payment_schedule pps
+        WHERE
+            pps.payment_number = #{paymentNumber}
+    </select>
+
+    <delete id="deletePurchasePaymentSchedule">
+        delete from jr_purchase_payment_schedule  where payment_number = #{paymentNumber}
+    </delete>
+
+    <delete id="deletePurchasePayment">
+        delete from jr_purchase_payment  where payment_number = #{paymentNumber}
+    </delete>
+
+    <update id="confirmPurchasePayment"  parameterType="com.erp.purchase.entity.PurchasePayment">
+        UPDATE
+            jr_purchase_payment
+        set payment_state = 2
+        WHERE id=#{ids}
+    </update>
+
+    <update id="cancelPurchasePayment"  parameterType="com.erp.purchase.entity.PurchasePayment">
+        UPDATE
+            jr_purchase_payment
+        set payment_state = 1
+        WHERE id=#{ids}
+    </update>
+
+    <update id="paymentPurchasePayment"  parameterType="com.erp.purchase.entity.PurchasePayment">
+        UPDATE
+            jr_purchase_payment
+        set payment_shape = 1 , payment_shape_date = #{purchasePayment.paymentShapeDate}
+        WHERE id=#{ids}
+    </update>
+
+</mapper>

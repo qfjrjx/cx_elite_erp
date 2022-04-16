@@ -200,7 +200,7 @@
                 febs.alert.warn('请选择一条需要修改的数据');
             }else{
                 layui.each(checkStatus.data, function (key, item) {
-                    febs.modal.open('【采购订单】 修改', 'purchase/purchaseInvoice/update/' + item.invoiceNumbers, {
+                    febs.modal.open('【采购发票】 修改', 'purchase/purchaseInvoice/update/' + item.invoiceNumbers, {
                         btn: ['保存', '关闭'],
                         area: ["80%","70%"],
                         yes: function (index, layero) {

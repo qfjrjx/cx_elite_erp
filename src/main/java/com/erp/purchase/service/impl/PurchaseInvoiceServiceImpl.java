@@ -93,7 +93,13 @@ public class PurchaseInvoiceServiceImpl extends ServiceImpl<PurchaseInvoiceMappe
             String invoiceQuantity = jsonArrayOne.getJSONObject(i).getString("invoiceQuantity");
             String taxPrice = jsonArrayOne.getJSONObject(i).getString("taxPrice");
             String invoiceMoney = jsonArrayOne.getJSONObject(i).getString("invoiceMoney");
-
+            String invoiceDeposit = jsonArrayOne.getJSONObject(i).getString("invoiceDeposit");
+            String orderNumber = jsonArrayOne.getJSONObject(i).getString("orderNumber");
+            String invoiceBrand = jsonArrayOne.getJSONObject(i).getString("invoiceBrand");
+            String invoiceCompany = jsonArrayOne.getJSONObject(i).getString("invoiceCompany");
+            String invoiceCoding = jsonArrayOne.getJSONObject(i).getString("invoiceCoding");
+            BigDecimal invoiceDepositOtn = new BigDecimal(invoiceDeposit);
+            purchaseInvoiceSchedule.setInvoiceDeposit(invoiceDepositOtn);
             if (!invoiceDate.equals("")) {
                 purchaseInvoiceSchedule.setInvoiceDate(invoiceDate);
             }if (!invoiceCode.equals("")) {
@@ -116,7 +122,14 @@ public class PurchaseInvoiceServiceImpl extends ServiceImpl<PurchaseInvoiceMappe
                 purchaseInvoiceSchedule.setInvoiceMoney(invoiceMoneyTo);
                 purchaseInvoiceSchedule.setTaxMoney(invoiceMoneyTo);
                 purchaseInvoiceSchedule.setTaxNoMoney(invoiceMoneyTo);
+            }if (!orderNumber.equals("")) {
+                purchaseInvoiceSchedule.setOrderNumber(orderNumber);
+            }if (!invoiceCoding.equals("")) {
+                purchaseInvoiceSchedule.setInvoiceCoding(invoiceCoding);
+            }if (!invoiceCompany.equals("")) {
+                purchaseInvoiceSchedule.setInvoiceCompany(invoiceCompany);
             }
+            purchaseInvoiceSchedule.setInvoiceBrand(invoiceBrand);
             purchaseInvoiceSchedule.setInvoiceNumbers(invoiceNumbers);
             baseMapper.savePurchaseInvoiceSchedule(purchaseInvoiceSchedule);
         }
@@ -139,37 +152,43 @@ public class PurchaseInvoiceServiceImpl extends ServiceImpl<PurchaseInvoiceMappe
             String invoiceQuantity = jsonArrayOne.getJSONObject(i).getString("invoiceQuantity");
             String taxPrice = jsonArrayOne.getJSONObject(i).getString("taxPrice");
             String invoiceMoney = jsonArrayOne.getJSONObject(i).getString("invoiceMoney");
-
+            String invoiceDeposit = jsonArrayOne.getJSONObject(i).getString("invoiceDeposit");
+            String orderNumber = jsonArrayOne.getJSONObject(i).getString("orderNumber");
+            String invoiceBrand = jsonArrayOne.getJSONObject(i).getString("invoiceBrand");
+            String invoiceCompany = jsonArrayOne.getJSONObject(i).getString("invoiceCompany");
+            String invoiceCoding = jsonArrayOne.getJSONObject(i).getString("invoiceCoding");
+            BigDecimal invoiceDepositOtn = new BigDecimal(invoiceDeposit);
+            purchaseInvoiceSchedule.setInvoiceDeposit(invoiceDepositOtn);
             if (!invoiceDate.equals("")) {
                 purchaseInvoiceSchedule.setInvoiceDate(invoiceDate);
-            }
-            if (!invoiceCode.equals("")) {
+            }if (!invoiceCode.equals("")) {
                 purchaseInvoiceSchedule.setInvoiceCode(invoiceCode);
-            }
-            if (!invoiceUse.equals("")) {
+            }if (!invoiceUse.equals("")) {
                 purchaseInvoiceSchedule.setInvoiceUse(invoiceUse);
-            }
-            if (!invoiceName.equals("")) {
+            }if (!invoiceName.equals("")) {
                 purchaseInvoiceSchedule.setInvoiceName(invoiceName);
-            }
-            if (!invoiceSpecifications.equals("")) {
+            }if (!invoiceSpecifications.equals("")) {
                 purchaseInvoiceSchedule.setInvoiceSpecifications(invoiceSpecifications);
-            }
-            if (!invoiceQuantity.equals("")) {
+            }if (!invoiceQuantity.equals("")) {
                 purchaseInvoiceSchedule.setInvoiceQuantity(invoiceQuantity);
                 purchaseInvoiceSchedule.setInvoiceAmount(invoiceQuantity);
-            }
-            if (!taxPrice.equals("")) {
+            }if (!taxPrice.equals("")) {
                 BigDecimal taxPriceTo = new BigDecimal(taxPrice);
                 purchaseInvoiceSchedule.setTaxPrice(taxPriceTo);
                 purchaseInvoiceSchedule.setTaxNoPrice(taxPriceTo);
-            }
-            if (!invoiceMoney.equals("")) {
+            }if (!invoiceMoney.equals("")) {
                 BigDecimal invoiceMoneyTo = new BigDecimal(invoiceMoney);
                 purchaseInvoiceSchedule.setInvoiceMoney(invoiceMoneyTo);
                 purchaseInvoiceSchedule.setTaxMoney(invoiceMoneyTo);
                 purchaseInvoiceSchedule.setTaxNoMoney(invoiceMoneyTo);
+            }if (!orderNumber.equals("")) {
+                purchaseInvoiceSchedule.setOrderNumber(orderNumber);
+            }if (!invoiceCoding.equals("")) {
+                purchaseInvoiceSchedule.setInvoiceCoding(invoiceCoding);
+            }if (!invoiceCompany.equals("")) {
+                purchaseInvoiceSchedule.setInvoiceCompany(invoiceCompany);
             }
+            purchaseInvoiceSchedule.setInvoiceBrand(invoiceBrand);
             baseMapper.savePurchaseInvoiceSchedule(purchaseInvoiceSchedule);
         }
     }
@@ -189,5 +208,13 @@ public class PurchaseInvoiceServiceImpl extends ServiceImpl<PurchaseInvoiceMappe
     @Override
     public List<PurchaseInvoiceSchedule> queryPurchaseInvoiceSchedule(String invoiceNumbers) {
         return baseMapper.queryPurchaseInvoiceSchedule(invoiceNumbers);
+    }
+
+    @Override
+    public IPage<PurchaseInvoiceSchedule> purchasePaymentAddQuery(QueryRequest request, PurchaseInvoiceSchedule purchaseInvoiceSchedule) {
+        Page<PurchaseInvoiceSchedule> page = new Page<>(request.getPageNum(), request.getPageSize());
+        page.setSearchCount(false);
+        page.setTotal(baseMapper.countPurchasePaymentAddQuery(purchaseInvoiceSchedule));
+        return baseMapper.purchasePaymentAddQuery(page,purchaseInvoiceSchedule);
     }
 }

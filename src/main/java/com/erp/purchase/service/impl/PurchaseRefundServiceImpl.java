@@ -139,6 +139,11 @@ public class PurchaseRefundServiceImpl extends ServiceImpl<PurchaseRefundMapper,
             String refundBrand = jsonArrayOne.getJSONObject(i).getString("refundBrand");
             String refundSubclass = jsonArrayOne.getJSONObject(i).getString("refundSubclass");
             String refundCategory = jsonArrayOne.getJSONObject(i).getString("refundCategory");
+            String refundDeposit = jsonArrayOne.getJSONObject(i).getString("refundDeposit");
+
+            BigDecimal refundDepositOnt = new BigDecimal(refundDeposit);
+            purchaseRefundSchedule.setRefundDeposit(refundDepositOnt);
+            purchaseSettlementSchedule.setSettlementDeposit(refundDepositOnt);
             if (!refundLibraryOnt.equals("")) {
                 purchaseRefundSchedule.setRefundLibrary(refundLibraryOnt);
             }if (!supplierNameOnt.equals("")) {
@@ -176,6 +181,7 @@ public class PurchaseRefundServiceImpl extends ServiceImpl<PurchaseRefundMapper,
                 purchaseSettlementSchedule.setSettlementRemarks(refundRemarks);
             }if (!orderNumber.equals("")) {
                 purchaseRefundSchedule.setOrderNumber(orderNumber);
+                purchaseSettlementSchedule.setOrderNumber(orderNumber);
             }if (!refundBrand.equals("")) {
                 purchaseRefundSchedule.setRefundBrand(refundBrand);
                 purchaseSettlementSchedule.setSettlementBrand(refundBrand);

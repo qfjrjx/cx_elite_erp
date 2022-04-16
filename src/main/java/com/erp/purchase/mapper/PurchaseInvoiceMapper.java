@@ -33,4 +33,8 @@ public interface PurchaseInvoiceMapper extends BaseMapper<PurchaseInvoice> {
     void deletePurchaseInvoiceSchedule(@Param("invoiceNumbers") String invoiceNumbers);
 
     void deletePurchaseInvoice(@Param("invoiceNumbers") String invoiceNumbers);
+
+    long countPurchasePaymentAddQuery(@Param("purchaseInvoiceSchedule") PurchaseInvoiceSchedule purchaseInvoiceSchedule);
+
+    IPage<PurchaseInvoiceSchedule> purchasePaymentAddQuery(Page<PurchaseInvoiceSchedule> page,@Param("purchaseInvoiceSchedule") PurchaseInvoiceSchedule purchaseInvoiceSchedule);
 }

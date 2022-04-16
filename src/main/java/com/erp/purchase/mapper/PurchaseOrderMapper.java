@@ -47,4 +47,6 @@ public interface PurchaseOrderMapper extends BaseMapper<PurchaseOrder> {
     IPage<PurchaseOrder> queryPurchaseInspectionOrder(Page<PurchaseParameters> page,@Param("supplierName") String supplierName);
 
     long countPurchaseInspectionOrder(@Param("supplierName") String supplierName);
+
+    PurchaseOrderSchedule queryPaymentPurchaseOrderSchedule(@Param("invoiceName") String invoiceName);
 }

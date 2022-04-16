@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.erp.purchase.mapper.PurchaseInvoiceMapper">
 
-    <sql id="countPurchaseInvoicesSql">
+    <sql id="countPurchaseInvoiceSql">
         SELECT
             COUNT( 1 )
         FROM
@@ -11,7 +11,7 @@
             1 = 1
     </sql>
 
-    <sql id="findPurchaseInvoicesPageSql">
+    <sql id="findPurchaseInvoicePageSql">
         SELECT
             pi.id,
             sum(pis.invoice_quantity) invoiceQuantitySum,
@@ -55,11 +55,11 @@
     </sql>
 
     <select id="countPurchaseInvoice" parameterType="com.erp.purchase.entity.PurchaseInvoice" resultType="long">
-        <include refid="countPurchaseInvoicesSql"/>
+        <include refid="countPurchaseInvoiceSql"/>
     </select>
 
     <select id="findPurchaseInvoicePage" parameterType="com.erp.purchase.entity.PurchaseInvoice" resultType="com.erp.purchase.entity.PurchaseInvoice">
-        <include refid="findPurchaseInvoicesPageSql"/>
+        <include refid="findPurchaseInvoicePageSql"/>
     </select>
 
     <!--查阅回显-->
@@ -161,7 +161,12 @@
             tax_no_money,
             invoice_amount,
             invoice_money,
-            invoice_numbers
+            invoice_numbers,
+            invoice_deposit,
+            order_number,
+            invoice_coding,
+            invoice_company,
+            invoice_brand
         )
         VALUES
             (
@@ -177,7 +182,12 @@
                 #{taxNoMoney},
                 #{invoiceAmount},
                 #{invoiceMoney},
-                #{invoiceNumbers}
+                #{invoiceNumbers},
+                #{invoiceDeposit},
+                #{orderNumber},
+                #{invoiceCoding},
+                #{invoiceCompany},
+                #{invoiceBrand}
             )
     </insert>
 
@@ -190,4 +200,43 @@
     <delete id="deletePurchaseInvoice">
         delete from jr_purchase_invoice  where invoice_numbers = #{invoiceNumbers}
     </delete>
+
+    <sql id="countPurchasePaymentAddQuerySql">
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_purchase_invoice_schedule
+        WHERE
+            1 = 1
+    </sql>
+
+    <sql id="purchasePaymentAddQuerySql">
+        SELECT
+            pis.invoice_date,
+            pis.invoice_money,
+            pis.invoice_numbers,
+            pis.invoice_deposit,
+            pis.order_number,
+            pis.invoice_name,
+            pis.invoice_coding,
+            pis.invoice_brand,
+            pis.invoice_specifications,
+            pis.invoice_company,
+            pis.invoice_quantity,
+            pis.tax_price,
+            pis.tax_money,
+            pi.invoice_remarks
+        FROM
+            jr_purchase_invoice pi
+                LEFT JOIN jr_purchase_invoice_schedule pis on pi.invoice_numbers = pis.invoice_numbers
+        where pi.invoice_supplier = #{purchaseInvoiceSchedule.invoiceSupplier}
+    </sql>
+
+    <select id="countPurchasePaymentAddQuery" parameterType="com.erp.purchase.entity.PurchaseInvoiceSchedule" resultType="long">
+        <include refid="countPurchasePaymentAddQuerySql"/>
+    </select>
+
+    <select id="purchasePaymentAddQuery" parameterType="com.erp.purchase.entity.PurchaseInvoiceSchedule" resultType="com.erp.purchase.entity.PurchaseInvoiceSchedule">
+        <include refid="purchasePaymentAddQuerySql"/>
+    </select>
 </mapper>

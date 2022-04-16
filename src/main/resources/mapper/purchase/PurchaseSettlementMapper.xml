@@ -63,15 +63,18 @@
             pss.settlement_number,
             ps.settlement_use,
             pss.settlement_code,
+            pss.settlement_name,
+            pss.settlement_brand,
             pss.settlement_specifications,
+            pss.settlement_company,
             pss.settlement_quantity,
             pss.settlement_price,
-            pss.settlement_money
+            pss.settlement_money,
+            pss.settlement_deposit,
+            pss.order_number
         FROM
             jr_purchase_settlement_schedule pss
                 LEFT JOIN jr_purchase_settlement ps ON ( ps.settlement_numbers = pss.settlement_number )
-                LEFT JOIN jr_finance_parameters fpa ON ( ps.currency_id = fpa.id )
-                LEFT JOIN jr_finance_parameters fpb ON ( ps.tax_rate_id = fpb.id )
         WHERE
             1 = 1
         AND ps.settlement_supplier = #{purchaseSettlementSchedule.settlementSupplier}
@@ -140,7 +143,9 @@
             settlement_category,
             settlement_subclass,
             settlement_remarks,
-            settlement_number
+            settlement_number,
+            settlement_deposit,
+            order_number
         )
         VALUES
             (
@@ -156,7 +161,9 @@
                 #{settlementCategory},
                 #{settlementSubclass},
                 #{settlementRemarks},
-                #{settlementNumber}
+                #{settlementNumber},
+                #{settlementDeposit},
+                #{orderNumber}
             )
     </insert>
 
