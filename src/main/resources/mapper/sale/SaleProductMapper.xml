@@ -11,16 +11,18 @@
             1 = 1
     </sql>
     <sql id="findSaleProductsSql">
-        SELECT
+       SELECT
             tp.id,
             tp.product_name productName,
             tp.product_specification_model specificationModel,
             tp.product_remarks productRemarks,
+            pp.purchase_parameters_name purchaseParametersName,
             tp.product_state productState
         FROM
             jr_technology_product tp
+            LEFT JOIN jr_purchase_parameters pp ON ( tp.product_metering_company_id = pp.id )
         WHERE
-            tp.product_state = 1
+	tp.product_state = 1
     </sql>
     <select id="countSaleProducts" parameterType="com.erp.sale.entity.SaleProduct" resultType="long">
         <include refid="countSaleProductsSql"/>
@@ -29,9 +31,6 @@
     <select id="findSaleProductsPage" parameterType="com.erp.sale.entity.SaleProduct" resultType="com.erp.sale.entity.SaleProduct">
         <include refid="findSaleProductsSql"/>
     </select>
-
-
-
 
     <sql id="countSaleProductSql" >
         SELECT

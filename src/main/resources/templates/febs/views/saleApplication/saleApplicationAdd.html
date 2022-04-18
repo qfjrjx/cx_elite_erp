@@ -138,7 +138,7 @@
                                         {field: 'specificationModel', title: '规格型号', minWidth: 90},
                                         {field: 'parameterOption', title: '配置', minWidth: 90,event:'specification'
                                         },
-                                        {field: 'companyName', edit:true,title: '单位', minWidth: 55,align:'center'},
+                                        {field: 'companyName',title: '单位', minWidth: 55,align:'center'},
                                         {field: 'quantityName', edit:true,title: '数量', minWidth: 55,align:'center'},
                                         {field: 'explainName',edit:true, title: '说明', minWidth: 72}
                                      ]
@@ -154,8 +154,6 @@
                     $("#parameterProductName").val(data.productName);//产品名称
                     var parameterOptions = tableData[rowIndex].parameterOption;
                     $("#parameterOne").val(parameterOptions);//配置
-                    var companyName = tableData[rowIndex].companyName;
-                    $("#parameterTwo").val(companyName);//单位
                     var quantityName = tableData[rowIndex].quantityName;
                     $("#parameterThree").val(quantityName);//数量
                     var explainName = tableData[rowIndex].explainName;

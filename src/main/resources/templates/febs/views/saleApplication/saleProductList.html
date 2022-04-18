@@ -147,9 +147,10 @@
              var id = data.id;
              var productName = data.productName;
              var specificationModel = data.specificationModel;
+             var purchaseParametersName = data.purchaseParametersName;
              var productRemarks = data.productRemarks;
              var oldData =  table.cache["saleProduct-table"];
-             var dataOne={"productNames":productName,"specificationModels":specificationModel,"productRemark":productRemarks};
+             var dataOne={"productNames":productName,"specificationModels":specificationModel,"purchaseParametersName":purchaseParametersName,"productRemark":productRemarks};
             oldData.push(dataOne);
             layui.table.reload('saleProduct-table',{
                 data : oldData
@@ -164,7 +165,6 @@
             var parameterProductName = document.getElementById("applicationProductName");//获取产品名称
             var parameterProductNames = parameterProductName.value;
             var parameterOnes = document.getElementById("applicationParameterOneTo");//获取配置
-            var parameterTwo = document.getElementById("applicationParameterTwoTo");//获取单位
             var parameterThree = document.getElementById("applicationParameterThreeTo");//获取数量
             var parameterFour = document.getElementById("applicationParameterFourTo");//获取说明
             oldDataDel =  table.cache["saleApplicationUpdate-table"];
@@ -186,9 +186,9 @@
             let oldDatas =  table.cache["saleApplicationUpdate-table"];
             for (i=0;i<oldData.length;i++){
                 if(parameterProductNames !=null && parameterProductNames != "" &&　i < 1){
-                    dataOneUpdate={"productName":oldData[i].productNames,"specificationModel":oldData[i].specificationModels,"configureName":parameterOnes.value,"companyName":parameterTwo.value,"quantityName":parameterThree.value,"explainName":parameterFour.value};
+                    dataOneUpdate={"productName":oldData[i].productNames,"specificationModel":oldData[i].specificationModels,"configureName":parameterOnes.value,"companyName":oldData[i].purchaseParametersName,"quantityName":parameterThree.value,"explainName":parameterFour.value};
                 }else {
-                    dataOneUpdate={"productName":oldData[i].productNames,"specificationModel":oldData[i].specificationModels,"configureName":"","companyName":"","quantityName":"","explainName":""};
+                    dataOneUpdate={"productName":oldData[i].productNames,"specificationModel":oldData[i].specificationModels,"configureName":"","companyName":oldData[i].purchaseParametersName,"quantityName":"","explainName":""};
                 }
                 oldDatas.push(dataOneUpdate);
             }
@@ -212,6 +212,7 @@
                     {type: 'checkbox'},
                     {field: 'productName', title: '产品名称',sort: true},
                     {field: 'specificationModel', title: '规格型号',align:'center', minWidth: 100},
+                    {field: 'purchaseParametersName', title: '计量单位',hide:true,align:'center', minWidth: 100},
                     {field: 'productRemarks', title: '备注',align:'center', minWidth: 80}
                  ]
                 ]
@@ -225,6 +226,7 @@
                     {field: 'id', title: 'id',hide:true,sort: true},
                     {field: 'productNames', title: '产品名称',sort: true},
                     {field: 'specificationModels', title: '规格型号',align:'center', minWidth: 100},
+                    {field: 'purchaseParametersName', title: '计量单位',hide:true,align:'center', minWidth: 100},
                     {field: 'productRemark', title: '备注',align:'center', minWidth: 80}
                 ]]
             });

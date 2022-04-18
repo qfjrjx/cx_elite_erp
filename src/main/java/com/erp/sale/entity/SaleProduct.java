@@ -47,4 +47,9 @@ public class SaleProduct {
     @TableField("product_state")
     private String productState;
 
+    /**
+     *计量单位
+    */
+    private String purchaseParametersName;
+
 }
