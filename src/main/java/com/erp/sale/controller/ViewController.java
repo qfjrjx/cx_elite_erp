@@ -255,10 +255,15 @@ public class ViewController {
         model.addAttribute("paymentMethod",paymentMethod);
         return FebsUtil.view("saleOrder/saleOrderAdd");
     }
-    //跳转到销售订单下产品编码选择列表页面
+    //跳转到销售订单新增下产品编码选择列表页面
     @GetMapping("saleOrderProductList")
     public String saleOrderProductIndex(Model model){
         return FebsUtil.view("saleOrder/saleProductList");
+    }
+    //跳转到销售订单修改下产品编码选择列表页面
+    @GetMapping("saleProductUpdateList")
+    public String saleProductUpdateList(Model model){
+        return FebsUtil.view("saleOrder/saleProductUpdateList");
     }
     //销售订单页面配置查看
     @GetMapping("saleOrder/detail/{id}")
@@ -268,8 +273,35 @@ public class ViewController {
     }
     //销售订单页面配置信息回填
     private void saleOrderConfigureViewModel(Long id, Model model, Boolean transform) {
-        SaleOrder saleOrder = saleOrderService.findSaleOrderConfigureViewById(id);
+        SaleOrderSchedule saleOrderSchedule = saleOrderService.findSaleOrderConfigureViewById(id);
+        model.addAttribute("saleOrderSchedule", saleOrderSchedule);
+    }
+    //销售订单修改回显数据
+    @GetMapping("saleOrder/update/{id}")
+    @RequiresPermissions("saleOrder:update")
+    public String saleOrderUpdate(@PathVariable Long id, Model model) {
+        //查询业务员信息
+        List<SaleBusinessPersonnel> saleBusiness  = saleBusinessPersonnelService.queryBusinessPersonnel();
+        model.addAttribute("saleBusiness",saleBusiness);
+        //查询币种信息
+        List<FinanceParameters> currency  = financeParametersService.queryCurrencyInformation(FinanceParameters.CURRENCY);
+        model.addAttribute("currency",currency);
+        //查询税率信息
+        List<FinanceParameters> taxRate  = financeParametersService.queryCurrencyInformation(FinanceParameters.TAX_RATE);
+        model.addAttribute("taxRate",taxRate);
+        //查询付款方式信息
+        List<FinanceParameters> paymentMethod  = financeParametersService.queryCurrencyInformation(FinanceParameters.PAYMENT_METHOD);
+        model.addAttribute("paymentMethod",paymentMethod);
+        saleOrderUpdateModel(id, model, false);
+        return FebsUtil.view("saleOrder/saleOrderUpdate");
+    }
+    //销售订单修改回填
+    private void saleOrderUpdateModel(Long id, Model model, Boolean transform) {
+        SaleOrder saleOrder = saleOrderService.findSaleOrderById(id);
         model.addAttribute("saleOrder", saleOrder);
+        if (saleOrder.getOrderDate() != null) {
+            model.addAttribute("orderDate", DateUtil.getDateFormat(saleOrder.getOrderDate(), DateUtil.FULL_TIME_SPLIT));
+        }
     }
     //销售申请修改
     @GetMapping("saleApplication/update/{id}")

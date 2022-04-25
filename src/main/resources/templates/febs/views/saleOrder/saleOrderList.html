@@ -71,7 +71,7 @@
                                         </div>
                                     </div>
                                     <div class="layui-inline" >
-                                        <label class="layui-form-label layui-form-label-sm" >物料名称</label>
+                                        <label class="layui-form-label layui-form-label-sm" >产品名称</label>
                                         <div class="layui-input-inline" style="width: 100px">
                                             <input type="text" name="productName" autocomplete="off" style="width: 100px" class="layui-input" >
                                         </div>
@@ -169,6 +169,7 @@
             $view = $('#febs-saleOrder'),
             $query = $view.find('#query'),
             $addTo = $view.find('#addTo'),
+            $updateTo = $view.find('#updateTo'),//修改
             $deleteTo = $view.find('#deleteTo'),
             $exportTo = $view.find('#exportTo'),
             $reset = $view.find('#reset'),
@@ -223,7 +224,7 @@
                 layEvent = obj.event;
             let fileName = data.enclosureName;
             if (layEvent === 'see') {
-                febs.modal.view(data.specificationModel, 'sale/saleOrder/detail/' + data.id, {
+                febs.modal.view(data.specificationModel, 'sale/saleOrder/detail/' + data.orderScheduleId, {
                     btn: ['关闭'],
                     area: $(window).width() <= 750 ? '95%' : '50%',
                     yes: function (index, layero) {
@@ -294,27 +295,27 @@
                 btn: ['增加行','删除行','全部删除','保存', '关闭'],
                 area: ["80%","60%"],
                 yes: function (index, layero) {
-                    $('#saleOrderAdd-add').find('#submit').trigger('click');
+                    $('#saleOrder-add').find('#submit').trigger('click');
                 },
                 btn2: function () {
                     let checkStatus = table.checkStatus('saleOrder-table')
-                        , demoTo = table.cache["saleOrder-table"];//获取表格中的数据
+                        , saleOrderAddTable = table.cache["saleOrder-table"];//获取表格中的数据
                     if (checkStatus.data.length < 1) {
                         layer.alert("请选择一条数据操作");
                         return false;
                     }else {
-                        var tableList = [];//存储未选中的数据
+                        var saleOrderAddList = [];//存储未选中的数据
                         //循环表格数据
-                        for (var i in demoTo) {
+                        for (var i in saleOrderAddTable) {
                             //判断未选中数据
-                            if (!demoTo[i].LAY_CHECKED) {
+                            if (!saleOrderAddTable[i].LAY_CHECKED) {
                                 //存入数组
-                                tableList.push(demoTo[i]);
+                                saleOrderAddList.push(saleOrderAddTable[i]);
                             }
                         }
                         //重载表格
                         table.reload('saleOrder-table', {
-                            data: tableList
+                            data: saleOrderAddList
                         });
 
                     }
@@ -327,7 +328,7 @@
                     return false;
                 },
                 btn4: function () {
-                    $('#saleOrderAdd-add').find('#submitOne').trigger('click');
+                    $('#saleOrder-add').find('#submitData').trigger('click');
                     return false;
                 },
                 btn5: function () {
@@ -335,6 +336,63 @@
                 }
             });
         });
+        $updateTo.on('click', function () {
+            let checkStatus = table.checkStatus('saleOrderTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要修改的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要修改的数据');
+            }else{
+                layui.each(checkStatus.data, function (key, item) {
+                    febs.modal.open('【销售订单】修改', 'sale/saleOrder/update/' + item.id, {
+                        area: ["80%","60%"],
+                        btn: ['增加行','删除行','全部删除','保存', '关闭'],
+                        yes: function (index, layero) {
+                            $('#saleOrder-update').find('#submit').trigger('click');
+                        },
+                        btn2: function () {
+                            let checkStatus = table.checkStatus('saleOrderUpdate-table')
+                                , checkStatusDate = table.cache["saleOrderUpdate-table"];//获取表格中的数据
+                            if (checkStatus.data.length < 1) {
+                                layer.alert("请选择一条数据操作");
+                                return false;
+                            }else {
+                                var dateList = [];//存储未选中的数据
+                                //循环表格数据
+                                for (var i in checkStatusDate) {
+                                    //判断未选中数据
+                                    if (!checkStatusDate[i].LAY_CHECKED) {
+                                        //存入数组
+                                        dateList.push(checkStatusDate[i]);
+                                    }
+                                }
+                                //重载表格
+                                table.reload('saleOrderUpdate-table', {
+                                    data: dateList
+                                });
+
+                            }
+                            return false;
+                        },
+                        btn3: function () {
+                            var dataBak = [];
+                            layui.table.reload('saleOrderUpdate-table',{
+                                data:dataBak
+                            });
+                            return false;
+                        },
+                        btn4: function () {
+                            $('#saleOrder-update').find('#submitData').trigger('click');
+                            return false;
+                        },
+                        btn5: function () {
+                            layer.closeAll();
+                        }
+                    });
+                });
+            }
+        });
+
         $deleteTo.on('click', function () {
             let checkStatus = table.checkStatus('saleOrderTable');
             if (!checkStatus.data.length) {

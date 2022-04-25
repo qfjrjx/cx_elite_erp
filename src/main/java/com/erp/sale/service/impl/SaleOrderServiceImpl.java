@@ -1,8 +1,12 @@
 package com.erp.sale.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.erp.common.entity.QueryRequest;
 import com.erp.sale.entity.SaleOrder;
+import com.erp.sale.entity.SaleOrderAll;
+import com.erp.sale.entity.SaleOrderSchedule;
 import com.erp.sale.mapper.SaleOrderMapper;
 import com.erp.sale.service.ISaleOrderService;
 import org.springframework.stereotype.Service;
@@ -32,28 +36,32 @@ import java.util.Locale;
 @Service
 @RequiredArgsConstructor
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-public class SaleOrderServiceImpl extends ServiceImpl<SaleOrderMapper, SaleOrder> implements ISaleOrderService {
+public class SaleOrderServiceImpl extends ServiceImpl<SaleOrderMapper, SaleOrderAll> implements ISaleOrderService {
 
     private final SaleOrderMapper saleOrderMapper;
 
     @Override
-    public IPage<SaleOrder> findSaleOrders(QueryRequest request, SaleOrder saleOrder) {
-        Page<SaleOrder> page = new Page<>(request.getPageNum(), request.getPageSize());
+    public IPage<SaleOrderAll> findSaleOrders(QueryRequest request, SaleOrderAll saleOrder) {
+        Page<SaleOrderAll> page = new Page<>(request.getPageNum(), request.getPageSize());
         page.setSearchCount(false);
         page.setTotal(baseMapper.countSaleOrder(saleOrder));
         return baseMapper.findSaleOrderPage(page,saleOrder);
     }
 
     @Override
-    public List<SaleOrder> findSaleOrders(SaleOrder saleOrder) {
-	    LambdaQueryWrapper<SaleOrder> queryWrapper = new LambdaQueryWrapper<>();
+    public List<SaleOrderAll> findSaleOrders(SaleOrderAll saleOrder) {
+	    LambdaQueryWrapper<SaleOrderAll> queryWrapper = new LambdaQueryWrapper<>();
 		// TODO 设置查询条件
 		return this.baseMapper.selectList(queryWrapper);
     }
 
     @Override
-    public void createSaleOrder(String orderDate, String customerName, String salesmanName, String currencyName, String taxRate, String paymentMethod, String depositMoney, String invoiceNot, String contactsName, String mobilePhone, String orderType, String afterSalesClerk, String dataTable, String contImg) throws ParseException {
+    public void createSaleOrder(String saleOrderData,String dataTable, String contImg) throws ParseException {
             SaleOrder saleOrder = new SaleOrder();
+            SaleOrderSchedule saleOrderSchedule = new SaleOrderSchedule();
+            /*单号案例 SQ2102001*/
+            String initials = "HT";
+            String generateDocNo = null;
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             Date date = new Date();
             //获取当前年
@@ -82,25 +90,28 @@ public class SaleOrderServiceImpl extends ServiceImpl<SaleOrderMapper, SaleOrder
                         if (i < 10) {
                             n = "00" + (i+1);
                         }if ((i + 1) % 10 != 0){
-                            saleOrder.setOddNumbers("HT"+yearLast+month+n);
+                            generateDocNo = initials+yearLast+month+n;
+                            saleOrder.setOddNumbers(generateDocNo);
                             break;
                         }
                     }
                 }else{
                     int ff = oddNumbers+1;
                     if(ff < 100){
-                        saleOrder.setOddNumbers("HT"+yearLast+month+"0"+ff);
+                        generateDocNo = initials+yearLast+month+"0"+ff;
+                        saleOrder.setOddNumbers(generateDocNo);
                     }
                 }
             }else if(!month.equals(createTimeMonth)){
                 String n = "";
-                int i = 0;
+                int i = 1;
                 // 满足条件1
                 if (i < 10){
                     n = "00" + i;
                 }
                 if ((i + 1) % 10 != 0){
-                    saleOrder.setOddNumbers("HT"+yearLast+month+n);
+                    generateDocNo = initials+yearLast+month+n;
+                    saleOrder.setOddNumbers(generateDocNo);
                 }
             }
         }else {
@@ -111,9 +122,23 @@ public class SaleOrderServiceImpl extends ServiceImpl<SaleOrderMapper, SaleOrder
                 v = "00" + i;
             }
             if ((i + 1) % 10 != 0){
-                saleOrder.setOddNumbers("HT"+yearLast+month+v);
+                generateDocNo = initials+yearLast+month+v;
+                saleOrder.setOddNumbers(generateDocNo);
             }
         }
+        JSONObject saleOrderDataKey = JSON.parseObject(saleOrderData);
+        String  orderDate =  saleOrderDataKey.getString("orderDate");
+        String  customerName =  saleOrderDataKey.getString("customerName");
+        String  salesmanName =  saleOrderDataKey.getString("salesmanName");
+        String  currencyName =  saleOrderDataKey.getString("currencyName");
+        String  taxRate =  saleOrderDataKey.getString("taxRate");
+        String  paymentMethod =  saleOrderDataKey.getString("paymentMethod");
+        String  depositMoney =  saleOrderDataKey.getString("depositMoney");
+        String  invoiceNot =  saleOrderDataKey.getString("invoiceNot");
+        String  contactsName =  saleOrderDataKey.getString("contactsName");
+        String  mobilePhone =  saleOrderDataKey.getString("mobilePhone");
+        String  orderType =  saleOrderDataKey.getString("orderType");
+        String  afterSalesClerk =  saleOrderDataKey.getString("afterSalesClerk");
         if (!orderDate.equals("")) {
             Date orderDateOne = sdf.parse(orderDate);//格式化数据，取当前时间结果
             saleOrder.setOrderDate(orderDateOne);
@@ -170,19 +195,20 @@ public class SaleOrderServiceImpl extends ServiceImpl<SaleOrderMapper, SaleOrder
             String amountMoney = jsonArrayOne.getJSONObject(i).getString("amountMoney");
             String deliveryDate = jsonArrayOne.getJSONObject(i).getString("deliveryTime");
             String orderRemarks = jsonArrayOne.getJSONObject(i).getString("orderRemarks");
-            saleOrder.setProductName(productName);
-            saleOrder.setSpecificationModel(specificationModel);
-            saleOrder.setCompanyName(companyName);
-            saleOrder.setQuantityName(quantityName);
+            saleOrderSchedule.setOddNumbers(generateDocNo);
+            saleOrderSchedule.setProductName(productName);
+            saleOrderSchedule.setSpecificationModel(specificationModel);
+            saleOrderSchedule.setCompanyName(companyName);
+            saleOrderSchedule.setQuantityName(quantityName);
             BigDecimal unitPriceTo = new BigDecimal(unitPrice);
-            saleOrder.setUnitPrice(unitPriceTo);
+            saleOrderSchedule.setUnitPrice(unitPriceTo);
             if (!amountMoney.equals("")) {
                 BigDecimal amountMoneyTo = new BigDecimal(amountMoney);
-                saleOrder.setAmountMoney(amountMoneyTo);
+                saleOrderSchedule.setAmountMoney(amountMoneyTo);
             }
             Date requestedDeliveryDates = sdf.parse(deliveryDate);//格式化数据，取当前时间结果
-            saleOrder.setDeliveryDate(requestedDeliveryDates);
-            saleOrder.setOrderRemarks(orderRemarks);
+            saleOrderSchedule.setDeliveryDate(requestedDeliveryDates);
+            saleOrderSchedule.setOrderRemarks(orderRemarks);
             //saleApplication.setQuantityName(Integer.parseInt(quantityName));
             //将List集合转成json字符串
             JSONArray jsonArrayTwo = JSONArray.parseArray(configureName);
@@ -199,63 +225,78 @@ public class SaleOrderServiceImpl extends ServiceImpl<SaleOrderMapper, SaleOrder
                 String str1 =parameterOne.substring(0, parameterOne.indexOf(":"));
                 String configurationContent =parameterOne.substring(str1.length()+1, parameterOne.length());
                 if(allocationName.equals("机器要求")){
-                    saleOrder.setMachineRequirements(configurationContent);
+                    saleOrderSchedule.setMachineRequirements(configurationContent);
                     strOne.append("机器要求:"+configurationContent+",");
                 }if (allocationName.equals("电脑配置")){
-                    saleOrder.setComputerConfiguration(configurationContent);
+                    saleOrderSchedule.setComputerConfiguration(configurationContent);
                     strOne.append("电脑配置:"+configurationContent+",");
                 }if (allocationName.equals("刀具大小")){
-                    saleOrder.setToolSize(configurationContent);
+                    saleOrderSchedule.setToolSize(configurationContent);
                     strOne.append("刀具大小:"+configurationContent+",");
                 }if (allocationName.equals("每小时产量")){
-                    saleOrder.setHourlyProduction(configurationContent);
+                    saleOrderSchedule.setHourlyProduction(configurationContent);
                     strOne.append("每小时产量:"+configurationContent+",");
                 }if (allocationName.equals("加工工序")){
-                    saleOrder.setProcessingProcedure(configurationContent);
+                    saleOrderSchedule.setProcessingProcedure(configurationContent);
                     strOne.append("加工工序:"+configurationContent+",");
                 }if (allocationName.equals("夹具要求")){
-                    saleOrder.setFixtureRequirements(configurationContent);
+                    saleOrderSchedule.setFixtureRequirements(configurationContent);
                     strOne.append("夹具要求:"+configurationContent+",");
                 }if (allocationName.equals("产品形状")){
-                    saleOrder.setProductShape(configurationContent);
+                    saleOrderSchedule.setProductShape(configurationContent);
                     strOne.append("产品形状:"+configurationContent+",");
                 }if (allocationName.equals("产品尺寸")){
-                    saleOrder.setProductSize(configurationContent);
+                    saleOrderSchedule.setProductSize(configurationContent);
                     strOne.append("产品尺寸:"+configurationContent+",");
                 }if (allocationName.equals("其他要求")){
-                    saleOrder.setOtherRequirements(configurationContent);
+                    saleOrderSchedule.setOtherRequirements(configurationContent);
                     strOne.append("其他要求:"+configurationContent+",");
                 }
                 //System.out.println("parameterOptions----:"+jsonArrayTwo.get(j));
             }
             //System.out.println("列表----:"+jsonArrayOne.get(i));
-            saleOrder.setConfigureName(strOne.toString());
+            saleOrderSchedule.setConfigureName(strOne.toString());
             SimpleDateFormat simpleDateFormatOne = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
             String dates = simpleDateFormatOne.format(new Date());//系统当前时间
             Date today = simpleDateFormatOne.parse(dates);//格式化系统当前时间
             saleOrder.setCreateDate(today);
-            //添加到数据库
-            baseMapper.addSaleOrder(saleOrder);
+            //添加到数据库附表
+            baseMapper.addSaleOrderSchedule(saleOrderSchedule);
         }
-
-    }
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void updateSaleOrder(SaleOrder saleOrder) {
-        this.saveOrUpdate(saleOrder);
+        //添加到数据库主表
+        baseMapper.addSaleOrder(saleOrder);
     }
 
     @Override
+    public void updateSaleOrder(String saleApplicationData, String dataTable, String contImg) {
+
+
+
+    }
+
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deleteSaleOrder(SaleOrder saleOrder) {
-        LambdaQueryWrapper<SaleOrder> wrapper = new LambdaQueryWrapper<>();
+    public void deleteSaleOrder(SaleOrderAll saleOrder) {
+        LambdaQueryWrapper<SaleOrderAll> wrapper = new LambdaQueryWrapper<>();
 	    // TODO 设置删除条件
 	    this.remove(wrapper);
 	}
 
     @Override
-    public SaleOrder findSaleOrderConfigureViewById(Long id) {
+    public SaleOrderSchedule findSaleOrderConfigureViewById(Long id) {
 
         return baseMapper.findSaleOrderConfigureViewById(id);
+    }
+
+    @Override
+    public SaleOrder findSaleOrderById(Long id) {
+        return baseMapper.findSaleOrderById(id);
+    }
+
+    @Override
+    public List<SaleOrderSchedule> saleOrderSchedulesList(String oddNumbersTwo) {
+
+        return baseMapper.saleOrderSchedulesList(oddNumbersTwo);
     }
 }

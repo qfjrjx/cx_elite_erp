@@ -1,10 +1,10 @@
 <style>
-    #saleOrder-add {
+    #saleOrder-update {
         padding: 20px 25px 25px 0;
     }
 </style>
-<div class="layui-fluid" id="saleOrder-add">
-    <form class="layui-form" action="" lay-filter="saleOrder-add-form">
+<div class="layui-fluid" id="saleOrder-update">
+    <form class="layui-form" action="" lay-filter="saleOrder-update-form">
         <div class="layui-form-item febs-hide">
             <label class="layui-form-label febs-form-item-require">赋值参数：</label>
             <div class="layui-input-block">
@@ -27,35 +27,34 @@
         <div class="layui-form-item">
             <label class="layui-form-label febs-form-item-require" >单&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号</label>
             <div class="layui-input-inline" style="width: 120px">
-                <input type="text" name="oddNumbers" id="oddNumbers" style="width: 120px"
+                <input type="text" name="oddNumbers" id="oddNumbers" style="width: 120px" data-th-value="${saleOrder.oddNumbers}"
                        autocomplete="off" class="layui-input" placeholder="为空时自动生成" readonly>
             </div>
             <label class="layui-form-label febs-form-item-require">日&nbsp;期</label>
             <div class="layui-input-inline" style="width: 120px">
-                <input type="text" name="orderDate" id="orderDate"
+                <input type="text" name="orderDate" id="orderDate" data-th-value="${saleOrder.orderDate}"
                        autocomplete="off" class="layui-input createDate" readonly>
             </div>
             <label class="layui-form-label febs-form-item-require">客&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;户</label>
             <div class="layui-input-inline" style="width: 110px">
-                <input type="text" name="customerName" lay-verify="required"  id="customerNameTwo" lay-reqtext="系统提示，请选择客户"  ondblclick="saleCustomerProfileSelection()"
+                <input type="text" name="customerName" lay-verify="required"  id="customerNameTwo" data-th-value="${saleOrder.customerName}" lay-reqtext="系统提示，请选择客户"  ondblclick="saleCustomerProfileSelection()"
                        autocomplete="off" class="layui-input" style="width: 110px" placeholder="请双击" readonly>
             </div>
             <label class="layui-form-label febs-form-item-require">业&nbsp;&nbsp;务&nbsp;员</label>
             <div class="layui-input-inline" style="width: 110px" id="content">
                 <select id="personnelNameOne"  name="salesmanName" type="select" lay-verify="required"  class="layui-form-select selector" lay-filter="salesmanName">
-                    <option value="" >请选择...</option>
                     <option th:each="saleBusiness:${saleBusiness}" th:value="${saleBusiness.personnelName}">[[${saleBusiness.personnelName}]]</option>
                 </select>
             </div>
             <label class="layui-form-label layui-form-label-sm">币&nbsp;种</label>
             <div class="layui-input-inline" style="width: 90px">
-                <select id="currencyNameOne"  name="currencyName" lay-verify="required" class="layui-form-select" >
+                <select id="currencyNameOne"  type="select" name="currencyName" lay-verify="required" class="layui-form-select selector" lay-filter="currencyName" >
                     <option th:each="currency:${currency}" th:value="${currency.id}">[[${currency.financeParameterName}]]</option>
                 </select>
             </div>
             <label class="layui-form-label layui-form-label-sm">税&nbsp;率</label>
             <div class="layui-input-inline" style="width: 90px">
-                <select id="taxRate"  name="taxRate" lay-verify="required" class="layui-form-select" >
+                <select type="select" id="taxRate"  name="taxRate" lay-verify="required" class="layui-form-select" >
                     <option th:each="taxRate:${taxRate}" th:value="${taxRate.id}">[[${taxRate.financeParameterName}]]</option>
                 </select>
             </div>
@@ -64,13 +63,12 @@
             <label class="layui-form-label">付款方式</label>
             <div class="layui-input-inline" style="width: 120px">
                 <select id="paymentMethod"  name="paymentMethod" class="layui-form-select" >
-                    <option value="" >请选择...</option>
                     <option th:each="paymentMethod:${paymentMethod}" th:value="${paymentMethod.id}">[[${paymentMethod.financeParameterName}]]</option>
                 </select>
             </div>
             <label class="layui-form-label febs-form-item-require" >订&nbsp;金</label>
             <div class="layui-input-inline" style="width: 120px">
-                <input type="text" name="depositMoney" id="depositMoney" style="width: 120px"
+                <input type="text" name="depositMoney" id="depositMoney" style="width: 120px" data-th-value="${saleOrder.depositMoney}"
                        autocomplete="off" class="layui-input" placeholder="请输入订金">
             </div>
             <label class="layui-form-label ">是否开票</label>
@@ -82,12 +80,12 @@
             </div>
             <label class="layui-form-label ">联&nbsp;&nbsp;系&nbsp;人</label>
             <div class="layui-input-inline" style="width: 110px">
-                <input type="text" name="contactsName"  id="contactsNameOne" style="width: 110px"
+                <input type="text" name="contactsName"  id="contactsNameOne" style="width: 110px" data-th-value="${saleOrder.contactsName}"
                        autocomplete="off" class="layui-input" placeholder="">
             </div>
             <label class="layui-form-label layui-form-label-sm">手机</label>
             <div class="layui-input-inline" style="width: 200px">
-                <input type="text" name="mobilePhone" id="mobilePhoneOne" style="width: 200px"
+                <input type="text" name="mobilePhone" id="mobilePhoneOne" style="width: 200px" data-th-value="${saleOrder.mobilePhone}"
                        autocomplete="off" class="layui-input" placeholder="">
             </div>
         </div>
@@ -96,14 +94,14 @@
             <div class="layui-input-inline" style="width: 600px">
                 <button type="button" class="layui-btn layui-btn-sm" id="uploadPic"><i class="layui-icon">&#xe67c;</i>选择文件</button>
                 <button type="button" class="layui-btn layui-btn-sm layui-btn-warm" id="uploadPicBtn"><i class="layui-icon layui-icon-upload-circle"></i>开始上传</button>
-                <span id="span-img" style="color: #f5222d"></span>
+                <span id="span-img" style="color: #f5222d" data-th-text="${saleOrder.enclosureName}"></span>
                 <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" id="deletePicBtndeletePicBtn"><i class="layui-icon layui-icon-close"></i>删除</button>
                 　　　　<!-- 隐藏的input,一个隐藏的input（用于保存文件url） -->
                 　　　　<!--<input type="hidden" id="img_url" name="img" value=""/>-->
             </div>
             <label class="layui-form-label febs-form-item-require">订单类型</label>
             <div class="layui-input-inline" style="width: 100px">
-                <select name="orderType" id="orderType" lay-verify="required">
+                <select name="orderType" id="orderType" lay-verify="required" >
                     <option value=""></option>
                     <option value="1">配件</option>
                     <option value="2">整机</option>
@@ -112,15 +110,14 @@
             <label class="layui-form-label">售&nbsp;&nbsp;后&nbsp;员</label>
             <div class="layui-input-inline" style="width: 110px" >
                 <select name="afterSalesClerk" id="afterSalesClerk" type="select" class="layui-form-select selector" lay-filter="afterSalesClerk">
-                    <option value="" ></option>
                     <option th:each="saleBusiness:${saleBusiness}" th:value="${saleBusiness.personnelName}">[[${saleBusiness.personnelName}]]</option>
                 </select>
             </div>
         </div>
-        <table class="layui-table layui-form" id="saleOrder-table" lay-filter="saleOrder-table"></table>
+        <table class="layui-table layui-form" id="saleOrderUpdate-table" lay-filter="saleOrderUpdate-table"></table>
         <div class="layui-form-item febs-hide">
-            <button class="layui-btn" lay-submit="" lay-filter="saleOrder-add-form-submit" id="submit"></button>
-            <button class="layui-btn" lay-submit="" lay-filter="saleOrder-add-form-submitData" id="submitData"></button>
+            <button class="layui-btn" lay-submit="" lay-filter="saleOrder-update-form-submit" id="submit"></button>
+            <button class="layui-btn" lay-submit="" lay-filter="saleOrder-update-form-submitData" id="submitData"></button>
             <button type="reset" class="layui-btn" id="reset"></button>
         </div>
     </form>
@@ -131,7 +128,7 @@
     var orderDeliveryDateTo = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate();
 
 </script>
-<script>
+<script data-th-inline="javascript">
     layui.use(['febs', 'form', 'validate','table', 'xmSelect','upload','laydate'], function () {
         let $ = layui.$,
             febs = layui.febs,
@@ -140,12 +137,27 @@
             laydate = layui.laydate,
             validate = layui.validate,
             table = layui.table,
+            saleOrder = [[${saleOrder}]],
             upload = layui.upload,
             uploadInst;
 
 
         form.verify(validate);
         form.render();
+
+        initSaleOrderValue();
+
+        function initSaleOrderValue() {
+            form.val("saleOrder-update-form", {
+                "salesmanName": saleOrder.salesmanName,
+                "currencyName": saleOrder.currencyId,
+                "taxRate": saleOrder.taxRateId,
+                "paymentMethod": saleOrder.paymentMethodId,
+                "invoiceNot": saleOrder.invoiceNot,
+                "orderType": saleOrder.orderType,
+                "afterSalesClerk": saleOrder.afterSalesClerk
+            });
+        }
 
         //日期同时绑定多个
         lay('.createDate').each(function(){
@@ -187,10 +199,22 @@
                 });
             }
         });
+        var tableData = new Array(); // 用于存放表格数据
+        let oddNumbersOne = document.getElementById("oddNumbers");
+        let oddNumbersTwo = oddNumbersOne.value;
+        $.ajax({
+            url: 'saleOrderDate/list/'
+            ,data:{"oddNumbersTwo":oddNumbersTwo}
+            ,async:false
+            ,dataType:"json"
+            , success: function(data){
+                tableData=data.replies;
+            }
+        });
          table.render({
-                        elem: "#saleOrder-table",
-                        data:[],
-                        even:true,
+                        elem: "#saleOrderUpdate-table",
+                        data:tableData,
+                        page:false,
                             cols: [
                                      [
                                         {type: 'checkbox'},
@@ -223,7 +247,7 @@
                      });
         //监听行单击事件  给每一行数据绑定点击事件T
         //row(tableBigType)  表格的id
-        table.on('edit(saleOrder-table)', function(obj){
+        table.on('edit(saleOrderUpdate-table)', function(obj){
             trData = obj.data
             var tdQuantityName =  trData.quantityName;
             if (tdQuantityName !="" && tdQuantityName != undefined){
@@ -235,7 +259,7 @@
                 obj.update(obj.data);
             }
         });
-        table.on('tool(saleOrder-table)', function (obj) {
+        table.on('tool(saleOrderUpdate-table)', function (obj) {
             let data = obj.data,
                 layEvent = obj.event;
             if (layEvent === 'deliveryDateOne') {
@@ -251,7 +275,7 @@
                 });
             }
             if (layEvent === 'choice') {
-                var tableData = layui.table.cache['saleOrder-table'];
+                var tableData = layui.table.cache['saleOrderUpdate-table'];
                 var rowIndex = $(obj.tr).attr('data-index');//当前行的索引
                 if (tableData != "") {
                     $("#parameterProductName").val(data.productName);//产品名称
@@ -268,7 +292,7 @@
                     var explainName = tableData[rowIndex].explainName;
                     $("#parameterExplain").val(explainName);//说明
                 }
-                febs.modal.view('产品编码选择列表', "sale/saleOrderProductList", {
+                febs.modal.view('产品编码选择列表', "sale/saleProductUpdateList", {
                     area:["65%","80%"],
                    /* cancel:function (index,layero) {
                         if (confirm('确定要关闭么')){
@@ -344,7 +368,7 @@
                                     let dataOne = new Array();
                                     let dataBak = [];
 
-                                    let tableDas = layui.table.cache["saleOrder-table"];
+                                    let tableDas = layui.table.cache["saleOrderUpdate-table"];
                                     /* 机器要求*/
                                     let machineRequirements = document.getElementById("machineRequirements").value;
                                     /*电脑配置*/
@@ -392,7 +416,7 @@
                                         }
                                         dataBak.push(tableData);
                                     }
-                                    layui.table.reload('saleOrder-table',{
+                                    layui.table.reload('saleOrderUpdate-table',{
                                         data:dataBak
                                     });
                                     parent.layer.close(layer.index)
@@ -404,11 +428,11 @@
                 }
             }
         });
-        form.on('submit(saleOrder-add-form-submit)', function (data) {
+        form.on('submit(saleOrder-update-form-submit)', function (data) {
             //获取时间戳
             //var timestamp = new Date().getTime();
            var dataBak = [];
-           var tableBak = layui.table.cache['saleOrder-table'];
+           var tableBak = layui.table.cache['saleOrderUpdate-table'];
            for (var i=0;i<tableBak.length; i++){
                dataBak.push(tableBak[i]);
            }
@@ -424,15 +448,16 @@
                "orderRemarks":""
            });
           // console.log(dataBak);
-           layui.table.reload('saleOrder-table',{
+           layui.table.reload('saleOrderUpdate-table',{
                data:dataBak
            });
             return false;
 
         });
-        form.on('submit(saleOrder-add-form-submitData)', function (data) {
+        form.on('submit(saleOrder-update-form-submitData)', function (data) {
             var dataThree = new Array();
             let saleOrderData = {
+                "oddNumbers":data.field.oddNumbers,//单号
                 "orderDate":data.field.orderDate,//日期
                 "customerName":data.field.customerName,//客户
                 "salesmanName":data.field.salesmanName,//业务员
@@ -447,13 +472,21 @@
                 "afterSalesClerk":data.field.afterSalesClerk,//售后员
             }
             var contImg = document.getElementById("span-img").innerText;
-            var saleOrder_table =  table.cache["saleOrder-table"];
-            for (i=0;i<saleOrder_table.length;i++){
-                var dataOne={"productName":saleOrder_table[i].productName,"specificationModel":saleOrder_table[i].specificationModel,"configureName":saleOrder_table[i].configureName,"companyName":saleOrder_table[i].companyName,"quantityName":saleOrder_table[i].quantityName,"unitPrice":saleOrder_table[i].unitPrice,"amountMoney":saleOrder_table[i].amountMoney,"deliveryTime":saleOrder_table[i].deliveryTime,"orderRemarks":saleOrder_table[i].orderRemarks};
+            var saleOrderUpdate_table =  table.cache["saleOrderUpdate-table"];
+            for (i=0;i<saleOrderUpdate_table.length;i++){
+                var dataOne={"productName":saleOrderUpdate_table[i].productName,
+                    "specificationModel":saleOrderUpdate_table[i].specificationModel,
+                    "configureName":saleOrderUpdate_table[i].configureName,
+                    "companyName":saleOrderUpdate_table[i].companyName,
+                    "quantityName":saleOrderUpdate_table[i].quantityName,
+                    "unitPrice":saleOrderUpdate_table[i].unitPrice,
+                    "amountMoney":saleOrderUpdate_table[i].amountMoney,
+                    "deliveryTime":saleOrderUpdate_table[i].deliveryTime,
+                    "orderRemarks":saleOrderUpdate_table[i].orderRemarks};
                 dataThree.push(dataOne);
             }
             $.ajax({
-                url: '/saleOrder/add',
+                url: '/saleOrder/update',
                 type:"post",
                 data: {saleOrderData:JSON.stringify(saleOrderData),dataTable:JSON.stringify(dataThree),contImg:contImg},
                 success : function(res) {
