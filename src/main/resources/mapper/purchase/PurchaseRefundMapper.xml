@@ -44,14 +44,20 @@
                 LEFT JOIN jr_finance_parameters fpb ON ( pr.tax_rate_id = fpb.id )
         WHERE
             1 = 1
+            <if test="purchaseRefund.signedDateFrom != null and purchaseRefund.signedDateFrom !=''">
+                And pr.refund_date &gt;= #{purchaseRefund.signedDateFrom}
+            </if>
+            <if test="purchaseRefund.signedDateTo != null and purchaseRefund.signedDateTo !=''">
+                And pr.refund_date &lt;= #{purchaseRefund.signedDateTo}
+            </if>
             <if test="purchaseRefund.refundState != null and purchaseRefund.refundState != ''">
                 AND pr.refund_state = #{purchaseRefund.refundState}
             </if>
             <if test="purchaseRefund.refundNumber != null and purchaseRefund.refundNumber != ''">
                 AND pr.refund_number = #{purchaseRefund.refundNumber}
             </if>
-            <if test="purchaseRefund.supplierName != null and purchaseRefund.supplierName != ''">
-                AND pr.supplier_name = #{purchaseRefund.supplierName}
+            <if test="purchaseRefund.supplierNameRefund != null and purchaseRefund.supplierNameRefund != ''">
+                AND pr.supplier_name = #{purchaseRefund.supplierNameRefund}
             </if>
             <if test="purchaseRefund.refundLibrary != null and purchaseRefund.refundLibrary != ''">
                 AND pr.refund_library = #{purchaseRefund.refundLibrary}

@@ -88,4 +88,10 @@ public class PurchaseRequisitionSchedule {
     @TableField("apply_category")
     private String applyCategory;
 
+    /**
+     * 是否核销
+     */
+    @TableField("apply_cancel")
+    private String applyCancel;
+
 }

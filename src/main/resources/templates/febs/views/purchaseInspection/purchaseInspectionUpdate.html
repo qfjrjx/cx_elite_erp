@@ -8,7 +8,7 @@
         <div class="layui-form-item">
             <label class="layui-form-mid" >单号&nbsp;<b>:</b></label>
             <div class="layui-input-inline" style="width: 115px">
-                <input type="text" name="closedNumber" id="closedNumber" style="width: 115px"
+                <input type="text" name="inspectionNumber" id="inspectionNumber" style="width: 115px"
                        autocomplete="off" class="layui-input" placeholder="为空时自动生成" readonly>
             </div>
             <label class="layui-form-mid">日期&nbsp;<b>:</b></label>
@@ -16,20 +16,16 @@
                 <input type="text" name="purchaseRequisitionDate" id="purchaseRequisitionDate"
                        autocomplete="off" class="layui-input createDate" readonly>
             </div>
-            <label class="layui-form-mid">币&nbsp;种&nbsp;<b>:</b></label>
-            <div class="layui-input-inline" style="width: 90px">
-                <select id="currencyName"  name="currencyName" lay-verify="required" class="layui-form-select" >
-                    <option th:each="currency:${currency}" th:value="${currency.id}">[[${currency.financeParameterName}]]</option>
-                </select>
+            <label class="layui-form-mid" >币&nbsp;种&nbsp;<b>:</b></label>
+            <div class="layui-input-inline" style="width: 115px">
+                <input type="text" name="currencyName" id="currencyName" style="width: 115px"
+                       autocomplete="off" class="layui-input" placeholder="为空时自动生成" readonly>
             </div>
-            <label class="layui-form-mid">税&nbsp;率&nbsp;<b>:</b></label>
-            <div class="layui-input-inline" style="width: 85px">
-                <select id="taxRateName"  name="taxRateName" lay-verify="required" class="layui-form-select" >
-                    <option th:each="taxRate:${taxRate}" th:value="${taxRate.id}">[[${taxRate.financeParameterName}]]</option>
-                </select>
+            <label class="layui-form-mid" >税&nbsp;率&nbsp;<b>:</b></label>
+            <div class="layui-input-inline" style="width: 115px">
+                <input type="text" name="taxRateName" id="taxRateName" style="width: 115px"
+                       autocomplete="off" class="layui-input" placeholder="为空时自动生成" readonly>
             </div>
-
-
         </div>
         <table class="layui-table layui-form" id="purchaseInspectionUpdateList" lay-filter="purchaseInspectionUpdateList"></table>
         <div class="layui-form-item febs-hide">
@@ -70,6 +66,15 @@
 
         form.verify(validate);
         form.render();
+        initPurchaseRequisitionCreatorValue();
+
+        function initPurchaseRequisitionCreatorValue() {
+            form.val("purchaseInspection-update-form", {
+                "inspectionNumber": purchaseInspection.inspectionNumber,
+                "currencyName": purchaseInspection.currencyName,
+                "taxRateName":purchaseInspection.taxRateName
+            });
+        }
 
         var tableData=new Array(); // 用于存放表格数据
         $.ajax({
@@ -95,7 +100,7 @@
                     {field: 'materialName', title: '物料名称',align:'center', minWidth: 90},
                     {field: 'inspectionrSpecifications', title: '规格型号', align:'center',minWidth: 90},
                     {field: 'inspectionCompany',title: '单位', minWidth: 55,align:'center'},
-                    {field: 'orderQuantity',title: '订购数', minWidth: 55,align:'center',edit:true},
+                    {field: 'orderQuantity',title: '订购数', minWidth: 55,align:'center'},
                     {
                         field: 'unitPrice',
                         title: '单价',

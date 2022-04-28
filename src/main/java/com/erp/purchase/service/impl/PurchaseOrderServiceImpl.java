@@ -291,4 +291,12 @@ public class PurchaseOrderServiceImpl extends ServiceImpl<PurchaseOrderMapper, P
         page.setTotal(baseMapper.countPurchaseInspectionOrder(supplierName));
         return baseMapper.queryPurchaseInspectionOrder(page,supplierName);
     }
+
+    @Override
+    public IPage<PurchaseOrder> findPurchasePriceChanges(QueryRequest request, PurchaseOrder purchaseOrder) {
+        Page<PurchaseParameters> page = new Page<>(request.getPageNum(), request.getPageSize());
+        page.setSearchCount(false);
+        page.setTotal(baseMapper.countPurchasePriceChanges(purchaseOrder));
+        return baseMapper.findPurchasePriceChanges(page,purchaseOrder);
+    }
 }

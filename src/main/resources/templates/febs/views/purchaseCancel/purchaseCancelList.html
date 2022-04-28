@@ -1,0 +1,266 @@
+<style>
+    #purchaseCancel-list xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #purchaseCancel-list xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="purchaseCancel-list" lay-title="申请核销">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="parameter-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md12">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid layui-form-label-sm">状态</label>
+                                        <div class="layui-input-inline">
+                                            <select name="applyCancel">
+                                                <option value=""></option>
+                                                <option value="1">未核销</option>
+                                                <option value="2">已核销</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid">日期&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <input type="text" id="start_date" name="signedDateFrom" placeholder="" lay-verify='date' class="layui-input"/>
+                                            <i class="layui-icon" id="start_date_icon"></i>
+                                        </div>
+                                        <label class="layui-form-mid">至：</label>
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <input type="text" id="end_date" name="signedDateTo" placeholder="" lay-verify='date' class="layui-input"/>
+                                            <i class="layui-icon " id="end_date_icon"></i>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-mid layui-form-label-sm">单号</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="oddNumbers" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid layui-form-label-sm">部门</label>
+                                        <div class="layui-input-inline">
+                                            <select name="applySubclass">
+                                                <option value=""></option>
+                                                <option>键盘</option>
+                                                <option>电脑</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-mid layui-form-label-sm">名称</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="applyName" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-mid layui-form-label-sm">规格</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="applySpecifications" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid layui-form-label-sm">类别</label>
+                                        <div class="layui-input-inline">
+                                            <select name="applySubclass">
+                                                <option value=""></option>
+                                                <option value="1">键盘</option>
+                                                <option value="2">电脑</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="purchaseCancelTable" id="purchaseCancelTable" lay-data="{id: 'purchaseCancelTable'}"></table>
+                    <div class="layui-col-md6">
+                        <div class="layui-form-item"></div>
+                    </div>
+                    <div class="layui-col-md6 layui-col-sm12 layui-col-xs12 table-action-area">
+                        <!--查询按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                            <i class="layui-icon">&#xe848;</i>查询
+                        </div>
+                        <!--核销按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="cancelTo">
+                            <i class="layui-icon">&#xe855;</i>核销
+                        </div>
+                        <!--取消按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="downTo">
+                            <i class="layui-icon layui-icon-close"></i>取消
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="applyCancel-state">
+    {{#
+    let applyCancel = {
+    1: {title: '未核销'},
+    2: {title: '已核销'}
+    }[d.applyCancel];
+    }}
+    <span>{{ applyCancel.title }}</span>
+</script>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+            laydate = layui.laydate,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            $view = $('#purchaseCancel-list'),
+            $query = $view.find('#query'),
+            $downTo = $view.find('#downTo'),
+            $cancelTo = $view.find('#cancelTo'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'createTime', type: null},
+            tableIns;
+
+        form.render();
+        initPurchaseRequisitionTable();
+
+        var firstDate = new Date();
+        firstDate.setDate(1); //本月第一天
+        var datetime =firstDate.getFullYear() + '-' + (firstDate.getMonth() + 1) + '-' + firstDate.getDate();
+        /*  var endDate = new Date(firstDate);
+          endDate.setMonth(firstDate.getMonth()+1);
+          endDate.setDate(0);*///本月最后一天
+        //开始日期
+        var start = laydate.render({
+            elem: '#start_date',
+            max: 0 ,//设置一个默认最大值//最大值为当前日期
+            trigger: 'click',
+            value: new Date(firstDate),//初始赋值,//默认值本月第一天
+            done:function(value,date){
+                if(value && (value>$("#end_date").val())){
+                    /*开始时间大于结束时间时，清空结束时间*/
+                    $("#end_date").val("");
+                }
+                end.config.min ={
+                    year:date.year,
+                    month:date.month-1,
+                    date: date.date,
+                };
+            }
+        });
+        //结束日期
+        var end = laydate.render({
+            elem: '#end_date',
+            min : datetime,//最大值为当前日期
+            trigger: 'click',
+            value: new Date(),//初始赋值,//默认当前时间
+            done:function(value,date){
+                start.config.max={
+                    year:date.year,
+                    month:date.month-1,
+                    date: date.date,
+                }
+            }
+        });
+
+        function initPurchaseRequisitionTable() {
+            tableIns = febs.table.init({
+                elem: '#purchaseCancelTable',
+                id: 'purchaseCancelTable',
+                url: ctx + 'purchaseCancel/list',
+                cols: [[
+                    {type: 'checkbox'},
+                    {field:'number',title:'序号',align:'center',width:60,templet:function (d) {
+                            return d.LAY_INDEX;}},
+                    {field: 'purchaseRequisitionDate', title: '日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.purchaseRequisitionDate, "yyyy-MM-dd") }}</div>', minWidth: 110},
+                    {field: 'oddNumbers', title: '单号', minWidth: 145,align:'center'},
+                    {field: 'departmentName', title: '部门', minWidth: 120,align:'center'},
+                    {field: 'applyCode', title: '编码', minWidth: 95,align:'center'},
+                    {field: 'applyName', title: '名称', minWidth: 80,align:'center'},
+                    {field: 'applySpecifications', title: '规格', align:'center'},
+                    {field: 'applyBrand', title: '品牌', minWidth: 95,align:'center'},
+                    {field: 'applyQuantity', title: '申请数量',minWidth: 80,align:'center'},
+                    {field: 'applyQuantity', title: '订购数量', minWidth: 95,align:'center'},
+                    {field: 'applyQuantity', title: '收货数量',minWidth: 80,align:'center'},
+                    {field: 'applyCompany', title: '计量单位', align:'center'},
+                    {title: '状态', templet: '#applyCancel-state',align:'center',width:95},
+                    {field: 'applyCategory', title: '大类',minWidth: 80,align:'center'},
+                    {field: 'applySubclass', title: '小类', minWidth: 95,align:'center'},
+                    {field: 'applyRemarks', title: '备注',minWidth: 80,align:'center'}
+                ]]
+            });
+        }
+
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        $cancelTo.on('click', function () {
+            let checkStatus = table.checkStatus('purchaseCancelTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要核销的数据');
+            } else {
+                let ids = [];
+                layui.each(checkStatus.data, function (key, item) {
+                    ids.push(item.id)
+                    if(item.applyCancel == 2){
+                        febs.alert.warn('请勿重复核销');
+                    }else {
+                        febs.modal.confirm('申请核销', '是否确认？', function () {
+                            cancelPurchaseCancel(ids.join(','));
+                        });
+                    }
+                });
+            }
+        });
+
+        $downTo.on('click', function () {
+            let checkStatus = table.checkStatus('purchaseCancelTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要取消核销的数据');
+            } else {
+                let ids = [];
+                layui.each(checkStatus.data, function (key, item) {
+                    ids.push(item.id)
+                    if(item.applyCancel == 1 ){
+                        febs.alert.warn('请勿重复取消核销');
+                    }else {
+                        febs.modal.confirm('取消核销', '是否确认？', function () {
+                            downPurchaseCancel(ids.join(','));
+                        });
+                    }
+                });
+            }
+        });
+
+        function cancelPurchaseCancel(ids) {
+            febs.get(ctx + 'purchaseCancel/cancel/' + ids, null, function () {
+                febs.alert.success('核销成功');
+                $query.click();
+            });
+        }
+
+        function downPurchaseCancel(ids) {
+            febs.get(ctx + 'purchaseCancel/down/' + ids, null, function () {
+                febs.alert.success('取消核销成功');
+                $query.click();
+            });
+        }
+
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            params.signedDateFrom = $('#start_date').val();
+            params.signedDateTo = $('#end_date').val();
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+    })
+</script>

@@ -135,4 +135,13 @@ public class PurchasePaymentController extends BaseController {
         this.purchasePaymentService.paymentPurchasePayment(ids);
         return new FebsResponse().success();
     }
+
+    @GetMapping("purchasePriceChanges/query")
+    @ResponseBody
+    @RequiresPermissions("purchasePriceChanges:view")
+    public FebsResponse purchasePriceChangesQuery(QueryRequest request, PurchasePaymentSchedule purchasePaymentSchedule) {
+        Map<String, Object> dataTable = getDataTable(this.purchasePaymentService.purchasePriceChangesQuery(request, purchasePaymentSchedule));
+        return new FebsResponse().success().data(dataTable);
+    }
+
 }

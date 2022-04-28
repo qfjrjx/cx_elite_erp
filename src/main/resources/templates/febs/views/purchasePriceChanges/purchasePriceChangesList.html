@@ -1,0 +1,227 @@
+<style xmlns="http://www.w3.org/1999/html">
+    #purchasePriceChanges-list xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #purchasePriceChanges-list xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="purchasePriceChanges-list" lay-title="价格变动">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="parameter-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md12">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid">供应商&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <input type="text" name="supplierName" id="supplierName" lay-verify="required" ondblclick="purchasePriceChangesList()"
+                                                   autocomplete="off" class="layui-input" placeholder="双击选择" style="width: 145px"  readonly>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid">日期&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <input type="text" id="start_date" name="signedDateFrom" placeholder="" lay-verify='date' class="layui-input"/>
+                                            <i class="layui-icon" id="start_date_icon"></i>
+                                        </div>
+                                        <label class="layui-form-mid">至：</label>
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <input type="text" id="end_date" name="signedDateTo" placeholder="" lay-verify='date' class="layui-input"/>
+                                            <i class="layui-icon " id="end_date_icon"></i>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid">编码&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="orderCode" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid">名称&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="materialName" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid">规&nbsp;&nbsp;&nbsp;&nbsp;格&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <input type="text" name="orderSpecifications" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid">类别&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline">
+                                            <select name="orderSubclass">
+                                                <option value=""></option>
+                                                <option value="1">键盘</option>
+                                                <option value="2">电脑</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="purchasePriceChangesTable" id="purchasePriceChangesTable" lay-data="{id: 'purchasePriceChangesTable'}"></table>
+                    <div class="layui-col-md6">
+                        <div class="layui-form-item"></div>
+                    </div>
+                    <div class="layui-col-md6 layui-col-sm12 layui-col-xs12 table-action-area">
+                        <!--查询按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                            <i class="layui-icon">&#xe848;</i>查询
+                        </div>
+                        <!--分析按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="analysisTo">
+                            <i class="layui-icon">&#xe848;</i>分析
+                        </div>
+                        <!-- 导出按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain table-action" id="exportTo">
+                            <i class="layui-icon">&#xe7a8;</i>导出
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    layui.use('laydate', function(){
+        var laydate = layui.laydate;
+        //常规用法
+        laydate.render({
+            elem: '#test1'
+        });
+    });
+</script>
+<script>
+    layui.use('laydate', function(){
+        var laydate = layui.laydate;
+        //常规用法
+        laydate.render({
+            elem: '#test2'
+        });
+    });
+</script>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+            laydate = layui.laydate,
+            febs = layui.febs,
+            form = layui.form,
+            $view = $('#purchasePriceChanges-list'),
+            $query = $view.find('#query'),
+            $analysisTo = $view.find('#analysisTo'),
+            $exportTo = $view.find('#exportTo'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'createTime', type: null},
+            tableIns;
+
+        form.render();
+        initPurchaseRequisitionTable();
+
+        var firstDate = new Date();
+        firstDate.setDate(1); //本月第一天
+        var datetime =firstDate.getFullYear() + '-' + (firstDate.getMonth() + 1) + '-' + firstDate.getDate();
+        /*  var endDate = new Date(firstDate);
+          endDate.setMonth(firstDate.getMonth()+1);
+          endDate.setDate(0);*///本月最后一天
+        //开始日期
+        var start = laydate.render({
+            elem: '#start_date',
+            max: 0 ,//设置一个默认最大值//最大值为当前日期
+            trigger: 'click',
+            value: new Date(firstDate),//初始赋值,//默认值本月第一天
+            done:function(value,date){
+                if(value && (value>$("#end_date").val())){
+                    /*开始时间大于结束时间时，清空结束时间*/
+                    $("#end_date").val("");
+                }
+                end.config.min ={
+                    year:date.year,
+                    month:date.month-1,
+                    date: date.date,
+                };
+            }
+        });
+        //结束日期
+        var end = laydate.render({
+            elem: '#end_date',
+            min : datetime,//最大值为当前日期
+            trigger: 'click',
+            value: new Date(),//初始赋值,//默认当前时间
+            done:function(value,date){
+                start.config.max={
+                    year:date.year,
+                    month:date.month-1,
+                    date: date.date,
+                }
+            }
+        });
+
+        function initPurchaseRequisitionTable() {
+            tableIns = febs.table.init({
+                elem: '#purchasePriceChangesTable',
+                id: 'purchasePriceChangesTable',
+                url: ctx + 'purchasePriceChanges/list',
+                cols: [[
+                    {type: 'checkbox'},
+                    {field:'number',title:'序列号',align:'center',width:100,templet:function (d) {
+                            return d.LAY_INDEX;}},
+                    {field: 'orderPreparationDate', title: '日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.orderPreparationDate, "yyyy-MM-dd") }}</div>', minWidth: 170},
+                    {field: 'materialName', title: '名称', minWidth: 100,align:'center'},
+                    {field: 'orderSpecifications', title: '规格', minWidth: 100,align:'center'},
+                    {field: 'orderCompany', title: '单位', minWidth: 100,align:'center'},
+                    {field: 'unitPrice', title: '单价', minWidth: 100,align:'center'},
+                    {field: 'supplierName', title: '供应商', minWidth: 100,align:'center'},
+                    {field: 'orderSubclass', title: '类别', minWidth: 100,align:'center'}
+
+                ]]
+            });
+        }
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        $analysisTo.on('click', function () {
+            febs.modal.open('【价格变动】 分析查看', 'purchase/purchasePriceChanges/analysis', {
+                area: ["80%","60%"],
+            });
+        });
+
+        $exportTo.on('click', function () {
+            let params = getQueryParams();
+            params.pageSize = $view.find(".layui-laypage-limits option:selected").val();
+            params.pageNum = $view.find(".layui-laypage-em").next().html();
+            febs.download(ctx + 'purchasePriceChanges/excel', params, '价格变动.xlsx');
+        });
+
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            params.signedDateFrom = $('#start_date').val();
+            params.signedDateTo = $('#end_date').val();
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+
+    })
+    function purchasePriceChangesList(){
+        layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
+            let $ = layui.$,
+                febs = layui.febs;
+            febs.modal.open('供应商选择列表', 'purchase/purchasePriceChangesList', {
+                area:["55%","60%"],
+                yes: function (index, layero) {
+                }
+
+            });
+        });
+    }
+</script>

@@ -98,6 +98,7 @@ public class PurchaseInvoiceServiceImpl extends ServiceImpl<PurchaseInvoiceMappe
             String invoiceBrand = jsonArrayOne.getJSONObject(i).getString("invoiceBrand");
             String invoiceCompany = jsonArrayOne.getJSONObject(i).getString("invoiceCompany");
             String invoiceCoding = jsonArrayOne.getJSONObject(i).getString("invoiceCoding");
+            String invoiceSubclass = jsonArrayOne.getJSONObject(i).getString("invoiceSubclass");
             BigDecimal invoiceDepositOtn = new BigDecimal(invoiceDeposit);
             purchaseInvoiceSchedule.setInvoiceDeposit(invoiceDepositOtn);
             if (!invoiceDate.equals("")) {
@@ -131,6 +132,7 @@ public class PurchaseInvoiceServiceImpl extends ServiceImpl<PurchaseInvoiceMappe
             }
             purchaseInvoiceSchedule.setInvoiceBrand(invoiceBrand);
             purchaseInvoiceSchedule.setInvoiceNumbers(invoiceNumbers);
+            purchaseInvoiceSchedule.setInvoiceSubclass(invoiceSubclass);
             baseMapper.savePurchaseInvoiceSchedule(purchaseInvoiceSchedule);
         }
         baseMapper.savePurchaseInvoiceData(purchaseInvoiceData);
@@ -157,6 +159,7 @@ public class PurchaseInvoiceServiceImpl extends ServiceImpl<PurchaseInvoiceMappe
             String invoiceBrand = jsonArrayOne.getJSONObject(i).getString("invoiceBrand");
             String invoiceCompany = jsonArrayOne.getJSONObject(i).getString("invoiceCompany");
             String invoiceCoding = jsonArrayOne.getJSONObject(i).getString("invoiceCoding");
+            String invoiceSubclass = jsonArrayOne.getJSONObject(i).getString("invoiceSubclass");
             BigDecimal invoiceDepositOtn = new BigDecimal(invoiceDeposit);
             purchaseInvoiceSchedule.setInvoiceDeposit(invoiceDepositOtn);
             if (!invoiceDate.equals("")) {
@@ -189,6 +192,7 @@ public class PurchaseInvoiceServiceImpl extends ServiceImpl<PurchaseInvoiceMappe
                 purchaseInvoiceSchedule.setInvoiceCompany(invoiceCompany);
             }
             purchaseInvoiceSchedule.setInvoiceBrand(invoiceBrand);
+            purchaseInvoiceSchedule.setInvoiceSubclass(invoiceSubclass);
             baseMapper.savePurchaseInvoiceSchedule(purchaseInvoiceSchedule);
         }
     }

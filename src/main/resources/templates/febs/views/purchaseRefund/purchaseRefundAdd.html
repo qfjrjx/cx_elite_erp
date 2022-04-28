@@ -37,7 +37,7 @@
                                     </div>
                                     <label class="layui-form-mid">供应商&nbsp;<b>:</b></label>
                                     <div class="layui-input-inline" style="width: 145px">
-                                        <input type="text" name="supplierName" id="supplierNameRefund" lay-verify="required" ondblclick="dblclickCustomerName()"
+                                        <input type="text" name="supplierNameRefund" id="supplierNameRefund" lay-verify="required" ondblclick="dblclickCustomerName()"
                                                autocomplete="off" class="layui-input" placeholder="双击选择" style="width: 145px"  readonly>
                                     </div>
                                     <label class="layui-form-mid">库房&nbsp;<b>:</b></label>
@@ -56,6 +56,8 @@
                                             <option th:each="currency:${currency}" th:value="${currency.id}">[[${currency.financeParameterName}]]</option>
                                         </select>
                                     </div>
+                                    <br>
+                                    <br>
                                     <label class="layui-form-mid">税&nbsp;率&nbsp;<b>:</b></label>
                                     <div class="layui-input-inline" style="width: 85px">
                                         <select id="taxRateNameAdd"  name="taxRateNameAdd" lay-verify="required" class="layui-form-select" >

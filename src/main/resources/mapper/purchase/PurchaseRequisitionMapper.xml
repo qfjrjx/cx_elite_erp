@@ -9,6 +9,42 @@
         WHERE
             1 = 1
     </sql>
+
+    <sql id="countPurchaseCancelSql">
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_purchase_requisition pr
+        LEFT JOIN t_dept d ON ( pr.department_id = d.dept_id )
+        LEFT JOIN jr_purchase_requisition_schedule prs ON ( pr.odd_numbers = prs.odd_numbers )
+        WHERE
+            1 =1
+            <if test="purchaseRequisition.signedDateFrom != null and purchaseRequisition.signedDateFrom !=''">
+                And pr.purchase_requisition_date &gt;= #{purchaseRequisition.signedDateFrom}
+            </if>
+            <if test="purchaseRequisition.signedDateTo != null and purchaseRequisition.signedDateTo !=''">
+                And pr.purchase_requisition_date &lt;= #{purchaseRequisition.signedDateTo}
+            </if>
+            <if test="purchaseRequisition.oddNumbers != null and purchaseRequisition.oddNumbers != ''">
+                AND pr.odd_numbers = #{purchaseRequisition.oddNumbers}
+            </if>
+            <if test="purchaseRequisition.applyName != null and purchaseRequisition.applyName != ''">
+                AND prs.apply_name = #{purchaseRequisition.applyName}
+            </if>
+            <if test="purchaseRequisition.applySpecifications != null and purchaseRequisition.applySpecifications != ''">
+                AND prs.apply_specifications = #{purchaseRequisition.applySpecifications}
+            </if>
+            <if test="purchaseRequisition.applyCancel != null and purchaseRequisition.applyCancel != ''">
+                AND prs.apply_cancel = #{purchaseRequisition.applyCancel}
+            </if>
+            <if test="purchaseRequisition.departmentName != null and purchaseRequisition.departmentName != ''">
+                AND d.DEPT_NAME = #{purchaseRequisition.departmentName}
+            </if>
+            <if test="purchaseRequisition.applySubclass != null and purchaseRequisition.applySubclass != ''">
+                AND prs.apply_subclass = #{purchaseRequisition.applySubclass}
+            </if>
+    </sql>
+
     <sql id="findPurchaseRequisitionSql">
         SELECT
             pr.id,
@@ -25,6 +61,21 @@
             LEFT JOIN jr_purchase_requisition_schedule prs ON ( pr.odd_numbers = prs.odd_numbers )
         WHERE
             1 = 1
+            <if test="purchaseRequisition.signedDateFrom != null and purchaseRequisition.signedDateFrom !=''">
+                And pr.purchase_requisition_date &gt;= #{purchaseRequisition.signedDateFrom}
+            </if>
+            <if test="purchaseRequisition.signedDateTo != null and purchaseRequisition.signedDateTo !=''">
+                And pr.purchase_requisition_date &lt;= #{purchaseRequisition.signedDateTo}
+            </if>
+            <if test="purchaseRequisition.oddNumbers != null and purchaseRequisition.oddNumbers != ''">
+                AND pr.odd_numbers = #{purchaseRequisition.oddNumbers}
+            </if>
+            <if test="purchaseRequisition.departmentId != null and purchaseRequisition.departmentId != ''">
+                AND pr.department_id = #{purchaseRequisition.departmentId}
+            </if>
+            <if test="purchaseRequisition.applyState != null and purchaseRequisition.applyState != ''">
+                AND pr.apply_state = #{purchaseRequisition.applyState}
+            </if>
         GROUP BY
             oddNumbers
     </sql>
@@ -55,6 +106,53 @@
         WHERE
             1 = 1
     </sql>
+    <sql id="findPurchaseCancelPageSql">
+        SELECT
+            prs.id,
+            pr.odd_numbers oddNumbers,
+            pr.purchase_requisition_date purchaseRequisitionDate,
+            d.DEPT_NAME departmentName,
+            prs.apply_code applyCode,
+            prs.apply_name applyName,
+            prs.apply_specifications applySpecifications,
+            prs.apply_brand applyBrand,
+            prs.apply_quantity applyQuantity,
+            prs.apply_company applyCompany,
+            prs.apply_category applyCategory,
+            prs.apply_subclass applySubclass,
+            prs.apply_cancel applyCancel,
+            prs.apply_remarks applyRemarks
+        FROM
+            jr_purchase_requisition pr
+                LEFT JOIN t_dept d ON ( pr.department_id = d.dept_id )
+                LEFT JOIN jr_purchase_requisition_schedule prs ON ( pr.odd_numbers = prs.odd_numbers )
+        WHERE
+            1 =1
+        <if test="purchaseRequisition.signedDateFrom != null and purchaseRequisition.signedDateFrom !=''">
+            And pr.purchase_requisition_date &gt;= #{purchaseRequisition.signedDateFrom}
+        </if>
+        <if test="purchaseRequisition.signedDateTo != null and purchaseRequisition.signedDateTo !=''">
+            And pr.purchase_requisition_date &lt;= #{purchaseRequisition.signedDateTo}
+        </if>
+        <if test="purchaseRequisition.oddNumbers != null and purchaseRequisition.oddNumbers != ''">
+            AND pr.odd_numbers = #{purchaseRequisition.oddNumbers}
+        </if>
+        <if test="purchaseRequisition.applyName != null and purchaseRequisition.applyName != ''">
+            AND prs.apply_name = #{purchaseRequisition.applyName}
+        </if>
+        <if test="purchaseRequisition.applySpecifications != null and purchaseRequisition.applySpecifications != ''">
+            AND prs.apply_specifications = #{purchaseRequisition.applySpecifications}
+        </if>
+        <if test="purchaseRequisition.applyCancel != null and purchaseRequisition.applyCancel != ''">
+            AND prs.apply_cancel = #{purchaseRequisition.applyCancel}
+        </if>
+        <if test="purchaseRequisition.departmentName != null and purchaseRequisition.departmentName != ''">
+            AND d.DEPT_NAME = #{purchaseRequisition.departmentName}
+        </if>
+        <if test="purchaseRequisition.applySubclass != null and purchaseRequisition.applySubclass != ''">
+            AND prs.apply_subclass = #{purchaseRequisition.applySubclass}
+        </if>
+    </sql>
 
     <select id="countPurchaseRequisition" parameterType="com.erp.purchase.entity.PurchaseRequisition" resultType="long">
         <include refid="countPurchaseRequisitionSql"/>
@@ -66,6 +164,14 @@
 
     <select id="findOrderPurchaseRequisitionPage" parameterType="com.erp.purchase.entity.PurchaseRequisition" resultType="com.erp.purchase.entity.PurchaseRequisition">
         <include refid="findOrderPurchaseRequisitionSql"/>
+    </select>
+
+    <select id="findPurchaseCancelPage" parameterType="com.erp.purchase.entity.PurchaseRequisition" resultType="com.erp.purchase.entity.PurchaseRequisition">
+        <include refid="findPurchaseCancelPageSql"/>
+    </select>
+
+    <select id="countPurchaseCancel" parameterType="com.erp.purchase.entity.PurchaseRequisitionSchedule" resultType="long">
+        <include refid="countPurchaseCancelSql"/>
     </select>
 
     <!--查询出最后一个采购申请单号-->
@@ -111,7 +217,7 @@
     <insert id="savePurchaseRequisitionSchedule" parameterType="com.erp.purchase.entity.PurchaseRequisitionSchedule">
         INSERT INTO jr_purchase_requisition_schedule (
             odd_numbers, apply_code, apply_name,apply_specifications,apply_quality,apply_brand,apply_company
-            ,apply_quantity, delivery_date,apply_remarks,apply_subclass,apply_category)
+            ,apply_quantity, delivery_date,apply_remarks,apply_subclass,apply_category,apply_cancel)
         VALUES
             (#{oddNumbers},
              #{applyCode},
@@ -124,7 +230,8 @@
              #{deliveryDate},
              #{applyRemarks},
              #{applySubclass},
-             #{applyCategory}
+             #{applyCategory},
+             #{applyCancel}
             )
     </insert>
 
@@ -179,4 +286,18 @@
     <delete id="deletePurchaseRequisitionSchedule">
         delete from jr_purchase_requisition_schedule  where odd_numbers = #{oddNumbers}
     </delete>
+
+    <update id="cancelPurchaseCancel"  parameterType="com.erp.purchase.entity.PurchaseRequisitionSchedule">
+        UPDATE
+            jr_purchase_requisition_schedule
+        set apply_cancel = 2
+        WHERE id = #{ids}
+    </update>
+
+    <update id="downPurchaseCancel"  parameterType="com.erp.purchase.entity.PurchaseRequisitionSchedule">
+        UPDATE
+            jr_purchase_requisition_schedule
+        set apply_cancel = 1
+        WHERE id = #{ids}
+    </update>
 </mapper>

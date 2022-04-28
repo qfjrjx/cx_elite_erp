@@ -118,10 +118,22 @@ public class PurchasePaymentSchedule {
     private BigDecimal procurementPrice;
 
     /**
+     * 前次采购单价
+     */
+    @TableField("previous_price")
+    private BigDecimal previousPrice;
+
+    /**
      * 备注
      */
     @TableField("invoice_remarks")
     private String invoiceRemarks;
+
+    /**
+     * 备注
+     */
+    @TableField("inspection_subclass")
+    private String inspectionSubclass;
 
 }
 

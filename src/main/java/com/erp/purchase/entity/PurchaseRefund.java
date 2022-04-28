@@ -49,6 +49,8 @@ public class PurchaseRefund {
     @TableField("supplier_name")
     private String supplierName;
 
+    private String supplierNameRefund;
+
     /**
      * 库房
      */
@@ -111,5 +113,8 @@ public class PurchaseRefund {
      */
     @TableField("order_number")
     private String orderNumber;
+
+    private transient String signedDateFrom;
+    private transient String signedDateTo;
 
 }

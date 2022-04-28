@@ -314,6 +314,13 @@ public class ViewController {
         return FebsUtil.view("purchaseOrder/purchaseSupplierSelectionList");
     }
 
+    //供应商 双击跳到供应商选择列表页面  添加时用到
+    @GetMapping("purchaseSupplierOrderList")
+    @RequiresPermissions("purchaseSupplier:view")
+    public String purchaseSupplierOrderList(Model model) {
+
+        return FebsUtil.view("purchaseOrder/purchaseSupplierOrderList");
+    }
 
     //添加页面 点击申请单号跳转到采购申请
     @GetMapping("purchaseRequisitionQueryList")
@@ -467,6 +474,14 @@ public class ViewController {
     public String purchaseInspectionList(Model model) {
 
         return FebsUtil.view("purchaseInspection/purchaseInspectionAddList");
+    }
+
+    //供应商 双击跳到供应商选择列表页面  查询时用到
+    @GetMapping("purchaseInspectionListQuery")
+    @RequiresPermissions("purchaseInspection:view")
+    public String purchaseInspectionListQuery(Model model) {
+
+        return FebsUtil.view("purchaseInspection/purchaseInspectionListQuery");
     }
 
     /*来货检验查阅*/
@@ -687,4 +702,36 @@ public class ViewController {
         return FebsUtil.view("purchasePayment/purchasePaymentQueryUp");
     }
     /*采购管理模块-采购付款结束*/
+
+    /*采购管理模块-价格变动开始*/
+    @GetMapping("purchasePriceChanges/list")
+    @RequiresPermissions("purchasePriceChanges:view")
+    public String purchasePriceChangesIndex(){
+        return FebsUtil.view("purchasePriceChanges/purchasePriceChangesList");
+    }
+
+    /*采购管理模块-价格变动开始*/
+    @GetMapping("purchasePriceChanges/analysis")
+    @RequiresPermissions("purchasePriceChanges:analysis")
+    public String purchasePriceChangesAnalysis(){
+        return FebsUtil.view("purchasePriceChanges/purchasePriceChangesAnalysis");
+    }
+
+    //供应商 双击跳到供应商选择列表页面  添加时用到
+    @GetMapping("purchasePriceChangesList")
+    @RequiresPermissions("purchasePriceChanges:view")
+    public String purchasePriceChangesList(Model model) {
+
+        return FebsUtil.view("purchasePriceChanges/purchaseSupplierPriceChangesList");
+    }
+    /*采购管理模块-价格变动结束*/
+
+    /*采购管理模块-申请核销开始*/
+    @GetMapping("purchaseCancel/list")
+    @RequiresPermissions("purchaseCancel:view")
+    public String purchaseCancelIndex(){
+        return FebsUtil.view("purchaseCancel/purchaseCancelList");
+    }
+
+    /*采购管理模块-申请核销结束*/
 }

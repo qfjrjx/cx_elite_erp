@@ -5,7 +5,63 @@
         SELECT
             COUNT( 1 )
         FROM
-            jr_purchase_payment
+            (
+                SELECT
+                    pp.id,
+                    pp.payment_state,
+                    pp.payment_date,
+                    pp.payment_supplier,
+                    sum( pps.invoice_money ) paymentMoney,
+                    fpa.finance_parameter_name currencyName,
+                    pp.payment_type,
+                    fpb.finance_parameter_name paymentWay,
+                    pp.payment_invoice,
+                    pp.payment_operation,
+                    pp.payment_operation_date,
+                    pp.payment_remarks,
+                    pp.payment_shape,
+                    pp.payment_shape_date,
+                    pp.payment_code,
+                    pp.payment_number,
+                    pp.currency_id
+                FROM
+                    jr_purchase_payment pp
+                        LEFT JOIN jr_purchase_payment_schedule pps ON ( pp.payment_number = pps.payment_number )
+                        LEFT JOIN jr_finance_parameters fpa ON ( pp.currency_id = fpa.id )
+                        LEFT JOIN jr_finance_parameters fpb ON ( pp.payment_way = fpb.id )
+                WHERE
+                    1 = 1
+                    <if test="purchasePayment.signedDateFrom != null and purchasePayment.signedDateFrom !=''">
+                        And pp.payment_date &gt;= #{purchasePayment.signedDateFrom}
+                    </if>
+                    <if test="purchasePayment.signedDateTo != null and purchasePayment.signedDateTo !=''">
+                        And pp.payment_date &lt;= #{purchasePayment.signedDateTo}
+                    </if>
+                    <if test="purchasePayment.paymentState != null and purchasePayment.paymentState != ''">
+                        AND pp.payment_state = #{purchasePayment.paymentState}
+                    </if>
+                    <if test="purchasePayment.currencyName != null and purchasePayment.currencyName != ''">
+                        AND pp.currency_id = #{purchasePayment.currencyName}
+                    </if>
+                    <if test="purchasePayment.paymentType != null and purchasePayment.paymentType != ''">
+                        AND pp.payment_type = #{purchasePayment.paymentType}
+                    </if>
+                    <if test="purchasePayment.paymentWay != null and purchasePayment.paymentWay != ''">
+                        AND pp.payment_way = #{purchasePayment.paymentWay}
+                    </if>
+                    <if test="purchasePayment.paymentSupplier != null and purchasePayment.paymentSupplier != ''">
+                        AND pp.payment_supplier = #{purchasePayment.paymentSupplier}
+                    </if>
+                GROUP BY
+                    pp.payment_number
+            ) jr_purchase_payment
+    </sql>
+
+    <sql id="countPurchasePaymentScheduleSql">
+        SELECT
+            COUNT( 1 )
+        FROM
+            ( SELECT COUNT( 1 ) FROM jr_purchase_payment_schedule pps WHERE 1 = 1 GROUP BY pps.invoice_specifications ) jr_purchase_payment_schedule
         WHERE
             1 = 1
     </sql>
@@ -16,10 +72,10 @@
             pp.payment_state,
             pp.payment_date,
             pp.payment_supplier,
-            sum(pps.invoice_money) paymentMoney,
+            sum( pps.invoice_money ) paymentMoney,
             fpa.finance_parameter_name currencyName,
             pp.payment_type,
-            pp.payment_way,
+            fpb.finance_parameter_name paymentWay,
             pp.payment_invoice,
             pp.payment_operation,
             pp.payment_operation_date,
@@ -27,15 +83,57 @@
             pp.payment_shape,
             pp.payment_shape_date,
             pp.payment_code,
-            pp.payment_number
+            pp.payment_number,
+            pp.currency_id
         FROM
             jr_purchase_payment pp
-                LEFT JOIN jr_purchase_payment_schedule pps ON ( pp.payment_number = pps.payment_number )
-                LEFT JOIN jr_finance_parameters fpa ON ( pp.currency_id = fpa.id )
+        LEFT JOIN jr_purchase_payment_schedule pps ON ( pp.payment_number = pps.payment_number )
+        LEFT JOIN jr_finance_parameters fpa ON ( pp.currency_id = fpa.id )
+        LEFT JOIN jr_finance_parameters fpb ON ( pp.payment_way = fpb.id )
+        WHERE
+            1 = 1
+        <if test="purchasePayment.signedDateFrom != null and purchasePayment.signedDateFrom !=''">
+            And pp.payment_date &gt;= #{purchasePayment.signedDateFrom}
+        </if>
+        <if test="purchasePayment.signedDateTo != null and purchasePayment.signedDateTo !=''">
+            And pp.payment_date &lt;= #{purchasePayment.signedDateTo}
+        </if>
+        <if test="purchasePayment.paymentState != null and purchasePayment.paymentState != ''">
+            AND pp.payment_state = #{purchasePayment.paymentState}
+        </if>
+        <if test="purchasePayment.currencyName != null and purchasePayment.currencyName != ''">
+            AND pp.currency_id = #{purchasePayment.currencyName}
+        </if>
+        <if test="purchasePayment.paymentType != null and purchasePayment.paymentType != ''">
+            AND pp.payment_type = #{purchasePayment.paymentType}
+        </if>
+        <if test="purchasePayment.paymentWay != null and purchasePayment.paymentWay != ''">
+            AND pp.payment_way = #{purchasePayment.paymentWay}
+        </if>
+        <if test="purchasePayment.paymentSupplier != null and purchasePayment.paymentSupplier != ''">
+            AND pp.payment_supplier = #{purchasePayment.paymentSupplier}
+        </if>
+        GROUP BY
+        pp.payment_number
+    </sql>
+
+    <sql id="findPurchasePaymentSchedulePageSql">
+        SELECT
+            pps.invoice_name,
+            pps.invoice_specifications,
+            pps.invoice_company,
+            pps.previous_price,
+            pps.procurement_price,
+            pps.tax_price,
+            pps.inspection_subclass
+        FROM
+            jr_purchase_payment_schedule pps
         WHERE
             1 = 1
         GROUP BY
-        pp.payment_number
+            pps.invoice_specifications
+        ORDER BY
+            pps.invoice_date DESC
     </sql>
 
     <select id="countPurchasePayment" parameterType="com.erp.purchase.entity.PurchasePayment" resultType="long">
@@ -44,6 +142,15 @@
 
     <select id="findPurchasePaymentPage" parameterType="com.erp.purchase.entity.PurchasePayment" resultType="com.erp.purchase.entity.PurchasePayment">
         <include refid="findPurchasePaymentPageSql"/>
+    </select>
+
+    <!--点击价格分析-->
+    <select id="countPurchasePaymentSchedule" parameterType="com.erp.purchase.entity.PurchasePaymentSchedule" resultType="long">
+        <include refid="countPurchasePaymentScheduleSql"/>
+    </select>
+
+    <select id="findPurchasePaymentSchedulePage" parameterType="com.erp.purchase.entity.PurchasePaymentSchedule" resultType="com.erp.purchase.entity.PurchasePaymentSchedule">
+        <include refid="findPurchasePaymentSchedulePageSql"/>
     </select>
 
     <!--查询出最后一个采购订单单号-->
@@ -80,7 +187,9 @@
             tax_price,
             tax_money,
             invoice_remarks,
-            procurement_price
+            procurement_price,
+            previous_price,
+            inspection_subclass
         )
         VALUES
             (
@@ -100,7 +209,9 @@
                 #{taxPrice},
                 #{taxMoney},
                 #{invoiceRemarks},
-                #{procurementPrice}
+                #{procurementPrice},
+                #{previousPrice},
+                #{inspectionSubclass}
             )
     </insert>
 

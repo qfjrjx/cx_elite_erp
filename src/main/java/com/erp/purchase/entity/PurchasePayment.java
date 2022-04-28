@@ -113,4 +113,7 @@ public class PurchasePayment {
 
     private BigDecimal paymentMoney;
 
+    private transient String signedDateFrom;
+    private transient String signedDateTo;
+
 }

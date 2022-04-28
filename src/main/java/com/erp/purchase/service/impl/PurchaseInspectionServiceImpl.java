@@ -70,9 +70,11 @@ public class PurchaseInspectionServiceImpl extends ServiceImpl<PurchaseInspectio
         //格式化当前月
         String month = simpleDateFormat.format(date);
         JSONObject object = JSON.parseObject(purchaseInspection);
-        String  userName =  object.getString("userName");
-        String  purchaseRequisitionDate =  object.getString("purchaseRequisitionDate");
-        String  supplierName =  object.getString("supplierName");
+        String userName =  object.getString("userName");
+        String purchaseRequisitionDate =  object.getString("purchaseRequisitionDate");
+        String supplierName =  object.getString("supplierName");
+        String currencyId = object.getString("currencyId");
+        String taxRateId = object.getString("taxRateId");
         //查询出最后一个工作安排单号
         PurchaseInspection purchaseInspectionOne = null;
         purchaseInspectionOne = baseMapper.queryPurchaseInspection();
@@ -107,6 +109,8 @@ public class PurchaseInspectionServiceImpl extends ServiceImpl<PurchaseInspectio
         Date purchaseRequisitionDateOne = simpleDateFormatOne.parse(purchaseRequisitionDate);//格式化系统当前时间
         purchaseInspectionDate.setPurchaseRequisitionDate(purchaseRequisitionDateOne);
         purchaseInspectionDate.setSupplierName(supplierName);
+        purchaseInspectionDate.setTaxRateId(taxRateId);
+        purchaseInspectionDate.setCurrencyId(currencyId);
         purchaseInspectionDate.setInspectionType("1");
         purchaseInspectionDate.setInspectionState("1");
         JSONArray jsonArrayOne = JSONArray.parseArray(dataTable);

@@ -29,22 +29,22 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="layui-inline" >
+                                    <div class="layui-inline">
                                         <label class="layui-form-mid">日期&nbsp;<b>:</b></label>
-                                        <div class="layui-input-inline" style="width: 100px">
-                                            <input type="text" name="purchaseRequisitionDate" id="test1"
-                                                   autocomplete="off" class="layui-input createDate" readonly>
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <input type="text" id="start_date" name="signedDateFrom" placeholder="" lay-verify='date' class="layui-input"/>
+                                            <i class="layui-icon" id="start_date_icon"></i>
                                         </div>
-                                        <label class="layui-form-mid">至&nbsp;<b>:</b></label>
-                                        <div class="layui-input-inline" style="width: 100px">
-                                            <input type="text" name="purchaseRequisitionDate" id="test2"
-                                                   autocomplete="off" class="layui-input createDate" readonly>
+                                        <label class="layui-form-mid">至：</label>
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <input type="text" id="end_date" name="signedDateTo" placeholder="" lay-verify='date' class="layui-input"/>
+                                            <i class="layui-icon " id="end_date_icon"></i>
                                         </div>
                                     </div>
                                     <div class="layui-inline">
                                         <label class="layui-form-mid">单位&nbsp;<b>:</b></label>
                                         <div class="layui-input-inline" style="width: 145px">
-                                            <input type="text" name="invoiceSupplier" id="invoiceSupplier" lay-verify="required" ondblclick="dblclickInvoiceSupplierList()"
+                                            <input type="text" name="paymentSupplier" id="paymentSupplier" lay-verify="required" ondblclick="dblclickInvoiceSupplierList()"
                                                    autocomplete="off" class="layui-input" placeholder="双击选择" style="width: 145px"  readonly>
                                         </div>
                                     </div>
@@ -53,8 +53,9 @@
                                         <div class="layui-input-inline" style="width: 90px">
                                             <select id="currencyName"  name="currencyName" lay-verify="required" class="layui-form-select" >
                                                 <option value=""></option>
-                                                <option value="1">人民币</option>
-                                                <option value="2">美元</option>
+                                                <option value="4">人民币</option>
+                                                <option value="5">美元</option>
+                                                <option value="6">欧元</option>
                                             </select>
                                         </div>
                                     </div>
@@ -73,8 +74,8 @@
                                         <div class="layui-input-inline" style="width: 90px">
                                             <select id="paymentWay"  name="paymentWay" lay-verify="required" class="layui-form-select" >
                                                 <option value=""></option>
-                                                <option value="1">中行</option>
-                                                <option value="2">农行</option>
+                                                <option value="7">中行</option>
+                                                <option value="8">农行</option>
                                             </select>
                                         </div>
                                     </div>
@@ -142,24 +143,6 @@
     <a lay-event="edit" shiro:hasPermission="purchasePayment:update"><i
             class="layui-icon febs-edit-area febs-blue">&#xe7a4;</i></a>
 </script>
-<script>
-    layui.use('laydate', function(){
-        var laydate = layui.laydate;
-        //常规用法
-        laydate.render({
-            elem: '#test1'
-        });
-    });
-</script>
-<script>
-    layui.use('laydate', function(){
-        var laydate = layui.laydate;
-        //常规用法
-        laydate.render({
-            elem: '#test2'
-        });
-    });
-</script>
 <script type="text/html" id="paymentState-state">
     {{#
     let paymentState = {
@@ -180,15 +163,6 @@
     }}
     <span>{{ paymentType.title }}</span>
 </script>
-<script type="text/html" id="paymentWay-state">
-    {{#
-    let paymentWay = {
-    1: {title: '中行'},
-    2: {title: '农行'}
-    }[d.paymentWay];
-    }}
-    <span>{{ paymentWay.title }}</span>
-</script>
 <script type="text/html" id="paymentInvoice-state">
     {{#
     let paymentInvoice = {
@@ -207,6 +181,11 @@
     }}
     <span>{{ paymentShape.title }}</span>
 </script>
+<script type="text/html" id="paymentCode-reply">
+    {{# if(d.paymentCode != null){ }}
+    <a lay-event="design">d.paymentCode</a>
+    {{# } }}
+</script>
 <script data-th-inline="none" type="text/javascript">
     layui.use(['jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
         let $ = layui.jquery,
@@ -216,6 +195,7 @@
             table = layui.table,
             $view = $('#purchasePayment-list'),
             $query = $view.find('#query'),
+            $reset = $view.find('#reset'),
             $queryTo = $view.find('#queryTo'),
             $addTo = $view.find('#addTo'),
             $updateTo = $view.find('#updateTo'),
@@ -230,9 +210,50 @@
         form.render();
         initPurchaseRequisitionTable();
 
+        var firstDate = new Date();
+        firstDate.setDate(1); //本月第一天
+        var datetime =firstDate.getFullYear() + '-' + (firstDate.getMonth() + 1) + '-' + firstDate.getDate();
+        //开始日期
+        var start = laydate.render({
+            elem: '#start_date',
+            max: 0 ,//设置一个默认最大值//最大值为当前日期
+            trigger: 'click',
+            value: new Date(firstDate),//初始赋值,//默认值本月第一天
+            done:function(value,date){
+                if(value && (value>$("#end_date").val())){
+                    /*开始时间大于结束时间时，清空结束时间*/
+                    $("#end_date").val("");
+                }
+                end.config.min ={
+                    year:date.year,
+                    month:date.month-1,
+                    date: date.date,
+                };
+            }
+        });
+        //结束日期
+        var end = laydate.render({
+            elem: '#end_date',
+            min : datetime,//最大值为当前日期
+            trigger: 'click',
+            value: new Date(),//初始赋值,//默认当前时间
+            done:function(value,date){
+                start.config.max={
+                    year:date.year,
+                    month:date.month-1,
+                    date: date.date,
+                }
+            }
+        });
+
         $query.on('click', function () {
             let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
             tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        $reset.on('click', function () {
+            $searchForm[0].reset();
+            tableIns.reload({where: getQueryParams(), page: {curr: 1}});
         });
 
         $addTo.on('click', function () {
@@ -257,6 +278,9 @@
                 febs.alert.warn('请选择一条需要修改的数据');
             }else{
                 layui.each(checkStatus.data, function (key, item) {
+                if (item.paymentShape == 1){
+                        febs.alert.warn('改状态不允许修改');
+                    }else{
                     febs.modal.open('【采购订单】 修改', 'purchase/purchasePayment/update/' + item.id, {
                         btn: ['保存', '关闭'],
                         area: ["80%","70%"],
@@ -268,6 +292,7 @@
                             layer.closeAll();
                         }
                     });
+                }
                 });
             }
         });
@@ -277,18 +302,19 @@
                 elem: '#purchasePaymentTable',
                 id: 'purchasePaymentTable',
                 url: ctx + 'purchasePayment/list',
+                toolbar: true,
                 cols: [[
                     {type: 'checkbox'},
                     {field:'number',title:'序号',align:'center',width:60,templet:function (d) {
                             return d.LAY_INDEX;}},
                     {title: '状态', templet: '#paymentState-state',align:'center',width:60},
                     {field: 'paymentDate', title: '日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.paymentDate, "yyyy-MM-dd") }}</div>', minWidth: 110},
-                    {field: 'paymentCode', title: '采购单号', minWidth: 145,align:'center'},
+                    {field: 'paymentCode', title: '采购单号', minWidth: 145,align:'center',templet: '<div><a href="#" id="query" class="layui-table-link">{{d.paymentCode}}</a></div>'},
                     {field: 'paymentSupplier', title: '单位', minWidth: 120,align:'center'},
                     {field: 'paymentMoney', title: '金额', minWidth: 60,align:'center'},
                     {field: 'currencyName', title: '币种', minWidth: 60,align:'center'},
                     {title: '付款类型', templet: '#paymentType-state',align:'center',width:90},
-                    {title: '付款方式', templet: '#paymentWay-state',align:'center',width:90},
+                    {field: 'paymentWay', title: '付款方式', minWidth: 60,align:'center'},
                     {title: '是否开票', templet: '#paymentInvoice-state',align:'center',width:90},
                     {field: 'paymentOperation', title: '操作人', align:'center', minWidth: 160},
                     {field: 'paymentOperationDate', title: '操作日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.paymentOperationDate, "yyyy-MM-dd") }}</div>', minWidth: 110},
@@ -301,6 +327,8 @@
 
         function getQueryParams() {
             let params = $searchForm.serializeJson();
+            params.signedDateFrom = $('#start_date').val();
+            params.signedDateTo = $('#end_date').val();
             params.invalidate_ie_cache = new Date();
             return params;
         }
@@ -421,4 +449,17 @@
         }
 
     })
+
+    function dblclickInvoiceSupplierList(){
+        layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
+            let $ = layui.$,
+                febs = layui.febs;
+            febs.modal.open('供应商选择列表', 'purchase/dblclickPaymentSupplierName', {
+                area:["55%","60%"],
+                yes: function (index, layero) {
+                }
+
+            });
+        });
+    }
 </script>

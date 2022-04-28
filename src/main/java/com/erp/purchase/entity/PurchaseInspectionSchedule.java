@@ -95,5 +95,8 @@ public class PurchaseInspectionSchedule {
      */
     private String inspectionState;
 
+    private String taxRateName;
+    private String currencyName;
+
 
 }

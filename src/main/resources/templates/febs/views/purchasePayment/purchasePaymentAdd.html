@@ -35,8 +35,8 @@
             <label class="layui-form-mid">付款方式&nbsp;<b>:</b></label>
             <div class="layui-input-inline" style="width: 85px">
                 <select id="paymentWayOnt"  name="paymentWayOnt">
-                    <option value="1">中行</option>
-                    <option value="2">农行</option>
+                    <option value="7">中行</option>
+                    <option value="8">农行</option>
                 </select>
             </div>
             <label class="layui-form-mid">币&nbsp;种&nbsp;<b>:</b></label>
@@ -134,6 +134,7 @@
             var taxPrice = data.taxPrice;
             var taxMoney = data.taxMoney;
             var invoiceRemarks = data.invoiceRemarks;
+            var invoiceSubclass = data.invoiceSubclass;
             $.ajax({
                 url: '/saleOrder/random',
                 success : function(data) {
@@ -144,7 +145,7 @@
                         "prepaidMoney":invoiceDeposit,"thePayment":thePayment,"orderNumber":orderNumber,
                         "invoiceName":invoiceName,"invoiceCoding":invoiceCoding,"invoiceBrand":invoiceBrand,
                         "invoiceSpecifications":invoiceSpecifications,"invoiceCompany":invoiceCompany,"invoiceQuantity":invoiceQuantity,
-                        "taxPrice":taxPrice,"taxMoney":taxMoney,"invoiceRemarks":invoiceRemarks};
+                        "taxPrice":taxPrice,"taxMoney":taxMoney,"invoiceRemarks":invoiceRemarks,"inspectionSubclass":invoiceSubclass};
                     oldData.push(dataOne);
                     layui.table.reload('purchasePaymentAdd-table',{
                         data : oldData
@@ -257,7 +258,6 @@
         });
 
         form.on('submit(purchasePayment-add-form-submit)', function (data) {
-            alert($('#currencyNameOnt').val())
             var paymentSupplier = $('#paymentSupplier').val();
             var purchaseRequisitionDate = $('#purchaseRequisitionDate').val();
             var paymentCode = $('#paymentCode').val();
@@ -285,7 +285,8 @@
                     "invoiceQuantity":purchaseRefundTable[i].invoiceQuantity,
                     "taxPrice":purchaseRefundTable[i].taxPrice,
                     "taxMoney":purchaseRefundTable[i].taxMoney,
-                    "invoiceRemarks":purchaseRefundTable[i].invoiceRemarks
+                    "invoiceRemarks":purchaseRefundTable[i].invoiceRemarks,
+                    "inspectionSubclass":purchaseRefundTable[i].inspectionSubclass
                 };
                 dataThree.push(dataOne);
             }

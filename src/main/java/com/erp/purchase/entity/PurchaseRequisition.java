@@ -126,4 +126,12 @@ public class PurchaseRequisition {
      */
     private String applyCategory;
 
+    /**
+     * 是否核销
+     */
+    private String applyCancel;
+
+    private transient String signedDateFrom;
+    private transient String signedDateTo;
+
 }

@@ -49,7 +49,7 @@ public class PurchaseOrder {
     @TableField("supplier_name")
     private String supplierName;
 
-
+    private String supplierNameList;
 
     /**
      * 币种
@@ -172,5 +172,8 @@ public class PurchaseOrder {
      * 大类
      */
     private String orderCategory;
+
+    private transient String signedDateFrom;
+    private transient String signedDateTo;
 
 }

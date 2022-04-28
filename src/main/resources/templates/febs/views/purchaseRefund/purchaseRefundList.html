@@ -28,6 +28,18 @@
                                             </select>
                                         </div>
                                     </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid">日期&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <input type="text" id="start_date" name="signedDateFrom" placeholder="" lay-verify='date' class="layui-input"/>
+                                            <i class="layui-icon" id="start_date_icon"></i>
+                                        </div>
+                                        <label class="layui-form-mid">至：</label>
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <input type="text" id="end_date" name="signedDateTo" placeholder="" lay-verify='date' class="layui-input"/>
+                                            <i class="layui-icon " id="end_date_icon"></i>
+                                        </div>
+                                    </div>
                                     <div class="layui-inline" >
                                         <label class="layui-form-mid layui-form-label-sm">单号</label>
                                         <div class="layui-input-inline">
@@ -37,7 +49,7 @@
                                     <div class="layui-inline" >
                                         <label class="layui-form-mid layui-form-label-sm">供应商</label>
                                         <div class="layui-input-inline">
-                                            <input type="text" name="supplierName" id="supplierName" lay-verify="required" ondblclick="dblclickCustomerName()"
+                                            <input type="text" name="supplierNameRefund" id="supplierNameRefund" lay-verify="required" ondblclick="dblclickCustomerName()"
                                                    autocomplete="off" class="layui-input" placeholder="双击选择" style="width: 145px"  readonly>
                                         </div>
                                     </div>
@@ -143,6 +155,45 @@
 
         form.render();
         initPurchaseRequisitionTable();
+
+        var firstDate = new Date();
+        firstDate.setDate(1); //本月第一天
+        var datetime =firstDate.getFullYear() + '-' + (firstDate.getMonth() + 1) + '-' + firstDate.getDate();
+        /*  var endDate = new Date(firstDate);
+          endDate.setMonth(firstDate.getMonth()+1);
+          endDate.setDate(0);*///本月最后一天
+        //开始日期
+        var start = laydate.render({
+            elem: '#start_date',
+            max: 0 ,//设置一个默认最大值//最大值为当前日期
+            trigger: 'click',
+            value: new Date(firstDate),//初始赋值,//默认值本月第一天
+            done:function(value,date){
+                if(value && (value>$("#end_date").val())){
+                    /*开始时间大于结束时间时，清空结束时间*/
+                    $("#end_date").val("");
+                }
+                end.config.min ={
+                    year:date.year,
+                    month:date.month-1,
+                    date: date.date,
+                };
+            }
+        });
+        //结束日期
+        var end = laydate.render({
+            elem: '#end_date',
+            min : datetime,//最大值为当前日期
+            trigger: 'click',
+            value: new Date(),//初始赋值,//默认当前时间
+            done:function(value,date){
+                start.config.max={
+                    year:date.year,
+                    month:date.month-1,
+                    date: date.date,
+                }
+            }
+        });
 
         dropdownMenu.render({
             elem: $view.find('.action-more'),
@@ -381,7 +432,7 @@
         layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
             let $ = layui.$,
                 febs = layui.febs;
-            febs.modal.open('供应商选择列表', 'purchase/purchaseSupplierSelectionList', {
+            febs.modal.open('供应商选择列表', 'purchase/purchaseRefundAddName', {
                 area:["55%","60%"],
                 yes: function (index, layero) {
                 }

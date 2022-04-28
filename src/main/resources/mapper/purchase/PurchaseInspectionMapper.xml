@@ -5,9 +5,28 @@
         SELECT
             COUNT( 1 )
         FROM
-            jr_purchase_inspection
+            jr_purchase_inspection pi
+        LEFT JOIN jr_purchase_inspection_schedule pis ON ( pi.inspection_number = pis.inspection_number )
         WHERE
             1 = 1
+            <if test="purchaseInspection.signedDateFrom != null and purchaseInspection.signedDateFrom !=''">
+                And pi.purchase_requisition_date &gt;= #{purchaseInspection.signedDateFrom}
+            </if>
+            <if test="purchaseInspection.signedDateTo != null and purchaseInspection.signedDateTo !=''">
+                And pi.purchase_requisition_date &lt;= #{purchaseInspection.signedDateTo}
+            </if>
+            <if test="purchaseInspection.supplierName != null and purchaseInspection.supplierName != ''">
+                AND pi.supplier_name = #{purchaseInspection.supplierName}
+            </if>
+            <if test="purchaseInspection.inspectionState != null and purchaseInspection.inspectionState != ''">
+                AND pi.inspection_state = #{purchaseInspection.inspectionState}
+            </if>
+            <if test="purchaseInspection.inspectionNumber != null and purchaseInspection.inspectionNumber != ''">
+                AND pi.inspection_number = #{purchaseInspection.inspectionNumber}
+            </if>
+            <if test="purchaseInspection.inspectionType != null and purchaseInspection.inspectionType != ''">
+                AND pi.inspection_type = #{purchaseInspection.inspectionType}
+            </if>
     </sql>
 
     <sql id="findPurchaseInspectionPage">
@@ -28,6 +47,12 @@
                 LEFT JOIN jr_purchase_inspection_schedule pis ON ( pi.inspection_number = pis.inspection_number )
         WHERE
             1 = 1
+            <if test="purchaseInspection.signedDateFrom != null and purchaseInspection.signedDateFrom !=''">
+                And pi.purchase_requisition_date &gt;= #{purchaseInspection.signedDateFrom}
+            </if>
+            <if test="purchaseInspection.signedDateTo != null and purchaseInspection.signedDateTo !=''">
+                And pi.purchase_requisition_date &lt;= #{purchaseInspection.signedDateTo}
+            </if>
             <if test="purchaseInspection.supplierName != null and purchaseInspection.supplierName != ''">
                 AND pi.supplier_name = #{purchaseInspection.supplierName}
             </if>
@@ -48,9 +73,14 @@
         SELECT
             pi.inspection_state,
             pi.inspection_remarks,
-            pi.inspection_number
+            pi.inspection_number,
+            fpa.finance_parameter_name currencyName,
+            fpb.finance_parameter_name taxRateName,
+            pi.purchase_requisition_date
         FROM
             jr_purchase_inspection pi
+                LEFT JOIN jr_finance_parameters fpa ON ( pi.currency_id = fpa.id )
+                LEFT JOIN jr_finance_parameters fpb ON ( pi.tax_rate_id = fpb.id )
         WHERE
             pi.inspection_number = #{inspectionNumber}
 
@@ -146,7 +176,9 @@
             inspection_preparer,
             inspection_preparation_date,
             inspection_quality,
-            inspection_remarks
+            inspection_remarks,
+            tax_rate_id,
+            currency_id
         )
         VALUES
             (
@@ -159,7 +191,9 @@
                 #{inspectionPreparer},
                 #{inspectionPreparationDate},
                 #{inspectionQuality},
-                #{inspectionRemarks}
+                #{inspectionRemarks},
+                #{taxRateId},
+                #{currencyId}
             )
     </insert>
 

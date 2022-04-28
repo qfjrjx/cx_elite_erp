@@ -64,4 +64,6 @@ public interface IPurchasePaymentService extends IService<PurchasePayment> {
     void cancelPurchasePayment(String ids);
 
     void paymentPurchasePayment(String ids) throws ParseException ;
+
+    IPage<PurchasePaymentSchedule> purchasePriceChangesQuery(QueryRequest request, PurchasePaymentSchedule purchasePaymentSchedule);
 }

@@ -20,7 +20,7 @@
                                     </div>
                                     <label class="layui-form-mid">日期</label>
                                     <div class="layui-input-inline" style="width: 100px">
-                                        <input type="text" class="layui-input" id="test1" placeholder="yyyy-MM-dd">
+                                        <input type="text" class="layui-input" id="test1" placeholder="">
                                     </div>
                                     <label class="layui-form-mid">发票号&nbsp;<b>:</b></label>
                                     <div class="layui-input-inline" style="width: 145px">
@@ -127,11 +127,6 @@
         });
     });
 </script>
-<script langguage="JavaScript">
-    var now = new Date();
-    purchaseRequisitionDate.value=new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate();
-    var deliveryDateTo = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate();
-</script>
 <script data-th-inline="none" type="text/javascript">
     layui.use(['jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect' , 'validate'], function () {
         let $ = layui.jquery,
@@ -175,6 +170,7 @@
             var settlementMoney = data.settlementMoney;
             var settlementDeposit = data.settlementDeposit;
             var orderNumber = data.orderNumber;
+            var settlementSubclass = data.settlementSubclass;
             $.ajax({
                 url: '/saleOrder/random',
                 success : function(data) {
@@ -185,7 +181,7 @@
                         "invoiceName":settlementName,"invoiceSpecifications":settlementSpecifications,
                         "invoiceQuantity":settlementQuantity,"taxPrice":settlementPrice,
                         "invoiceMoney":settlementMoney,"invoiceDeposit":settlementDeposit,"orderNumber":orderNumber,
-                        "invoiceBrand":settlementBrand,"invoiceCompany":settlementCompany,"invoiceCoding":settlementCode};
+                        "invoiceBrand":settlementBrand,"invoiceCompany":settlementCompany,"invoiceCoding":settlementCode,"invoiceSubclass":settlementSubclass};
                     oldData.push(dataOne);
                     layui.table.reload('purchaseInvoiceAdd-table',{
                         data : oldData
@@ -297,7 +293,7 @@
 
         form.on('submit(purchaseInvoice-add-form-submit)', function (data) {
             var invoiceSupplier = $('#invoiceSupplierAdd').val();
-            var purchaseRequisitionDate = $('#purchaseRequisitionDate').val();
+            var purchaseRequisitionDate = $('#test1').val();
             var currencyName = $('#currencyNameAdd').val();
             var taxRateName = $('#taxRateNameAdd').val();
             var invoiceAmount = $('#invoiceAmount').val();
@@ -320,7 +316,9 @@
                     "orderNumber":purchaseRefundTable[i].orderNumber,
                     "invoiceBrand":purchaseRefundTable[i].invoiceBrand,
                     "invoiceCompany":purchaseRefundTable[i].invoiceCompany,
-                    "invoiceCoding":purchaseRefundTable[i].invoiceCoding
+                    "invoiceCoding":purchaseRefundTable[i].invoiceCoding,
+                    "invoiceSubclass":purchaseRefundTable[i].invoiceSubclass
+
                 };
                 dataThree.push(dataOne);
             }

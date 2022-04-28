@@ -48,7 +48,7 @@ public class PurchasePaymentServiceImpl extends ServiceImpl<PurchasePaymentMappe
         Page<PurchasePayment> page = new Page<>(request.getPageNum(), request.getPageSize());
         page.setSearchCount(false);
         page.setTotal(baseMapper.countPurchasePayment(purchasePayment));
-        return baseMapper.findPurchasePaymentPage(page,purchasePayment);
+            return baseMapper.findPurchasePaymentPage(page,purchasePayment);
     }
 
     @Override
@@ -150,8 +150,10 @@ public class PurchasePaymentServiceImpl extends ServiceImpl<PurchasePaymentMappe
             String taxPrice = jsonArrayOne.getJSONObject(i).getString("taxPrice");
             String taxMoney = jsonArrayOne.getJSONObject(i).getString("taxMoney");
             String invoiceRemarks = jsonArrayOne.getJSONObject(i).getString("invoiceRemarks");
+            String inspectionSubclass = jsonArrayOne.getJSONObject(i).getString("inspectionSubclass");
 
-            PurchaseOrderSchedule purchaseOrderSchedule = purchaseOrderMapper.queryPaymentPurchaseOrderSchedule(invoiceName);
+            //取上次采购单价
+            PurchaseOrderSchedule purchaseOrderSchedule = purchaseOrderMapper.queryPaymentPurchaseOrderSchedule(invoiceSpecifications);
             String procurementPrice = "0";
             BigDecimal unitPrice = purchaseOrderSchedule.getUnitPrice();
             if (!unitPrice.equals("")){
@@ -159,6 +161,16 @@ public class PurchasePaymentServiceImpl extends ServiceImpl<PurchasePaymentMappe
             }else {
                 BigDecimal procurementPriceOtn = new BigDecimal(procurementPrice);
                 purchasePaymentSchedule.setProcurementPrice(procurementPriceOtn);
+            }
+            //取前次采购单价
+            PurchaseOrderSchedule previous = purchaseOrderMapper.queryPaymentPrevious(invoiceSpecifications);
+            String previousPrice = "0";
+            BigDecimal previousUnitPrice = previous.getUnitPrice();
+            if (!previousUnitPrice.equals("")){
+                purchasePaymentSchedule.setPreviousPrice(previousUnitPrice);
+            }else {
+                BigDecimal procurementPriceOtn = new BigDecimal(previousPrice);
+                purchasePaymentSchedule.setPreviousPrice(procurementPriceOtn);
             }
             purchasePaymentSchedule.setInvoiceDate(invoiceDate);
             purchasePaymentDate.setPaymentCode(paymentCode);
@@ -192,9 +204,9 @@ public class PurchasePaymentServiceImpl extends ServiceImpl<PurchasePaymentMappe
             }if (!taxMoney.equals("")){
                 BigDecimal taxMoneyOtn = new BigDecimal(taxMoney);
                 purchasePaymentSchedule.setTaxMoney(taxMoneyOtn);
-            }if (!invoiceRemarks.equals("")){
-                purchasePaymentSchedule.setInvoiceRemarks(invoiceRemarks);
             }
+            purchasePaymentSchedule.setInvoiceRemarks(invoiceRemarks);
+            purchasePaymentSchedule.setInspectionSubclass(inspectionSubclass);
             purchasePaymentDate.setPaymentCode(orderNumber);
             baseMapper.savePurchasePaymentSchedule(purchasePaymentSchedule);
         }
@@ -226,6 +238,8 @@ public class PurchasePaymentServiceImpl extends ServiceImpl<PurchasePaymentMappe
             String taxPrice = jsonArrayOne.getJSONObject(i).getString("taxPrice");
             String taxMoney = jsonArrayOne.getJSONObject(i).getString("taxMoney");
             String invoiceRemarks = jsonArrayOne.getJSONObject(i).getString("invoiceRemarks");
+            String inspectionSubclass = jsonArrayOne.getJSONObject(i).getString("inspectionSubclass");
+            //取上次采购单价
             PurchaseOrderSchedule purchaseOrderSchedule = purchaseOrderMapper.queryPaymentPurchaseOrderSchedule(invoiceName);
             String procurementPrice = "0";
             BigDecimal unitPrice = purchaseOrderSchedule.getUnitPrice();
@@ -234,6 +248,16 @@ public class PurchasePaymentServiceImpl extends ServiceImpl<PurchasePaymentMappe
             }else {
                 BigDecimal procurementPriceOtn = new BigDecimal(procurementPrice);
                 purchasePaymentSchedule.setProcurementPrice(procurementPriceOtn);
+            }
+            //取前次采购单价
+            PurchaseOrderSchedule previous = purchaseOrderMapper.queryPaymentPrevious(invoiceSpecifications);
+            String previousPrice = "0";
+            BigDecimal previousUnitPrice = previous.getUnitPrice();
+            if (!previousUnitPrice.equals("")){
+                purchasePaymentSchedule.setPreviousPrice(previousUnitPrice);
+            }else {
+                BigDecimal procurementPriceOtn = new BigDecimal(previousPrice);
+                purchasePaymentSchedule.setPreviousPrice(procurementPriceOtn);
             }
             purchasePaymentSchedule.setInvoiceDate(invoiceDate);
             purchasePaymentSchedule.setInvoiceBrand(invoiceBrand);
@@ -269,6 +293,7 @@ public class PurchasePaymentServiceImpl extends ServiceImpl<PurchasePaymentMappe
             }if (!invoiceRemarks.equals("")){
                 purchasePaymentSchedule.setInvoiceRemarks(invoiceRemarks);
             }
+            purchasePaymentSchedule.setInspectionSubclass(inspectionSubclass);
             baseMapper.savePurchasePaymentSchedule(purchasePaymentSchedule);
         }
     }
@@ -308,5 +333,13 @@ public class PurchasePaymentServiceImpl extends ServiceImpl<PurchasePaymentMappe
         PurchasePayment purchasePayment = new PurchasePayment();
         purchasePayment.setPaymentShapeDate(today);
         baseMapper.paymentPurchasePayment(ids,purchasePayment);
+    }
+
+    @Override
+    public IPage<PurchasePaymentSchedule> purchasePriceChangesQuery(QueryRequest request, PurchasePaymentSchedule purchasePaymentSchedule) {
+        Page<PurchasePaymentSchedule> page = new Page<>(request.getPageNum(), request.getPageSize());
+        page.setSearchCount(false);
+        page.setTotal(baseMapper.countPurchasePaymentSchedule(purchasePaymentSchedule));
+        return baseMapper.findPurchasePaymentSchedulePage(page,purchasePaymentSchedule);
     }
 }

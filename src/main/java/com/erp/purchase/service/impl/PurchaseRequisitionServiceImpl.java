@@ -117,6 +117,8 @@ public class PurchaseRequisitionServiceImpl extends ServiceImpl<PurchaseRequisit
             String applyQuantity = jsonArrayOne.getJSONObject(i).getString("applyQuantity");
             String deliveryDate = jsonArrayOne.getJSONObject(i).getString("deliveryDate");
             String applyRemarks = jsonArrayOne.getJSONObject(i).getString("applyRemarks");
+            String applyCategory = jsonArrayOne.getJSONObject(i).getString("applyCategory");
+            String applySubclass = jsonArrayOne.getJSONObject(i).getString("applySubclass");
             if (!applyCode.equals("")) {
                 purchaseRequisitionSchedule.setApplyCode(applyCode);
             }if (!applyName.equals("")) {
@@ -136,7 +138,12 @@ public class PurchaseRequisitionServiceImpl extends ServiceImpl<PurchaseRequisit
                 purchaseRequisitionSchedule.setDeliveryDate(deliveryDateOne);
             }if (applyRemarks != null && applyQuantity != "") {
                 purchaseRequisitionSchedule.setApplyRemarks(applyRemarks);
+            }if (!applyCategory.equals("")) {
+                purchaseRequisitionSchedule.setApplyCategory(applyCategory);
+            }if (!applySubclass.equals("") && !applySubclass.equals(null)) {
+                purchaseRequisitionSchedule.setApplySubclass(applySubclass);
             }
+            purchaseRequisitionSchedule.setApplyCancel("1");
             //添加到数据库
             baseMapper.savePurchaseRequisitionSchedule(purchaseRequisitionSchedule);
         }
@@ -162,6 +169,8 @@ public class PurchaseRequisitionServiceImpl extends ServiceImpl<PurchaseRequisit
             String applyQuantity = jsonArrayOne.getJSONObject(i).getString("applyQuantity");
             String deliveryDate = jsonArrayOne.getJSONObject(i).getString("deliveryDate");
             String applyRemarks = jsonArrayOne.getJSONObject(i).getString("applyRemarks");
+            String applyCategory = jsonArrayOne.getJSONObject(i).getString("applyCategory");
+            String applySubclass = jsonArrayOne.getJSONObject(i).getString("applySubclass");
             if (!applyCode.equals("")) {
                 purchaseRequisitionSchedule.setApplyCode(applyCode);
             }if (!applyName.equals("")) {
@@ -181,7 +190,12 @@ public class PurchaseRequisitionServiceImpl extends ServiceImpl<PurchaseRequisit
                 purchaseRequisitionSchedule.setDeliveryDate(deliveryDateOne);
             }if (applyRemarks != null && applyQuantity != "") {
                 purchaseRequisitionSchedule.setApplyRemarks(applyRemarks);
+            }if (!applyCategory.equals("")) {
+                purchaseRequisitionSchedule.setApplyCategory(applyCategory);
+            }if (!applySubclass.equals("") && !applySubclass.equals(null)) {
+                purchaseRequisitionSchedule.setApplySubclass(applySubclass);
             }
+            purchaseRequisitionSchedule.setApplyCancel("1");
             //添加到数据库
             baseMapper.savePurchaseRequisitionSchedule(purchaseRequisitionSchedule);
         }
@@ -222,5 +236,23 @@ public class PurchaseRequisitionServiceImpl extends ServiceImpl<PurchaseRequisit
         page.setSearchCount(false);
         page.setTotal(baseMapper.countPurchaseRequisition(purchaseRequisition));
         return baseMapper.findOrderPurchaseRequisitionPage(page,purchaseRequisition);
+    }
+
+    @Override
+    public IPage<PurchaseRequisition> findPurchaseCancel(QueryRequest request, PurchaseRequisition purchaseRequisition) {
+        Page<PurchaseRequisition> page = new Page<>(request.getPageNum(), request.getPageSize());
+        page.setSearchCount(false);
+        page.setTotal(baseMapper.countPurchaseCancel(purchaseRequisition));
+        return baseMapper.findPurchaseCancelPage(page,purchaseRequisition);
+    }
+
+    @Override
+    public void cancelPurchaseCancel(String ids) {
+        baseMapper.cancelPurchaseCancel(ids);
+    }
+
+    @Override
+    public void downPurchaseCancel(String ids) {
+        baseMapper.downPurchaseCancel(ids);
     }
 }

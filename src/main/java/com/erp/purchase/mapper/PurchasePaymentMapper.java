@@ -41,4 +41,8 @@ public interface PurchasePaymentMapper extends BaseMapper<PurchasePayment> {
     void cancelPurchasePayment(@Param("ids") String ids);
 
     void paymentPurchasePayment(@Param("ids") String ids, @Param("purchasePayment") PurchasePayment purchasePayment);
+
+    long countPurchasePaymentSchedule(PurchasePaymentSchedule purchasePaymentSchedule);
+
+    IPage<PurchasePaymentSchedule> findPurchasePaymentSchedulePage(Page<PurchasePaymentSchedule> page,@Param("purchasePayment") PurchasePaymentSchedule purchasePaymentSchedule);
 }

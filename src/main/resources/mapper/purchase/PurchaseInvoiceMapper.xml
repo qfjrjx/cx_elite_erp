@@ -50,6 +50,16 @@
         <if test="purchaseInvoice.taxRateId != null and purchaseInvoice.taxRateId != ''">
             AND pi.tax_rate_id = #{purchaseInvoice.taxRateId}
         </if>
+        <if test="purchaseInvoice.invoiceDateState == 1 ">
+            AND pi.invoice_date_state = #{purchaseInvoice.invoiceDateState}
+            And pi.registration_date &gt;= #{purchaseInvoice.signedDateFrom}
+            And pi.registration_date &lt;= #{purchaseInvoice.signedDateTo}
+        </if>
+        <if test="purchaseInvoice.invoiceDateState == 2 ">
+            AND pi.invoice_date_state = #{purchaseInvoice.invoiceDateState}
+            And pi.invoice_date &gt;= #{purchaseInvoice.signedDateFrom}
+            And pi.invoice_date &lt;= #{purchaseInvoice.signedDateTo}
+        </if>
         GROUP BY
             pi.invoice_numbers
     </sql>
@@ -166,7 +176,8 @@
             order_number,
             invoice_coding,
             invoice_company,
-            invoice_brand
+            invoice_brand,
+            invoice_subclass
         )
         VALUES
             (
@@ -187,7 +198,8 @@
                 #{orderNumber},
                 #{invoiceCoding},
                 #{invoiceCompany},
-                #{invoiceBrand}
+                #{invoiceBrand},
+                #{invoiceSubclass}
             )
     </insert>
 
@@ -225,7 +237,8 @@
             pis.invoice_quantity,
             pis.tax_price,
             pis.tax_money,
-            pi.invoice_remarks
+            pi.invoice_remarks,
+            pis.invoice_subclass
         FROM
             jr_purchase_invoice pi
                 LEFT JOIN jr_purchase_invoice_schedule pis on pi.invoice_numbers = pis.invoice_numbers

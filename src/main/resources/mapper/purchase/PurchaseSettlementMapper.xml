@@ -71,7 +71,8 @@
             pss.settlement_price,
             pss.settlement_money,
             pss.settlement_deposit,
-            pss.order_number
+            pss.order_number,
+            pss.settlement_subclass
         FROM
             jr_purchase_settlement_schedule pss
                 LEFT JOIN jr_purchase_settlement ps ON ( ps.settlement_numbers = pss.settlement_number )

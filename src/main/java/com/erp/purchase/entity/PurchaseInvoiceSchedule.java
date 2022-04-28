@@ -129,6 +129,12 @@ public class PurchaseInvoiceSchedule {
     @TableField("invoice_coding")
     private String invoiceCoding;
 
+    /**
+     * 小类
+     */
+    @TableField("invoice_subclass")
+    private String invoiceSubclass;
+
     private String invoiceSupplier;
 
     private String invoiceRemarks;

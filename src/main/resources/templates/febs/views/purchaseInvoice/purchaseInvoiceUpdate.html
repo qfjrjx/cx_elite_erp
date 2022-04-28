@@ -104,11 +104,6 @@
         </div>
     </div>
 </div>
-<script langguage="JavaScript">
-    var now = new Date();
-    purchaseRequisitionDate.value=new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate();
-    var deliveryDateTo = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate();
-</script>
 <script type="text/html" id="invoiceUse-state">
     {{#
     let invoiceUse = {
@@ -185,6 +180,7 @@
             var settlementMoney = data.settlementMoney;
             var settlementDeposit = data.settlementDeposit;
             var orderNumber = data.orderNumber;
+            var settlementSubclass = data.settlementSubclass;
             $.ajax({
                 url: '/saleOrder/random',
                 success : function(data) {
@@ -195,7 +191,7 @@
                         "invoiceName":settlementName,"invoiceSpecifications":settlementSpecifications,
                         "invoiceQuantity":settlementQuantity,"taxPrice":settlementPrice,
                         "invoiceMoney":settlementMoney,"invoiceDeposit":settlementDeposit,"orderNumber":orderNumber,
-                        "invoiceBrand":settlementBrand,"invoiceCompany":settlementCompany,"invoiceCoding":settlementCode};
+                        "invoiceBrand":settlementBrand,"invoiceCompany":settlementCompany,"invoiceCoding":settlementCode,"invoiceSubclass":settlementSubclass};
                     oldData.push(dataOne);
                     layui.table.reload('purchaseInvoiceUpdateList',{
                         data : oldData
@@ -303,7 +299,6 @@
         }
 
         form.on('submit(purchaseInvoice-update-form-submit)', function (data) {
-            var invoiceNumbers = $('#invoiceNumbers').val();
             let dataThree = new Array();
             let purchaseRefundTable =  table.cache["purchaseInvoiceUpdateList"];
             for (i=0;i<purchaseRefundTable.length;i++){
@@ -320,7 +315,8 @@
                     "orderNumber":purchaseRefundTable[i].orderNumber,
                     "invoiceBrand":purchaseRefundTable[i].invoiceBrand,
                     "invoiceCompany":purchaseRefundTable[i].invoiceCompany,
-                    "invoiceCoding":purchaseRefundTable[i].invoiceCoding
+                    "invoiceCoding":purchaseRefundTable[i].invoiceCoding,
+                    "invoiceSubclass":purchaseRefundTable[i].invoiceSubclass
                 };
                 dataThree.push(dataOne);
             }

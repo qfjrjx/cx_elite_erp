@@ -19,31 +19,56 @@
                                 <div class="layui-form-item">
                                     <div class="layui-inline">
                                         <label class="layui-form-mid layui-form-label-sm">状态</label>
-                                        <div class="layui-input-inline">
-                                            <select name="purchaseRequisitionState">
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <select name="orderState">
                                                 <option value=""></option>
-                                                <option value="1">启用</option>
-                                                <option value="2">禁用</option>
+                                                <option value="1">登记</option>
+                                                <option value="2">确认</option>
+                                                <option value="3">核准</option>
                                             </select>
                                         </div>
                                     </div>
                                     <div class="layui-inline">
-                                        <label class="layui-form-mid layui-form-label-sm">参数类别</label>
-                                        <div class="layui-input-inline">
-                                            <select name="applyState">
-                                                <option value=""></option>
-                                                <option value="1">材质</option>
-                                                <option value="2">订购类型</option>
-                                                <option value="3">付款方式</option>
-                                                <option value="4">计量单位</option>
-                                                <option value="5">物料类别</option>
-                                            </select>
+                                        <label class="layui-form-mid">日期&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <input type="text" id="start_date" name="signedDateFrom" placeholder="" lay-verify='date' class="layui-input"/>
+                                            <i class="layui-icon" id="start_date_icon"></i>
+                                        </div>
+                                        <label class="layui-form-mid">至：</label>
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <input type="text" id="end_date" name="signedDateTo" placeholder="" lay-verify='date' class="layui-input"/>
+                                            <i class="layui-icon " id="end_date_icon"></i>
                                         </div>
                                     </div>
                                     <div class="layui-inline" >
-                                        <label class="layui-form-mid layui-form-label-sm">参数名称</label>
-                                        <div class="layui-input-inline">
-                                            <input type="text" name="purchaseRequisitionName" autocomplete="off" class="layui-input">
+                                        <label class="layui-form-mid layui-form-label-sm">单号</label>
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <input type="text" name="orderNumber" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-mid layui-form-label-sm">供应商</label>
+                                        <input type="text" name="supplierNameList" id="supplierNameList" lay-verify="required" ondblclick="dblclickCustomerNameList()"
+                                               autocomplete="off" class="layui-input" placeholder="双击选择" style="width: 145px"  readonly>
+                                    </div>
+                                    <!--<div class="layui-inline">
+                                        <label class="layui-form-mid layui-form-label-sm">类型</label>
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <select name="applyState">
+                                                <option value=""></option>
+                                                <option value="1">采购</option>
+                                                <option value="2">委外</option>
+                                            </select>
+                                        </div>
+                                    </div>-->
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid layui-form-label-sm">付款方式</label>
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <select name="paymentMethod">
+                                                <option value=""></option>
+                                                <option value="1">预付</option>
+                                                <option value="2">到付</option>
+                                            </select>
                                         </div>
                                     </div>
                                 </div>
@@ -165,6 +190,43 @@
 
         form.render();
         initPurchaseRequisitionTable();
+
+        var firstDate = new Date();
+        firstDate.setDate(1); //本月第一天
+        var datetime =firstDate.getFullYear() + '-' + (firstDate.getMonth() + 1) + '-' + firstDate.getDate();
+        //开始日期
+        var start = laydate.render({
+            elem: '#start_date',
+            max: 0 ,//设置一个默认最大值//最大值为当前日期
+            trigger: 'click',
+            value: new Date(firstDate),//初始赋值,//默认值本月第一天
+            done:function(value,date){
+                if(value && (value>$("#end_date").val())){
+                    /*开始时间大于结束时间时，清空结束时间*/
+                    $("#end_date").val("");
+                }
+                end.config.min ={
+                    year:date.year,
+                    month:date.month-1,
+                    date: date.date,
+                };
+            }
+        });
+        //结束日期
+        var end = laydate.render({
+            elem: '#end_date',
+            min : datetime,//最大值为当前日期
+            trigger: 'click',
+            value: new Date(),//初始赋值,//默认当前时间
+            done:function(value,date){
+                start.config.max={
+                    year:date.year,
+                    month:date.month-1,
+                    date: date.date,
+                }
+            }
+        });
+
         dropdownMenu.render({
             elem: $view.find('.action-more'),
             click: function (name, elem, event) {
@@ -282,76 +344,80 @@
                 febs.alert.warn('请选择一条需要修改的数据');
             }else{
                 layui.each(checkStatus.data, function (key, item) {
-                    febs.modal.open('【采购订单】 修改', 'purchase/purchaseOrder/update/' + item.id, {
-                        area: ["80%","60%"],
-                        btn: ['增加行','删除行','删除整单','保存', '关闭'],
-                        yes: function (index, layero) {
-                            var buttonArr = [];
-                            var tableBak = layui.table.cache['purchaseOrderRequisitionList'];//获取之前编辑过的全部数据，前提是编辑数据是要更新缓存，buttonList 为表格的id
-                            for (var i = 0; i < tableBak.length; i++) {
-                                buttonArr.push(tableBak[i]);      //将之前的数组存储
-                            }
-                            buttonArr.push({
-                                "applyCode":"",
-                                "applyName":"",
-                                "applySpecifications":"",
-                                "applyQuality":"",
-                                "applyBrand":"",
-                                "applyCompany":"",
-                                "applyQuantity":"",
-                                "deliveryDate":deliveryDateTo,
-                                "applyRemarks":"",
-                            });
-                            table.reload('purchaseOrderRequisitionList',{
-                                data:buttonArr
-                            });
-                        },
-                        btn2: function () {
-                            let checkStatus = table.checkStatus('purchaseOrderRequisitionList')
-                                , demo = table.cache["purchaseOrderRequisitionList"];//获取表格中的数据
-                            if (checkStatus.data.length < 1) {
-                                layer.alert("请选择一条数据操作");
-                                return false;
-                            }else {
-                                var tablelist = [];//存储未选中的数据
-                                //循环表格数据
-                                for (var i in demo) {
-                                    //判断未选中数据
-                                    if (!demo[i].LAY_CHECKED) {
-                                        //存入数组
-                                        tablelist.push(demo[i]);
-                                    }
+                    if (item.orderState == 1){
+                        febs.modal.open('【采购订单】 修改', 'purchase/purchaseOrder/update/' + item.id, {
+                            area: ["80%","60%"],
+                            btn: ['增加行','删除行','删除整单','保存', '关闭'],
+                            yes: function (index, layero) {
+                                var buttonArr = [];
+                                var tableBak = layui.table.cache['purchaseOrderRequisitionList'];//获取之前编辑过的全部数据，前提是编辑数据是要更新缓存，buttonList 为表格的id
+                                for (var i = 0; i < tableBak.length; i++) {
+                                    buttonArr.push(tableBak[i]);      //将之前的数组存储
                                 }
-                                //重载表格
-                                table.reload('purchaseOrderRequisitionList', {
-                                    data: tablelist
+                                buttonArr.push({
+                                    "applyCode":"",
+                                    "applyName":"",
+                                    "applySpecifications":"",
+                                    "applyQuality":"",
+                                    "applyBrand":"",
+                                    "applyCompany":"",
+                                    "applyQuantity":"",
+                                    "deliveryDate":deliveryDateTo,
+                                    "applyRemarks":"",
                                 });
+                                table.reload('purchaseOrderRequisitionList',{
+                                    data:buttonArr
+                                });
+                            },
+                            btn2: function () {
+                                let checkStatus = table.checkStatus('purchaseOrderRequisitionList')
+                                    , demo = table.cache["purchaseOrderRequisitionList"];//获取表格中的数据
+                                if (checkStatus.data.length < 1) {
+                                    layer.alert("请选择一条数据操作");
+                                    return false;
+                                }else {
+                                    var tablelist = [];//存储未选中的数据
+                                    //循环表格数据
+                                    for (var i in demo) {
+                                        //判断未选中数据
+                                        if (!demo[i].LAY_CHECKED) {
+                                            //存入数组
+                                            tablelist.push(demo[i]);
+                                        }
+                                    }
+                                    //重载表格
+                                    table.reload('purchaseOrderRequisitionList', {
+                                        data: tablelist
+                                    });
 
-                            }
-                            return false;
-                        },
-                        btn3: function () {
+                                }
+                                return false;
+                            },
+                            btn3: function () {
                                 let orderNumber = [];
                                 layui.each(checkStatus.data, function (key, item) {
                                     orderNumber.push(item.orderNumber)
                                 });
                                 deletePurchaseRequisitionOrderNumber(orderNumber.join(','));
 
-                            layer.closeAll();
-                            var dataBak = [];
-                            layui.table.reload('purchaseOrderRequisitionList',{
-                                data:dataBak
-                            });
-                            return false;
-                        },
-                        btn4: function () {
-                            $('#purchaseOrder-update').find('#submit').trigger('click');
-                            return false;
-                        },
-                        btn5: function () {
-                            layer.closeAll();
-                        }
-                    });
+                                layer.closeAll();
+                                var dataBak = [];
+                                layui.table.reload('purchaseOrderRequisitionList',{
+                                    data:dataBak
+                                });
+                                return false;
+                            },
+                            btn4: function () {
+                                $('#purchaseOrder-update').find('#submit').trigger('click');
+                                return false;
+                            },
+                            btn5: function () {
+                                layer.closeAll();
+                            }
+                        });
+                    }else{
+                        febs.alert.warn('该状态不允许修改');
+                    }
                 });
             }
         });
@@ -541,5 +607,16 @@
         }
 
     })
+    function dblclickCustomerNameList(){
+        layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
+            let $ = layui.$,
+                febs = layui.febs;
+            febs.modal.open('供应商选择列表', 'purchase/purchaseSupplierOrderList', {
+                area:["55%","60%"],
+                yes: function (index, layero) {
+                }
+            });
+        });
+    }
 
 </script>

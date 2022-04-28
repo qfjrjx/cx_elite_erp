@@ -1,0 +1,95 @@
+<style>
+    #purchasePriceChanges-analysis {
+        padding: 20px 25px 25px 0;
+    }
+</style>
+<div class="layui-fluid" id="purchasePriceChanges-analysis">
+    <form class="layui-form" action="" lay-filter="purchasePriceChanges-analysis">
+        <table lay-filter="purchasePriceChangesAnalysis" id="purchasePriceChangesAnalysis" lay-data="{id: 'purchasePriceChangesAnalysis'}"></table>
+    </form>
+</div>
+<script type="text/html" id="inspectionSubclass-reply">
+    {{#
+    let inspectionSubclass = {
+    1: {title: '是'},
+    2: {title: '否'}
+    }[d.inspectionSubclass];
+    }}
+    <span>{{ inspectionSubclass.title }}</span>
+</script>
+<script data-th-inline="javascript">
+    layui.use(['form', 'validate','table'], function () {
+        let $ = layui.$,
+            form = layui.form,
+            febs = layui.febs,
+            validate = layui.validate,
+            table = layui.table,
+            tableIns;
+
+        form.render();
+        initPurchaseRequisitionTable();
+
+/*        var tableData= new Array(); // 用于存放表格数据
+        $.ajax({
+            url: 'purchasePriceChanges/query'
+            ,data:{}
+            ,async:false
+            ,dataType:"json"
+            , success: function(data){
+                tableData=data.replies;
+            }
+        });*/
+
+        function initPurchaseRequisitionTable() {
+            tableIns = febs.table.init({
+                elem: '#purchasePriceChangesAnalysis',
+                id: 'purchasePriceChangesAnalysis',
+                url: ctx + 'purchasePriceChanges/query',
+                cols: [
+                    [
+                        {
+                            field: 'number', title: '序号', align: 'center', width: 60, templet: function (d) {
+                                return d.LAY_INDEX;
+                            }
+                        },
+                        {field: 'invoiceName', title: '名称', align: 'center', minWidth: 90},
+                        {field: 'invoiceSpecifications', title: '规格', minWidth: 55, align: 'center'},
+                        {field: 'invoiceCompany', title: '单位', minWidth: 55, align: 'center'},
+                        {
+                            field: 'previousPrice',
+                            title: '前次采购单价',
+                            minWidth: 55,
+                            align: 'center',
+                            templet: function (data) {
+                                var price = parseFloat(data.previousPrice).toFixed(2); //设置小数点后个数
+                                return price;
+                            }
+                        },
+                        {
+                            field: 'procurementPrice',
+                            title: '上次采购单价',
+                            minWidth: 55,
+                            align: 'center',
+                            templet: function (data) {
+                                var price = parseFloat(data.procurementPrice).toFixed(2); //设置小数点后个数
+                                return price;
+                            }
+                        },
+                        {
+                            field: 'taxPrice', title: '最近采购单价', minWidth: 55, align: 'center', templet: function (data) {
+                                var price = parseFloat(data.taxPrice).toFixed(2); //设置小数点后个数
+                                return price;
+                            }
+                        },
+                        {field: 'inspectionSubclass', title: '类别', minWidth: 55, align: 'center' ,
+                        templet:function (d) {
+                            if (d.inspectionSubclass == 1) return '键盘';
+                            else if(d.inspectionSubclass == 2) return '电脑';
+                            else return '';
+                        }}
+                    ]
+                ]
+            });
+        }
+    })
+</script>

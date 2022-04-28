@@ -129,4 +129,33 @@ public class PurchaseRequisitionController extends BaseController {
         Map<String, Object> dataTable = getDataTable(this.purchaseRequisitionService.findOrderPurchaseRequisitionPage(request, purchaseRequisition));
         return new FebsResponse().success().data(dataTable);
     }
+
+    //申请核销查询
+    @GetMapping("purchaseCancel/list")
+    @ResponseBody
+    @RequiresPermissions("purchaseCancel:view")
+    public FebsResponse purchaseCancelList(QueryRequest request, PurchaseRequisition purchaseRequisition) {
+        Map<String, Object> dataTable = getDataTable(this.purchaseRequisitionService.findPurchaseCancel(request, purchaseRequisition));
+        return new FebsResponse().success().data(dataTable);
+    }
+
+    //核销确认
+    @ControllerEndpoint(operation = "确认", exceptionMessage = "确认失败")
+    @GetMapping("purchaseCancel/cancel/{ids}")
+    @ResponseBody
+    @RequiresPermissions("purchaseCancel:cancel")
+    public FebsResponse cancelPurchaseCancel(@PathVariable String ids) {
+        this.purchaseRequisitionService.cancelPurchaseCancel(ids);
+        return new FebsResponse().success();
+    }
+
+    //核销取消
+    @ControllerEndpoint(operation = "确认", exceptionMessage = "确认失败")
+    @GetMapping("purchaseCancel/down/{ids}")
+    @ResponseBody
+    @RequiresPermissions("purchaseCancel:cancel")
+    public FebsResponse downPurchaseCancel(@PathVariable String ids) {
+        this.purchaseRequisitionService.downPurchaseCancel(ids);
+        return new FebsResponse().success();
+    }
 }

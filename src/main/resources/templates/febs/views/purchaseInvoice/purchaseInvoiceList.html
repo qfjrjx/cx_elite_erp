@@ -29,19 +29,22 @@
                                     </div>
                                     <div class="layui-inline" >
                                         <div class="layui-input-inline">
-                                            <select name="invoiceState">
+                                            <select name="invoiceDateState">
+                                                <option value=""></option>
                                                 <option value="1">登记日期</option>
                                                 <option value="2">开票日期</option>
                                             </select>
                                         </div>
-                                        <div class="layui-input-inline" style="width: 100px">
-                                            <input type="text" name="purchaseRequisitionDate" id="purchaseRequisitionDate"
-                                                   autocomplete="off" class="layui-input createDate" readonly>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <input type="text" id="start_date" name="signedDateFrom" placeholder="" lay-verify='date' class="layui-input"/>
+                                            <i class="layui-icon" id="start_date_icon"></i>
                                         </div>
-                                        <label class="layui-form-mid">至&nbsp;<b>:</b></label>
-                                        <div class="layui-input-inline" style="width: 100px">
-                                            <input type="text" name="purchaseRequisitionDate" id="purchaseRequisitionDate1"
-                                                   autocomplete="off" class="layui-input createDate" readonly>
+                                        <label class="layui-form-mid">至：</label>
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <input type="text" id="end_date" name="signedDateTo" placeholder="" lay-verify='date' class="layui-input"/>
+                                            <i class="layui-icon " id="end_date_icon"></i>
                                         </div>
                                     </div>
                                     <div class="layui-inline">
@@ -60,16 +63,22 @@
                                     <div class="layui-inline">
                                         <label class="layui-form-mid">币&nbsp;种&nbsp;<b>:</b></label>
                                         <div class="layui-input-inline" style="width: 90px">
-                                            <select id="currencyName"  name="currencyName" lay-verify="required" class="layui-form-select" >
-                                                <option th:each="currency:${currency}" th:value="${currency.id}">[[${currency.financeParameterName}]]</option>
+                                            <select id="currencyId"  name="currencyId" lay-verify="required" class="layui-form-select" >
+                                                <option value=""></option>
+                                                <option value="4">人民币</option>
+                                                <option value="5">美元</option>
+                                                <option value="6">欧元</option>
                                             </select>
                                         </div>
                                     </div>
                                     <div class="layui-inline">
                                         <label class="layui-form-mid">税&nbsp;率&nbsp;<b>:</b></label>
-                                        <div class="layui-input-inline" style="width: 85px">
-                                            <select id="taxRateName"  name="taxRateName" lay-verify="required" class="layui-form-select" >
-                                                <option th:each="taxRate:${taxRate}" th:value="${taxRate.id}">[[${taxRate.financeParameterName}]]</option>
+                                        <div class="layui-input-inline" style="width: 90px">
+                                            <select id="taxRateId"  name="taxRateId" lay-verify="required" class="layui-form-select" >
+                                                <option value=""></option>
+                                                <option value="1">13%</option>
+                                                <option value="2">9%</option>
+                                                <option value="3">6%</option>
                                             </select>
                                         </div>
                                     </div>
@@ -141,13 +150,6 @@
     <a lay-event="edit" shiro:hasPermission="purchaseInvoice:update"><i
             class="layui-icon febs-edit-area febs-blue">&#xe7a4;</i></a>
 </script>
-<script langguage="JavaScript">
-
-    var now = new Date();
-    purchaseRequisitionDate.value=new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate();
-    purchaseRequisitionDate1.value=new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate();
-    var deliveryDateTo = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate();
-</script>
 <script data-th-inline="none" type="text/javascript">
     layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
         let $ = layui.jquery,
@@ -168,6 +170,42 @@
 
         form.render();
         initPurchaseRequisitionTable();
+
+        var firstDate = new Date();
+        firstDate.setDate(1); //本月第一天
+        var datetime =firstDate.getFullYear() + '-' + (firstDate.getMonth() + 1) + '-' + firstDate.getDate();
+        //开始日期
+        var start = laydate.render({
+            elem: '#start_date',
+            max: 0 ,//设置一个默认最大值//最大值为当前日期
+            trigger: 'click',
+            value: new Date(firstDate),//初始赋值,//默认值本月第一天
+            done:function(value,date){
+                if(value && (value>$("#end_date").val())){
+                    /*开始时间大于结束时间时，清空结束时间*/
+                    $("#end_date").val("");
+                }
+                end.config.min ={
+                    year:date.year,
+                    month:date.month-1,
+                    date: date.date,
+                };
+            }
+        });
+        //结束日期
+        var end = laydate.render({
+            elem: '#end_date',
+            min : datetime,//最大值为当前日期
+            trigger: 'click',
+            value: new Date(),//初始赋值,//默认当前时间
+            done:function(value,date){
+                start.config.max={
+                    year:date.year,
+                    month:date.month-1,
+                    date: date.date,
+                }
+            }
+        });
 
         $query.on('click', function () {
             let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});

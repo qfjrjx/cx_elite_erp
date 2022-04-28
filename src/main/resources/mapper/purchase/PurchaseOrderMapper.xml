@@ -7,8 +7,29 @@
             COUNT( 1 )
         FROM
             jr_purchase_order po
+        LEFT JOIN jr_purchase_order_schedule pos ON ( po.order_number = pos.odd_numbers )
+        LEFT JOIN jr_finance_parameters fpa ON ( po.currency_id = fpa.id )
+        LEFT JOIN jr_finance_parameters fpb ON ( po.tax_rate_id = fpb.id )
         WHERE
-	1 = 1
+            1 = 1
+            <if test="purchaseOrder.signedDateFrom != null and purchaseOrder.signedDateFrom !=''">
+                And po.purchase_requisition_date &gt;= #{purchaseOrder.signedDateFrom}
+            </if>
+            <if test="purchaseOrder.signedDateTo != null and purchaseOrder.signedDateTo !=''">
+                And po.purchase_requisition_date &lt;= #{purchaseOrder.signedDateTo}
+            </if>
+            <if test="purchaseOrder.supplierNameList != null and purchaseOrder.supplierNameList != ''">
+                AND po.supplier_name = #{purchaseOrder.supplierNameList}
+            </if>
+            <if test="purchaseOrder.orderState != null and purchaseOrder.orderState != ''">
+                AND po.order_state = #{purchaseOrder.orderState}
+            </if>
+            <if test="purchaseOrder.orderNumber != null and purchaseOrder.orderNumber != ''">
+                AND po.order_number = #{purchaseOrder.orderNumber}
+            </if>
+            <if test="purchaseOrder.paymentMethod != null and purchaseOrder.paymentMethod != ''">
+                AND po.payment_method = #{purchaseOrder.paymentMethod}
+            </if>
     </sql>
 
     <sql id="countPurchaseInspectionOrderSql">
@@ -16,6 +37,50 @@
             COUNT( 1 )
         FROM
             jr_purchase_order po
+        WHERE
+            1 = 1
+    </sql>
+
+    <sql id="countPurchasePriceChangesSql">
+        SELECT
+            COUNT( 1 )
+        FROM
+            (
+                SELECT
+                    po.order_preparation_date orderPreparationDate,
+                    pos.material_name materialName,
+                    pos.order_specifications orderSpecifications,
+                    pos.order_company orderCompany,
+                    pos.order_subclass orderSubclass,
+                    po.supplier_name,
+                    pos.unit_price unitPrice
+                FROM
+                    jr_purchase_order po
+                        LEFT JOIN jr_purchase_order_schedule pos ON ( po.order_number = pos.odd_numbers )
+                WHERE
+                    1 = 1
+                <if test="purchaseOrder.signedDateFrom != null and purchaseOrder.signedDateFrom !=''">
+                    And po.order_preparation_date &gt;= #{purchaseOrder.signedDateFrom}
+                </if>
+                <if test="purchaseOrder.signedDateTo != null and purchaseOrder.signedDateTo !=''">
+                    And po.order_preparation_date &lt;= #{purchaseOrder.signedDateTo}
+                </if>
+                <if test="purchaseOrder.supplierName != null and purchaseOrder.supplierName != ''">
+                    AND po.supplier_name = #{purchaseOrder.supplierName}
+                </if>
+                <if test="purchaseOrder.orderCode != null and purchaseOrder.orderCode != ''">
+                    AND pos.order_code = #{purchaseOrder.orderCode}
+                </if>
+                <if test="purchaseOrder.materialName != null and purchaseOrder.materialName != ''">
+                    AND pos.material_name = #{purchaseOrder.materialName}
+                </if>
+                <if test="purchaseOrder.orderSpecifications != null and purchaseOrder.orderSpecifications != ''">
+                    AND pos.order_specifications = #{purchaseOrder.orderSpecifications}
+                </if>
+                <if test="purchaseOrder.orderSubclass != null and purchaseOrder.orderSubclass != ''">
+                    AND pos.order_subclass = #{purchaseOrder.orderSubclass}
+                </if>
+            ) jr_purchase_order
         WHERE
             1 = 1
     </sql>
@@ -43,6 +108,24 @@
             LEFT JOIN jr_finance_parameters fpb ON ( po.tax_rate_id = fpb.id )
         WHERE
             1 = 1
+            <if test="purchaseOrder.signedDateFrom != null and purchaseOrder.signedDateFrom !=''">
+                And po.purchase_requisition_date &gt;= #{purchaseOrder.signedDateFrom}
+            </if>
+            <if test="purchaseOrder.signedDateTo != null and purchaseOrder.signedDateTo !=''">
+                And po.purchase_requisition_date &lt;= #{purchaseOrder.signedDateTo}
+            </if>
+            <if test="purchaseOrder.supplierNameList != null and purchaseOrder.supplierNameList != ''">
+                AND po.supplier_name = #{purchaseOrder.supplierNameList}
+            </if>
+            <if test="purchaseOrder.orderState != null and purchaseOrder.orderState != ''">
+                AND po.order_state = #{purchaseOrder.orderState}
+            </if>
+            <if test="purchaseOrder.orderNumber != null and purchaseOrder.orderNumber != ''">
+                AND po.order_number = #{purchaseOrder.orderNumber}
+            </if>
+            <if test="purchaseOrder.paymentMethod != null and purchaseOrder.paymentMethod != ''">
+                AND po.payment_method = #{purchaseOrder.paymentMethod}
+            </if>
         GROUP BY
 	        po.order_number
     </sql>
@@ -84,6 +167,43 @@
         WHERE
             po.order_state = '3'
     </sql>
+    <sql id="findPurchasePriceChangesSql">
+        SELECT
+            po.order_preparation_date orderPreparationDate,
+            pos.material_name materialName,
+            pos.order_specifications orderSpecifications,
+            pos.order_company orderCompany,
+            pos.order_subclass orderSubclass,
+            po.supplier_name,
+            pos.unit_price unitPrice
+        FROM
+            jr_purchase_order po
+                LEFT JOIN
+            jr_purchase_order_schedule pos ON ( po.order_number = pos.odd_numbers )
+        WHERE
+            1 = 1
+        <if test="purchaseOrder.signedDateFrom != null and purchaseOrder.signedDateFrom !=''">
+            And po.order_preparation_date &gt;= #{purchaseOrder.signedDateFrom}
+        </if>
+        <if test="purchaseOrder.signedDateTo != null and purchaseOrder.signedDateTo !=''">
+            And po.order_preparation_date &lt;= #{purchaseOrder.signedDateTo}
+        </if>
+        <if test="purchaseOrder.supplierName != null and purchaseOrder.supplierName != ''">
+            AND po.supplier_name = #{purchaseOrder.supplierName}
+        </if>
+        <if test="purchaseOrder.orderCode != null and purchaseOrder.orderCode != ''">
+            AND pos.order_code = #{purchaseOrder.orderCode}
+        </if>
+        <if test="purchaseOrder.materialName != null and purchaseOrder.materialName != ''">
+            AND pos.material_name = #{purchaseOrder.materialName}
+        </if>
+        <if test="purchaseOrder.orderSpecifications != null and purchaseOrder.orderSpecifications != ''">
+            AND pos.order_specifications = #{purchaseOrder.orderSpecifications}
+        </if>
+        <if test="purchaseOrder.orderSubclass != null and purchaseOrder.orderSubclass != ''">
+            AND pos.order_subclass = #{purchaseOrder.orderSubclass}
+        </if>
+    </sql>
 
     <select id="countPurchaseOrder" parameterType="com.erp.purchase.entity.PurchaseOrder" resultType="long">
         <include refid="countPurchaseOrderSql"/>
@@ -93,8 +213,16 @@
         <include refid="countPurchaseInspectionOrderSql"/>
     </select>
 
+    <select id="countPurchasePriceChanges" parameterType="com.erp.purchase.entity.PurchaseOrder" resultType="long">
+        <include refid="countPurchasePriceChangesSql"/>
+    </select>
+
     <select id="findPurchaseOrderPage" parameterType="com.erp.purchase.entity.PurchaseOrder" resultType="com.erp.purchase.entity.PurchaseOrder">
         <include refid="findPurchaseOrderSql"/>
+    </select>
+
+    <select id="findPurchasePriceChanges" parameterType="com.erp.purchase.entity.PurchaseOrder" resultType="com.erp.purchase.entity.PurchaseOrder">
+        <include refid="findPurchasePriceChangesSql"/>
     </select>
 
     <!--查询出最后一个采购订单单号-->
@@ -271,7 +399,7 @@
         <include refid="queryPurchaseInspectionOrderSql"/>
     </select>
 
-    <!--根据物料名称进行查询上次采购单价-->
+    <!--根据规格进行查询上次采购单价-->
     <select id="queryPaymentPurchaseOrderSchedule" parameterType="String" resultType="com.erp.purchase.entity.PurchaseOrderSchedule">
         SELECT
             unit_price,
@@ -281,10 +409,26 @@
         WHERE
             1 = 1
             AND
-            pos.material_name = #{invoiceName}
+            pos.order_specifications = #{invoiceSpecifications}
         ORDER BY
             pos.delivery_date DESC
             LIMIT 1,1;
+    </select>
+
+    <!--根据规格进行查询上上次采购单价-->
+    <select id="queryPaymentPrevious" parameterType="String" resultType="com.erp.purchase.entity.PurchaseOrderSchedule">
+        SELECT
+            unit_price,
+            delivery_date
+        FROM
+            jr_purchase_order_schedule pos
+        WHERE
+            1 = 1
+          AND
+            pos.order_specifications = #{invoiceSpecifications}
+        ORDER BY
+            pos.delivery_date DESC
+            LIMIT 2,1;
     </select>
 
 </mapper>

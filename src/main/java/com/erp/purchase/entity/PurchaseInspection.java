@@ -84,4 +84,23 @@ public class PurchaseInspection {
     @TableField("inspection_remarks")
     private String inspectionRemarks;
 
+    /**
+     * 税率
+     */
+    @TableField("tax_rate_id")
+    private String taxRateId;
+
+    private String taxRateName;
+
+    /**
+     * 币种
+     */
+    @TableField("currency_id")
+    private String currencyId;
+
+    private String currencyName;
+
+    private transient String signedDateFrom;
+    private transient String signedDateTo;
+
 }

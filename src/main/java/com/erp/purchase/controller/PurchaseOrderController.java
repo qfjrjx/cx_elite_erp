@@ -89,12 +89,17 @@ public class PurchaseOrderController extends BaseController {
         return new FebsResponse().success();
     }
 
-    @ControllerEndpoint(operation = "修改PurchaseOrder", exceptionMessage = "导出Excel失败")
-    @PostMapping("purchaseOrder/excel")
-    @ResponseBody
-    @RequiresPermissions("purchaseOrder:export")
+    /**
+     * 价格变动导出
+     * @param queryRequest
+     * @param purchaseOrder
+     * @param response
+     */
+    @ControllerEndpoint(operation = "导出purchasePriceChanges", exceptionMessage = "导出Excel失败")
+    @GetMapping("purchasePriceChanges/excel")
+    @RequiresPermissions("purchasePriceChanges:export")
     public void export(QueryRequest queryRequest, PurchaseOrder purchaseOrder, HttpServletResponse response) {
-        List<PurchaseOrder> purchaseOrders = this.purchaseOrderService.findPurchaseOrders(queryRequest, purchaseOrder).getRecords();
+        List<PurchaseOrder> purchaseOrders = this.purchaseOrderService.findPurchasePriceChanges(queryRequest, purchaseOrder).getRecords();
         ExcelKit.$Export(PurchaseOrder.class, response).downXlsx(purchaseOrders, false);
     }
 
@@ -154,6 +159,13 @@ public class PurchaseOrderController extends BaseController {
     @ResponseBody
     public FebsResponse completionStatusList(QueryRequest request, String supplierName) {
         Map<String, Object> dataTable = getDataTable(this.purchaseOrderService.queryPurchaseInspectionOrder(request, supplierName));
+        return new FebsResponse().success().data(dataTable);
+    }
+
+    @GetMapping("purchasePriceChanges/list")
+    @ResponseBody
+    public FebsResponse purchasePriceChangesList(QueryRequest request, PurchaseOrder purchaseOrder) {
+        Map<String, Object> dataTable = getDataTable(this.purchaseOrderService.findPurchasePriceChanges(request, purchaseOrder));
         return new FebsResponse().success().data(dataTable);
     }
 }

@@ -112,4 +112,7 @@ public class PurchaseInvoice {
      *开票数量
      */
     private String invoiceAmount;
+
+    private transient String signedDateFrom;
+    private transient String signedDateTo;
 }
