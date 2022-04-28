@@ -6,7 +6,9 @@ import com.erp.common.entity.FebsConstant;
 import com.erp.common.entity.FebsResponse;
 import com.erp.common.entity.QueryRequest;
 import com.erp.common.utils.FebsUtil;
-import com.erp.sale.entity.SaleOrder;
+import com.erp.sale.entity.SaleApplicationAll;
+import com.erp.sale.entity.SaleOrderAll;
+import com.erp.sale.entity.SaleOrderSchedule;
 import com.erp.sale.service.ISaleOrderService;
 import com.wuwenze.poi.ExcelKit;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
@@ -50,14 +51,14 @@ public class SaleOrderController extends BaseController {
     @GetMapping("saleOrder")
     @ResponseBody
     @RequiresPermissions("saleOrder:list")
-    public FebsResponse getAllSaleOrders(SaleOrder saleOrder) {
+    public FebsResponse getAllSaleOrders(SaleOrderAll saleOrder) {
         return new FebsResponse().success().data(saleOrderService.findSaleOrders(saleOrder));
     }
 
     @GetMapping("saleOrder/list")
     @ResponseBody
     @RequiresPermissions("saleOrder:view")
-    public FebsResponse saleOrderList(QueryRequest request, SaleOrder saleOrder) {
+    public FebsResponse saleOrderList(QueryRequest request, SaleOrderAll saleOrder) {
         Map<String, Object> dataTable = getDataTable(this.saleOrderService.findSaleOrders(request, saleOrder));
         return new FebsResponse().success().data(dataTable);
     }
@@ -66,23 +67,8 @@ public class SaleOrderController extends BaseController {
     @PostMapping("saleOrder/add")
     @ResponseBody
     @RequiresPermissions("saleOrder:add")
-    public FebsResponse addSaleOrder(@RequestParam String orderDate,
-                                     @RequestParam String customerName,
-                                     @RequestParam String salesmanName,
-                                     @RequestParam String currencyName,
-                                     @RequestParam String taxRate,
-                                     @RequestParam String paymentMethod,
-                                     @RequestParam String depositMoney,
-                                     @RequestParam String invoiceNot,
-                                     @RequestParam String contactsName,
-                                     @RequestParam String mobilePhone,
-                                     @RequestParam String orderType,
-                                     @RequestParam String afterSalesClerk,
-                                     @RequestParam String dataTable,
-                                     @RequestParam String contImg) throws ParseException {
-        this.saleOrderService.createSaleOrder(orderDate,customerName,
-                salesmanName,currencyName,taxRate,paymentMethod,
-                depositMoney,invoiceNot,contactsName,mobilePhone,orderType,afterSalesClerk,dataTable,contImg);
+    public FebsResponse addSaleOrder(@RequestParam String saleOrderData,@RequestParam String dataTable,@RequestParam String contImg) throws ParseException {
+        this.saleOrderService.createSaleOrder(saleOrderData,dataTable,contImg);
         return new FebsResponse().success();
     }
 
@@ -90,27 +76,40 @@ public class SaleOrderController extends BaseController {
     @GetMapping("saleOrder/delete")
     @ResponseBody
     @RequiresPermissions("saleOrder:delete")
-    public FebsResponse deleteSaleOrder(SaleOrder saleOrder) {
+    public FebsResponse deleteSaleOrder(SaleOrderAll saleOrder) {
         this.saleOrderService.deleteSaleOrder(saleOrder);
         return new FebsResponse().success();
     }
 
+    @ControllerEndpoint(operation = "修改附表回显SaleOrder", exceptionMessage = "修改SaleOrder失败")
+    @GetMapping("saleOrderDate/list")
+    @ResponseBody
+    @RequiresPermissions("saleOrder:view")
+    public Map saleOrderDateList(@RequestParam String oddNumbersTwo) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        try {
+            List<SaleOrderSchedule> saleOrderSchedules = this.saleOrderService.saleOrderSchedulesList(oddNumbersTwo);
+            map.put("replies", saleOrderSchedules);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return map;
+    }
     @ControllerEndpoint(operation = "修改SaleOrder", exceptionMessage = "修改SaleOrder失败")
     @PostMapping("saleOrder/update")
     @ResponseBody
     @RequiresPermissions("saleOrder:update")
-    public FebsResponse updateSaleOrder(SaleOrder saleOrder) {
-        this.saleOrderService.updateSaleOrder(saleOrder);
+    public FebsResponse updateSaleApplication(@RequestParam String saleApplicationData,@RequestParam String dataTable,@RequestParam String contImg) throws ParseException {
+        this.saleOrderService.updateSaleOrder(saleApplicationData,dataTable,contImg);
         return new FebsResponse().success();
     }
-
     @ControllerEndpoint(operation = "修改SaleOrder", exceptionMessage = "导出Excel失败")
     @PostMapping("saleOrder/excel")
     @ResponseBody
     @RequiresPermissions("saleOrder:export")
-    public void export(QueryRequest queryRequest, SaleOrder saleOrder, HttpServletResponse response) {
-        List<SaleOrder> saleOrders = this.saleOrderService.findSaleOrders(queryRequest, saleOrder).getRecords();
-        ExcelKit.$Export(SaleOrder.class, response).downXlsx(saleOrders, false);
+    public void export(QueryRequest queryRequest, SaleOrderAll saleOrder, HttpServletResponse response) {
+        List<SaleOrderAll> saleOrders = this.saleOrderService.findSaleOrders(queryRequest, saleOrder).getRecords();
+        ExcelKit.$Export(SaleOrderAll.class, response).downXlsx(saleOrders, false);
     }
 
     @GetMapping("saleOrder/random")

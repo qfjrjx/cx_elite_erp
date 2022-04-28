@@ -1,9 +1,9 @@
 <style>
-    #saleOrder-product xm-select {
+    #saleProductUpdate-list xm-select {
         min-height: 30px;
         line-height: 30px;
     }
-    #saleOrder-product xm-select > .xm-label .scroll .label-content {
+    #saleProductUpdate-list xm-select > .xm-label .scroll .label-content {
         display: flex;
         padding: 0 30px 0 10px;
     }
@@ -11,7 +11,7 @@
         width: 160px;
     }
 </style>
-<div class="layui-fluid layui-anim febs-anim" id="saleOrder-product" lay-title="产品信息">
+<div class="layui-fluid layui-anim febs-anim" id="saleProductUpdate-list" lay-title="产品信息">
     <div class="layui-row febs-container">
         <div class="layui-col-md12">
             <div class="layui-card">
@@ -61,9 +61,9 @@
                             </div>
                         </div>
                     </form>
-                    <table lay-filter="saleOrderProductTable" id="saleOrderProductTable" lay-data="{id: 'saleOrderProductTable'}"></table>
+                    <table lay-filter="saleOrderProductUpdateTable" id="saleOrderProductUpdateTable" lay-data="{id: 'saleOrderProductUpdateTable'}"></table>
                     <br>
-                    <table lay-filter="saleOrderProduct-table" id="saleOrderProduct-table" lay-data="{id: 'saleOrderProduct-table'}"></table>
+                    <table lay-filter="saleOrderProductUpdate-table" id="saleOrderProductUpdate-table" lay-data="{id: 'saleOrderProductUpdate-table'}"></table>
                 </div>
             </div>
         </div>
@@ -92,7 +92,7 @@
             form = layui.form,
             table = layui.table,
             dropdownMenu = layui.dropdownMenu,
-            $view = $('#saleOrder-product'),
+            $view = $('#saleProductUpdate-list'),
             $query = $view.find('#query'),
             $reset = $view.find('#reset'),
             $addTo = $view.find('#addTo'),
@@ -115,7 +115,7 @@
         dropdownMenu.render({
             elem: $view.find('.action-more'),
             click: function (name, elem, event) {
-                let checkStatus = table.checkStatus('saleOrderProductTable');
+                let checkStatus = table.checkStatus('saleOrderProductUpdateTable');
                 if (name === 'delete') {
                     if (!checkStatus.data.length) {
                         febs.alert.warn('请选择需要删除的数据');
@@ -132,13 +132,13 @@
             },
             options: []
         });
-        table.on('tool(saleOrderProductTable)', function (obj) {
+        table.on('tool(saleOrderProductUpdateTable)', function (obj) {
             let data = obj.data,
                 layEvent = obj.event;
 
         });
 
-        table.on('sort(saleOrderProductTable)', function (obj) {
+        table.on('sort(saleOrderProductUpdateTable)', function (obj) {
             sortObject = obj;
             tableIns.reload({
                 initSort: obj,
@@ -148,16 +148,16 @@
                 })
             });
         });
-        table.on('rowDouble(saleOrderProductTable)', function (obj) {
+        table.on('rowDouble(saleOrderProductUpdateTable)', function (obj) {
              var data = obj.data;
              var productName = data.productName;
              var specificationModel = data.productSpecificationModel;
              var productMeteringCompany = data.productMeteringCompany;
              var productRemarks = data.productRemarks;
-             var oldData =  table.cache["saleOrderProduct-table"];
+             var oldData =  table.cache["saleOrderProductUpdate-table"];
              var dataOne={"productNames":productName,"productSpecificationModels":specificationModel,"purchaseParametersName":productMeteringCompany,"productRemark":productRemarks};
              oldData.push(dataOne);
-             layui.table.reload('saleOrderProduct-table',{
+             layui.table.reload('saleOrderProductUpdate-table',{
                 data : oldData
             });
         });
@@ -178,7 +178,7 @@
                     var parameterUnitPrice = document.getElementById("parameterUnitPrice");//获取单价
                     var parameterAmountMoney = document.getElementById("parameterAmountMoney");//获取金额
                     var parameterExplain = document.getElementById("parameterExplain");//获取备注
-                    dataDel =  table.cache["saleOrder-table"];
+                    dataDel =  table.cache["saleOrderUpdate-table"];
                     var dateList = [];//存储未选中的数据
                     //循环表格数据
                     for (var i in dataDel) {
@@ -189,12 +189,12 @@
                         }
                     }
                     //重载表格
-                    table.reload('saleOrder-table', {
+                    table.reload('saleOrderUpdate-table', {
                         data: dateList
                     });
-                    var oldData =  table.cache["saleOrderProduct-table"];
+                    var oldData =  table.cache["saleOrderProductUpdate-table"];
                     var dataOneAdd;
-                    oldDatas =  table.cache["saleOrder-table"];
+                    oldDatas =  table.cache["saleOrderUpdate-table"];
                     for (i=0;i<oldData.length;i++){
                         if (parameterProductNameTwo != null && parameterProductNameTwo  != "" && i < 1){
                              dataOneAdd={"productName":oldData[i].productNames,"specificationModel":oldData[i].productSpecificationModels,"configureName":parameterConfigureTo,"companyName":oldData[i].purchaseParametersName,"quantityName":parameterQuantity.value,"unitPrice":parameterUnitPrice.value,"amountMoney":parameterAmountMoney.value,"orderRemarks":parameterExplain.value,"deliveryTime":deliveryDateTo};
@@ -203,7 +203,7 @@
                         }
                         oldDatas.push(dataOneAdd);
                     }
-                    layui.table.reload('saleOrder-table',{
+                    layui.table.reload('saleOrderUpdate-table',{
                         data : oldDatas
                     });
                     parent.layer.close(layer.index)
@@ -215,8 +215,8 @@
 
         function initTable() {
             tableIns = febs.table.init({
-                elem: '#saleOrderProductTable',
-                id: 'saleOrderProductTable',
+                elem: '#saleOrderProductUpdateTable',
+                id: 'saleOrderProductUpdateTable',
                 url: ctx + 'technologyProduct/list',
                 cols: [
                     [
@@ -230,7 +230,7 @@
             });
         };
          table.render({
-                elem:'#saleOrderProduct-table',
+                elem:'#saleOrderProductUpdate-table',
                 data:tableData,
                 cols: [[
                     {type: 'checkbox'},
@@ -240,12 +240,12 @@
                     {field: 'productRemark', title: '备注',align:'center', minWidth: 80}
                 ]]
             });
-        table.on('rowDouble(saleOrderProduct-table)', function (obj) {
+        table.on('rowDouble(saleOrderProductUpdate-table)', function (obj) {
             var data = obj.data;
-            var oldData =  table.cache["saleOrderProduct-table"];
+            var oldData =  table.cache["saleOrderProductUpdate-table"];
             if (obj.tr.data('index') != -1) {
                 oldData.splice(obj.tr.data('index'), 1)//根据索引删除当前行
-                layui.table.reload('saleOrderProduct-table',{
+                layui.table.reload('saleOrderProductUpdate-table',{
                     data: oldData
                 });
             }

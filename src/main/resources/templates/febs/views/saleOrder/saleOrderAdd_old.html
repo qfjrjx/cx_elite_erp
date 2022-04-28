@@ -1,13 +1,14 @@
 <style>
-    #saleOrder-add {
+    #saleOrderAdd-add {
         padding: 20px 25px 25px 0;
     }
 </style>
-<div class="layui-fluid" id="saleOrder-add">
-    <form class="layui-form" action="" lay-filter="saleOrder-add-form">
+<div class="layui-fluid" id="saleOrderAdd-add">
+    <form class="layui-form" action="" lay-filter="saleOrderAdd-add-form">
         <div class="layui-form-item febs-hide">
             <label class="layui-form-label febs-form-item-require">赋值参数：</label>
             <div class="layui-input-block">
+                     <!--获取tr索引-->
                 <!--获取产品名称-->
                 <input type="text" name="parameterProductName" id="parameterProductName">
                 <!--获取配置-->
@@ -32,7 +33,7 @@
             </div>
             <label class="layui-form-label febs-form-item-require">日&nbsp;期</label>
             <div class="layui-input-inline" style="width: 120px">
-                <input type="text" name="orderDate" id="orderDate"
+                    <input type="text" name="orderDate" id="orderDate"
                        autocomplete="off" class="layui-input createDate" readonly>
             </div>
             <label class="layui-form-label febs-form-item-require">客&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;户</label>
@@ -94,12 +95,12 @@
         <div class="layui-form-item">
             <label class="layui-form-label">附件</label>
             <div class="layui-input-inline" style="width: 600px">
-                <button type="button" class="layui-btn layui-btn-sm" id="uploadPic"><i class="layui-icon">&#xe67c;</i>选择文件</button>
-                <button type="button" class="layui-btn layui-btn-sm layui-btn-warm" id="uploadPicBtn"><i class="layui-icon layui-icon-upload-circle"></i>开始上传</button>
-                <span id="span-img" style="color: #f5222d"></span>
-                <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" id="deletePicBtndeletePicBtn"><i class="layui-icon layui-icon-close"></i>删除</button>
-                　　　　<!-- 隐藏的input,一个隐藏的input（用于保存文件url） -->
-                　　　　<!--<input type="hidden" id="img_url" name="img" value=""/>-->
+               <button type="button" class="layui-btn layui-btn-sm" id="uploadPic"><i class="layui-icon">&#xe67c;</i>选择文件</button>
+               <button type="button" class="layui-btn layui-btn-sm layui-btn-warm" id="uploadPicBtn"><i class="layui-icon layui-icon-upload-circle"></i>开始上传</button>
+               <span id="span-img" style="color: #f5222d"></span>
+               <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" id="deletePicBtndeletePicBtn"><i class="layui-icon layui-icon-close"></i>删除</button>
+            　　　　<!-- 隐藏的input,一个隐藏的input（用于保存文件url） -->
+            　　　　<!--<input type="hidden" id="img_url" name="img" value=""/>-->
             </div>
             <label class="layui-form-label febs-form-item-require">订单类型</label>
             <div class="layui-input-inline" style="width: 100px">
@@ -119,16 +120,15 @@
         </div>
         <table class="layui-table layui-form" id="saleOrder-table" lay-filter="saleOrder-table"></table>
         <div class="layui-form-item febs-hide">
-            <button class="layui-btn" lay-submit="" lay-filter="saleOrder-add-form-submit" id="submit"></button>
-            <button class="layui-btn" lay-submit="" lay-filter="saleOrder-add-form-submitData" id="submitData"></button>
+            <button class="layui-btn" lay-submit="" lay-filter="saleOrderAdd-add-form-submit" id="submit"></button>
+            <button class="layui-btn" lay-submit="" lay-filter="saleOrderAdd-add-form-submitOne" id="submitOne"></button>
             <button type="reset" class="layui-btn" id="reset"></button>
         </div>
     </form>
 </div>
 <script langguage="JavaScript">
     var now = new Date();
-    orderDate.value=new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate();
-    var orderDeliveryDateTo = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate();
+    orderDate.value =new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate();
 
 </script>
 <script>
@@ -138,13 +138,11 @@
             layer = layui.layer,
             form = layui.form,
             laydate = layui.laydate,
-            validate = layui.validate,
             table = layui.table,
             upload = layui.upload,
             uploadInst;
 
 
-        form.verify(validate);
         form.render();
 
         //日期同时绑定多个
@@ -193,51 +191,77 @@
                         even:true,
                             cols: [
                                      [
-                                        {type: 'checkbox'},
+                                         {type: 'checkbox'},
                                          {field: 'productName',title: '产品名称', minWidth: 95,event:'choice'},
                                          {field: 'specificationModel', title: '规格型号', minWidth: 90},
                                          {field: 'configureName', title: '配置', minWidth: 90,event:'specificationTo'
                                          },
-                                         {field: 'companyName',title: '单位', minWidth: 55,align:'center'},
+                                         {field: 'companyName', edit:true,title: '单位', minWidth: 55,align:'center'},
                                          {field: 'quantityName', edit:true,title: '数量', minWidth: 55,align:'center'},
                                          {field: 'unitPrice', edit:true,title: '单价', minWidth: 55,align:'center',templet:function (data) {
-                                             if (data.unitPrice != null){
-                                                 var price = parseFloat(data.unitPrice).toFixed(2); //设置小数点后个数
-                                                 return price;
-                                             }else {
-                                                 return "";
-                                             }
-                                                }},
+                                         var price = parseFloat(data.unitPrice).toFixed(2); //设置小数点后个数
+                                         return price;}},
                                          {field: 'amountMoney',title: '金额', minWidth: 55,align:'center',templet:function (data) {
-                                             if (data.amountMoney != null){
                                                  var price = parseFloat(data.amountMoney).toFixed(2); //设置小数点后个数
-                                                 return price;
-                                             }else {
-                                                 return "";
-                                             }
-                                                }},
+                                                 return price;}},
                                          {field: 'deliveryTime',title: '交货日期', minWidth: 72,event: 'deliveryDateOne',templet:'<div>{{ layui.util.toDateString(d.deliveryTime, "yyyy-MM-dd") }}</div>'},
                                          {field: 'orderRemarks',edit:true, title: '备注', minWidth: 72}
                                      ]
                                   ]
                      });
+
+
+        //监听行单击事件  给每一行数据绑定点击事件T
+        //row(tableBigType)  表格的id
+        table.on('row(saleOrder-table)', function(obj){
+            //获取checkbox
+            var checked = $($($(obj.tr[0].firstChild)[0].firstElementChild)[0].lastChild);
+            //判断是否被选中
+            if(checked[0].className == "layui-unselect layui-form-checkbox layui-form-checked") {
+                //设置为未选中的样式
+                checked.attr("class","layui-unselect layui-form-checkbox");
+            } else {
+                //设置为选中的样式
+                checked.attr("class","layui-unselect layui-form-checkbox layui-form-checked");
+            }
+        });
         //监听行单击事件  给每一行数据绑定点击事件T
         //row(tableBigType)  表格的id
         table.on('edit(saleOrder-table)', function(obj){
             trData = obj.data
             var tdQuantityName =  trData.quantityName;
             if (tdQuantityName !="" && tdQuantityName != undefined){
-                var tdUnitPrice = trData.unitPrice;
-                if (tdQuantityName != null && tdUnitPrice != null){
-                    var Money  = parseInt(tdQuantityName) * parseInt(tdUnitPrice);
-                    trData.amountMoney = Money;
-                }
+                 var tdUnitPrice = trData.unitPrice;
+                 var Money  = parseInt(tdQuantityName) * parseInt(tdUnitPrice);
+                trData.amountMoney = Money;
                 obj.update(obj.data);
             }
         });
         table.on('tool(saleOrder-table)', function (obj) {
             let data = obj.data,
                 layEvent = obj.event;
+            if (layEvent === 'choice') {
+                var tableData = layui.table.cache['saleOrder-table'];
+                var rowIndex = $(obj.tr).attr('data-index');//当前行的索引
+                if (tableData != "") {
+                    $("#parameterProductName").val(data.productName);//产品名称
+                    var parameterOptions = tableData[rowIndex].configureName;
+                    $("#parameterConfigure").val(parameterOptions);//配置
+                    var companyName = tableData[rowIndex].companyName;
+                    $("#parameterCompany").val(companyName);//单位
+                    var quantityName = tableData[rowIndex].quantityName;
+                    $("#parameterQuantity").val(quantityName);//数量
+                     var unitPrice = tableData[rowIndex].unitPrice;
+                    $("#parameterUnitPrice").val(unitPrice);//单价
+                     var amountMoney = tableData[rowIndex].amountMoney;
+                    $("#parameterAmountMoney").val(amountMoney);//金额
+                    var explainName = tableData[rowIndex].explainName;
+                    $("#parameterExplain").val(explainName);//说明
+                }
+                febs.modal.view('产品编码选择列表', "sale/saleOrderProductList", {
+                    area:["65%","80%"]
+                });
+            }
             if (layEvent === 'deliveryDateOne') {
                 var field = $(this).data('field');  //获取当前对象的字段名称，（如：field:'velappr'）
                 laydate.render({
@@ -250,217 +274,191 @@
                     }
                 });
             }
-            if (layEvent === 'choice') {
-                var tableData = layui.table.cache['saleOrder-table'];
-                var rowIndex = $(obj.tr).attr('data-index');//当前行的索引
-                if (tableData != "") {
-                    $("#parameterProductName").val(data.productName);//产品名称
-                    var parameterOptions = tableData[rowIndex].configureName;
-                    $("#parameterConfigure").val(parameterOptions);//配置
-                    var companyName = tableData[rowIndex].companyName;
-                    $("#parameterCompany").val(companyName);//单位
-                    var quantityName = tableData[rowIndex].quantityName;
-                    $("#parameterQuantity").val(quantityName);//数量
-                    var unitPrice = tableData[rowIndex].unitPrice;
-                    $("#parameterUnitPrice").val(unitPrice);//单价
-                    var amountMoney = tableData[rowIndex].amountMoney;
-                    $("#parameterAmountMoney").val(amountMoney);//金额
-                    var explainName = tableData[rowIndex].explainName;
-                    $("#parameterExplain").val(explainName);//说明
-                }
-                febs.modal.view('产品编码选择列表', "sale/saleOrderProductList", {
-                    area:["65%","80%"],
-                   /* cancel:function (index,layero) {
-                        if (confirm('确定要关闭么')){
-                            layer.close(index)
-                        }
-                        return false;
-                    }*/
-                });
-            }
             if (layEvent === 'specificationTo') {
-                    var productNameOne  = data.productName;
-                    if (productNameOne == "") {
-                        febs.alert.warn('请选择产品');
-                        return false;
-                    }else {
-                            var parameterOptionTo  = data.configureName.toString();
-                            var parameterOptionTwo = parameterOptionTo.split(",");
-                            var machineRequirementsOne = "";
-                            var computerConfigurationOne = "";
-                            var toolSizeOne = "";
-                            var hourlyProductionOne = "";
-                            var processingProcedureOne = "";
-                            var fixtureRequirementsOne = "";
-                            var productShapeOne = "";
-                            var productSizeOne = "";
-                            var otherRequirementsOne = "";
-                            for(var i=0;i<parameterOptionTwo.length;i++) {
+             /*   var tableDataTo = layui.table.cache['saleOrder-table'];
+                var rowIndexOne = $(obj.tr).attr('data-index');//当前行的索引*/
+                var productNameOne  = data.productName;
+                if (productNameOne == "") {
+                    febs.alert.warn('请选择产品');
+                    return false;
+                }else {
+                        var machineRequirementsOne = "";
+                        var computerConfigurationOne = "";
+                        var toolSizeOne = "";
+                        var hourlyProductionOne = "";
+                        var processingProcedureOne = "";
+                        var fixtureRequirementsOne = "";
+                        var productShapeOne = "";
+                        var productSizeOne = "";
+                        var otherRequirementsOne = "";
+                        var parameterOptionTo  = data.configureName.toString();
+                       var parameterOptionTwo = parameterOptionTo.split(",");
+                        if (parameterOptionTwo !=null){
+                            for(var i=0;i<parameterOptionTwo.length;i++){
                                 var parameterOptionThree = parameterOptionTwo[i].split(":")[0];
                                 var parameterOptionFour = parameterOptionTwo[i].split(":")[1];
-                                if (parameterOptionThree == "机器要求") {
+                                if (parameterOptionThree=="机器要求"){
                                     machineRequirementsOne = parameterOptionFour;
-                                }
-                                if (parameterOptionThree == "电脑配置") {
+                                }if (parameterOptionThree=="电脑配置"){
                                     computerConfigurationOne = parameterOptionFour;
-                                }
-                                if (parameterOptionThree == "刀具大小") {
+                                }if (parameterOptionThree=="刀具大小"){
                                     toolSizeOne = parameterOptionFour;
-                                }
-                                if (parameterOptionThree == "每小时产量") {
+                                }if (parameterOptionThree=="每小时产量"){
                                     hourlyProductionOne = parameterOptionFour;
-                                }
-                                if (parameterOptionThree == "加工工序") {
+                                }if (parameterOptionThree=="加工工序"){
                                     processingProcedureOne = parameterOptionFour;
-                                }
-                                if (parameterOptionThree == "夹具要求") {
+                                }if (parameterOptionThree=="夹具要求"){
                                     fixtureRequirementsOne = parameterOptionFour;
-                                }
-                                if (parameterOptionThree == "产品形状") {
+                                }if (parameterOptionThree=="产品形状"){
                                     productShapeOne = parameterOptionFour;
-                                }
-                                if (parameterOptionThree == "产品尺寸") {
+                                }if (parameterOptionThree=="产品尺寸"){
                                     productSizeOne = parameterOptionFour;
-                                }
-                                if (parameterOptionThree == "其他要求") {
+                                }if (parameterOptionThree=="其他要求"){
                                     otherRequirementsOne = parameterOptionFour;
                                 }
                             }
-                            febs.modal.open('订单配置选择列表', 'sale/specificationList/', {
-                                area:["30%","65%"],
-                                btn: ['保存', '关闭'],
-                                data:{
-                                    machineRequirementsOne:machineRequirementsOne,
-                                    computerConfigurationOne:computerConfigurationOne,
-                                    toolSizeOne:toolSizeOne,
-                                    hourlyProductionOne:hourlyProductionOne,
-                                    processingProcedureOne:processingProcedureOne,
-                                    fixtureRequirementsOne:fixtureRequirementsOne,
-                                    productShapeOne:productShapeOne,
-                                    productSizeOne:productSizeOne,
-                                    otherRequirementsOne:otherRequirementsOne
-                                },
-                                yes: function (index, layero) {
-                                    let dataOne = new Array();
-                                    let dataBak = [];
+                        }
+                        febs.modal.open('订单配置选择列表', 'sale/specificationList/', {
+                            area:["30%","65%"],
+                            btn: ['保存', '关闭'],
+                            data:{
+                                 machineRequirementsOne:machineRequirementsOne,
+                                computerConfigurationOne:computerConfigurationOne,
+                                toolSizeOne:toolSizeOne,
+                                hourlyProductionOne:hourlyProductionOne,
+                                processingProcedureOne:processingProcedureOne,
+                                fixtureRequirementsOne:fixtureRequirementsOne,
+                                productShapeOne:productShapeOne,
+                                productSizeOne:productSizeOne,
+                                otherRequirementsOne:otherRequirementsOne
+                            },
+                            yes: function (index, layero) {
+                                let dataOne = new Array();
+                                let dataBak = [];
 
-                                    let tableDas = layui.table.cache["saleOrder-table"];
-                                    /* 机器要求*/
-                                    let machineRequirements = document.getElementById("machineRequirements").value;
-                                    /*电脑配置*/
-                                    let computerConfiguration = document.getElementById("computerConfiguration").value;
-                                    /*刀具大小*/
-                                    let toolSize = document.getElementById("toolSize").value;
-                                    /*每小时产量*/
-                                    var hourlyProduction = document.getElementById("hourlyProduction").value;
-                                    /*加工工序*/
-                                    var processingProcedure = document.getElementById("processingProcedure").value;
-                                    /*夹具要求*/
-                                    var fixtureRequirements = document.getElementById("fixtureRequirements").value;
-                                    /*产品形状*/
-                                    var productShape = document.getElementById("productShape").value;
-                                    /*产品尺寸*/
-                                    var productSize = document.getElementById("productSize").value;
-                                    /*其他要求*/
-                                    var otherRequirements = document.getElementById("otherRequirements").value;
-                                    if (machineRequirements !=""){
-                                        dataOne.push("机器要求:"+machineRequirements);
-                                    }if (computerConfiguration !=""){
-                                        dataOne.push("电脑配置:"+computerConfiguration);
-                                    }if (toolSize !=""){
-                                        dataOne.push("刀具大小:"+toolSize);
-                                    }if (hourlyProduction !=""){
-                                        dataOne.push("每小时产量:"+hourlyProduction);
-                                    }if (processingProcedure !=""){
-                                        dataOne.push("加工工序:"+processingProcedure);
-                                    }if (fixtureRequirements !=""){
-                                        dataOne.push("夹具要求:"+fixtureRequirements);
-                                    }if (productShape !=""){
-                                        dataOne.push("产品形状:"+productShape);
-                                    }if (productSize !=""){
-                                        dataOne.push("产品尺寸:"+productSize);
-                                    }if (otherRequirements !=""){
-                                        dataOne.push("其他要求:"+otherRequirements);
-                                    }
-                                    var tableData;
-                                    var rowIndex = $(obj.tr).attr('data-index');//当前行的索引
-                                    for (i=0;i<tableDas.length;i++){
-                                        if (tableDas[rowIndex].productName == tableDas[i].productName && tableDas[rowIndex].configureName == tableDas[i].configureName){
-                                            tableData = {"productName":tableDas[i].productName,"specificationModel":tableDas[i].specificationModel,"configureName":dataOne,"companyName":tableDas[i].companyName,"quantityName":tableDas[i].quantityName,"unitPrice":tableDas[i].unitPrice,"amountMoney":tableDas[i].amountMoney,"deliveryTime":tableDas[i].deliveryTime,"orderRemarks":tableDas[i].orderRemarks};
-                                        }else{
-                                            tableData = {"productName":tableDas[i].productName,"specificationModel":tableDas[i].specificationModel,"configureName":tableDas[i].configureName,"companyName":tableDas[i].companyName,"quantityName":tableDas[i].quantityName,"unitPrice":tableDas[i].unitPrice,"amountMoney":tableDas[i].amountMoney,"deliveryTime":tableDas[i].deliveryTime,"orderRemarks":tableDas[i].orderRemarks};
-                                        }
-                                        dataBak.push(tableData);
-                                    }
-                                    layui.table.reload('saleOrder-table',{
-                                        data:dataBak
-                                    });
-                                    parent.layer.close(layer.index)
-                                },
-                                btn2: function () {
-                                    parent.layer.close(layer.index)
+                                let tableDas = layui.table.cache["saleOrder-table"];
+                                /!* 机器要求*!/
+                                let machineRequirements = document.getElementById("machineRequirements").value;
+                                /!*电脑配置*!/
+                                let computerConfiguration = document.getElementById("computerConfiguration").value;
+                                /!* 刀具大小*!/
+                                let toolSize = document.getElementById("toolSize").value;
+                                /!*每小时产量*!/
+                                var hourlyProduction = document.getElementById("hourlyProduction").value;
+                                /!* 加工工序*!/
+                                var processingProcedure = document.getElementById("processingProcedure").value;
+                                /!* 夹具要求*!/
+                                var fixtureRequirements = document.getElementById("fixtureRequirements").value;
+                                /!*产品形状*!/
+                                var productShape = document.getElementById("productShape").value;
+                                /!*产品尺寸*!/
+                                var productSize = document.getElementById("productSize").value;
+                                /!* 其他要求*!/
+                                var otherRequirements = document.getElementById("otherRequirements").value;
+                                if (machineRequirements !=""){
+                                    dataOne.push("机器要求:"+machineRequirements);
+                                }if (computerConfiguration !=""){
+                                    dataOne.push("电脑配置:"+computerConfiguration);
+                                }if (toolSize !=""){
+                                    dataOne.push("刀具大小:"+toolSize);
+                                }if (hourlyProduction !=""){
+                                    dataOne.push("每小时产量:"+hourlyProduction);
+                                }if (processingProcedure !=""){
+                                    dataOne.push("加工工序:"+processingProcedure);
+                                }if (fixtureRequirements !=""){
+                                    dataOne.push("夹具要求:"+fixtureRequirements);
+                                }if (productShape !=""){
+                                    dataOne.push("产品形状:"+productShape);
+                                }if (productSize !=""){
+                                    dataOne.push("产品尺寸:"+productSize);
+                                }if (otherRequirements !=""){
+                                    dataOne.push("其他要求:"+otherRequirements);
                                 }
-                            });
-                }
+                                var tableData;
+                                var rowIndex = $(obj.tr).attr('data-index');//当前行的索引
+                                for (i=0;i<tableDas.length;i++){
+                                    if (tableDas[rowIndex].configureName==tableDas[i].configureName){
+                                        tableData = {"productName":tableDas[i].productName,"specificationModel":tableDas[i].specificationModel,"configureName":dataOne,"companyName":tableDas[i].companyName,"quantityName":tableDas[i].quantityName,"unitPrice":tableDas[i].unitPrice,"amountMoney":tableDas[i].amountMoney,"deliveryTime":tableDas[i].deliveryTime,"orderRemarks":tableDas[i].orderRemarks};
+                                    }else{
+                                        tableData = {"productName":tableDas[i].productName,"specificationModel":tableDas[i].specificationModel,"configureName":tableDas[i].configureName,"companyName":tableDas[i].companyName,"quantityName":tableDas[i].quantityName,"unitPrice":tableDas[i].unitPrice,"amountMoney":tableDas[i].amountMoney,"deliveryTime":tableDas[i].deliveryTime,"orderRemarks":tableDas[i].orderRemarks};
+                                    }
+                                    dataBak.push(tableData);
+                                }
+                                layui.table.reload('saleOrder-table',{
+                                    data:dataBak
+                                });
+                                parent.layer.close(layer.index)
+                            },
+                            btn2: function () {
+                                parent.layer.close(layer.index)
+                            }
+                        });
+                   }
             }
         });
-        form.on('submit(saleOrder-add-form-submit)', function (data) {
-            //获取时间戳
-            //var timestamp = new Date().getTime();
-           var dataBak = [];
-           var tableBak = layui.table.cache['saleOrder-table'];
-           for (var i=0;i<tableBak.length; i++){
-               dataBak.push(tableBak[i]);
-           }
-           dataBak.push({
-               "productName":"",
-               "specificationModel":"",
-               "configureName":"",
-               "companyName":"",
-               "quantityName":null,
-               "unitPrice":null,
-               "amountMoney":null,
-               "deliveryTime":orderDeliveryDateTo,
-               "orderRemarks":""
-           });
-          // console.log(dataBak);
+        form.on('submit(saleOrderAdd-add-form-submit)', function (data) {
+            var timestamp = new Date().getTime();
+            var oldDate = layui.table.cache['saleOrder-table'];
+            var dataNew = {
+                "productName":"",
+                "specificationModel":"",
+                "configureName":"",
+                "companyName":"",
+                "quantityName":null,
+                "unitPrice":null,
+                "amountMoney":null,
+                "deliveryTime":deliveryDateTo,
+                "orderRemarks":""
+            };
+            oldDate.push(dataNew);
            layui.table.reload('saleOrder-table',{
-               data:dataBak
+               data:oldDate
            });
             return false;
 
         });
-        form.on('submit(saleOrder-add-form-submitData)', function (data) {
-            var dataThree = new Array();
-            let saleOrderData = {
-                "orderDate":data.field.orderDate,//日期
-                "customerName":data.field.customerName,//客户
-                "salesmanName":data.field.salesmanName,//业务员
-                "currencyName":data.field.currencyName,//币种
-                "taxRate":data.field.taxRate,//税率
-                "paymentMethod":data.field.paymentMethod,//付款方式
-                "depositMoney":data.field.depositMoney,//订金
-                "invoiceNot":data.field.invoiceNot,//是否开票
-                "contactsName":data.field.contactsName,//联系人
-                "mobilePhone":data.field.mobilePhone,//手机
-                "orderType":data.field.orderType,//订单类型
-                "afterSalesClerk":data.field.afterSalesClerk,//售后员
-            }
+        form.on('submit(saleOrderAdd-add-form-submitOne)', function (data) {
+            var orderDate = document.getElementById("orderDate").value;//日期
+            var customerNameTwo = document.getElementById("customerNameTwo").value;//客户
+            var personnelNameOne = document.getElementById("personnelNameOne").value;//业务员
+            var currencyNameOne = document.getElementById("currencyNameOne").value;//币种
+            var taxRate = document.getElementById("taxRate").value;//税率
+            var paymentMethod = document.getElementById("paymentMethod").value;//付款方式
+            var depositMoney = document.getElementById("depositMoney").value;//订金
+            var invoiceNot = document.getElementById("invoiceNot").value;//是否开票
+            var contactsNameOne = document.getElementById("contactsNameOne").value;//联系人
+            var mobilePhoneOne = document.getElementById("mobilePhoneOne").value;//手机
+            var orderType = document.getElementById("orderType").value;//订单类型
+            var afterSalesClerk = document.getElementById("afterSalesClerk").value;//售后员
             var contImg = document.getElementById("span-img").innerText;
+            var dataThree = new Array();
             var saleOrder_table =  table.cache["saleOrder-table"];
             for (i=0;i<saleOrder_table.length;i++){
                 var dataOne={"productName":saleOrder_table[i].productName,"specificationModel":saleOrder_table[i].specificationModel,"configureName":saleOrder_table[i].configureName,"companyName":saleOrder_table[i].companyName,"quantityName":saleOrder_table[i].quantityName,"unitPrice":saleOrder_table[i].unitPrice,"amountMoney":saleOrder_table[i].amountMoney,"deliveryTime":saleOrder_table[i].deliveryTime,"orderRemarks":saleOrder_table[i].orderRemarks};
                 dataThree.push(dataOne);
             }
-            $.ajax({
-                url: '/saleOrder/add',
-                type:"post",
-                data: {saleOrderData:JSON.stringify(saleOrderData),dataTable:JSON.stringify(dataThree),contImg:contImg},
-                success : function(res) {
-                    layer.closeAll();
-                    $('#febs-saleOrder').find('#query').click();
-                }
-            });
+                $.ajax({
+                    url: '/saleOrder/add',
+                    type:"post",
+                    data: {orderDate: orderDate,//日期
+                        customerName:customerNameTwo,//客户
+                        salesmanName:personnelNameOne,//业务员
+                        currencyName:currencyNameOne,//币种
+                        taxRate:taxRate,//税率
+                        paymentMethod:paymentMethod,//付款方式
+                        depositMoney:depositMoney,//订金
+                        invoiceNot:invoiceNot,//是否开票
+                        contactsName:contactsNameOne,//联系人
+                        mobilePhone:mobilePhoneOne,//手机
+                        orderType:orderType,//订单类型
+                        afterSalesClerk:afterSalesClerk,//售后员
+                        dataTable:JSON.stringify(dataThree),
+                        contImg:contImg},
+                    success : function(res) {
+                        //$query.click();
+                        parent.location.reload();
+                    }
+                });
             return false;
         });
         $("#deletePicBtn").click(function () {

@@ -81,7 +81,7 @@
             layer = layui.layer,
             form = layui.form,
             xmSelect = layui.xmSelect,
-            saleOrder = [[${saleOrder}]],
+            saleOrderSchedule = [[${saleOrderSchedule}]],
             validate = layui.validate;
 
         form.verify(validate);
@@ -91,15 +91,15 @@
 
         function initSaleOrderValue() {
             form.val("saleOrderConfigure-view-form", {
-                "machineRequirements": saleOrder.machineRequirements,
-                "computerConfiguration": saleOrder.computerConfiguration,
-                "toolSize": saleOrder.toolSize,
-                "hourlyProduction": saleOrder.hourlyProduction,
-                "processingProcedure": saleOrder.processingProcedure,
-                "fixtureRequirements": saleOrder.fixtureRequirements,
-                "productShape": saleOrder.productShape,
-                "productSize": saleOrder.productSize,
-                "otherRequirements": saleOrder.otherRequirements
+                "machineRequirements": saleOrderSchedule.machineRequirements,
+                "computerConfiguration": saleOrderSchedule.computerConfiguration,
+                "toolSize": saleOrderSchedule.toolSize,
+                "hourlyProduction": saleOrderSchedule.hourlyProduction,
+                "processingProcedure": saleOrderSchedule.processingProcedure,
+                "fixtureRequirements": saleOrderSchedule.fixtureRequirements,
+                "productShape": saleOrderSchedule.productShape,
+                "productSize": saleOrderSchedule.productSize,
+                "otherRequirements": saleOrderSchedule.otherRequirements
             });
         }
     });

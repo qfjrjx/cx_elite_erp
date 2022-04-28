@@ -6,10 +6,14 @@
             COUNT( 1 )
         FROM
             jr_sale_order so
+        LEFT JOIN jr_sale_order_schedule sos ON ( so.odd_numbers = sos.odd_numbers )
+        LEFT JOIN jr_finance_parameters fpa ON ( so.currency_id = fpa.id )
+        LEFT JOIN jr_finance_parameters fpb ON ( so.tax_rate_id = fpb.id )
+        LEFT JOIN jr_finance_parameters fpc ON ( so.payment_method_id = fpc.id )
         WHERE
             1 = 1
         <if test="saleOrder.orderState != null and saleOrder.orderState !=''">
-            And so.order_state = #{saleOrder.orderState}
+            And sos.order_state = #{saleOrder.orderState}
         </if>
         <if test="saleOrder.startTimeFrom != null and saleOrder.startTimeFrom !=''">
             And so.order_date &gt; #{saleOrder.startTimeFrom}
@@ -30,61 +34,63 @@
             And so.odd_numbers = #{saleOrder.oddNumbers}
         </if>
         <if test="saleOrder.productName != null and saleOrder.productName !=''">
-            And so.product_name = #{saleOrder.productName}
+            And sos.product_name = #{saleOrder.productName}
         </if>
         <if test="saleOrder.specificationModel != null and saleOrder.specificationModel !=''">
-            And so.specification_model = #{saleOrder.specificationModel}
+            And sos.specification_model = #{saleOrder.specificationModel}
         </if>
          <if test="saleOrder.currencyName != null and saleOrder.currencyName !=''">
             And so.currency_id = #{saleOrder.currencyName}
         </if>
     </sql>
     <sql id="findSaleOrderSql" >
-        SELECT
-            so.id,
-            so.order_state orderState,
-            so.odd_numbers oddNumbers,
-            so.order_date orderDate,
-            so.customer_name customerName,
-            so.salesman_name salesmanName,
-            fpa.finance_parameter_name currencyName,
-            fpb.finance_parameter_name taxRate,
-            fpc.finance_parameter_name paymentMethod,
-            so.deposit_money depositMoney,
-            so.invoice_not invoiceNot,
-            so.contacts_name contactsName,
-            so.mobile_phone mobilePhone,
-            so.enclosure_name enclosureName,
-            so.order_type orderType,
-            so.after_sales_clerk afterSalesClerk,
-            so.product_name productName,
-            so.specification_model specificationModel,
-            so.configure_name configureName,
-            so.company_name companyName,
-            so.quantity_name quantityName,
-            so.unit_price unitPrice,
-            so.amount_money amountMoney,
-            so.delivery_date deliveryDate,
-            so.order_remarks orderRemarks,
-            so.machine_requirements machineRequirements,
-            so.computer_configuration computerConfiguration,
-            so.tool_size toolSize,
-            so.hourly_production hourlyProduction,
-            so.processing_procedure processingProcedure,
-            so.fixture_requirements fixtureRequirements,
-            so.product_shape productShape,
-            so.product_size productSize,
-            so.other_requirements otherRequirements,
-            so.create_date createDate
-        FROM
-            jr_sale_order so
-        LEFT JOIN jr_finance_parameters fpa ON ( so.currency_id = fpa.id )
-        LEFT JOIN jr_finance_parameters fpb ON ( so.tax_rate_id = fpb.id )
-        LEFT JOIN jr_finance_parameters fpc ON ( so.payment_method_id = fpc.id )
-        WHERE
+            SELECT
+                so.id,
+                sos.order_state orderState,
+                so.odd_numbers oddNumbers,
+                so.order_date orderDate,
+                so.customer_name customerName,
+                so.salesman_name salesmanName,
+                fpa.finance_parameter_name currencyName,
+                fpb.finance_parameter_name taxRate,
+                fpc.finance_parameter_name paymentMethod,
+                so.deposit_money depositMoney,
+                so.invoice_not invoiceNot,
+                so.contacts_name contactsName,
+                so.mobile_phone mobilePhone,
+                so.enclosure_name enclosureName,
+                so.order_type orderType,
+                so.after_sales_clerk afterSalesClerk,
+                sos.id orderScheduleId,
+                sos.product_name productName,
+                sos.specification_model specificationModel,
+                sos.configure_name configureName,
+                sos.company_name companyName,
+                sos.quantity_name quantityName,
+                sos.unit_price unitPrice,
+                sos.amount_money amountMoney,
+                sos.delivery_date deliveryDate,
+                sos.order_remarks orderRemarks,
+                sos.machine_requirements machineRequirements,
+                sos.computer_configuration computerConfiguration,
+                sos.tool_size toolSize,
+                sos.hourly_production hourlyProduction,
+                sos.processing_procedure processingProcedure,
+                sos.fixture_requirements fixtureRequirements,
+                sos.product_shape productShape,
+                sos.product_size productSize,
+                sos.other_requirements otherRequirements,
+                so.create_date createDate
+            FROM
+                jr_sale_order so
+            LEFT JOIN jr_sale_order_schedule sos ON ( so.odd_numbers = sos.odd_numbers )
+            LEFT JOIN jr_finance_parameters fpa ON ( so.currency_id = fpa.id )
+            LEFT JOIN jr_finance_parameters fpb ON ( so.tax_rate_id = fpb.id )
+            LEFT JOIN jr_finance_parameters fpc ON ( so.payment_method_id = fpc.id )
+            WHERE
             1 = 1
             <if test="saleOrder.orderState != null and saleOrder.orderState !=''">
-                And so.order_state = #{saleOrder.orderState}
+                And sos.order_state = #{saleOrder.orderState}
             </if>
             <if test="saleOrder.startTimeFrom != null and saleOrder.startTimeFrom !=''">
                 And so.order_date &gt; #{saleOrder.startTimeFrom}
@@ -105,21 +111,21 @@
                 And so.odd_numbers = #{saleOrder.oddNumbers}
             </if>
             <if test="saleOrder.productName != null and saleOrder.productName !=''">
-                And so.product_name = #{saleOrder.productName}
+                And sos.product_name = #{saleOrder.productName}
             </if>
             <if test="saleOrder.specificationModel != null and saleOrder.specificationModel !=''">
-                And so.specification_model = #{saleOrder.specificationModel}
+                And sos.specification_model = #{saleOrder.specificationModel}
             </if>
             <if test="saleOrder.currencyName != null and saleOrder.currencyName !=''">
                 And so.currency_id = #{saleOrder.currencyName}
             </if>
     </sql>
 
-    <select id="countSaleOrder" parameterType="com.erp.sale.entity.SaleOrder" resultType="long">
+    <select id="countSaleOrder" parameterType="com.erp.sale.entity.SaleOrderAll" resultType="long">
         <include refid="countSaleOrderSql"/>
     </select>
 
-    <select id="findSaleOrderPage" parameterType="com.erp.sale.entity.SaleOrder" resultType="com.erp.sale.entity.SaleOrder">
+    <select id="findSaleOrderPage" parameterType="com.erp.sale.entity.SaleOrderAll" resultType="com.erp.sale.entity.SaleOrderAll">
         <include refid="findSaleOrderSql"/>
     </select>
 
@@ -141,24 +147,6 @@
             so.enclosure_name enclosureName,
             so.order_type orderType,
             so.after_sales_clerk afterSalesClerk,
-            so.product_name productName,
-            so.specification_model specificationModel,
-            so.configure_name configureName,
-            so.company_name companyName,
-            so.quantity_name quantityName,
-            so.unit_price unitPrice,
-            so.amount_money amountMoney,
-            so.delivery_date deliveryDate,
-            so.order_remarks orderRemarks,
-            so.machine_requirements machineRequirements,
-            so.computer_configuration computerConfiguration,
-            so.tool_size toolSize,
-            so.hourly_production hourlyProduction,
-            so.processing_procedure processingProcedure,
-            so.fixture_requirements fixtureRequirements,
-            so.product_shape productShape,
-            so.product_size productSize,
-            so.other_requirements otherRequirements,
             so.create_date createDate
         FROM
 	        jr_sale_order so
@@ -185,6 +173,28 @@
                     enclosure_name ,
                     order_type ,
                     after_sales_clerk ,
+                    create_date  )
+        VALUES
+                    (#{oddNumbers},
+                     #{orderDate},
+                     #{customerName},
+                     #{salesmanName},
+                     #{currencyId},
+                     #{taxRateId},
+                     #{paymentMethodId},
+                     #{depositMoney},
+                     #{invoiceNot},
+                     #{contactsName},
+                     #{mobilePhone},
+                     #{enclosureName},
+                     #{orderType},
+                     #{afterSalesClerk},
+                     #{createDate}
+            )
+    </insert>
+    <insert id="addSaleOrderSchedule" parameterType="com.erp.sale.entity.SaleOrderSchedule">
+        INSERT INTO jr_sale_order_schedule (
+                    odd_numbers ,
                     product_name ,
                     specification_model ,
                     configure_name ,
@@ -202,23 +212,9 @@
                     fixture_requirements ,
                     product_shape ,
                     product_size ,
-                    other_requirements ,
-                    create_date  )
+                    other_requirements)
         VALUES
                     (#{oddNumbers},
-                     #{orderDate},
-                     #{customerName},
-                     #{salesmanName},
-                     #{currencyId},
-                     #{taxRateId},
-                     #{paymentMethodId},
-                     #{depositMoney},
-                     #{invoiceNot},
-                     #{contactsName},
-                     #{mobilePhone},
-                     #{enclosureName},
-                     #{orderType},
-                     #{afterSalesClerk},
                      #{productName},
                      #{specificationModel},
                      #{configureName},
@@ -236,27 +232,80 @@
                      #{fixtureRequirements},
                      #{productShape},
                      #{productSize},
-                     #{otherRequirements},
-                     #{createDate}
+                     #{otherRequirements}
             )
     </insert>
 
     <!-- 配置回显查询-->
-    <select id="findSaleOrderConfigureViewById" parameterType="long" resultType="com.erp.sale.entity.SaleOrder">
+    <select id="findSaleOrderConfigureViewById" parameterType="long" resultType="com.erp.sale.entity.SaleOrderSchedule">
         SELECT
-            so.machine_requirements machineRequirements,
-            so.computer_configuration computerConfiguration,
-            so.tool_size toolSize,
-            so.hourly_production hourlyProduction,
-            so.processing_procedure processingProcedure,
-            so.fixture_requirements fixtureRequirements,
-            so.product_shape productShape,
-            so.product_size productSize,
-            so.other_requirements otherRequirements
+            sos.machine_requirements machineRequirements,
+            sos.computer_configuration computerConfiguration,
+            sos.tool_size toolSize,
+            sos.hourly_production hourlyProduction,
+            sos.processing_procedure processingProcedure,
+            sos.fixture_requirements fixtureRequirements,
+            sos.product_shape productShape,
+            sos.product_size productSize,
+            sos.other_requirements otherRequirements
         FROM
-            jr_sale_order so
+            jr_sale_order_schedule sos
+        WHERE
+            sos.id = #{id}
+    </select>
+
+    <!-- 销售订单修改回显查询-->
+    <select id="findSaleOrderById" parameterType="long" resultType="com.erp.sale.entity.SaleOrder">
+        SELECT
+            so.id,
+            so.odd_numbers oddNumbers,
+            so.order_date orderDate,
+            so.customer_name customerName,
+            so.salesman_name salesmanName,
+            so.currency_id currencyId,
+            so.tax_rate_id taxRateId,
+            so.payment_method_id paymentMethodId,
+            so.deposit_money depositMoney,
+            so.invoice_not invoiceNot,
+            so.contacts_name contactsName,
+            so.mobile_phone mobilePhone,
+            so.enclosure_name enclosureName,
+            so.order_type orderType,
+            so.after_sales_clerk afterSalesClerk,
+            so.create_date createDate
+        FROM
+	        jr_sale_order so
         WHERE
             so.id = #{id}
+    </select>
+    <!-- 销售订单修改加载附表-->
+    <select id="saleOrderSchedulesList" parameterType="String" resultType="com.erp.sale.entity.SaleOrderSchedule">
+         SELECT
+            sos.id,
+            sos.order_state orderState,
+            sos.odd_numbers oddNumbers,
+            sos.product_name productName,
+            sos.specification_model specificationModel,
+            sos.configure_name configureName,
+            sos.company_name companyName,
+            sos.quantity_name quantityName,
+            sos.unit_price unitPrice,
+            sos.amount_money amountMoney,
+            sos.delivery_date deliveryDate,
+            sos.order_remarks orderRemarks,
+            sos.machine_requirements machineRequirements,
+            sos.computer_configuration computerConfiguration,
+            sos.tool_size toolSize,
+            sos.hourly_production hourlyProduction,
+            sos.processing_procedure processingProcedure,
+            sos.fixture_requirements fixtureRequirements,
+            sos.product_shape productShape,
+            sos.product_size productSize,
+            sos.other_requirements otherRequirements
+        FROM
+            jr_sale_order_schedule sos
+        WHERE
+            sos.odd_numbers = #{oddNumbersTwo}
     </select>
 
 </mapper>
