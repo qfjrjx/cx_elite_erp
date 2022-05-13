@@ -44,9 +44,9 @@ public interface ISaleOrderService extends IService<SaleOrderAll> {
     /**
      * 修改
      *
-     * @param saleOrder saleOrder
+     * @param  saleOrderData  dataTable  contImg
      */
-    void updateSaleOrder(String saleApplicationData, String dataTable, String contImg);
+    void updateSaleOrder(String saleOrderData, String dataTable,String contImg) throws ParseException;
     /**
      * 删除
      *

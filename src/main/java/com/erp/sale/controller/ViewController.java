@@ -303,6 +303,33 @@ public class ViewController {
             model.addAttribute("orderDate", DateUtil.getDateFormat(saleOrder.getOrderDate(), DateUtil.FULL_TIME_SPLIT));
         }
     }
+    //销售订单确认(按钮)回显数据
+    @GetMapping("saleOrder/confirm/{id}")
+    @RequiresPermissions("saleOrder:confirm")
+    public String saleOrderConfirm(@PathVariable Long id, Model model) {
+        //查询业务员信息
+        List<SaleBusinessPersonnel> saleBusiness  = saleBusinessPersonnelService.queryBusinessPersonnel();
+        model.addAttribute("saleBusiness",saleBusiness);
+        //查询币种信息
+        List<FinanceParameters> currency  = financeParametersService.queryCurrencyInformation(FinanceParameters.CURRENCY);
+        model.addAttribute("currency",currency);
+        //查询税率信息
+        List<FinanceParameters> taxRate  = financeParametersService.queryCurrencyInformation(FinanceParameters.TAX_RATE);
+        model.addAttribute("taxRate",taxRate);
+        //查询付款方式信息
+        List<FinanceParameters> paymentMethod  = financeParametersService.queryCurrencyInformation(FinanceParameters.PAYMENT_METHOD);
+        model.addAttribute("paymentMethod",paymentMethod);
+        saleOrderConfirmModel(id, model, false);
+        return FebsUtil.view("saleOrder/saleOrderConfirm");
+    }
+    //销售订单确认(按钮)回填
+    private void saleOrderConfirmModel(Long id, Model model, Boolean transform) {
+        SaleOrder saleOrder = saleOrderService.findSaleOrderById(id);
+        model.addAttribute("saleOrder", saleOrder);
+        if (saleOrder.getOrderDate() != null) {
+            model.addAttribute("orderDate", DateUtil.getDateFormat(saleOrder.getOrderDate(), DateUtil.FULL_TIME_SPLIT));
+        }
+    }
     //销售申请修改
     @GetMapping("saleApplication/update/{id}")
     @RequiresPermissions("saleApplication:update")

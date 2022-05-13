@@ -10,6 +10,7 @@ import com.erp.sale.entity.SaleApplicationReply;
 import com.erp.sale.entity.SaleApplicationSchedule;
 import com.erp.sale.mapper.SaleApplicationMapper;
 import com.erp.sale.service.ISaleApplicationService;
+import com.google.gson.JsonArray;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.annotation.Propagation;
@@ -277,7 +278,19 @@ public class SaleApplicationServiceImpl extends ServiceImpl<SaleApplicationMappe
             }
             //将List集合转成json字符串
             if(!configureName.equals("")){
-                JSONArray jsonArrayTwo = JSONArray.parseArray(configureName);
+                String str = configureName.substring(0,1);
+                JSONArray  jsonArrayTwo;
+                if (!str.equals("[")){
+                    JsonArray arr = new JsonArray();
+                    String[] placeName = configureName.split(",");
+                    /* System.out.println("-------------1111111>>"+placeName);*/
+                    for (int k = 0; k < placeName.length; k++) {
+                        arr.add(placeName[k]);
+                    }
+                    jsonArrayTwo = JSONArray.parseArray(String.valueOf(arr));
+                }else {
+                    jsonArrayTwo = JSONArray.parseArray(configureName);
+                }
                 //StringBuilder拼接字符串方式
                 StringBuilder strOne = new StringBuilder();
                 for(int j = 0; j < jsonArrayTwo.size(); j++){

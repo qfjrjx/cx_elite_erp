@@ -36,4 +36,8 @@ public interface SaleOrderMapper extends BaseMapper<SaleOrderAll> {
     SaleOrder findSaleOrderById(@Param("id") Long id);
 
     List<SaleOrderSchedule> saleOrderSchedulesList(@Param("oddNumbersTwo") String oddNumbersTwo);
+
+    void deleteSaleOrderSchedule(@Param("oddNumbers") String oddNumbers);
+
+    void updateSaleOrder(SaleOrder saleOrder);
 }

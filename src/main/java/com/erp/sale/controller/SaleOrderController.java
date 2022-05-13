@@ -96,11 +96,11 @@ public class SaleOrderController extends BaseController {
         return map;
     }
     @ControllerEndpoint(operation = "修改SaleOrder", exceptionMessage = "修改SaleOrder失败")
-    @PostMapping("saleOrder/update")
+    @PostMapping(value="saleOrder/update",produces="application/json; utf-8")
     @ResponseBody
     @RequiresPermissions("saleOrder:update")
-    public FebsResponse updateSaleApplication(@RequestParam String saleApplicationData,@RequestParam String dataTable,@RequestParam String contImg) throws ParseException {
-        this.saleOrderService.updateSaleOrder(saleApplicationData,dataTable,contImg);
+    public FebsResponse updateSaleApplication(@RequestParam String saleOrderData,@RequestParam String dataTable,@RequestParam String contImg) throws ParseException {
+        this.saleOrderService.updateSaleOrder(saleOrderData,dataTable,contImg);
         return new FebsResponse().success();
     }
     @ControllerEndpoint(operation = "修改SaleOrder", exceptionMessage = "导出Excel失败")
