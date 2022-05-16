@@ -30,10 +30,10 @@ import java.util.Map;
 
 /**
  * 业务人员表
-
-               数据库表名：                                         对应java表名：
-    
-               jr_sale_business_personnel                    SaleBusinessPersonnel Controller
+ * <p>
+ * 数据库表名：                                         对应java表名：
+ * <p>
+ * jr_sale_business_personnel                    SaleBusinessPersonnel Controller
  *
  * @author qiufeng
  * @date 2021-10-08 13:34:13
@@ -47,7 +47,7 @@ public class SaleBusinessPersonnelController extends BaseController {
     private final ISaleBusinessPersonnelService saleBusinessPersonnelService;
 
     @GetMapping(FebsConstant.VIEW_PREFIX + "saleBusinessPersonnel")
-    public String saleBusinessPersonnelIndex(){
+    public String saleBusinessPersonnelIndex() {
         return FebsUtil.view("saleBusinessPersonnel/saleBusinessPersonnel");
     }
 
