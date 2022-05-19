@@ -1,0 +1,87 @@
+<style>
+    #saleApplication-addTo {
+        padding: 20px 25px 25px 0;
+    }
+</style>
+<div class="layui-fluid" id="saleApplication-addTo">
+    <form class="layui-form" action="" lay-filter="saleApplication-add-form">
+        <div class="layui-form-item <!--febs-hide-->">
+            <label class="layui-form-label febs-form-item-require">赋值参数：</label>
+            <div class="layui-input-block">
+                <!-- 获取产品名称-->
+                <input type="text" name="parameterProductName" id="parameterProductName">
+                <!--获取配置-->
+                <input type="text" name="parameterOne" id="parameterOne">
+                <!--获取单位-->
+                <input type="text" name="parameterTwo" id="parameterTwo">
+                <!--获取数量-->
+                <input type="text" name="parameterThree" id="parameterThree">
+                <!--获取说明-->
+                <input type="text" name="parameterFour" id="parameterFour">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require">单号</label>
+            <div class="layui-input-inline" style="width: 120px">
+                <input type="text" name="parameterValue" id="parameterValue" style="width: 120px" autocomplete="off" class="layui-input" placeholder="为空时自动生成" readonly>
+            </div>
+            <label class="layui-form-label febs-form-item-require">申请交货日期</label>
+            <div class="layui-input-inline" style="width: 120px">
+                <input type="text" name="transferData" id="transferData" style="width: 120px" autocomplete="off" class="layui-input createDate" readonly>
+            </div>
+            <label class="layui-form-label febs-form-item-require">客户名称</label>
+            <div class="layui-input-inline" style="width: 110px">
+                <input type="text" name="customerName" lay-verify="require" id="customerNameTwo" lay-reqtext="系统提示，请选择客户" ondblclick="saleCustomerProfileSelection()"
+                       autocomplete="off" class="layui-input" style="width: 110px" placeholder="请双击" readonly>
+            </div>
+            <label class="layui-form-label febs-form-item-require">业务员</label>
+            <div class="layui-input-inline" style="width: 110px" id="content">
+                <select name="personnelName" id="personnelNameOne" type="select" lay-verify="require" class="layui-form-select selector" lay-filter="personnelName">
+                    <option value=""></option>
+                    <option th:each="saleBusinessTo:${saleBusinessTo}" th:value="${saleBusinessTo.personnelName}">[[${saleBusinessTo.personnelName}]]</option>
+                </select>
+            </div>
+        </div>
+    </form>
+    sadgasjhdasdjasjyd
+</div>
+<script langguage="JavaScript">
+
+    var now = new Date();
+    transferData.value=new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate();
+
+</script>
+
+<script>
+    layui.use(['febs', 'form', 'laydate'], function () {
+        let $ = layui.$,
+            form = layui.form,
+            laydate = layui.laydate;
+
+            form.render();
+
+            // 单个日期绑定
+        lay('.createDate').each(function () {
+            laydate.render({
+                elem: this,
+                range: false,
+                trigger: 'click'
+            });
+        });
+
+    });
+
+    function saleCustomerProfileSelection(){
+        layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
+            let $ = layui.$,
+                febs = layui.febs;
+
+            febs.modal.open('【客户选择列表】', 'sale/saleCustomerProfileSelectionTo', {
+                area:["75%","70%"],
+                yes: function (index, layero) {
+                }
+
+            });
+        });
+    }
+</script>

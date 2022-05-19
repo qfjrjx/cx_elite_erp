@@ -1,0 +1,207 @@
+<style>
+    #febs-saleApplicationTo xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #febs-saleApplicationTo xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="febs-saleApplicationTo" lay-title="销售申请2">
+    <div class="layui-row febs-container" >
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="parameter-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md12"></div>
+                            <div class="layui-form-item">
+                                <div class="layui-inline">
+                                    <laber class="layui-form-label">申请交货日期</laber>
+                                    <div class="layui-input-inline">
+                                        <input type="text" name="signedTime" id="signedTime" class="layui-input createTime">
+                                    </div>
+                                </div>
+                                <div class="layui-inline">
+                                    <label class="layui-form-label layui-form-label-sm">销售客户</label>
+                                    <div class="layui-input-inline" style="width: 110px">
+                                        <input type="text" name="customerName" id="customerName" lay-verify="required" ondblclick="dblclickCustomerName()"
+                                               autocomplete="off" class="layui-input" style="width: 110px" >
+                                    </div>
+                                </div>
+                                <div class="layui-inline">
+                                    <label class="layui-form-label layui-form-label-sm">业务员</label>
+                                    <div class="layui-input-inline" style="width: 110px">
+                                        <select id="salesmanName" name="salesmanName" lay-verify="required" class="layui-form-select">
+                                            <option value="">全部</option>
+                                            <option th:each="saleBusinessTo:${saleBusinessTo}" th:value="${saleBusinessTo.personnelName}">[[${saleBusinessTo.personnelName}]]</option>
+                                        </select>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label layui-form-label-sm">单号</label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <input type="text" name="applicationNo" autocomplete="off" style="width: 110px" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label layui-form-label-sm">产品名称</label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <input type="text" name="productName" autocomplete="off" style="width: 110px" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label layui-form-label-sm">规格型号</label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <input type="text" name="specificationModel" autocomplete="off" style="width: 110px" class="layui-input">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="saleApplicationTableTo" lay-data="{id: 'saleApplicationTableTo'}"></table>
+                    <div><span style="margin-left: 845px;color: #f5222d" data-th-text="${quantityNameCountTo}"></span></div>
+                    <div class="layui-col-md6">
+                        <div class="layui-form-item"></div>
+                    </div>
+                    <div class="layui-col-md6 layui-col-sm12 layui-col-xs12  table-action-area">
+                        <!-- 搜索按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                            <i class="layui-icon">&#xe848;</i>搜索
+                        </div>
+                        <!-- 刷新按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain table-action" id="reset">
+                            <i class="layui-icon">&#xe79b;</i>刷新
+                        </div>
+                        <!-- 新增按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" shiro:hasAnyPermissions="saleApplication:addTo" id="addTo">
+                            <i class="layui-icon">&#xe78a;</i>新增
+                        </div>
+                    </div>
+                    <div>dfhsjsdk</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['febs', 'jquery', 'table', 'form', 'laydate', 'form'], function () {
+        let $ = layui.jquery,
+            febs = layui.febs,
+            form = layui.form,
+            laydate = layui.laydate,
+            table = layui.table,
+            $view = $('#febs-saleApplicationTo'),
+            $query = $view.find('#query'),
+            $searchForm = $view.find('form'),
+            $reset = $view.find('#reset'),
+            $addTo = $view.find('#addTo'),
+            signedDateFrom,
+            signedDateTo,
+            sortObject = {field: 'createTime', type: null},
+            tableIns;
+
+        form.render();
+
+        initTable();
+
+        // 用于多个日期绑定（.createTime为定义的文本输入框的类名）,range为true时是多个时间选择，range为false时是单个时间选择
+        lay('.createTime').each(function () {
+            laydate.render({
+                elem: this,
+                range: true,
+                trigger: 'click'
+            })
+        });
+        // 用于初始化加载列表页面，id为table标签里面定义的名字
+        function initTable() {
+            tableIns = febs.table.init({
+                elem: $view.find('table'),
+                id: 'saleApplicationTableTo',
+                url: ctx + 'saleApplication/list',
+                page: true,
+                cols: [[
+                    {type: 'checkbox'},
+                    {field:'number',title:'序号', minWidth: 30,align:'center',templet:function (d) {
+                            return d.LAY_INDEX;}},
+                    {field: 'id', title: '编号',hide:true,sort: true},
+                    {field: 'requestedDeliveryDate', title: '申请交货日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.requestedDeliveryDate, "yyyy-MM-dd") }}</div>', minWidth: 115},
+                    {field: 'applicationNo', title: '申请单号',align:'center', minWidth: 105},
+                    {field: 'customerName', title: '客户',align:'center', minWidth: 90},
+                    {field: 'salesmanName', title: '业务员',align:'center', minWidth: 75},
+                    {field: 'productName', title: '产品名称', minWidth: 95},
+                    {field: 'specificationModel', title: '规格型号', minWidth: 90},
+                    {field: 'configureName', title: '配置', minWidth: 90, /*templet: dispose*/},
+                    {field: 'companyName', title: '单位', minWidth: 50,align:'center'},
+                    {field: 'quantityName', title: '数量', minWidth: 50,align:'center'},
+                    {title: '附件', minWidth: 90,align:'center',toolbar: '#enclosure-name'},
+                    {title: '设计回复', minWidth: 88,align:'center',toolbar: '#design-reply'},
+                    {title: '采购回复', minWidth: 88,align:'center',toolbar: '#purchase-reply'},
+                    {title: '生产回复', minWidth: 88,align:'center',toolbar: '#production-reply'},
+                    {title: '装配回复', minWidth: 88,align:'center',toolbar: '#assembling-reply'},
+                    {field: 'explainName', title: '说明', minWidth: 72}
+                ]]
+            });
+        };
+
+       // 搜索按钮
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        // 刷新按钮
+        $reset.on('click', function () {
+            // 查询条件重置
+            $searchForm[0].reset();
+            signedDateFrom = null;
+            signedDateTo = null;
+            $("#customerName").attr("value", "");
+            tableIns.reload({where: getQueryParams(), page: {curr: 1} })
+        });
+        
+        // 新增按钮
+        $addTo.on('click', function () {
+            febs.modal.open('【销售申请】新增', 'sale/saleApplication/addTo', {
+                btn: ['增加行','删除行','全部删除','保存', '关闭'],
+                area: ["80%","60%"],
+                //closeBtn: 0, //不显示关闭按钮
+                yes: function (index, layero) {
+                    $('saleApplication-addTo').find('#submit').trigger('click');
+                },
+            })
+        })
+
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            let signedTime = params.signedTime;
+            if (signedTime) {
+                signedDateFrom = signedTime.split(' - ')[0];
+                signedDateTo = signedTime.split(' - ')[1];
+            }
+            params.signedDateFrom = signedDateFrom;
+            params.signedDateTo = signedDateTo;
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+    })
+
+    function dblclickCustomerName(){
+        layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
+            let $ = layui.$,
+                febs = layui.febs;
+
+            febs.modal.open('客户选择列表', 'sale/jumpSaleCustomerProfile', {
+                area:["75%","90%"],
+                yes: function (index, layero) {
+
+                }
+
+            });
+        });
+    }
+
+
+
+</script>
