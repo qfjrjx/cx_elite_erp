@@ -1,0 +1,154 @@
+<style>
+    #productionPlan-planCustomerName xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #productionPlan-planCustomerName xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="productionPlan-planCustomerName" lay-title="供应商选择列表">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="parameter-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md11">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-mid" >名称简拼&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 90px">
+                                            <input type="text" name="abbreviationOfFullName" autocomplete="off" style="width: 90px" class="layui-input" >
+                                        </div>
+                                        <label class="layui-form-mid" >供应商简称&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 90px">
+                                            <input type="text" name="supplierAbbreviation" autocomplete="off" style="width: 90px" class="layui-input" >
+                                        </div>
+                                        <label class="layui-form-mid" >名称&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 90px">
+                                            <input type="text" name="supplierFullName" autocomplete="off" style="width: 90px" class="layui-input" >
+                                        </div>
+                                        <label class="layui-form-mid" >联系人&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 90px">
+                                            <input type="text" name="supplierContacts" autocomplete="off" style="width: 90px" class="layui-input" >
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md1 layui-col-sm12 layui-col-xs12 table-action-area">
+                                <!--搜索按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                                    <i class="layui-icon">&#xe848;</i>查询
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="productionPlanPlanCustomerNameListTable" lay-data="{id: 'productionPlanPlanCustomerNameListTable'}"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="supplier-state">
+    {{#
+    let supplierState = {
+    1: {title: '启用', color: 'green'},
+    2: {title: '禁用', color: 'volcano'}
+    }[d.supplierState];
+    }}
+    <span class="layui-badge febs-bg-{{supplierState.color}}">{{ supplierState.title }}</span>
+</script>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+            laydate = layui.laydate,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            dropdownMenu = layui.dropdownMenu,
+            $view = $('#productionPlan-planCustomerName'),
+            $query = $view.find('#query'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'createTime', type: null},
+            createdDateFrom,
+            createdDateTo,
+            tableIns;
+
+        form.render();
+
+        initTable();
+
+
+//日期同时绑定多个
+        lay('.createTime').each(function(){
+            laydate.render({
+                elem: this,
+                range: true,
+                trigger: 'click'
+            });
+        })
+        dropdownMenu.render({
+            elem: $view.find('.action-more'),
+            click: function (name, elem, event) {
+                let checkStatus = table.checkStatus('productionPlanPlanCustomerNameListTable');
+            },
+            options: []
+        });
+
+        table.on('sort(productionPlanPlanCustomerNameListTable)', function (obj) {
+            sortObject = obj;
+            tableIns.reload({
+                initSort: obj,
+                where: $.extend(getQueryParams(), {
+                    field: obj.field,
+                    order: obj.type
+                })
+            });
+        });
+
+        function initTable() {
+            tableIns = febs.table.init({
+                elem: $view.find('table'),
+                id: 'productionPlanPlanCustomerNameListTable',
+                url: ctx + 'purchaseSupplier/list',
+                cols: [[
+                    {field: 'supplierAbbreviation', title: '供应商简称',align:'center', minWidth: 150},
+                    {field: 'supplierFullName', title: '供应商名称', align:'center',minWidth: 200},
+                    {field: 'workTelephone', title: '电话',align:'center', minWidth: 100},
+                    {field: 'supplierContacts', title: '联系人',align:'center', minWidth: 90},
+                    {field: 'supplierContactNumber', title: '联系人电话', align:'center',minWidth: 95}
+                ]],done: function(res, curr, count){
+                    $('#productionPlan-planCustomerName').find('.layui-table-body').find("table" ).find("tbody").children("tr").on('dblclick',function(){
+                        var id = JSON.stringify($('#productionPlan-planCustomerName').find('.layui-table-body').find("table" ).find("tbody").find(".layui-table-hover").data('index'));
+                        var obj = res.data[id];
+                        var supplierName = $("#supplierName").val();
+                        if (supplierName!=null && supplierName!=""){
+                            $("#supplierName").attr("value","");
+                        }
+                        $("#planCustomerName").attr("value",obj.supplierFullName);/*供应商添加回填*/
+                        parent.layer.close(layer.index)
+                    })
+                }
+            });
+        }
+
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            let signedTime = params.signedTime;
+            if (signedTime) {
+                createdDateFrom = signedTime.split(' - ')[0];
+                createdDateTo = signedTime.split(' - ')[1];
+            }
+            params.createdDateFrom = createdDateFrom;
+            params.createdDateTo = createdDateTo;
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+
+    })
+
+</script>
+

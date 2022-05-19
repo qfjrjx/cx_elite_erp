@@ -331,12 +331,14 @@
                 });
             }
         });
-
         function initPurchaseRequisitionTable() {
             tableIns = febs.table.init({
                 elem: '#purchaseRefundList',
                 id: 'purchaseRefundList',
                 url: ctx + 'purchaseRefund/list',
+                where: {
+                    getQueryParams
+                },
                 cols: [[
                     {type: 'checkbox'},
                     {field:'number',title:'序号',align:'center',width:60,templet:function (d) {
@@ -359,7 +361,6 @@
             });
         }
         table.on('row(purchaseRefundList)', function (obj) {
-
             let oddNumbers = obj.data.refundNumber;
             var dataBak = [];
             layui.table.reload('purchaseRefundTable',{
@@ -432,7 +433,7 @@
         layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
             let $ = layui.$,
                 febs = layui.febs;
-            febs.modal.open('供应商选择列表', 'purchase/purchaseRefundAddName', {
+            febs.modal.open('供应商选择列表', 'purchase/purchaseRefundListName', {
                 area:["55%","60%"],
                 yes: function (index, layero) {
                 }

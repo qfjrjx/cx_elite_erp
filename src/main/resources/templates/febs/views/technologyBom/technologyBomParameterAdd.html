@@ -1,0 +1,94 @@
+<style>
+    #technologyBomParameter-add {
+        padding: 20px 25px 25px 0;
+    }
+</style>
+<div class="layui-fluid" id="technologyBomParameter-add">
+    <form class="layui-form" action="" lay-filter="technologyBomParameter-add-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label" >参数类别：</label>
+            <div class="layui-input-inline">
+                <select id="parameterCategory"  name="parameterCategory" lay-verify="required" class="layui-form-select" >
+                    <option value="1">BOM配置</option>
+                    <option value="2">部分名称</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" >参数值：</label>
+            <div class="layui-input-block">
+                <input type="text" name="parameterValue"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">参数名称：</label>
+            <div class="layui-input-block">
+                <input type="text" name="parameterName"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">名排序：</label>
+            <div class="layui-input-block">
+                <input type="text" name="parameterSorting"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">备注：</label>
+            <div class="layui-input-block">
+                <input type="text" name="parameterNote"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">状态：</label>
+            <div class="layui-input-inline">
+                <select id="parameterState"  name="parameterState" lay-verify="required" class="layui-form-select" >
+                    <option value="1">启用</option>
+                    <option value="2">禁用</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item" style="display: none;">
+            <label class="layui-form-label">创建时间：</label>
+            <div class="layui-input-inline" style="width: 90px">
+                <input type="text" name="parameterDate" id="orderDate"
+                       autocomplete="off" class="layui-input createDate" readonly>
+            </div>
+        </div>
+        <div class="layui-form-item febs-hide">
+            <button class="layui-btn" lay-submit="" lay-filter="technologyBomParameter-add-form-submit" id="submit"></button>
+        </div>
+    </form>
+</div>
+<script langguage="JavaScript">
+    var now = new Date();
+    orderDate.value=new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate();
+    var orderDeliveryDateTo = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate();
+
+</script>
+<script>
+    layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
+        let $ = layui.$,
+            febs = layui.febs,
+            layer = layui.layer,
+            form = layui.form,
+            validate = layui.validate;
+
+        form.verify(validate);
+        form.render();
+
+        form.on('submit(technologyBomParameter-add-form-submit)', function (data) {
+            febs.post(ctx + 'technologyBomParameter/add', data.field,function () {
+                layer.closeAll();
+                febs.alert.success('新增参数成功');
+                $('#technology-configuration').find('#query').click();
+            });
+            return false;
+
+        });
+
+    });
+</script>

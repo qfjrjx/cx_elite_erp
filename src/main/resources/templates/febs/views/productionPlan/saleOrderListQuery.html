@@ -1,0 +1,194 @@
+<style>
+    #saleOrderList-query xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #saleOrderList-query xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="saleOrderList-query" lay-title="销售订单选择列表">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="parameter-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md11">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-mid" >订单号&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 90px">
+                                            <input type="text" name="oddNumbers" autocomplete="off" style="width: 90px" class="layui-input" >
+                                        </div>
+                                        <label class="layui-form-mid" >名称&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 90px">
+                                            <input type="text" name="productName" autocomplete="off" style="width: 90px" class="layui-input" >
+                                        </div>
+                                        <label class="layui-form-mid" >规格&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 90px">
+                                            <input type="text" name="specificationModel" autocomplete="off" style="width: 90px" class="layui-input" >
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md1 layui-col-sm12 layui-col-xs12 table-action-area">
+                                <!--搜索按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                                    <i class="layui-icon">&#xe848;</i>查询
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="saleOrderListQueryTable" lay-data="{id: 'saleOrderListQueryTable'}"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+            laydate = layui.laydate,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            dropdownMenu = layui.dropdownMenu,
+            $view = $('#saleOrderList-query'),
+            $query = $view.find('#query'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'createTime', type: null},
+            createdDateFrom,
+            createdDateTo,
+            tableIns;
+
+        form.render();
+
+        initTable();
+
+        //日期同时绑定多个
+        lay('.createTime').each(function(){
+            laydate.render({
+                elem: this,
+                range: true,
+                trigger: 'click'
+            });
+        })
+        dropdownMenu.render({
+            elem: $view.find('.action-more'),
+            click: function (name, elem, event) {
+                let checkStatus = table.checkStatus('saleOrderListQueryTable');
+            },
+            options: []
+        });
+
+        table.on('sort(saleOrderListQueryTable)', function (obj) {
+            sortObject = obj;
+            tableIns.reload({
+                initSort: obj,
+                where: $.extend(getQueryParams(), {
+                    field: obj.field,
+                    order: obj.type
+                })
+            });
+        });
+
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        function initTable() {
+            tableIns = febs.table.init({
+                elem: $view.find('table'),
+                id: 'saleOrderListQueryTable',
+                url: ctx + 'saleOrder/list',
+                cols: [[
+                    {field: 'oddNumbers', title: '销售订单',align:'center', minWidth: 150},
+                    {field: 'productName', title: '产品名称', align:'center',minWidth: 200},
+                    {field: 'specificationModel', title: '规格型号',align:'center', minWidth: 100},
+                    {field: 'configureName', title: '配置',align:'center', minWidth: 90},
+                    {field: 'companyName', title: '单位', align:'center',minWidth: 95},
+                    {field: 'quantityName', title: '数量', align:'center',minWidth: 200},
+                    {field: 'unitPrice', title: '单价',align:'center', minWidth: 100},
+                    {field: 'amountMoney', title: '金额',align:'center', minWidth: 90},
+                    {field: 'deliveryDate', title: '交货日期', align:'center',minWidth: 95,templet:'<div>{{ layui.util.toDateString(d.deliveryDate, "yyyy-MM-dd") }}</div>'},
+                    {field: 'orderRemarks', title: '备注',align:'center', minWidth: 150 ,hide:true},
+                    {field: 'machineRequirements', title: '机器要求', align:'center',minWidth: 200,hide:true},
+                    {field: 'computerConfiguration', title: '电脑配置',align:'center', minWidth: 100,hide:true},
+                    {field: 'toolSize', title: '刀具大小',align:'center', minWidth: 90,hide:true},
+                    {field: 'processingProcedure', title: '加工工序', align:'center',minWidth: 95,hide:true},
+                    {field: 'fixtureRequirements', title: '夹具要求', align:'center',minWidth: 200,hide:true},
+                    {field: 'productShape', title: '产品形状',align:'center', minWidth: 100,hide:true},
+                    {field: 'productSize', title: '产品尺寸',align:'center', minWidth: 90,hide:true},
+                    {field: 'otherRequirements', title: '其他要求',align:'center', minWidth: 100,hide:true}
+                ]],done: function(res, curr, count){
+                    $('#saleOrderList-query').find('.layui-table-body').find("table" ).find("tbody").children("tr").on('dblclick',function(){
+                        var id = JSON.stringify($('#saleOrderList-query').find('.layui-table-body').find("table" ).find("tbody").find(".layui-table-hover").data('index'));
+                        var obj = res.data[id];
+                        var oddNumbersTwo = $("#oddNumbers").val();
+                        if (oddNumbersTwo!=null && oddNumbersTwo!=""){
+                            $("#oddNumbersTwo").attr("value","");
+                        }
+                        $("#oddNumbersTwo").attr("value",obj.oddNumbers);
+                        //数量
+                        var quantityNameOne = obj.quantityName;
+                        $("#quantityNameOne").val(quantityNameOne);
+                        //产品名称
+                        var productNameOne = obj.productName;
+                        $("#productNameOne").val(productNameOne);
+                        //规格型号
+                        var specificationModelOne = obj.specificationModel;
+                        $("#specificationModelOne").val(specificationModelOne);
+                        //机器要求
+                        var configureNames = obj.machineRequirements;
+                        $("#configureNamesOne").val(configureNames);
+                        //电脑配置
+                        var computerConfigurationOne = obj.computerConfiguration;
+                        $("#computerConfigurationOne").val(computerConfigurationOne);
+                        //刀具大小
+                        var toolSizeOne = obj.toolSize;
+                        $("#toolSizeOne").val(toolSizeOne);
+                        //加工工序
+                        var processingProcedureOne = obj.processingProcedure;
+                        $("#processingProcedureOne").val(processingProcedureOne);
+                        //其他要求
+                        var otherRequirementsOne = obj.otherRequirements;
+                        $("#otherRequirementsOne").val(otherRequirementsOne);
+                        //夹具要求
+                        var fixtureRequirementsOne = obj.fixtureRequirements;
+                        $("#fixtureRequirementsOne").val(fixtureRequirementsOne);
+                        //产品形状
+                        var productShapeOne = obj.productShape;
+                        $("#productShapeOne").val(productShapeOne);
+                        //产品尺寸
+                        var productSizeOne = obj.productSize;
+                        $("#productSizeOne").val(productSizeOne);
+                        //备注
+                        var orderRemarksOne = obj.orderRemarks;
+                        $("#orderRemarksOne").val(orderRemarksOne);
+                        parent.layer.close(layer.index)
+                    })
+                }
+            });
+        }
+
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            let signedTime = params.signedTime;
+            if (signedTime) {
+                createdDateFrom = signedTime.split(' - ')[0];
+                createdDateTo = signedTime.split(' - ')[1];
+            }
+            params.createdDateFrom = createdDateFrom;
+            params.createdDateTo = createdDateTo;
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+
+    })
+
+</script>

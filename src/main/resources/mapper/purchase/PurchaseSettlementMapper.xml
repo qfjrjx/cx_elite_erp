@@ -72,13 +72,15 @@
             pss.settlement_money,
             pss.settlement_deposit,
             pss.order_number,
-            pss.settlement_subclass
+            pss.settlement_subclass,
+            pss.whether_invoice
         FROM
             jr_purchase_settlement_schedule pss
                 LEFT JOIN jr_purchase_settlement ps ON ( ps.settlement_numbers = pss.settlement_number )
         WHERE
             1 = 1
         AND ps.settlement_supplier = #{purchaseSettlementSchedule.settlementSupplier}
+        AND pss.whether_invoice = '2'
     </sql>
 
     <select id="countPurchaseSettlement" parameterType="com.erp.purchase.entity.PurchaseSettlement" resultType="long">
@@ -146,7 +148,8 @@
             settlement_remarks,
             settlement_number,
             settlement_deposit,
-            order_number
+            order_number,
+            whether_invoice
         )
         VALUES
             (
@@ -164,7 +167,8 @@
                 #{settlementRemarks},
                 #{settlementNumber},
                 #{settlementDeposit},
-                #{orderNumber}
+                #{orderNumber},
+                #{whetherInvoice}
             )
     </insert>
 

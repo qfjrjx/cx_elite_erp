@@ -99,6 +99,12 @@ public class PurchaseInvoice {
     private String invoiceDateState;
 
     /**
+     *日期分类
+     */
+    @TableField("registration_date_state")
+    private String registrationDateState;
+
+    /**
      * 入库数量总数
      */
     private String invoiceQuantitySum;

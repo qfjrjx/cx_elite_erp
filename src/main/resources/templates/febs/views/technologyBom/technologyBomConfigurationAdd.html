@@ -1,0 +1,169 @@
+<style>
+    #configuration-add {
+        padding: 20px 25px 25px 0;
+    }
+</style>
+<div class="layui-fluid" id="configuration-add">
+    <form class="layui-form" action="" lay-filter="configuration-add-form">
+        <div class="layui-form-item">
+            <label class="layui-form-mid">部分名称&nbsp;<b>:</b></label>
+            <div class="layui-input-inline" style="width: 90px">
+                <select id="parameterName"  name="parameterName" lay-verify="required" class="layui-form-select">
+                    <option th:each="parameterName:${parameterName}" th:value="${parameterName.id}">[[${parameterName.parameterName}]]</option>
+                </select>
+            </div>
+            <label class="layui-form-mid">配置&nbsp;<b>:</b></label>
+            <div class="layui-input-inline" style="width: 90px">
+                <select id="parameterState"  name="parameterState" lay-verify="required" class="layui-form-select" >
+                    <option value="1">外购件</option>
+                    <option value="2">机械清单</option>
+                    <option value="3">随机配件</option>
+                    <option value="4">JZ-8.7</option>
+                    <option value="5">JZ-5.13C</option>
+                </select>
+            </div>
+            <label class="layui-form-label layui-form-label-sm">说明&nbsp;<b>:</b></label>
+            <div class="layui-input-inline" style="width: 100px">
+                <input type="text" name="productName" autocomplete="off" class="layui-input">
+            </div>
+                <label class="layui-form-label">附&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;件：</label>
+                <div class="layui-input-inline" style="width: 600px">
+                    <button type="button" class="layui-btn layui-btn-sm" id="uploadPic"><i class="layui-icon">&#xe67c;</i>选择文件</button>
+                    <button type="button" class="layui-btn layui-btn-sm layui-btn-warm" id="uploadPicBtn"><i class="layui-icon layui-icon-upload-circle"></i>开始上传</button>
+                    <span id="span-img" style="color: #f5222d"></span>
+                    <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" id="deletePicBtndeletePicBtn"><i class="layui-icon layui-icon-close"></i>删除</button>
+                    　　　　<!-- 隐藏的input,一个隐藏的input（用于保存文件url） -->
+                    　　　　<input type="hidden" id="img_url" name="parameterAttachment" value=""/>
+                </div>
+        </div>
+        <table class="layui-table layui-form" id="technologyConfiguration-table" lay-filter="technologyConfiguration-table"></table>
+        <div class="layui-form-item febs-hide">
+            <button class="layui-btn" lay-submit="" lay-filter="configuration-add-form-submit" id="submit"></button>
+            <button type="reset" class="layui-btn" id="reset"></button>
+        </div>
+    </form>
+</div>
+<script>
+    layui.use(['febs', 'form', 'validate','table', 'xmSelect','upload','laydate'], function () {
+        let $ = layui.$,
+            febs = layui.febs,
+            layer = layui.layer,
+            form = layui.form,
+            laydate = layui.laydate,
+            validate = layui.validate,
+            table = layui.table,
+            upload = layui.upload,
+            uploadInst;
+
+
+        form.verify(validate);
+        form.render();
+
+        let userName = currentUser.username;
+
+        //上传图片
+        uploadInst = upload.render({
+            elem: '#uploadPic' //绑定元素
+            ,url: 'document/uploadFile' //上传接口 [[@{/upload/img}]]
+            ,auto: false
+            ,size: 307200 //限制文件大小，单位 KB
+            ,accept: 'file' //允许上传的文件类型
+            ,exts: 'doc|docx|pdf|jpg|jpeg|png|zip|xlsx|xls|excel|'
+            ,bindAction: '#uploadPicBtn'
+            ,before: function(obj){
+                //预读本地文件示例，不支持ie8
+                obj.preview(function(index, file, result){
+                    $('#preShow').attr('src', result); //图片链接（base64）
+                });
+            }
+            ,done: function(res){
+                //如果上传失败
+                if(res.code > 0){
+                    alert("上传失败");
+                    return layer.msg('上传失败');
+                }
+                //上传成功
+                $('#span-img').html(res.data);
+                $('#img_url').attr('value', res.data);
+                return layer.msg('上传成功');
+            }
+            ,error: function(){
+                var demoText = $('#demoText');
+                demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-mini demo-reload">重试</a>');
+                demoText.find('.demo-reload').on('click', function(){
+                    uploadInst.upload();
+                });
+            }
+        });
+
+        table.render({
+            elem: "#technologyConfiguration-table",
+            data:[],
+            even:true,
+            cols: [
+                [
+                    {type: 'checkbox'},
+                    {field: 'parameterDrawings',title: '图纸号',align:'center', minWidth: 145,edit:true},
+                    {field: 'parameterMaterial', title: '物料名称',align:'center', minWidth: 90 ,event:'choice'},
+                    {field: 'parameterSpecifications', title: '规格型号', align:'center',minWidth: 90},
+                    {field: 'parameterUnit',title: '单位', minWidth: 55,align:'center'},
+                    {field: 'parameterBrand',title: '品牌', minWidth: 55,align:'center'},
+                    {field: 'parameterNumber',title: '数量', minWidth: 55,align:'center',edit:true},
+                    {field: 'parameterReplace',title: '替代物料', minWidth: 50,align:'center',event:'choices'},
+                    {field: 'parameterNote',edit:true, title: '备注', minWidth: 72}
+                ]
+            ]
+        });
+
+        table.on('tool(technologyConfiguration-table)', function (obj) {
+            let data = obj.data,
+                layEvent = obj.event;
+            if (layEvent === 'choice') {
+                var tableData = layui.table.cache['technologyConfiguration-table'];
+                var rowIndex = $(obj.tr).attr('data-index');//当前行的索引
+                if (tableData != ""){
+                    $("#parameterIndex").val(rowIndex);//获取索引
+                    tableData.splice(rowIndex,1); //删除缓存的行
+                }
+                febs.modal.view('物料编码选择列表', "technology/purchaseRequisitionQueryList", {
+                    area:["70%","80%"]
+                });
+            }
+        });
+
+        form.on('submit(configuration-add-form-submit)', function (data) {
+            let dataThree = new Array();
+            let technologyConfigurationTable =  table.cache["technologyConfiguration-table"];
+            for (i=0;i<technologyConfigurationTable.length;i++){
+                let dataOne={
+                    "parameterDrawings":technologyConfigurationTable[i].parameterDrawings,
+                    "parameterMaterial":technologyConfigurationTable[i].parameterMaterial,
+                    "parameterSpecifications":technologyConfigurationTable[i].parameterSpecifications,
+                    "parameterUnit":technologyConfigurationTable[i].parameterUnit,
+                    "parameterBrand":technologyConfigurationTable[i].parameterBrand,
+                    "parameterNumber":technologyConfigurationTable[i].parameterNumber,
+                    "parameterReplace":technologyConfigurationTable[i].parameterReplace,
+                    "parameterNote":technologyConfigurationTable[i].parameterNote,
+                    "parameterMaterialCode":technologyConfigurationTable[i].parameterMaterialCode,
+                    "parameterLocation":technologyConfigurationTable[i].parameterLocation
+                };
+                dataThree.push(dataOne);
+            }
+            let entity = {userName:userName,parameterName: data.field.parameterName,parameterState:data.field.parameterState,productName: data.field.productName,parameterAttachment: data.field.parameterAttachment}
+            $.ajax({
+                url: '/technologyBomConfiguration/add',
+                type:"post",
+                data: {technologyBomConfiguration:JSON.stringify(entity),dataTable:JSON.stringify(dataThree)},
+                success : function(res) {
+                    layer.closeAll();
+                    $('#technology-configuration').find('#query').click();
+                    var dataBak = [];
+                    layui.table.reload('technologyBomConfigurationTable',{
+                        data:dataBak
+                    });
+                }
+            });
+            return false;
+        });
+    })
+</script>

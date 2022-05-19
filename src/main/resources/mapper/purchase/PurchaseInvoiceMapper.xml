@@ -51,12 +51,10 @@
             AND pi.tax_rate_id = #{purchaseInvoice.taxRateId}
         </if>
         <if test="purchaseInvoice.invoiceDateState == 1 ">
-            AND pi.invoice_date_state = #{purchaseInvoice.invoiceDateState}
             And pi.registration_date &gt;= #{purchaseInvoice.signedDateFrom}
             And pi.registration_date &lt;= #{purchaseInvoice.signedDateTo}
         </if>
         <if test="purchaseInvoice.invoiceDateState == 2 ">
-            AND pi.invoice_date_state = #{purchaseInvoice.invoiceDateState}
             And pi.invoice_date &gt;= #{purchaseInvoice.signedDateFrom}
             And pi.invoice_date &lt;= #{purchaseInvoice.signedDateTo}
         </if>
@@ -138,7 +136,9 @@
             tax_rate_money,
             registration,
             registration_date,
-            invoice_remarks
+            invoice_remarks,
+            invoice_date_state,
+            registration_date_state
         )
         VALUES
             (
@@ -151,7 +151,9 @@
                 #{taxRateMoney},
                 #{registration},
                 #{registrationDate},
-                #{invoiceRemarks}
+                #{invoiceRemarks},
+                #{invoiceDateState},
+                #{registrationDateState}
             )
     </insert>
 
@@ -252,4 +254,25 @@
     <select id="purchasePaymentAddQuery" parameterType="com.erp.purchase.entity.PurchaseInvoiceSchedule" resultType="com.erp.purchase.entity.PurchaseInvoiceSchedule">
         <include refid="purchasePaymentAddQuerySql"/>
     </select>
+
+    <update id="savePurchaseSettlementUpdate"  parameterType="com.erp.purchase.entity.PurchaseSettlementSchedule">
+        UPDATE
+            jr_purchase_settlement_schedule
+        set whether_invoice = 1
+        WHERE settlement_number = #{invoiceCode}
+    </update>
+
+    <update id="confirmPurchaseInspection"  parameterType="com.erp.purchase.entity.PurchaseInvoice">
+        UPDATE
+            jr_purchase_invoice
+        set invoice_state = 2
+        WHERE id = #{ids}
+    </update>
+
+    <update id="cancelPurchaseInspection"  parameterType="com.erp.purchase.entity.PurchaseInvoice">
+        UPDATE
+            jr_purchase_invoice
+        set invoice_state = 1
+        WHERE id = #{ids}
+    </update>
 </mapper>

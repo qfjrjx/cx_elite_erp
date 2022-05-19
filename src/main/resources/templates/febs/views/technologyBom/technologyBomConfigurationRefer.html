@@ -1,0 +1,87 @@
+<style>
+    #configuration-refer {
+        padding: 20px 25px 25px 0;
+    }
+</style>
+<div class="layui-fluid" id="configuration-refer">
+    <form class="layui-form" action="" lay-filter="configuration-refer-form">
+        <div class="layui-form-item">
+            <label class="layui-form-mid">部分名称&nbsp;<b>:</b></label>
+            <div class="layui-input-inline" style="width: 90px">
+                <select id="parameterPart"  name="parameterPart" lay-verify="required" class="layui-form-select" >
+                    <option value=""></option>
+                    <option th:each="parameterName:${parameterName}" th:value="${parameterName.id}">[[${parameterName.parameterName}]]</option>
+                </select>
+            </div>
+            <label class="layui-form-mid">配置&nbsp;<b>:</b></label>
+            <div class="layui-input-inline" style="width: 90px">
+                <select id="parameterWith"  name="parameterWith" lay-verify="required" class="layui-form-select" >
+                    <option value=""></option>
+                    <option value="1">外购件</option>
+                    <option value="2">机械清单</option>
+                    <option value="3">随机配件</option>
+                    <option value="4">JZ-8.7</option>
+                    <option value="5">JZ-5.13C</option>
+                </select>
+            </div>
+            <label class="layui-form-label layui-form-label-sm">说明&nbsp;<b>:</b></label>
+            <div class="layui-input-inline" style="width: 100px">
+                <input type="text" name="parameterInstructions" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <table lay-filter="configurationRefer" id="configurationRefer" lay-data="{id: 'configurationRefer'}"></table>
+    </form>
+</div>
+<script data-th-inline="javascript">
+    layui.use(['form', 'validate','table'], function () {
+        let $ = layui.$,
+            form = layui.form,
+            validate = layui.validate,
+            table = layui.table,
+            technologyBomConfiguration = [[${technologyBomConfiguration}]];
+
+        form.verify(validate);
+        form.render();
+        initPurchaseRequisitionCreatorValue();
+
+        function initPurchaseRequisitionCreatorValue() {
+            form.val("configuration-refer-form", {
+                "parameterWith": technologyBomConfiguration.parameterWith,
+                "parameterPart": technologyBomConfiguration.parameterPart,
+                "parameterAttachment": technologyBomConfiguration.parameterAttachment,
+                "parameterInstructions": technologyBomConfiguration.parameterInstructions,
+                "parameterCode" : technologyBomConfiguration.parameterCode
+            });
+        }
+
+        var tableData=new Array(); // 用于存放表格数据
+        $.ajax({
+            url: 'configurationRefer/query'
+            ,data:{"parameterCode":technologyBomConfiguration.parameterCode}
+            ,async:false
+            ,dataType:"json"
+            , success: function(data){
+                tableData=data.replies;
+            }
+        });
+
+        table.render({
+            elem: "#configurationRefer",
+            data:tableData,
+            cols: [
+                [
+                    {type: 'checkbox'},
+                    {field: 'parameterDrawings',title: '图纸号',align:'center', minWidth: 145,event:'choice'},
+                    {field: 'parameterMaterial', title: '物料名称',align:'center', minWidth: 90},
+                    {field: 'parameterSpecifications', title: '规格型号', align:'center',minWidth: 90},
+                    {field: 'parameterUnit',title: '单位', minWidth: 55,align:'center'},
+                    {field: 'parameterBrand',title: '品牌', minWidth: 55,align:'center'},
+                    {field: 'parameterNumber',title: '数量', minWidth: 55,align:'center'},
+                    {field: 'parameterReplace', title: '替代物料', minWidth: 50,align:'center'},
+                    {field: 'parameterNote',title: '备注', minWidth: 72}
+                ]
+            ]
+        });
+
+    })
+</script>

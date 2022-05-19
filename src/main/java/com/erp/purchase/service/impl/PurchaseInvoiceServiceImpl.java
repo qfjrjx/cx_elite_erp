@@ -71,10 +71,12 @@ public class PurchaseInvoiceServiceImpl extends ServiceImpl<PurchaseInvoiceMappe
         String dates = simpleDateFormatTwo.format(new Date());//系统当前时间
         Date today = simpleDateFormatTwo.parse(dates);//格式化系统当前时间
         //制单日期
-        purchaseInvoiceData.setRegistrationDate(today);//把获取系统当前时间赋值给实体对象
-
-        //Date invoiceTime = simpleDateFormatTwo.parse(purchaseRequisitionDate);
+        SimpleDateFormat simpleDateFormatOne = new SimpleDateFormat("yyyy-MM-dd");//设置日期格式
+        Date purchaseRequisitionDateOne = simpleDateFormatOne.parse(purchaseRequisitionDate);//格式化系统当前时间
+        purchaseInvoiceData.setRegistrationDate(purchaseRequisitionDateOne);//把获取系统当前时间赋值给实体对象
+        purchaseInvoiceData.setRegistrationDateState("1");
         purchaseInvoiceData.setInvoiceDate(today);
+        purchaseInvoiceData.setInvoiceDateState("2");
         purchaseInvoiceData.setInvoiceState("1");
         purchaseInvoiceData.setInvoiceNumbers(invoiceNumbers);
         purchaseInvoiceData.setInvoiceSupplier(invoiceSupplier);
@@ -134,6 +136,7 @@ public class PurchaseInvoiceServiceImpl extends ServiceImpl<PurchaseInvoiceMappe
             purchaseInvoiceSchedule.setInvoiceNumbers(invoiceNumbers);
             purchaseInvoiceSchedule.setInvoiceSubclass(invoiceSubclass);
             baseMapper.savePurchaseInvoiceSchedule(purchaseInvoiceSchedule);
+            baseMapper.savePurchaseSettlementUpdate(invoiceCode);
         }
         baseMapper.savePurchaseInvoiceData(purchaseInvoiceData);
     }
@@ -220,5 +223,15 @@ public class PurchaseInvoiceServiceImpl extends ServiceImpl<PurchaseInvoiceMappe
         page.setSearchCount(false);
         page.setTotal(baseMapper.countPurchasePaymentAddQuery(purchaseInvoiceSchedule));
         return baseMapper.purchasePaymentAddQuery(page,purchaseInvoiceSchedule);
+    }
+
+    @Override
+    public void confirmPurchaseInspection(String ids) {
+        baseMapper.confirmPurchaseInspection(ids);
+    }
+
+    @Override
+    public void cancelPurchaseInspection(String ids) {
+        baseMapper.cancelPurchaseInspection(ids);
     }
 }

@@ -144,6 +144,7 @@ public class PurchaseRefundServiceImpl extends ServiceImpl<PurchaseRefundMapper,
             BigDecimal refundDepositOnt = new BigDecimal(refundDeposit);
             purchaseRefundSchedule.setRefundDeposit(refundDepositOnt);
             purchaseSettlementSchedule.setSettlementDeposit(refundDepositOnt);
+            purchaseSettlementSchedule.setWhetherInvoice("2");
             if (!refundLibraryOnt.equals("")) {
                 purchaseRefundSchedule.setRefundLibrary(refundLibraryOnt);
             }if (!supplierNameOnt.equals("")) {

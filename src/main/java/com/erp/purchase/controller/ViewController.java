@@ -554,6 +554,17 @@ public class ViewController {
     private void purchaseRefundModel(Long id, Model model, Boolean transform) {
         PurchaseRefund purchaseRefund = this.purchaseRefundService.findPurchaseRefundQueryPage(id);
         model.addAttribute("purchaseRefund", purchaseRefund);
+        if (purchaseRefund.getRefundPreparationDate() != null) {
+            model.addAttribute("refundPreparationDate", DateUtil.getDateFormat(purchaseRefund.getRefundPreparationDate(), DateUtil.FULL_TIME_SPLIT));
+        }
+    }
+
+    //供应商 双击跳到供应商选择列表页面  添加时用到
+    @GetMapping("purchaseRefundListName")
+    @RequiresPermissions("purchaseSupplier:view")
+    public String purchaseRefundListName(Model model) {
+
+        return FebsUtil.view("purchaseRefund/purchaseSupplierSelectionList");
     }
 
     //供应商 双击跳到供应商选择列表页面  添加时用到
@@ -561,7 +572,7 @@ public class ViewController {
     @RequiresPermissions("purchaseSupplier:view")
     public String purchaseRefundAddName(Model model) {
 
-        return FebsUtil.view("purchaseRefund/purchaseSupplierSelectionList");
+        return FebsUtil.view("purchaseRefund/purchaseSupplierSelectionAddList");
     }
 
     /*采购管理模块-采购退货结束*/
@@ -600,6 +611,14 @@ public class ViewController {
         return FebsUtil.view("purchaseInvoice/purchaseSupplierSelectionList");
     }
 
+    //供应商 双击跳到供应商选择列表页面  添加时用到
+    @GetMapping("dblclickInvoiceSupplierAdd")
+    @RequiresPermissions("purchaseSettlement:view")
+    public String dblclickInvoiceSupplierAdd(Model model) {
+
+        return FebsUtil.view("purchaseInvoice/purchaseSupplierSelectionAdd");
+    }
+
     /*采购发票查阅*/
     @GetMapping("purchaseInvoice/queryup/{invoiceNumbers}")
     @RequiresPermissions("purchaseInvoice:reading")
@@ -612,6 +631,9 @@ public class ViewController {
     private void purchaseInvoiceModel(String invoiceNumbers, Model model, Boolean transform) {
         PurchaseInvoice purchaseInvoice = this.purchaseInvoiceService.findPurchaseInvoiceQueryPage(invoiceNumbers);
         model.addAttribute("purchaseInvoice", purchaseInvoice);
+        if (purchaseInvoice.getInvoiceDate() != null) {
+            model.addAttribute("invoiceDate", DateUtil.getDateFormat(purchaseInvoice.getInvoiceDate(), DateUtil.FULL_TIME_SPLIT));
+        }
     }
 
     /*采购发票新增*/
@@ -669,6 +691,14 @@ public class ViewController {
     public String dblclickPaymentSupplierName(Model model) {
 
         return FebsUtil.view("purchasePayment/purchaseSupplierSelectionList");
+    }
+
+    //供应商 双击跳到供应商选择列表页面  添加时用到
+    @GetMapping("dblclickPaymentSupplierNameAdd")
+    @RequiresPermissions("purchasePayment:view")
+    public String dblclickPaymentSupplierNameAdd(Model model) {
+
+        return FebsUtil.view("purchasePayment/purchaseSupplierSelectionAdd");
     }
 
     //采购付款修改

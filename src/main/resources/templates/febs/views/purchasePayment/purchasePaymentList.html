@@ -278,9 +278,7 @@
                 febs.alert.warn('请选择一条需要修改的数据');
             }else{
                 layui.each(checkStatus.data, function (key, item) {
-                if (item.paymentShape == 1){
-                        febs.alert.warn('改状态不允许修改');
-                    }else{
+                if (item.paymentState == 1){
                     febs.modal.open('【采购订单】 修改', 'purchase/purchasePayment/update/' + item.id, {
                         btn: ['保存', '关闭'],
                         area: ["80%","70%"],
@@ -292,6 +290,8 @@
                             layer.closeAll();
                         }
                     });
+                    }else{
+                    febs.alert.warn('改状态不允许修改');
                 }
                 });
             }

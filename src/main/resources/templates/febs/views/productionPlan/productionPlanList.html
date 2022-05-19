@@ -1,0 +1,562 @@
+<style>
+    #productionPlan-list xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #productionPlan-list xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="productionPlan-list" lay-title="生产计划">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="production-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md12">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid layui-form-label-sm">状态：</label>
+                                        <div class="layui-input-inline" style="width: 70px">
+                                            <select name="planState">
+                                                <option value="">全部</option>
+                                                <option value="1">登记</option>
+                                                <option value="2">确认</option>
+                                            </select>
+                                        </div>
+                                        <label class="layui-form-label layui-form-label-sm">日期：</label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <input type="text" id="start_date" name="signedDateFrom" placeholder="" lay-verify='date' class="layui-input"/>
+                                            <i class="layui-icon" id="start_date_icon"></i>
+                                        </div>
+                                        <label class="layui-form-mid">至：</label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <input type="text" id="end_date" name="signedDateTo" placeholder="" lay-verify='date' class="layui-input"/>
+                                            <i class="layui-icon " id="end_date_icon"></i>
+                                        </div>
+                                        <label class="layui-form-label">客&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;户：</label>
+                                        <div class="layui-input-inline" style="width: 90px">
+                                            <input type="text" name="planCustomerName" lay-verify="required"  id="customerNameTwo" lay-reqtext="系统提示，请选择客户"  ondblclick="productionPlanPlanCustomerNameList()"
+                                                   autocomplete="off" class="layui-input" style="width: 110px" placeholder="请双击" readonly>
+                                        </div>
+                                        <label class="layui-form-label layui-form-label-sm" >订单号：</label>
+                                        <div class="layui-input-inline" style="width: 90px">
+                                            <input type="text" name="planNumber" autocomplete="off" style="width: 90px" class="layui-input" >
+                                        </div>
+                                        <label class="layui-form-label layui-form-label-sm" >机器码：</label>
+                                        <div class="layui-input-inline" style="width: 90px">
+                                            <input type="text" name="planCode" autocomplete="off" style="width: 90px" class="layui-input" >
+                                        </div>
+                                        <label class="layui-form-label layui-form-label-sm" >名称：</label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <input type="text" name="planProductName" autocomplete="off" style="width: 110px" class="layui-input" >
+                                        </div>
+                                        <label class="layui-form-label layui-form-label-sm" style="width: 110px">规格型号：</label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <input type="text" name="planSpecifications" autocomplete="off" style="width: 110px" class="layui-input" >
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="productionPlanTable" lay-data="{id: 'productionPlanTable'}"></table>
+
+                    <div><span style="margin-left: 845px;color: #f5222d" data-th-text="${quantityNameCount}"></span></div>
+                    <div class="layui-col-md4">
+                        <div class="layui-form-item"></div>
+                    </div>
+                    <div class="layui-col-md8 layui-col-sm12 layui-col-xs12 table-action-area">
+                        <!--搜索按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                            <i class="layui-icon">&#xe848;</i>搜索
+                        </div>
+                        <!-- 刷新表格按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain table-action" id="reset">
+                            <i class="layui-icon">&#xe79b;</i>刷新
+                        </div>
+                        <!--添加按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="productionPlan:add" id="addTo">
+                            <i class="layui-icon">&#xe78a;</i>新增
+                        </div>
+                        <!--修改按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="productionPlan:update" id="updateTo">
+                            <i class="layui-icon">&#xe642;</i>修改
+                        </div>
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
+                             "shiro:hasAnyPermissions="productionPlan:delete" id="deleteTo">
+                            <i class="layui-icon layui-icon-close"></i>删除
+                        </div>
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="productionPlan:bom" id="addBOM">
+                            <i class="layui-icon">&#xe78a;</i>设置BOM
+                        </div>
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="productionPlan:shipment" id="shipmentTo">
+                            <i class="layui-icon">&#xe78a;</i>关联出货
+                        </div>
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="productionPlan:updateBom" id="updateBOM">
+                            <i class="layui-icon">&#xe642;</i>修改BOM
+                        </div>
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="productionPlan:upload" id="uploadTo">
+                            <i class="layui-icon">&#xe642;</i>附件上传
+                        </div>
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="productionPlan:number" id="numberTo">
+                            <i class="layui-icon">&#xe642;</i>出厂编号
+                        </div>
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="productionPlan:complete" id="completeTo">
+                            <i class="layui-icon">&#xe642;</i>机加完成
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="planState-state">
+    {{#
+    let planState = {
+    1: {title: '登记'},
+    2: {title: '完成'}
+    }[d.planState];
+    }}
+    <span>{{ planState.title }}</span>
+</script>
+<script type="text/html" id="planMachining-name">
+    {{# if(d.planMachining != null){ }}
+    <a lay-event="download" shiro:hasPermission="productionPlan:upload">下载</a>
+    {{# } }}
+</script>
+<script type="text/html" id="planAssembly-name">
+    {{# if(d.planAssembly != null){ }}
+    <a lay-event="download" shiro:hasPermission="productionPlan:upload">下载</a>
+    {{# } }}
+</script>
+<script type="text/html" id="planInstructionsOne-name">
+    {{# if(d.planInstructionsOne != null){ }}
+    <a lay-event="download" shiro:hasPermission="productionPlan:upload">下载</a>
+    {{# } }}
+</script>
+<script type="text/html" id="planInstructionsTwo-name">
+    {{# if(d.planInstructionsTwo != null){ }}
+    <a lay-event="download" shiro:hasPermission="productionPlan:upload">下载</a>
+    {{# } }}
+</script>
+<script type="text/html" id="planInstructionsThree-name">
+    {{# if(d.planInstructionsThree != null){ }}
+    <a lay-event="download" shiro:hasPermission="productionPlan:upload">下载</a>
+    {{# } }}
+</script>
+<script type="text/html" id="planMachineBom-name">
+    {{# if(d.planMachineBom != null){ }}
+    <a lay-event="viewBom" shiro:hasPermission="productionPlan:bom">查看BOM</a>
+    {{# } }}
+</script>
+<script>
+    layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+            laydate = layui.laydate,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            dropdownMenu = layui.dropdownMenu,
+            $view = $('#productionPlan-list'),
+            $query = $view.find('#query'),
+            $addTo = $view.find('#addTo'),//添加
+            $updateTo = $view.find('#updateTo'),//修改
+            $deleteTo = $view.find('#deleteTo'),
+            $addBOM = $view.find('#addBOM'),
+            $updateBOM = $view.find('#updateBOM'),
+            $numberTo = $view.find('#numberTo'),
+            $uploadTo = $view.find('#uploadTo'),
+            $reset = $view.find('#reset'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'createTime', type: null},
+            signedDateFrom,
+            signedDateTo,
+            tableIns;
+
+        form.render();
+
+        initTable();
+
+        var firstDate = new Date();
+        firstDate.setDate(1); //本月第一天
+        var datetime =firstDate.getFullYear() + '-' + (firstDate.getMonth() + 1) + '-' + firstDate.getDate();
+        //开始日期
+        var start = laydate.render({
+            elem: '#start_date',
+            max: 0 ,//设置一个默认最大值//最大值为当前日期
+            trigger: 'click',
+            value: new Date(firstDate),//初始赋值,//默认值本月第一天
+            done:function(value,date){
+                if(value && (value>$("#end_date").val())){
+                    /*开始时间大于结束时间时，清空结束时间*/
+                    $("#end_date").val("");
+                }
+                end.config.min ={
+                    year:date.year,
+                    month:date.month-1,
+                    date: date.date,
+                };
+            }
+        });
+        //结束日期
+        var end = laydate.render({
+            elem: '#end_date',
+            min : datetime,//最大值为当前日期
+            trigger: 'click',
+            value: new Date(),//初始赋值,//默认当前时间
+            done:function(value,date){
+                start.config.max={
+                    year:date.year,
+                    month:date.month-1,
+                    date: date.date,
+                }
+            }
+        });
+
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        $reset.on('click', function () {
+            $searchForm[0].reset();
+            tableIns.reload({where: getQueryParams(), page: {curr: 1}});
+        });
+
+        $addTo.on('click', function () {
+            febs.modal.open('【整机计划】新增', 'production/productionPlan/add', {
+                type:1,
+                btn: ['保存', '关闭'],
+                area: $(window).width() <= 750 ? '95%' : '50%',
+                yes: function (index, layero) {
+                    $('#productionPlan-add').find('#submit').trigger('click');
+                    return false;
+                },
+                btn2: function () {
+                    layer.closeAll();
+                }
+            });
+        });
+
+        $updateTo.on('click', function () {
+            let checkStatus = table.checkStatus('productionPlanTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要修改的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要修改的数据');
+            }else{
+                layui.each(checkStatus.data, function (key, item) {
+                    febs.modal.open('【整机计划】 修改', 'production/productionPlan/update/' + item.id, {
+                        area: $(window).width() <= 750 ? '95%' : '50%',
+                        btn: ['保存', '关闭'],
+                        yes: function (index, layero) {
+                            $('#productionPlan-update').find('#submit').trigger('click');
+                            return false;
+                        },
+                        btn2: function () {
+                            layer.closeAll();
+                        }
+                    });
+                });
+            }
+        });
+
+        $deleteTo.on('click', function () {
+            let checkStatus = table.checkStatus('productionPlanTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要删除的数据');
+            } else {
+                febs.modal.confirm('删除生产计划', '确定删除？', function () {
+                    let planNumber = [];
+                    layui.each(checkStatus.data, function (key, item) {
+                        planNumber.push(item.planNumber)
+                    });
+                    deleteProductionPlan(planNumber.join(','));
+                });
+            }
+        });
+
+        $numberTo.on('click', function () {
+            let checkStatus = table.checkStatus('productionPlanTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要出厂的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要出厂的数据');
+            }else {
+                layui.each(checkStatus.data, function (key, item) {
+                    febs.modal.open('请输入', 'production/productionPlan/number/' + item.id, {
+                        type: 1,
+                        btn: ['确定', '取消'],
+                        area:["30%","20%"],
+                        yes: function (index, layero) {
+                            $('#productionPlan-number').find('#submit').trigger('click');
+                            return false;
+                        },
+                        btn2: function () {
+                            layer.closeAll();
+                        }
+                    });
+                });
+            }
+        });
+
+        $uploadTo.on('click', function () {
+            let checkStatus = table.checkStatus('productionPlanTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择一条数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条数据');
+            }else {
+                layui.each(checkStatus.data, function (key, item) {
+                    febs.modal.open('【整机计划】 附件上传', 'production/productionPlan/upload/' + item.id, {
+                        type: 1,
+                        btn: ['确定', '取消'],
+                        area:["50%","50%"],
+                        yes: function (index, layero) {
+                            $('#productionPlan-upload').find('#submit').trigger('click');
+                            return false;
+                        },
+                        btn2: function () {
+                            layer.closeAll();
+                        }
+                    });
+                });
+            }
+        });
+
+        $addBOM.on('click', function () {
+            let checkStatus = table.checkStatus('productionPlanTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择一条数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条数据');
+            }else {
+                layui.each(checkStatus.data, function (key, item) {
+                    if (item.planMachineBom != null) {
+                        febs.alert.warn('请勿重复设置BOM');
+                    } else {
+                        febs.modal.open('【客户BOM】 设置', 'production/productionPlan/addBom/' + item.id, {
+                            btn: ['增加行', '删除行', '保存', '关闭'],
+                            area: ["80%", "60%"],
+                            yes: function (index, layero) {
+                                var dataBak = [];
+                                var tableBak = layui.table.cache['productionPlanAddBom-table'];
+                                for (var i = 0; i < tableBak.length; i++) {
+                                    dataBak.push(tableBak[i]);
+                                }
+                                dataBak.push({
+                                    "settlementQuantity": "",
+                                    "settlementQuantitys": "",
+                                    "settlementMoney": "",
+                                });
+                                console.log(dataBak);
+                                layui.table.reload('productionPlanAddBom-table', {
+                                    data: dataBak
+                                });
+                            },
+                            btn2: function () {
+                                let checkStatus = table.checkStatus('productionPlanAddBom-table')
+                                    , demo = table.cache["productionPlanAddBom-table"];//获取表格中的数据
+                                if (checkStatus.data.length < 1) {
+                                    layer.alert("请选择一条数据操作");
+                                    return false;
+                                } else {
+                                    var tablelist = [];//存储未选中的数据
+                                    //循环表格数据
+                                    for (var i in demo) {
+                                        //判断未选中数据
+                                        if (!demo[i].LAY_CHECKED) {
+                                            //存入数组
+                                            tablelist.push(demo[i]);
+                                        }
+                                    }
+                                    //重载表格
+                                    table.reload('productionPlanAddBom-table', {
+                                        data: tablelist
+                                    });
+
+                                }
+                                return false;
+                            },
+                            btn3: function () {
+                                $('#productionPlan-addBom').find('#submit').trigger('click');
+                                return false;
+                            },
+                            btn4: function () {
+                                layer.closeAll();
+                            }
+                        });
+                    }
+                })
+            }
+        });
+
+        $updateBOM.on('click', function () {
+            let checkStatus = table.checkStatus('productionPlanTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择一条数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条数据');
+            }else {
+                layui.each(checkStatus.data, function (key, item) {
+                        febs.modal.open('【客户BOM】 修改', 'production/productionPlan/updateBom/' + item.id, {
+                            btn: ['增加行', '删除行', '保存', '关闭'],
+                            area: ["80%", "60%"],
+                            yes: function (index, layero) {
+                                var dataBak = [];
+                                var tableBak = layui.table.cache['productionPlanUpdateBom'];
+                                for (var i = 0; i < tableBak.length; i++) {
+                                    dataBak.push(tableBak[i]);
+                                }
+                                dataBak.push({
+                                    "settlementQuantity": "",
+                                    "settlementQuantitys": "",
+                                    "settlementMoney": "",
+                                });
+                                console.log(dataBak);
+                                layui.table.reload('productionPlanUpdateBom', {
+                                    data: dataBak
+                                });
+                            },
+                            btn2: function () {
+                                let checkStatus = table.checkStatus('productionPlanUpdateBom')
+                                    , demo = table.cache["productionPlanUpdateBom"];//获取表格中的数据
+                                if (checkStatus.data.length < 1) {
+                                    layer.alert("请选择一条数据操作");
+                                    return false;
+                                } else {
+                                    var tablelist = [];//存储未选中的数据
+                                    //循环表格数据
+                                    for (var i in demo) {
+                                        //判断未选中数据
+                                        if (!demo[i].LAY_CHECKED) {
+                                            //存入数组
+                                            tablelist.push(demo[i]);
+                                        }
+                                    }
+                                    //重载表格
+                                    table.reload('productionPlanUpdateBom', {
+                                        data: tablelist
+                                    });
+
+                                }
+                                return false;
+                            },
+                            btn3: function () {
+                                $('#productionPlan-updateBom').find('#submit').trigger('click');
+                                return false;
+                            },
+                            btn4: function () {
+                                layer.closeAll();
+                            }
+                        });
+                })
+            }
+        });
+
+        table.on('tool(productionPlanTable)', function (obj) {
+            let data = obj.data,
+                layEvent = obj.event;
+            if (layEvent === 'see') {
+                febs.modal.view(data.planProductName, 'production/productionPlan/detail/' + data.planNumber, {
+                    btn: ['关闭'],
+                    area: $(window).width() <= 750 ? '95%' : '50%',
+                    yes: function (index, layero) {
+                        layer.closeAll();
+                    }
+                });
+            }
+            if (layEvent === 'viewBom') {
+                febs.modal.view('【BOM查阅】', 'production/productionPlan/viewBom/' + data.planCode, {
+                    area: ["80%", "60%"],
+                    yes: function (index, layero) {
+                        layer.closeAll();
+                    }
+                });
+            }
+        });
+
+        function initTable() {
+            tableIns = febs.table.init({
+                elem: $view.find('table'),
+                id: 'productionPlanTable',
+                url: ctx + 'productionPlan/list',
+                page: true,
+                cols: [
+                    [
+                    {type: 'checkbox'},
+                    {field:'number',title:'序号', minWidth: 30,align:'center',templet:function (d) {
+                            return d.LAY_INDEX;}},
+                    {title: '状态', templet: '#planState-state',align:'center',width:60},
+                    {field: 'planDate', title: '交货日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.planDate, "yyyy-MM-dd") }}</div>', minWidth: 115},
+                    {field: 'planNumber', title: '订单号',align:'center', minWidth: 105},
+                    {field: 'planCustomerName', title: '客户名称',align:'center', minWidth: 90},
+                    {field: 'planProductName', title: '产品名称',align:'center', minWidth: 90},
+                    {field: 'planSpecifications', title: '规格型号', minWidth: 95},
+                    {field: 'planCode', title: '机器码', minWidth: 105,align:'center'},
+                    {field: 'planConfiguration', title: '配置', minWidth: 90,align:'center',templet: dispose},
+                    {field: 'planMachineBom', title: '机器BOM', minWidth: 90,align:'center',toolbar: '#planMachineBom-name'},
+                    {field: 'planInvoice', title: '发货单号', minWidth: 90},
+                    {field: 'planFactory', title: '出厂编号',align:'center', minWidth: 90},
+                    {field: 'planMachining', title: '机加附件',align:'center', minWidth: 90 ,toolbar: '#planMachining-name'},
+                    {field: 'planAssembly', title: '装配附件', minWidth: 95,toolbar: '#planAssembly-name'},
+                    {field: 'planInstructionsOne', title: '说明1', minWidth: 90,toolbar: '#planInstructionsOne-name'},
+                    {field: 'planInstructionsTwo', title: '说明2', minWidth: 90,align:'center',toolbar: '#planInstructionsTwo-name'},
+                    {field: 'planInstructionsThree', title: '说明3', minWidth: 90,align:'center',toolbar: '#planInstructionsThree-name'},
+                    {field: 'planVoucher', title: '制单人', minWidth: 72},
+                    {field: 'planVoucherDate', title: '制单日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.planVoucherDate, "yyyy-MM-dd") }}</div>', minWidth: 115},
+                    {field: 'planNote', title: '备注',minWidth: 90}
+                ]
+                ]
+            });
+        }
+
+        function dispose(d) {
+            var dispose = d.planConfiguration;
+            if ('' == dispose || null == dispose || undefined == dispose) {
+                return '';
+            }
+            if (dispose.length > 0) {
+                return '<a class="layui-table-link" href="javascript:void(0);" lay-event="see">查看</a>&nbsp;' + d.planConfiguration +' ';
+            }
+        }
+
+        function deleteProductionPlan(planNumber) {
+            febs.get(ctx + 'productionPlan/delete/' + planNumber, null, function () {
+                febs.alert.success('删除生产计划成功');
+                $query.click();
+            });
+        }
+
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+    });
+
+    function productionPlanPlanCustomerNameList(){
+        layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
+            let $ = layui.$,
+                febs = layui.febs;
+
+            febs.modal.open('客户选择列表', 'sale/saleCustomerProfileSelection', {
+                area:["75%","70%"],
+                yes: function (index, layero) {
+                }
+
+            });
+        });
+    }
+</script>

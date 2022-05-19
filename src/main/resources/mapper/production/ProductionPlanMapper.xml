@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.production.mapper.ProductionPlanMapper">
+    <sql id="countProductionPlansSql">
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_production_plan pp
+        WHERE
+            1 = 1
+        <if test="productionPlan.signedDateFrom != null and productionPlan.signedDateFrom !=''">
+            And pp.plan_voucher_date &gt;= #{productionPlan.signedDateFrom}
+        </if>
+        <if test="productionPlan.signedDateTo != null and productionPlan.signedDateTo !=''">
+            And pp.plan_voucher_date &lt;= #{productionPlan.signedDateTo}
+        </if>
+        <if test="productionPlan.planState != null and productionPlan.planState != ''">
+            AND pp.plan_state = #{productionPlan.planState}
+        </if>
+        <if test="productionPlan.planCustomerName != null and productionPlan.planCustomerName != ''">
+            AND pp.plan_customer_name = #{productionPlan.planCustomerName}
+        </if>
+        <if test="productionPlan.planNumber != null and productionPlan.planNumber != ''">
+            AND pp.plan_number = #{productionPlan.planNumber}
+        </if>
+        <if test="productionPlan.planCode != null and productionPlan.planCode != ''">
+            AND pp.plan_code = #{productionPlan.planCode}
+        </if>
+        <if test="productionPlan.planProductName != null and productionPlan.planProductName != ''">
+            AND pp.plan_product_name = #{productionPlan.planProductName}
+        </if>
+        <if test="productionPlan.planSpecifications != null and productionPlan.planSpecifications != ''">
+            AND pp.plan_specifications = #{productionPlan.planSpecifications}
+        </if>
+    </sql>
+
+    <sql id="findProductionPlansPageSql" >
+        SELECT
+            pp.id,
+            pp.plan_state,
+            pp.plan_date,
+            pp.plan_number,
+            pp.plan_customer_name,
+            pp.plan_product_name,
+            pp.plan_specifications,
+            pp.plan_code,
+            pp.plan_configuration,
+            pp.plan_machine_bom,
+            pp.plan_invoice,
+            pp.plan_factory,
+            pp.plan_machining,
+            pp.plan_assembly,
+            pp.plan_instructions_one,
+            pp.plan_instructions_two,
+            pp.plan_instructions_three,
+            pp.plan_voucher,
+            pp.plan_voucher_date,
+            pp.plan_note
+        FROM
+            jr_production_plan pp
+        WHERE
+            1 = 1
+        <if test="productionPlan.signedDateFrom != null and productionPlan.signedDateFrom !=''">
+            And pp.plan_voucher_date &gt;= #{productionPlan.signedDateFrom}
+        </if>
+        <if test="productionPlan.signedDateTo != null and productionPlan.signedDateTo !=''">
+            And pp.plan_voucher_date &lt;= #{productionPlan.signedDateTo}
+        </if>
+        <if test="productionPlan.planState != null and productionPlan.planState != ''">
+            AND pp.plan_state = #{productionPlan.planState}
+        </if>
+        <if test="productionPlan.planCustomerName != null and productionPlan.planCustomerName != ''">
+            AND pp.plan_customer_name = #{productionPlan.planCustomerName}
+        </if>
+        <if test="productionPlan.planNumber != null and productionPlan.planNumber != ''">
+            AND pp.plan_number = #{productionPlan.planNumber}
+        </if>
+        <if test="productionPlan.planCode != null and productionPlan.planCode != ''">
+            AND pp.plan_code = #{productionPlan.planCode}
+        </if>
+        <if test="productionPlan.planProductName != null and productionPlan.planProductName != ''">
+            AND pp.plan_product_name = #{productionPlan.planProductName}
+        </if>
+        <if test="productionPlan.planSpecifications != null and productionPlan.planSpecifications != ''">
+            AND pp.plan_specifications = #{productionPlan.planSpecifications}
+        </if>
+        GROUP BY
+            pp.plan_number
+    </sql>
+
+    <select id="countProductionPlans" parameterType="com.erp.production.entity.ProductionPlan" resultType="long">
+        <include refid="countProductionPlansSql"/>
+    </select>
+
+    <select id="findProductionPlansPage" parameterType="com.erp.production.entity.ProductionPlan" resultType="com.erp.production.entity.ProductionPlan">
+        <include refid="findProductionPlansPageSql"/>
+    </select>
+
+    <select id="queryProductionPlan" resultType="com.erp.production.entity.ProductionPlan">
+        SELECT
+            pp.id,
+            pp.plan_state,
+            pp.plan_date,
+            pp.plan_number,
+            pp.plan_code
+        FROM
+            jr_production_plan pp
+        WHERE
+            1 = 1
+        ORDER BY
+            pp.plan_voucher_date DESC
+            LIMIT 1
+    </select>
+
+    <insert id="saveProductionPlanScheduleDate" parameterType="com.erp.production.entity.ProductionPlanSchedule">
+        INSERT INTO
+            jr_production_plan_schedule
+        (
+            plan_order,
+            plan_amount,
+            plan_machine,
+            plan_configuration,
+            plan_cutting,
+            plan_process,
+            plan_other,
+            plan_jig,
+            plan_shape,
+            plan_size,
+            plan_note,
+            plan_attachment,
+            plan_number,
+            plan_date
+        )
+        VALUES
+            (
+                #{planOrder},
+                #{planAmount},
+                #{planMachine},
+                #{planConfiguration},
+                #{planCutting},
+                #{planProcess},
+                #{planOther},
+                #{planJig},
+                #{planShape},
+                #{planSize},
+                #{planNote},
+                #{planAttachment},
+                #{planNumber},
+                #{planDate}
+            )
+    </insert>
+
+    <insert id="saveProductionPlan" parameterType="com.erp.production.entity.ProductionPlan">
+        INSERT INTO
+            jr_production_plan
+        (
+            plan_state,
+            plan_date,
+            plan_number,
+            plan_customer_name,
+            plan_product_name,
+            plan_specifications,
+            plan_voucher,
+            plan_voucher_date,
+            plan_code,
+            plan_configuration
+        )
+        VALUES
+            (
+                #{planState},
+                #{planDate},
+                #{planNumber},
+                #{planCustomerName},
+                #{planProductName},
+                #{planSpecifications},
+                #{planVoucher},
+                #{planVoucherDate},
+                #{planCode},
+                #{planConfiguration}
+            )
+    </insert>
+
+    <select id="productionPlanScheduleId" parameterType="Long" resultType="com.erp.production.entity.ProductionPlanSchedule">
+        SELECT
+            pp.plan_customer_name customerName,
+            pp.plan_date,
+            pps.plan_amount,
+            pps.plan_order,
+            pps.plan_machine,
+            pps.plan_configuration,
+            pps.plan_cutting,
+            pps.plan_process,
+            pps.plan_other,
+            pps.plan_jig,
+            pps.plan_shape,
+            pps.plan_size,
+            pps.plan_note,
+            pps.plan_attachment,
+            pp.plan_number,
+            pp.plan_product_name,
+            pp.plan_specifications,
+            pp.plan_code
+        FROM
+            jr_production_plan pp
+                LEFT JOIN jr_production_plan_schedule pps ON pp.plan_number = pps.plan_number
+        WHERE
+            1=1
+        AND pp.id = #{id}
+    </select>
+
+    <delete id="deleteProductionPlanSchedule">
+        delete from jr_production_plan_schedule  where plan_number = #{planNumber}
+    </delete>
+
+    <delete id="deleteProductionPlan">
+        delete from jr_production_plan  where plan_number = #{planNumber}
+    </delete>
+
+    <update id="updateProductionPlan"  parameterType="com.erp.production.entity.ProductionPlan">
+        UPDATE
+            jr_production_plan
+        set plan_configuration= #{productionPlan.planConfiguration},plan_note = #{productionPlan.planNote}
+        WHERE plan_number=#{productionPlan.planNumber}
+    </update>
+
+    <update id="numberProductionPlan"  parameterType="com.erp.production.entity.ProductionPlan">
+        UPDATE
+            jr_production_plan
+        set plan_factory= #{productionPlan.planFactory}
+        WHERE plan_number=#{productionPlan.planNumber}
+    </update>
+
+    <update id="uploadProductionPlan"  parameterType="com.erp.production.entity.ProductionPlan">
+        UPDATE
+            jr_production_plan
+        set plan_machining= #{productionPlan.planMachining},
+            plan_assembly= #{productionPlan.planAssembly},
+            plan_instructions_one= #{productionPlan.planInstructionsOne},
+            plan_instructions_two= #{productionPlan.planInstructionsTwo},
+            plan_instructions_three= #{productionPlan.planInstructionsThree}
+        WHERE id=#{productionPlan.id}
+    </update>
+
+    <select id="productionPlanId" parameterType="Long" resultType="com.erp.production.entity.ProductionPlan">
+        SELECT
+            pp.id,
+            pp.plan_machining,
+            pp.plan_assembly,
+            pp.plan_instructions_one,
+            pp.plan_instructions_two,
+            pp.plan_instructions_three
+        FROM
+            jr_production_plan pp
+        WHERE
+            1=1
+          AND pp.id = #{id}
+    </select>
+
+    <select id="productionPlanPlanNumber" parameterType="String" resultType="com.erp.production.entity.ProductionPlanSchedule">
+        SELECT
+            pp.plan_customer_name customerName,
+            pp.plan_date,
+            pps.plan_amount,
+            pps.plan_order,
+            pps.plan_machine,
+            pps.plan_configuration,
+            pps.plan_cutting,
+            pps.plan_process,
+            pps.plan_other,
+            pps.plan_jig,
+            pps.plan_shape,
+            pps.plan_size,
+            pps.plan_note,
+            pps.plan_attachment,
+            pp.plan_number
+        FROM
+            jr_production_plan pp
+                LEFT JOIN jr_production_plan_schedule pps ON pp.plan_number = pps.plan_number
+        WHERE
+            1=1
+          AND pp.plan_number = #{planNumber}
+    </select>
+
+    <insert id="saveSetupBomSchedule" parameterType="com.erp.production.entity.SetupBomSchedule">
+        INSERT INTO
+            jr_setup_bom_schedule
+        (
+            bom_code,
+            bom_material_code,
+            bom_material_name,
+            bom_specifications,
+            bom_brand,
+            bom_amount,
+            bom_material,
+            bom_material_amount,
+            bom_note,
+            plan_number,
+            bom_unit,
+            bom_location,
+            tree_secondary_id
+        )
+        VALUES
+            (
+                #{bomCode},
+                #{bomMaterialCode},
+                #{bomMaterialName},
+                #{bomSpecifications},
+                #{bomBrand},
+                #{bomAmount},
+                #{bomMaterial},
+                #{bomMaterialAmount},
+                #{bomNote},
+                #{planNumber},
+                #{bomUnit},
+                #{bomLocation},
+                #{treeSecondaryId}
+            )
+    </insert>
+
+    <insert id="saveSetupBomData" parameterType="com.erp.production.entity.SetupBom">
+        INSERT INTO
+            jr_setup_bom
+        (
+            plan_number,
+            bom_part,
+            bom_configuration,
+            bom_code,
+            tree_id
+        )
+        VALUES
+            (
+                #{planNumber},
+                #{bomPart},
+                #{bomConfiguration},
+                #{bomCode},
+                #{treeId}
+            )
+    </insert>
+
+    <update id="updatePlanMachineBom"  parameterType="com.erp.production.entity.ProductionPlan">
+        UPDATE
+            jr_production_plan
+        set plan_machine_bom= #{productionPlan.planMachineBom}
+        WHERE plan_code=#{productionPlan.planCode}
+    </update>
+
+    <select id="queryProductionPlanUpdateBom" parameterType="String" resultType="com.erp.production.entity.SetupBom">
+        SELECT
+            plan_number,
+            bom_part,
+            bom_configuration,
+            bom_code
+        FROM
+            jr_setup_bom
+        WHERE
+            plan_number = #{planCode}
+    </select>
+
+    <delete id="deleteSetupBom">
+        delete from jr_setup_bom  where plan_number = #{planCode}
+    </delete>
+
+    <delete id="deleteSetupBomSchedule">
+        delete from jr_setup_bom_schedule  where plan_number = #{planCode}
+    </delete>
+
+    <select id="queryProductionPlanViewBom" parameterType="String" resultType="com.erp.production.entity.SetupBomSchedule">
+        SELECT
+            sb.plan_number,
+            sb.bom_part,
+            sb.bom_configuration,
+            sb.bom_code,
+            pp.plan_product_name,
+            sbs.bom_material_name,
+            sbs.bom_specifications,
+            sbs.bom_unit,
+            sbs.bom_amount,
+            sbs.bom_material,
+            sbs.bom_note,
+            sb.tree_id,
+            sbs.tree_secondary_id
+        FROM
+            jr_production_plan pp
+                LEFT JOIN jr_setup_bom sb ON pp.plan_code = sb.plan_number
+                LEFT JOIN jr_setup_bom_schedule sbs ON sb.plan_number = sbs.plan_number
+        WHERE
+            sbs.plan_number = #{planCode}
+    </select>
+
+</mapper>

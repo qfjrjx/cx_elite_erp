@@ -1,0 +1,203 @@
+<style>
+    #productionPlan-update {
+        padding: 20px 25px 25px 0;
+    }
+</style>
+<div class="layui-fluid" id="productionPlan-update">
+    <form class="layui-form" action="" lay-filter="productionPlan-update-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label">交货日期：</label>
+            <div class="layui-input-inline" style="width: 120px">
+                <input type="text" name="planDate" id="planDate" data-th-value="${productionPlanSchedule.planDate}"
+                       autocomplete="off" class="layui-input createDate" readonly>
+            </div>
+            <label class="layui-form-label">客&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;户：</label>
+            <div class="layui-input-inline" style="width: 90px">
+                <input type="text" name="customerName" lay-verify="required"  id="customerNameTwo" lay-reqtext="系统提示，请选择客户"  ondblclick="saleCustomerProfileSelection()"
+                       autocomplete="off" class="layui-input" style="width: 110px" placeholder="请双击" readonly>
+            </div>
+            <label class="layui-form-label">销售订单：</label>
+            <div class="layui-input-inline" style="width: 90px">
+                <input type="text" name="planOrder" lay-verify="required"  id="oddNumbersTwo" lay-reqtext="系统提示，请选择客户"  ondblclick="saleOrderList()"
+                       autocomplete="off" class="layui-input" style="width: 110px" placeholder="请双击" readonly>
+            </div>
+            <label class="layui-form-label">数&nbsp;量：</label>
+            <div class="layui-input-inline" style="width: 90px">
+                <input type="text" name="planAmount" id="quantityNameOne" class="layui-input" placeholder = "1" autocomplete="off">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" >机器要求：</label>
+            <div class="layui-input-block">
+                <input type="text" name="planMachine" id="configureNamesOne"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" >电脑配置：</label>
+            <div class="layui-input-block">
+                <input type="text" name="planConfiguration"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">刀具大小：</label>
+            <div class="layui-input-block">
+                <input type="text" name="planCutting"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">加工工序：</label>
+            <div class="layui-input-block">
+                <input type="text" name="planProcess"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">其他要求：</label>
+            <div class="layui-input-block">
+                <input type="text" name="planOther" id="otherRequirementsOne"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">夹具要求：</label>
+            <div class="layui-input-block">
+                <input type="text" name="planJig"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">产品形状：</label>
+            <div class="layui-input-block">
+                <input type="text" name="planShape"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">产品尺寸：</label>
+            <div class="layui-input-block">
+                <input type="text" name="planSize"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注：</label>
+            <div class="layui-input-block">
+                <input type="text" name="planNote"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">附&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;件：</label>
+            <div class="layui-input-inline" style="width: 600px">
+                <button type="button" class="layui-btn layui-btn-sm" id="uploadPic"><i class="layui-icon">&#xe67c;</i>选择文件</button>
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-warm" id="uploadPicBtn"><i class="layui-icon layui-icon-upload-circle"></i>开始上传</button>
+                <span id="span-img" style="color: #f5222d" data-th-text="${productionPlanSchedule.planAttachment}"></span>
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" id="deletePicBtndeletePicBtn"><i class="layui-icon layui-icon-close"></i>删除</button>
+                　　　　<!-- 隐藏的input,一个隐藏的input（用于保存文件url） -->
+                　　　　<input type="hidden" id="img_url" name="planAttachment" value=""/>
+            </div>
+        </div>
+
+        <div class="layui-form-item" style="display: none;">
+            <label class="layui-form-label">订单号：</label>
+            <div class="layui-input-block">
+                <input type="text" name="planNumber" id="planNumber"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+
+        <div class="layui-form-item febs-hide">
+            <button class="layui-btn" lay-submit="" lay-filter="productionPlan-update-form-submit" id="submit"></button>
+        </div>
+    </form>
+</div>
+
+<script langguage="JavaScript">
+    var now = new Date();
+    planDate.value=new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate();
+    var orderDeliveryDateTo = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate();
+
+</script>
+
+<script data-th-inline="javascript">
+    layui.use(['febs', 'form', 'validate','table', 'xmSelect','upload','laydate'], function () {
+        let $ = layui.$,
+            febs = layui.febs,
+            layer = layui.layer,
+            form = layui.form,
+            productionPlanSchedule = [[${productionPlanSchedule}]],
+            planDateOnt = [[${planDate}]],
+            upload = layui.upload,
+            uploadInst;
+
+        initPurchaseRequisitionCreatorValue();
+
+        function initPurchaseRequisitionCreatorValue() {
+            form.val("productionPlan-update-form", {
+                "customerName": productionPlanSchedule.customerName,
+                "planOrder":productionPlanSchedule.planOrder,
+                "planAmount": productionPlanSchedule.planAmount,
+                "planMachine":productionPlanSchedule.planMachine,
+                "planConfiguration": productionPlanSchedule.planConfiguration,
+                "planCutting":productionPlanSchedule.planCutting,
+                "planProcess": productionPlanSchedule.planProcess,
+                "planOther":productionPlanSchedule.planOther,
+                "planJig": productionPlanSchedule.planJig,
+                "planShape":productionPlanSchedule.planShape,
+                "planSize": productionPlanSchedule.planSize,
+                "planNote":productionPlanSchedule.planNote,
+                "planNumber":productionPlanSchedule.planNumber,
+                "planAttachment":productionPlanSchedule.planAttachment,
+                "planDate":planDateOnt
+            });
+        }
+
+        //上传图片
+        uploadInst = upload.render({
+            elem: '#uploadPic' //绑定元素
+            ,url: 'document/uploadFile' //上传接口 [[@{/upload/img}]]
+            ,auto: false
+            ,size: 307200 //限制文件大小，单位 KB
+            ,accept: 'file' //允许上传的文件类型
+            ,exts: 'doc|docx|pdf|jpg|jpeg|png|zip|xlsx|xls|excel|'
+            ,bindAction: '#uploadPicBtn'
+            ,before: function(obj){
+                //预读本地文件示例，不支持ie8
+                obj.preview(function(index, file, result){
+                    $('#preShow').attr('src', result); //图片链接（base64）
+                });
+            }
+            ,done: function(res){
+                //如果上传失败
+                if(res.code > 0){
+                    alert("上传失败");
+                    return layer.msg('上传失败');
+                }
+                //上传成功
+                $('#span-img').html(res.data);
+                $('#img_url').attr('value', res.data);
+                return layer.msg('上传成功');
+            }
+            ,error: function(){
+                var demoText = $('#demoText');
+                demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-mini demo-reload">重试</a>');
+                demoText.find('.demo-reload').on('click', function(){
+                    uploadInst.upload();
+                });
+            }
+        });
+
+        form.on('submit(productionPlan-update-form-submit)', function (data) {
+            febs.post(ctx + 'productionPlan/update', data.field,function () {
+                layer.closeAll();
+                febs.alert.success('修改参数成功');
+                $('#productionPlan-list').find('#query').click();
+            });
+            return false;
+
+        });
+    })
+</script>

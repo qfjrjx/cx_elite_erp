@@ -12,21 +12,21 @@
                        autocomplete="off" class="layui-input" placeholder="为空时自动生成" readonly>
             </div>
             <label class="layui-form-mid">付款日期&nbsp;<b>:</b></label>
-            <div class="layui-input-inline" style="width: 100px">
+            <div class="layui-input-inline" style="width: 115px">
                 <input type="text" name="paymentDate" id="paymentDate"
                        autocomplete="off" class="layui-input createDate" readonly>
             </div>
             <label class="layui-form-mid">单位&nbsp;<b>:</b></label>
-            <div class="layui-input-inline" style="width: 145px">
-                <input type="text" name="paymentSupplier" id="paymentSupplier" lay-verify="required" ondblclick="dblclickPaymentSupplierName()"
-                       autocomplete="off" class="layui-input" placeholder="双击选择" style="width: 145px"  readonly>
+            <div class="layui-input-inline" style="width: 115px">
+                <input type="text" name="paymentSupplier" id="paymentSupplier" lay-verify="required"
+                       autocomplete="off" class="layui-input" placeholder="双击选择" style="width: 115px"  readonly>
             </div>
             <label class="layui-form-mid">采购单号&nbsp;<b>:</b></label>
-            <div class="layui-input-inline" style="width: 200px">
+            <div class="layui-input-inline" style="width: 115px">
                 <input type="text" id="paymentCode" name="paymentCode" autocomplete="off" class="layui-input">
             </div>
             <label class="layui-form-mid">付款类型&nbsp;<b>:</b></label>
-            <div class="layui-input-inline" style="width: 85px">
+            <div class="layui-input-inline" style="width: 115px">
                 <select id="paymentTypeOnt"  name="paymentTypeOnt">
                     <option value="">请选择</option>
                     <option value="1">预付</option>
@@ -34,7 +34,7 @@
                 </select>
             </div>
             <label class="layui-form-mid">付款方式&nbsp;<b>:</b></label>
-            <div class="layui-input-inline" style="width: 85px">
+            <div class="layui-input-inline" style="width: 115px">
                 <select id="paymentWayOnt"  name="paymentWayOnt">
                     <option value="">请选择</option>
                     <option value="1">中行</option>
@@ -42,7 +42,7 @@
                 </select>
             </div>
             <label class="layui-form-mid">币&nbsp;种&nbsp;<b>:</b></label>
-            <div class="layui-input-inline" style="width: 90px">
+            <div class="layui-input-inline" style="width: 115px">
                 <select id="currencyNameOnt"  name="currencyNameOnt" lay-verify="required" class="layui-form-select" >
                     <option th:each="currency:${currency}" th:value="${currency.id}">[[${currency.financeParameterName}]]</option>
                 </select>
@@ -51,11 +51,11 @@
             <br>
             <br>
             <label class="layui-form-mid">付款金额&nbsp;<b>:</b></label>
-            <div class="layui-input-inline" style="width: 200px">
+            <div class="layui-input-inline" style="width: 115px">
                 <input type="text" id="paymentMoney" name="paymentMoney" autocomplete="off" class="layui-input">
             </div>
             <label class="layui-form-mid">是否开票&nbsp;<b>:</b></label>
-            <div class="layui-input-inline" style="width: 80px">
+            <div class="layui-input-inline" style="width: 115px">
                 <select name="paymentInvoice" id="paymentInvoice">
                     <option value="">请选择</option>
                     <option value="1">是</option>
@@ -63,17 +63,13 @@
                 </select>
             </div>
             <label class="layui-form-mid">备注&nbsp;<b>:</b></label>
-            <div class="layui-input-inline" style="width: 200px">
+            <div class="layui-input-inline" style="width: 115px">
                 <input type="text" id="paymentRemarks" name="paymentRemarks" autocomplete="off" class="layui-input">
             </div>
             <div class="layui-col-md2 layui-col-sm12 layui-col-xs12 table-action-area">
                 <!--搜索按钮-->
                 <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
                     <i class="layui-icon">&#xe848;</i>查询
-                </div>
-                <!--添加按钮-->
-                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action " id="addTo">
-                    <i class="layui-icon">&#xe78a;</i>确定
                 </div>
             </div>
         </div>
@@ -104,7 +100,8 @@
             $searchForm = $view.find('form'),
             sortObject = {field: 'createDate', type: null},
             purchasePayment = [[${purchasePayment}]],
-            paymentDate = [[${paymentDate}]];
+            paymentDate = [[${paymentDate}]],
+            tableIns;
 
 
         form.render();

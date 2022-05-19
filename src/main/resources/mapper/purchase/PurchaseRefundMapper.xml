@@ -149,9 +149,7 @@
         LEFT JOIN jr_warehouse_storage_schedule wss ON ( ws.order_number = wss.order_numbers )
         WHERE
             1 = 1
-            <if test="warehouseStorage.supplierName != null and warehouseStorage.supplierName != ''">
-                AND ws.supplier_name = #{warehouseStorage.supplierName}
-            </if>
+        AND ws.supplier_name = #{warehouseStorage.supplierName}
             <if test="warehouseStorage.storageLibrary != null and warehouseStorage.storageLibrary != ''">
                 AND ws.storage_library = #{warehouseStorage.storageLibrary}
             </if>

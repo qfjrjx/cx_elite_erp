@@ -60,4 +60,8 @@ public interface IPurchaseInvoiceService extends IService<PurchaseInvoice> {
     List<PurchaseInvoiceSchedule> queryPurchaseInvoiceSchedule(String invoiceNumbers);
 
     IPage<PurchaseInvoiceSchedule> purchasePaymentAddQuery(QueryRequest request, PurchaseInvoiceSchedule purchaseInvoiceSchedule);
+
+    void confirmPurchaseInspection(String ids);
+
+    void cancelPurchaseInspection(String ids);
 }

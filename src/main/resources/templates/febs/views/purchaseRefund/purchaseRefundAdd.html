@@ -11,7 +11,7 @@
         width: 160px;
     }
 </style>
-<div class="layui-fluid layui-anim febs-anim" id="purchaseRefund-add" lay-title="采购收货选择列表">
+<div class="layui-fluid layui-anim febs-anim" id="purchaseRefund-add" lay-title="采购退货选择列表">
     <div class="layui-row febs-container">
         <div class="layui-col-md12">
             <div class="layui-card">
@@ -20,28 +20,23 @@
                         <div class="layui-row">
                             <div class="layui-col-md10">
                                 <div class="layui-form-item">
-                                    <label class="layui-form-mid" >单号&nbsp;<b>:</b></label>
+                                    <label class="layui-form-mid" >单&nbsp;&nbsp;&nbsp;&nbsp;号&nbsp;<b>:</b></label>
                                     <div class="layui-input-inline" style="width: 115px">
-                                        <input type="text" name="refundNumber" id="refundNumber" style="width: 115px"
+                                        <input type="text" name="refundNumber" id="refundNumber"
                                                autocomplete="off" class="layui-input" placeholder="为空时自动生成" readonly>
                                     </div>
-                                    <label class="layui-form-mid">日期</label>
-                                    <div class="layui-input-inline">
-                                        <input type="text" id="start_date" name="signedDateFrom" lay-verify='date' class="layui-input"/>
-                                        <i class="layui-icon" id="start_date_icon"></i>
-                                    </div>
-                                    <label class="layui-form-mid">至：</label>
-                                    <div class="layui-input-inline">
-                                        <input type="text" id="end_date" name="signedDateTo" lay-verify='date' class="layui-input"/>
-                                        <i class="layui-icon " id="end_date_icon"></i>
+                                    <label class="layui-form-mid">日&nbsp;期&nbsp;<b>:</b></label>
+                                    <div class="layui-input-inline" style="width: 115px">
+                                        <input type="text" name="transferDatas" id="transferDatas"
+                                               autocomplete="off" class="layui-input createDate" readonly>
                                     </div>
                                     <label class="layui-form-mid">供应商&nbsp;<b>:</b></label>
-                                    <div class="layui-input-inline" style="width: 145px">
-                                        <input type="text" name="supplierNameRefund" id="supplierNameRefund" lay-verify="required" ondblclick="dblclickCustomerName()"
-                                               autocomplete="off" class="layui-input" placeholder="双击选择" style="width: 145px"  readonly>
+                                    <div class="layui-input-inline" style="width: 115px">
+                                        <input type="text" name="supplierName" lay-verify="required"  id="supplierName" lay-reqtext="系统提示，请选择客户"  ondblclick="dblclickCustomerAddName()"
+                                               autocomplete="off" class="layui-input" placeholder="请双击" readonly>
                                     </div>
-                                    <label class="layui-form-mid">库房&nbsp;<b>:</b></label>
-                                    <div class="layui-input-inline" style="width: 100px">
+                                    <label class="layui-form-mid">库&nbsp;房&nbsp;<b>:</b></label>
+                                    <div class="layui-input-inline" style="width: 115px">
                                         <select name="refundLibrary" id="refundLibrary">
                                             <option value="1">外购库</option>
                                             <option value="2">机加库</option>
@@ -51,37 +46,37 @@
                                         </select>
                                     </div>
                                     <label class="layui-form-mid">币&nbsp;种&nbsp;<b>:</b></label>
-                                    <div class="layui-input-inline" style="width: 90px">
+                                    <div class="layui-input-inline" style="width: 115px">
                                         <select id="currencyNameAdd"  name="currencyNameAdd" lay-verify="required" class="layui-form-select" >
                                             <option th:each="currency:${currency}" th:value="${currency.id}">[[${currency.financeParameterName}]]</option>
                                         </select>
                                     </div>
-                                    <br>
-                                    <br>
                                     <label class="layui-form-mid">税&nbsp;率&nbsp;<b>:</b></label>
-                                    <div class="layui-input-inline" style="width: 85px">
+                                    <div class="layui-input-inline" style="width: 115px">
                                         <select id="taxRateNameAdd"  name="taxRateNameAdd" lay-verify="required" class="layui-form-select" >
                                             <option th:each="taxRate:${taxRate}" th:value="${taxRate.id}">[[${taxRate.financeParameterName}]]</option>
                                         </select>
                                     </div>
+                                    <br>
+                                    <br>
                                     <label class="layui-form-mid">入库单&nbsp;<b>:</b></label>
-                                    <div class="layui-input-inline" style="width: 120px">
+                                    <div class="layui-input-inline" style="width: 115px">
                                         <input type="text"  name="storageNumbers" autocomplete="off" class="layui-input">
                                     </div>
-                                    <label class="layui-form-mid">编码&nbsp;<b>:</b></label>
-                                    <div class="layui-input-inline" style="width: 120px">
+                                    <label class="layui-form-mid">编&nbsp;码&nbsp;<b>:</b></label>
+                                    <div class="layui-input-inline" style="width: 115px">
                                         <input type="text" id="storageCode" name="storageCode" autocomplete="off" class="layui-input">
                                     </div>
-                                    <label class="layui-form-mid">名称&nbsp;<b>:</b></label>
-                                    <div class="layui-input-inline" style="width: 120px">
+                                    <label class="layui-form-mid">名&nbsp;&nbsp;&nbsp;&nbsp;称&nbsp;<b>:</b></label>
+                                    <div class="layui-input-inline" style="width: 115px">
                                         <input type="text" name="storageName" autocomplete="off" class="layui-input">
                                     </div>
-                                    <label class="layui-form-mid">规格&nbsp;<b>:</b></label>
-                                    <div class="layui-input-inline" style="width: 120px">
+                                    <label class="layui-form-mid">规&nbsp;格&nbsp;<b>:</b></label>
+                                    <div class="layui-input-inline" style="width: 115px">
                                         <input type="text" name="storageSpecifications" autocomplete="off" class="layui-input">
                                     </div>
-                                    <label class="layui-form-mid">小类&nbsp;<b>:</b></label>
-                                    <div class="layui-input-inline" style="width: 100px">
+                                    <label class="layui-form-mid">小&nbsp;类&nbsp;<b>:</b></label>
+                                    <div class="layui-input-inline" style="width: 115px">
                                         <select name="storageSubclass" id="storageSubclass">
                                             <option value=""></option>
                                             <option value="1">键盘</option>
@@ -94,10 +89,6 @@
                                 <!--搜索按钮-->
                                 <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
                                     <i class="layui-icon">&#xe848;</i>查询
-                                </div>
-                                <!--添加按钮-->
-                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action " id="addTo">
-                                    <i class="layui-icon">&#xe78a;</i>确定
                                 </div>
                             </div>
                         </div>
@@ -151,19 +142,22 @@
 <script type="text/html" id="zizeng">
     {{d.LAY_TABLE_INDEX+1}}
 </script>
+<script langguage="JavaScript">
+
+    var now = new Date();
+    transferDatas.value=new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate();
+
+</script>
 <script data-th-inline="none" type="text/javascript">
     layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect' , 'validate'], function () {
         let $ = layui.jquery,
-            laydate = layui.laydate,
             febs = layui.febs,
             form = layui.form,
             table = layui.table,
             layer = layui.layer,
-            dropdownMenu = layui.dropdownMenu,
             $view = $('#purchaseRefund-add'),
             $query = $view.find('#query'),
             $reset = $view.find('#reset'),
-            $addTo = $view.find('#addTo'),
             $searchForm = $view.find('form'),
             sortObject = {field: 'createDate', type: null},
             createdDateFrom,
@@ -175,34 +169,6 @@
         initTable();
 
         let userName = currentUser.username;
-        //日期同时绑定多个
-        lay('.createTime').each(function(){
-            laydate.render({
-                elem: this,
-                range: true,
-                trigger: 'click'
-            });
-        })
-        dropdownMenu.render({
-            elem: $view.find('.action-more'),
-            click: function (name, elem, event) {
-                let checkStatus = table.checkStatus('purchaseRefundAdd');
-                if (name === 'delete') {
-                    if (!checkStatus.data.length) {
-                        febs.alert.warn('请选择需要删除的数据');
-                    } else {
-                        febs.modal.confirm('删除领取记录信息', '确定删除？', function () {
-                            let ids = [];
-                            layui.each(checkStatus.data, function (key, item) {
-                                ids.push(item.id)
-                            });
-                            deleteSaleProduct(ids.join(','));
-                        });
-                    }
-                }
-            },
-            options: []
-        });
         table.on('tool(purchaseRefundAdd)', function (obj) {
             let data = obj.data,
                 layEvent = obj.event;
@@ -260,26 +226,7 @@
         var tableData=new Array(); // 用于存放表格数据
         $query.on('click', function () {
             let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
-            alert(params);
             tableIns.reload({where: params, page: {curr: 1}});
-        });
-        $addTo.on('click', function () {
-            var oldDataOne;
-            var oldData =  table.cache["purchaseRefundAdd-table"];
-            for (i=0;i<oldData.length;i++){
-                var dataOne={"applicationNo":oldData[i].orderNumber,"orderCode":oldData[i].orderCode,
-                    "materialName":oldData[i].materialName,"orderSpecifications":oldData[i].orderSpecifications,
-                    "orderQuality":oldData[i].orderQuality,"orderBrand":oldData[i].orderBrand,
-                    "orderCompany":oldData[i].orderCompany,"orderQuantity":oldData[i].orderQuantity,
-                    "unitPrice":3,"orderMoney":oldData[i].orderMoney,"orderRemarks":oldData[i].orderRemarks,
-                    "refundSubclass":oldData[i].refundSubclass,"refundCategory":oldData[i].refundCategory,"refundDeposit":oldData[i].refundDeposit};
-                oldDataOne =  table.cache["purchaseClosedRequisitionList"];
-                oldDataOne.push(dataOne);
-            }
-            layui.table.reload('purchaseClosedRequisitionList',{
-                data : oldDataOne
-            });
-            parent.layer.close(layer.index); //再执行关闭
         });
         $reset.on('click', function () {
             $searchForm[0].reset();
@@ -478,7 +425,7 @@
 
 
     });
-    function dblclickCustomerName(){
+    function dblclickCustomerAddName(){
         layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
             let $ = layui.$,
                 febs = layui.febs;

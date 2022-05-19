@@ -1,0 +1,287 @@
+<style>
+  #productionPlan-upload {
+    padding: 20px 25px 25px 0;
+  }
+</style>
+<div class="layui-fluid" id="productionPlan-upload">
+  <form class="layui-form" action="" lay-filter="productionPlan-upload-form">
+    <div class="layui-form-item">
+      <label class="layui-form-label">机&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;加：</label>
+      <div class="layui-input-inline" style="width: 600px">
+        <button type="button" class="layui-btn layui-btn-sm" id="uploadPic"><i class="layui-icon">&#xe67c;</i>选择文件</button>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-warm" id="uploadPicBtn"><i class="layui-icon layui-icon-upload-circle"></i>开始上传</button>
+        <span id="span-img" style="color: #f5222d" data-th-text="${productionPlan.planMachining}"></span>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" id="deletePicBtndeletePicBtn"><i class="layui-icon layui-icon-close"></i>删除</button>
+        　　　　<!-- 隐藏的input,一个隐藏的input（用于保存文件url） -->
+        　　　　<input type="hidden" id="img_url" name="planMachining" value=""/>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">装&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;配：</label>
+      <div class="layui-input-inline" style="width: 600px">
+        <button type="button" class="layui-btn layui-btn-sm" id="uploadAssembly"><i class="layui-icon">&#xe67c;</i>选择文件</button>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-warm" id="uploadAssemblyBtn"><i class="layui-icon layui-icon-upload-circle"></i>开始上传</button>
+        <span id="span-assembly" style="color: #f5222d" data-th-text="${productionPlan.planAssembly}"></span>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" id="deleteAssemblyBtn"><i class="layui-icon layui-icon-close"></i>删除</button>
+        　　　　<!-- 隐藏的input,一个隐藏的input（用于保存文件url） -->
+        　　　　<input type="hidden" id="img_assembly" name="planAssembly" value=""/>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">说&nbsp;&nbsp;&nbsp;明&nbsp;&nbsp;&nbsp;1：</label>
+      <div class="layui-input-inline" style="width: 600px">
+        <button type="button" class="layui-btn layui-btn-sm" id="uploadOne"><i class="layui-icon">&#xe67c;</i>选择文件</button>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-warm" id="uploadOneBtn"><i class="layui-icon layui-icon-upload-circle"></i>开始上传</button>
+        <span id="span-one" style="color: #f5222d" data-th-text="${productionPlan.planInstructionsOne}"></span>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" id="deleteOneBtn"><i class="layui-icon layui-icon-close"></i>删除</button>
+        　　　　<!-- 隐藏的input,一个隐藏的input（用于保存文件url） -->
+        　　　　<input type="hidden" id="img_one" name="planInstructionsOne" value=""/>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">说&nbsp;&nbsp;&nbsp;明&nbsp;&nbsp;&nbsp;2：</label>
+      <div class="layui-input-inline" style="width: 600px">
+        <button type="button" class="layui-btn layui-btn-sm" id="uploadTwo"><i class="layui-icon">&#xe67c;</i>选择文件</button>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-warm" id="uploadTwoBtn"><i class="layui-icon layui-icon-upload-circle"></i>开始上传</button>
+        <span id="span-two" style="color: #f5222d" data-th-text="${productionPlan.planInstructionsTwo}"></span>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" id="deleteTwoBtn"><i class="layui-icon layui-icon-close"></i>删除</button>
+        　　　　<!-- 隐藏的input,一个隐藏的input（用于保存文件url） -->
+        　　　　<input type="hidden" id="img_two" name="planInstructionsTwo" value=""/>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">说&nbsp;&nbsp;&nbsp;明&nbsp;&nbsp;&nbsp;3：</label>
+      <div class="layui-input-inline" style="width: 600px">
+        <button type="button" class="layui-btn layui-btn-sm" id="uploadThree"><i class="layui-icon">&#xe67c;</i>选择文件</button>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-warm" id="uploadThreeBtn"><i class="layui-icon layui-icon-upload-circle"></i>开始上传</button>
+        <span id="span-three" style="color: #f5222d" data-th-text="${productionPlan.planInstructionsThree}"></span>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" id="deleteThreeBtn"><i class="layui-icon layui-icon-close"></i>删除</button>
+        　　　　<!-- 隐藏的input,一个隐藏的input（用于保存文件url） -->
+        　　　　<input type="hidden" id="img_three" name="planInstructionsThree" value=""/>
+      </div>
+    </div>
+    <div class="layui-form-item" style="display: none;">
+      <label class="layui-form-label">主键：</label>
+      <div class="layui-input-block">
+        <input type="text" name="id" id="id"
+               autocomplete="off" class="layui-input" placeholder="">
+      </div>
+    </div>
+    <div class="layui-form-item febs-hide">
+      <button class="layui-btn" lay-submit="" lay-filter="productionPlan-upload-form-submit" id="submit"></button>
+    </div>
+  </form>
+</div>
+<script data-th-inline="javascript">
+  layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
+    let $ = layui.$,
+            febs = layui.febs,
+            layer = layui.layer,
+            form = layui.form,
+            productionPlan = [[${productionPlan}]],
+            validate = layui.validate,
+            upload = layui.upload,
+            uploadInst;
+
+    form.verify(validate);
+    form.render();
+
+    initPurchaseRequisitionCreatorValue();
+
+    function initPurchaseRequisitionCreatorValue() {
+      form.val("productionPlan-upload-form", {
+        "planMachining":productionPlan.planMachining,
+        "planAssembly":productionPlan.planAssembly,
+        "planInstructionsOne":productionPlan.planInstructionsOne,
+        "planInstructionsTwo":productionPlan.planInstructionsTwo,
+        "planInstructionsThree":productionPlan.planInstructionsThree,
+        "id": productionPlan.id
+      });
+    }
+
+    //机加附件
+    uploadInst = upload.render({
+      elem: '#uploadPic' //绑定元素
+      ,url: 'document/uploadFile' //上传接口 [[@{/upload/img}]]
+      ,auto: false
+      ,size: 307200 //限制文件大小，单位 KB
+      ,accept: 'file' //允许上传的文件类型
+      ,exts: 'doc|docx|pdf|jpg|jpeg|png|zip|xlsx|xls|excel|'
+      ,bindAction: '#uploadPicBtn'
+      ,before: function(obj){
+        //预读本地文件示例，不支持ie8
+        obj.preview(function(index, file, result){
+          $('#preShow').attr('src', result); //图片链接（base64）
+        });
+      }
+      ,done: function(res){
+        //如果上传失败
+        if(res.code > 0){
+          alert("上传失败");
+          return layer.msg('上传失败');
+        }
+        //上传成功
+        $('#span-img').html(res.data);
+        $('#img_url').attr('value', res.data);
+        return layer.msg('上传成功');
+      }
+      ,error: function(){
+        var demoText = $('#demoText');
+        demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-mini demo-reload">重试</a>');
+        demoText.find('.demo-reload').on('click', function(){
+          uploadInst.upload();
+        });
+      }
+    });
+
+    //装配附件
+    uploadInst = upload.render({
+      elem: '#uploadAssembly' //绑定元素
+      ,url: 'document/uploadFile' //上传接口 [[@{/upload/img}]]
+      ,auto: false
+      ,size: 307200 //限制文件大小，单位 KB
+      ,accept: 'file' //允许上传的文件类型
+      ,exts: 'doc|docx|pdf|jpg|jpeg|png|zip|xlsx|xls|excel|'
+      ,bindAction: '#uploadAssemblyBtn'
+      ,before: function(obj){
+        //预读本地文件示例，不支持ie8
+        obj.preview(function(index, file, result){
+          $('#preShow').attr('src', result); //图片链接（base64）
+        });
+      }
+      ,done: function(res){
+        //如果上传失败
+        if(res.code > 0){
+          alert("上传失败");
+          return layer.msg('上传失败');
+        }
+        //上传成功
+        $('#span-assembly').html(res.data);
+        $('#img_assembly').attr('value', res.data);
+        return layer.msg('上传成功');
+      }
+      ,error: function(){
+        var demoText = $('#demoText');
+        demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-mini demo-reload">重试</a>');
+        demoText.find('.demo-reload').on('click', function(){
+          uploadInst.upload();
+        });
+      }
+    });
+
+    //说明1
+    uploadInst = upload.render({
+      elem: '#uploadOne' //绑定元素
+      ,url: 'document/uploadFile' //上传接口 [[@{/upload/img}]]
+      ,auto: false
+      ,size: 307200 //限制文件大小，单位 KB
+      ,accept: 'file' //允许上传的文件类型
+      ,exts: 'doc|docx|pdf|jpg|jpeg|png|zip|xlsx|xls|excel|'
+      ,bindAction: '#uploadOneBtn'
+      ,before: function(obj){
+        //预读本地文件示例，不支持ie8
+        obj.preview(function(index, file, result){
+          $('#preShow').attr('src', result); //图片链接（base64）
+        });
+      }
+      ,done: function(res){
+        //如果上传失败
+        if(res.code > 0){
+          alert("上传失败");
+          return layer.msg('上传失败');
+        }
+        //上传成功
+        $('#span-one').html(res.data);
+        $('#img_one').attr('value', res.data);
+        return layer.msg('上传成功');
+      }
+      ,error: function(){
+        var demoText = $('#demoText');
+        demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-mini demo-reload">重试</a>');
+        demoText.find('.demo-reload').on('click', function(){
+          uploadInst.upload();
+        });
+      }
+    });
+
+    //说明2
+    uploadInst = upload.render({
+      elem: '#uploadTwo' //绑定元素
+      ,url: 'document/uploadFile' //上传接口 [[@{/upload/img}]]
+      ,auto: false
+      ,size: 307200 //限制文件大小，单位 KB
+      ,accept: 'file' //允许上传的文件类型
+      ,exts: 'doc|docx|pdf|jpg|jpeg|png|zip|xlsx|xls|excel|'
+      ,bindAction: '#uploadTwoBtn'
+      ,before: function(obj){
+        //预读本地文件示例，不支持ie8
+        obj.preview(function(index, file, result){
+          $('#preShow').attr('src', result); //图片链接（base64）
+        });
+      }
+      ,done: function(res){
+        //如果上传失败
+        if(res.code > 0){
+          alert("上传失败");
+          return layer.msg('上传失败');
+        }
+        //上传成功
+        $('#span-two').html(res.data);
+        $('#img_two').attr('value', res.data);
+        return layer.msg('上传成功');
+      }
+      ,error: function(){
+        var demoText = $('#demoText');
+        demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-mini demo-reload">重试</a>');
+        demoText.find('.demo-reload').on('click', function(){
+          uploadInst.upload();
+        });
+      }
+    });
+
+    //说明3
+    uploadInst = upload.render({
+      elem: '#uploadThree' //绑定元素
+      ,url: 'document/uploadFile' //上传接口 [[@{/upload/img}]]
+      ,auto: false
+      ,size: 307200 //限制文件大小，单位 KB
+      ,accept: 'file' //允许上传的文件类型
+      ,exts: 'doc|docx|pdf|jpg|jpeg|png|zip|xlsx|xls|excel|'
+      ,bindAction: '#uploadThreeBtn'
+      ,before: function(obj){
+        //预读本地文件示例，不支持ie8
+        obj.preview(function(index, file, result){
+          $('#preShow').attr('src', result); //图片链接（base64）
+        });
+      }
+      ,done: function(res){
+        //如果上传失败
+        if(res.code > 0){
+          alert("上传失败");
+          return layer.msg('上传失败');
+        }
+        //上传成功
+        $('#span-three').html(res.data);
+        $('#img_three').attr('value', res.data);
+        return layer.msg('上传成功');
+      }
+      ,error: function(){
+        var demoText = $('#demoText');
+        demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-mini demo-reload">重试</a>');
+        demoText.find('.demo-reload').on('click', function(){
+          uploadInst.upload();
+        });
+      }
+    });
+
+    form.on('submit(productionPlan-upload-form-submit)', function (data) {
+      febs.post(ctx + 'productionPlan/upload', data.field, function () {
+        layer.closeAll();
+        febs.alert.success('附件上传成功');
+        $('#productionPlan-list').find('#query').click();
+      });
+      return false;
+
+    });
+  })
+</script>

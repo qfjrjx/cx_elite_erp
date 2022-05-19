@@ -4,15 +4,18 @@ import com.erp.common.entity.FebsConstant;
 import com.erp.common.utils.FebsUtil;
 import com.erp.purchase.entity.PurchaseParameters;
 import com.erp.purchase.service.IPurchaseParametersService;
-import com.erp.sale.entity.SaleBusinessPersonnel;
+import com.erp.technology.entity.TechnologyBomConfiguration;
+import com.erp.technology.entity.TechnologyBomParameter;
 import com.erp.technology.entity.TechnologyProduct;
 import com.erp.technology.entity.TechnologyProductCategory;
+import com.erp.technology.service.ITechnologyBomConfigurationService;
+import com.erp.technology.service.ITechnologyBomParameterService;
 import com.erp.technology.service.ITechnologyProductCategoryService;
 import com.erp.technology.service.ITechnologyProductService;
-import org.springframework.ui.Model;
 import lombok.RequiredArgsConstructor;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +36,10 @@ public class ViewController {
     private final ITechnologyProductService technologyProductService;
     //采购参数表 Service接口
     private final IPurchaseParametersService purchaseParametersService;
+    //BOM参数 Service接口
+    private final ITechnologyBomParameterService iTechnologyBomParameterService;
+    //BOM配置 Service接口
+    private final ITechnologyBomConfigurationService technologyBomConfigurationService;
 
     /* 产品类别模块开始 */
     @GetMapping("technologyProductCategory/list")
@@ -157,5 +164,97 @@ public class ViewController {
         model.addAttribute("technologyProduct", technologyProduct);
     }
     /*技术管理模块结束*/
+
+    /*BOM参数开始*/
+
+    //BOM参数查询
+    @GetMapping("technologyBomParameter/list")
+    @RequiresPermissions("technologyBomParameter:view")
+    public String technologyConfigurationBOM(){
+        return FebsUtil.view("technologyBom/technologyBomParameterList");
+    }
+
+    //BOM参数添加
+    @GetMapping("technologyBomParameter/add")
+    @RequiresPermissions("technologyBomParameter:add")
+    public String technologyBomParameterAdd() {
+        return FebsUtil.view("technologyBom/technologyBomParameterAdd");
+    }
+
+    //BOM参数修改
+    @GetMapping("technologyBomParameter/update/{id}")
+    @RequiresPermissions("technologyBomParameter:update")
+    public String productionPlanUpdate(@PathVariable Long id, Model model){
+        technologyBomParameterModel(id, model, false);
+        return FebsUtil.view("technologyBom/technologyBomParameterUpdate");
+    }
+    //生产计划修改回填
+    private void technologyBomParameterModel(Long id, Model model, Boolean transform){
+        TechnologyBomParameter technologyBomParameter = iTechnologyBomParameterService.technologyBomParameterId(id);
+        model.addAttribute("technologyBomParameterModel", technologyBomParameter);
+    }
+
+    /*BOM参数结束*/
+
+    /*BOM配置开始*/
+
+    //BOM配置查询
+    @GetMapping("technologyBomConfiguration/list")
+    @RequiresPermissions("technologyBomConfiguration:view")
+    public String technologyBomConfiguration(Model model){
+        //查询BOM参数
+        List<TechnologyBomParameter> parameterName  = iTechnologyBomParameterService.findTechnologyBomParametersList();
+        model.addAttribute("parameterName",parameterName);
+        return FebsUtil.view("technologyBom/technologyBomConfigurationList");
+    }
+
+    //BOM配置新增
+    @GetMapping("technologyBomConfiguration/add")
+    @RequiresPermissions("technologyBomConfiguration:add")
+    public String technologyBomConfigurationAdd(Model model){
+        //查询BOM参数
+        List<TechnologyBomParameter> parameterName  = iTechnologyBomParameterService.findTechnologyBomParametersList();
+        model.addAttribute("parameterName",parameterName);
+        return FebsUtil.view("technologyBom/technologyBomConfigurationAdd");
+    }
+
+    //点击新增跳转物料编码选择列表页面
+    @GetMapping("purchaseRequisitionQueryList")
+    @RequiresPermissions("purchaseRequisition:view")
+    public String purchaseMaterialCodeUpdateIndex(Model model){
+        return FebsUtil.view("technologyBom/purchaseMaterialCode");
+    }
+
+    //点击新增跳转物料编码选择列表页面
+    @GetMapping("purchaseRequisitionQuery")
+    @RequiresPermissions("purchaseRequisition:view")
+    public String purchaseRequisitionQueryIndex(Model model){
+        return FebsUtil.view("technologyBom/purchaseRequisitionQuery");
+    }
+
+    /*BOM配置修改*/
+    @GetMapping("technologyBomConfiguration/update/{id}")
+    @RequiresPermissions("technologyBomConfiguration:update")
+    public String technologyBomConfigurationUpdate(@PathVariable String id,Model model){
+        technologyBomConfigurationModel(id, model, false);
+        return FebsUtil.view("technologyBom/technologyBomConfigurationUpdate");
+    }
+
+    /*BOM配置查阅*/
+    @GetMapping("technologyBomConfiguration/refer/{id}")
+    @RequiresPermissions("technologyBomConfiguration:refer")
+    public String technologyBomConfigurationRefer(@PathVariable String id,Model model){
+        technologyBomConfigurationModel(id, model, false);
+        return FebsUtil.view("technologyBom/technologyBomConfigurationRefer");
+    }
+    //BOM配置查阅
+    private void technologyBomConfigurationModel(String id, Model model, Boolean transform) {
+        TechnologyBomConfiguration technologyBomConfiguration = this.technologyBomConfigurationService.findTechnologyBomConfigurationModel(id);
+        List<TechnologyBomParameter> parameterName  = iTechnologyBomParameterService.findTechnologyBomParametersList();
+        model.addAttribute("parameterName",parameterName);
+        model.addAttribute("technologyBomConfiguration", technologyBomConfiguration);
+    }
+
+    /*BOM配置结束*/
 
 }

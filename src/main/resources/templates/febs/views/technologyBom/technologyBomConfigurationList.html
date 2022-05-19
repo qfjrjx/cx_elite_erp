@@ -1,0 +1,411 @@
+<style>
+    #technology-configuration xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #technology-configuration xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="technology-configuration" lay-title="BOM参数">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="technology-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md12">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid">部分名称&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 90px">
+                                            <select id="parameterName"  name="parameterName" lay-verify="required" class="layui-form-select" >
+                                                <option value=""></option>
+                                                <option th:each="parameterName:${parameterName}" th:value="${parameterName.id}">[[${parameterName.parameterName}]]</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid">配置&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 90px">
+                                            <select id="parameterWith"  name="parameterWith" lay-verify="required" class="layui-form-select" >
+                                                <option value=""></option>
+                                                <option value="1">外购件</option>
+                                                <option value="2">机械清单</option>
+                                                <option value="3">随机配件</option>
+                                                <option value="4">JZ-8.7</option>
+                                                <option value="5">JZ-5.13C</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-mid" >状态&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 90px">
+                                            <select id="parameterState"  name="parameterState" lay-verify="required" class="layui-form-select" >
+                                                <option value=""></option>
+                                                <option value="1">登记</option>
+                                                <option value="2">确认</option>
+                                                <option value="3">受控</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="technologyBomConfigurationTable" lay-data="{id: 'technologyBomConfigurationTable'}"></table>
+
+                    <div><span style="margin-left: 845px;color: #f5222d" data-th-text="${quantityNameCount}"></span></div>
+                    <div class="layui-col-md6">
+                        <div class="layui-form-item"></div>
+                    </div>
+                    <div class="layui-col-md6 layui-col-sm12 layui-col-xs12 table-action-area">
+                        <!--搜索按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                            <i class="layui-icon">&#xe848;</i>搜索
+                        </div>
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action"
+                             shiro:hasAnyPermissions="technologyBomConfiguration:refer" id="refer">
+                            <i class="layui-icon">&#xe848;</i>查阅
+                        </div>
+                        <!--添加按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="technologyBomConfiguration:add" id="addTo">
+                            <i class="layui-icon">&#xe78a;</i>新增
+                        </div>
+                        <!--修改按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="technologyBomConfiguration:update" id="updateTo">
+                            <i class="layui-icon">&#xe642;</i>修改
+                        </div>
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action"
+                             shiro:hasAnyPermissions="technologyBomConfiguration:delete" id="deleteTo">
+                            <i class="layui-icon layui-icon-close"></i>删除
+                        </div>
+                        <!--确认按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
+                             "shiro:hasAnyPermissions="technologyBomConfiguration:confirm" id="confirmTo">
+                            <i class="layui-icon layui-icon-ok-circle"></i>确认
+                        </div>
+                        <!--取消按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
+                             "shiro:hasAnyPermissions="technologyBomConfiguration:cancel" id="cancelTo">
+                            <i class="layui-icon layui-icon-close"></i>取消
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="parameter-state">
+    {{#
+    let parameterState = {
+    1: {title: '登记'},
+    2: {title: '确认'},
+    3: {title: '受控'}
+    }[d.parameterState];
+    }}
+    <span>{{ parameterState.title }}</span>
+</script>
+<script type="text/html" id="parameterWith-state">
+    {{#
+    let parameterWith = {
+    1: {title: '外购件'},
+    2: {title: '机械清单'},
+    3: {title: '随机配件'},
+    4: {title: 'JZ-8.7'},
+    5: {title: 'JZ-5.13C'}
+    }[d.parameterWith];
+    }}
+    <span>{{ parameterWith.title }}</span>
+</script>
+<script>
+    layui.use(['jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            $view = $('#technology-configuration'),
+            $query = $view.find('#query'),
+            $refer = $view.find('#refer'),
+            $addTo = $view.find('#addTo'),//添加
+            $updateTo = $view.find('#updateTo'),//修改
+            $deleteTo = $view.find('#deleteTo'),
+            $confirmTo = $view.find('#confirmTo'),
+            $cancelTo = $view.find('#cancelTo'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'createTime', type: null},
+            tableIns;
+
+        form.render();
+
+        initTable();
+
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        $refer.on('click', function () {
+            let checkStatus = table.checkStatus('technologyBomConfigurationTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要查阅的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要查阅的数据');
+            }else{
+                layui.each(checkStatus.data, function (key, item) {
+                    febs.modal.open('【BOM配置】 明细查看', 'technology/technologyBomConfiguration/refer/' + item.id, {
+                        area: ["80%","60%"],
+                    });
+                });
+            }
+        });
+
+        $addTo.on('click', function () {
+            febs.modal.open('【BOM配置】 新增', 'technology/technologyBomConfiguration/add', {
+                btn: ['增加行','删除行','删除整单','保存', '关闭'],
+                area: ["80%","60%"],
+                yes: function (index, layero) {
+                    var dataBak = [];
+                    var tableBak = layui.table.cache['technologyConfiguration-table'];
+                    for (var i=0;i<tableBak.length; i++){
+                        dataBak.push(tableBak[i]);
+                    }
+                    dataBak.push({
+                        "parameterDrawings":"",
+                        "parameterMaterial":"",
+                        "parameterSpecifications":"",
+                        "parameterUnit":"",
+                        "parameterBrand":"",
+                        "parameterNumber":"",
+                        "parameterReplace":"",
+                        "parameterNote":""
+                    });
+                    console.log(dataBak);
+                    layui.table.reload('technologyConfiguration-table',{
+                        data:dataBak
+                    });
+                },
+                btn2: function () {
+                    let checkStatus = table.checkStatus('technologyConfiguration-table')
+                        , demo = table.cache["technologyConfiguration-table"];//获取表格中的数据
+                    if (checkStatus.data.length < 1) {
+                        layer.alert("请选择一条数据操作");
+                        return false;
+                    }else {
+                        var tablelist = [];//存储未选中的数据
+                        //循环表格数据
+                        for (var i in demo) {
+                            //判断未选中数据
+                            if (!demo[i].LAY_CHECKED) {
+                                //存入数组
+                                tablelist.push(demo[i]);
+                            }
+                        }
+                        //重载表格
+                        table.reload('technologyConfiguration-table', {
+                            data: tablelist
+                        });
+
+                    }
+                    return false;
+                },
+                btn3: function () {
+                    var dataBak = [];
+                    layui.table.reload('technologyConfiguration-table',{
+                        data:dataBak
+                    });
+                    return false;
+                },
+                btn4: function () {
+                    $('#configuration-add').find('#submit').trigger('click');
+                    return false;
+                },
+                btn5: function () {
+                    layer.closeAll();
+                }
+            });
+        });
+
+        $updateTo.on('click', function () {
+            let checkStatus = table.checkStatus('technologyBomConfigurationTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要修改的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要修改的数据');
+            }else{
+                layui.each(checkStatus.data, function (key, item) {
+                    febs.modal.open('【BOM参数】 修改', 'technology/technologyBomConfiguration/update/' + item.id, {
+                        area: ["80%","60%"],
+                        btn: ['增加行','删除行','删除整单','保存', '关闭'],
+                        yes: function (index, layero) {
+                            var buttonArr = [];
+                            var tableBak = layui.table.cache['configurationUpdate'];//获取之前编辑过的全部数据，前提是编辑数据是要更新缓存，buttonList 为表格的id
+                            for (var i = 0; i < tableBak.length; i++) {
+                                buttonArr.push(tableBak[i]);      //将之前的数组存储
+                            }
+                            buttonArr.push({
+                                "parameterDrawings":"",
+                                "parameterMaterial":"",
+                                "parameterSpecifications":"",
+                                "parameterUnit":"",
+                                "parameterBrand":"",
+                                "parameterNumber":"",
+                                "parameterReplace":"",
+                                "parameterNote":""
+                            });
+                            table.reload('configurationUpdate',{
+                                data:buttonArr
+                            });
+                        },
+                        btn2: function () {
+                            let checkStatus = table.checkStatus('configurationUpdate')
+                                , demo = table.cache["configurationUpdate"];//获取表格中的数据
+                            if (checkStatus.data.length < 1) {
+                                layer.alert("请选择一条数据操作");
+                                return false;
+                            }else {
+                                var tablelist = [];//存储未选中的数据
+                                //循环表格数据
+                                for (var i in demo) {
+                                    //判断未选中数据
+                                    if (!demo[i].LAY_CHECKED) {
+                                        //存入数组
+                                        tablelist.push(demo[i]);
+                                    }
+                                }
+                                //重载表格
+                                table.reload('configurationUpdate', {
+                                    data: tablelist
+                                });
+
+                            }
+                            return false;
+                        },
+                        btn3: function () {
+                            var dataBak = [];
+                            layui.table.reload('configurationUpdate',{
+                                data:dataBak
+                            });
+                            return false;
+                        },
+                        btn4: function () {
+                            $('#configuration-update').find('#submit').trigger('click');
+                            return false;
+                        },
+                        btn5: function () {
+                            layer.closeAll();
+                        }
+                    });
+                });
+            }
+        });
+
+        $deleteTo.on('click', function () {
+            let checkStatus = table.checkStatus('technologyBomConfigurationTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要删除的数据');
+            } else {
+                febs.modal.confirm('删除BOM配置', '确定删除？', function () {
+                    let parameterCode = [];
+                    layui.each(checkStatus.data, function (key, item) {
+                        parameterCode.push(item.parameterCode)
+                    });
+                    deleteTechnologyBomConfiguration(parameterCode.join(','));
+                });
+            }
+        });
+
+        $confirmTo.on('click', function () {
+            let checkStatus = table.checkStatus('technologyBomConfigurationTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要确认的数据');
+            } else {
+                let ids = [];
+                layui.each(checkStatus.data, function (key, item) {
+                    ids.push(item.id)
+                    if(item.parameterState == 2){
+                        febs.alert.warn('请勿重复确认');
+                    }else {
+                        febs.modal.confirm('确认BOM配置', '是否确认？', function () {
+                            confirmTechnologyBomConfiguration(ids.join(','));
+                        });
+                    }
+                });
+            }
+        });
+
+        $cancelTo.on('click', function () {
+            let checkStatus = table.checkStatus('technologyBomConfigurationTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要取消的数据');
+            } else {
+                let ids = [];
+                layui.each(checkStatus.data, function (key, item) {
+                    ids.push(item.id)
+                    if(item.parameterState == 1){
+                        febs.alert.warn('请勿重复取消');
+                    }else {
+                        febs.modal.confirm('取消BOM配置', '是否取消？', function () {
+                            cancelTechnologyBomConfiguration(ids.join(','));
+                        });
+                    }
+                });
+            }
+        });
+
+        function initTable() {
+            tableIns = febs.table.init({
+                elem: $view.find('table'),
+                id: 'technologyBomConfigurationTable',
+                url: ctx + 'technologyBomConfiguration/list',
+                page: true,
+                cols: [
+                    [
+                        {type: 'checkbox'},
+                        {field:'number',title:'序号', minWidth: 30,align:'center',templet:function (d) {
+                                return d.LAY_INDEX;}},
+                        {title: '状态', templet: '#parameter-state',align:'center',width:90},
+                        {field: 'parameterCode', title: 'BOM编码',align:'center', minWidth: 105},
+                        {field: 'parameterName', title: '部分名称',align:'center', minWidth: 90},
+                        {title: '配置', templet: '#parameterWith-state',align:'center',width:90},
+                        {field: 'parameterAttachment', title: '附件',minWidth: 95},
+                        {field: 'parameterInstructions', title: '说明',minWidth: 95},
+                        {field: 'parameterInputting', title: '建档人',align:'center', minWidth: 90},
+                        {field: 'parameterInputtingDate', title: '建档日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.parameterInputtingDate, "yyyy-MM-dd") }}</div>', minWidth: 115}
+                    ]
+                ]
+            });
+        }
+
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+
+        function deleteTechnologyBomConfiguration(parameterCode) {
+            febs.get(ctx + 'technologyBomConfiguration/delete/' + parameterCode, null, function () {
+                febs.alert.success('删除BOM配置成功');
+                $query.click();
+            });
+        }
+
+        function confirmTechnologyBomConfiguration(ids) {
+            febs.get(ctx + 'technologyBomConfiguration/confirm/' + ids, null, function () {
+                febs.alert.success('确认BOM配置成功');
+                $query.click();
+            });
+        }
+
+        function cancelTechnologyBomConfiguration(ids) {
+            febs.get(ctx + 'technologyBomConfiguration/cancel/' + ids, null, function () {
+                febs.alert.success('取消BOM配置成功');
+                $query.click();
+            });
+        }
+
+    })
+</script>

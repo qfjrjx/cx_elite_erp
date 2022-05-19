@@ -129,6 +129,7 @@
                             $("#supplierName").attr("value","");
                         }
                         $("#invoiceSupplier").attr("value",obj.supplierFullName);/*供应商添加回填*/
+                        parent.layer.close(layer.index)
                         $("#invoiceSupplierAdd").attr("value",obj.supplierFullName);/*供应商添加回填*/
                         parent.layer.close(layer.index)
                     })

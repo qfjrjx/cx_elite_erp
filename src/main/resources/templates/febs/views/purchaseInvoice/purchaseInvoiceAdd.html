@@ -13,77 +13,78 @@
                         <div class="layui-row">
                             <div class="layui-col-md10">
                                 <div class="layui-form-item">
-                                    <label class="layui-form-mid">单位&nbsp;<b>:</b></label>
-                                    <div class="layui-input-inline" style="width: 145px">
-                                        <input type="text" name="invoiceSupplierAdd" id="invoiceSupplierAdd" lay-verify="required" ondblclick="dblclickInvoiceSupplierList()"
-                                               autocomplete="off" class="layui-input" placeholder="双击选择" style="width: 145px"  readonly>
+                                    <label class="layui-form-mid">单&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;位&nbsp;<b>:</b></label>
+                                    <div class="layui-input-inline" style="width: 115px">
+                                        <input type="text" name="invoiceSupplierAdd" id="invoiceSupplierAdd" lay-verify="required" ondblclick="dblclickInvoiceSupplierAdd()"
+                                               autocomplete="off" class="layui-input" placeholder="双击选择" style="width: 115px"  readonly>
                                     </div>
-                                    <label class="layui-form-mid">日期</label>
-                                    <div class="layui-input-inline" style="width: 100px">
-                                        <input type="text" class="layui-input" id="test1" placeholder="">
+                                    <label class="layui-form-mid">日&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;期&nbsp;<b>:</b></label>
+                                    <div class="layui-input-inline" style="width: 115px">
+                                        <input type="text" class="layui-input" name="invoiceDate" id="invoiceDate" placeholder="">
                                     </div>
-                                    <label class="layui-form-mid">发票号&nbsp;<b>:</b></label>
-                                    <div class="layui-input-inline" style="width: 145px">
+                                    <label class="layui-form-mid">发&nbsp;&nbsp;票&nbsp;&nbsp;号&nbsp;<b>:</b></label>
+                                    <div class="layui-input-inline" style="width: 115px">
                                         <input type="text" id="invoiceNumbers" name="invoiceNumbers" autocomplete="off" class="layui-input">
                                     </div>
                                     <label class="layui-form-mid">币&nbsp;种&nbsp;<b>:</b></label>
-                                    <div class="layui-input-inline" style="width: 90px">
+                                    <div class="layui-input-inline" style="width: 115px">
                                         <select id="currencyNameAdd"  name="currencyNameAdd" lay-verify="required" class="layui-form-select" >
                                             <option th:each="currency:${currency}" th:value="${currency.id}">[[${currency.financeParameterName}]]</option>
                                         </select>
                                     </div>
-                                    <label class="layui-form-mid">税&nbsp;率&nbsp;<b>:</b></label>
-                                    <div class="layui-input-inline" style="width: 85px">
+                                    <label class="layui-form-mid">税&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;率&nbsp;<b>:</b></label>
+                                    <div class="layui-input-inline" style="width: 115px">
                                         <select id="taxRateNameAdd"  name="taxRateNameAdd" lay-verify="required" class="layui-form-select" >
                                             <option th:each="taxRate:${taxRate}" th:value="${taxRate.id}">[[${taxRate.financeParameterName}]]</option>
                                         </select>
                                     </div>
                                     <label class="layui-form-mid">发票数量&nbsp;<b>:</b></label>
-                                    <div class="layui-input-inline" style="width: 120px">
+                                    <div class="layui-input-inline" style="width: 115px">
                                         <input type="text" id="invoiceAmount"  name="invoiceAmount" autocomplete="off" class="layui-input">
                                     </div>
                                     <br>
                                     <br>
                                     <label class="layui-form-mid">发票金额&nbsp;<b>:</b></label>
-                                    <div class="layui-input-inline" style="width: 120px">
+                                    <div class="layui-input-inline" style="width: 115px">
                                         <input type="text" id="invoiceMoney" name="invoiceMoney" autocomplete="off" class="layui-input">
                                     </div>
                                     <label class="layui-form-mid">选择数量&nbsp;<b>:</b></label>
-                                    <div class="layui-input-inline" style="width: 120px">
+                                    <div class="layui-input-inline" style="width: 115px">
                                         <input type="text" name="storageName" autocomplete="off" class="layui-input">
                                     </div>
                                     <label class="layui-form-mid">选择金额&nbsp;<b>:</b></label>
-                                    <div class="layui-input-inline" style="width: 120px">
+                                    <div class="layui-input-inline" style="width: 115px">
                                         <input type="text" name="storageSpecifications" autocomplete="off" class="layui-input">
                                     </div>
-                                    <label class="layui-form-mid">税额&nbsp;<b>:</b></label>
-                                    <div class="layui-input-inline" style="width: 120px">
+                                    <label class="layui-form-mid">税&nbsp;额&nbsp;<b>:</b></label>
+                                    <div class="layui-input-inline" style="width: 115px">
                                         <input type="text" name="storageSpecifications" autocomplete="off" class="layui-input">
                                     </div>
                                     <label class="layui-form-mid">发票备注&nbsp;<b>:</b></label>
-                                    <div class="layui-input-inline" style="width: 200px">
+                                    <div class="layui-input-inline" style="width: 115px">
                                         <input type="text" id="invoiceRemarks" name="invoiceRemarks" autocomplete="off" class="layui-input">
                                     </div>
-                                    <br>
-                                    <br>
-                                    <label class="layui-form-mid layui-form-label-sm">口径</label>
-                                    <div class="layui-input-inline">
+                                    <label class="layui-form-mid">口&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;径&nbsp;<b>:</b></label>
+                                    <div class="layui-input-inline" style="width: 115px">
                                         <select name="invoiceState">
                                             <option value=""></option>
                                             <option value="1">采购退回</option>
                                             <option value="2">采购入库</option>
                                         </select>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="layui-col-md2 layui-col-sm12 layui-col-xs12 table-action-area">
-                                <!--搜索按钮-->
-                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
-                                    <i class="layui-icon">&#xe848;</i>查询
-                                </div>
-                                <!--添加按钮-->
-                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action " id="addTo">
-                                    <i class="layui-icon">&#xe78a;</i>确定
+                                    <br>
+                                    <br>
+                                    <label class="layui-form-mid">是否校验&nbsp;<b>:</b></label>
+                                    <div class="layui-input-inline" style="width: 115px">
+                                        <input name="is_notice" value="1" type="radio" title="是" checked="">
+                                        <input name="is_notice" value="0" type="radio" title="否">
+                                    </div>
+                                    <div class="layui-col-md2 layui-col-sm12 layui-col-xs12 table-action-area">
+                                        <!--搜索按钮-->
+                                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                                            <i class="layui-icon">&#xe848;</i>查询
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -118,19 +119,13 @@
     }}
     <span>{{ settlementUse.title }}</span>
 </script>
-<script>
-    layui.use('laydate', function(){
-        var laydate = layui.laydate;
-        //常规用法
-        laydate.render({
-            elem: '#test1'
-        });
-    });
+<script langguage="JavaScript">
+    var now = new Date();
+    invoiceDate.value=new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate();
 </script>
 <script data-th-inline="none" type="text/javascript">
     layui.use(['jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect' , 'validate'], function () {
         let $ = layui.jquery,
-            laydate = layui.laydate,
             febs = layui.febs,
             form = layui.form,
             table = layui.table,
@@ -293,7 +288,7 @@
 
         form.on('submit(purchaseInvoice-add-form-submit)', function (data) {
             var invoiceSupplier = $('#invoiceSupplierAdd').val();
-            var purchaseRequisitionDate = $('#test1').val();
+            var purchaseRequisitionDate = $('#invoiceDate').val();
             var currencyName = $('#currencyNameAdd').val();
             var taxRateName = $('#taxRateNameAdd').val();
             var invoiceAmount = $('#invoiceAmount').val();
@@ -344,11 +339,11 @@
 
     })
 
-    function dblclickInvoiceSupplierList(){
+    function dblclickInvoiceSupplierAdd(){
         layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
             let $ = layui.$,
                 febs = layui.febs;
-            febs.modal.open('供应商选择列表', 'purchase/dblclickInvoiceSupplierList', {
+            febs.modal.open('供应商选择列表', 'purchase/dblclickInvoiceSupplierAdd', {
                 area:["55%","60%"],
                 yes: function (index, layero) {
                 }

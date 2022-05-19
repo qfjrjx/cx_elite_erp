@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.technology.mapper.TechnologyBomConfigurationMapper">
+
+    <sql id="countTechnologyBomConfigurationSql" >
+    SELECT
+        COUNT( 1 )
+    FROM
+        jr_technology_bom_configuration tbc
+    WHERE
+        1 = 1
+        <if test="technologyBomConfiguration.parameterName != null and technologyBomConfiguration.parameterName != ''">
+            AND tbc.parameter_part = #{technologyBomConfiguration.parameterName}
+        </if>
+        <if test="technologyBomConfiguration.parameterState != null and technologyBomConfiguration.parameterState != ''">
+            AND tbc.parameter_state = #{technologyBomConfiguration.parameterState}
+        </if>
+        <if test="technologyBomConfiguration.parameterWith != null and technologyBomConfiguration.parameterWith != ''">
+            AND tbc.parameter_with = #{technologyBomConfiguration.parameterWith}
+        </if>
+    </sql>
+
+    <sql id="findTechnologyBomConfigurationPageSql" >
+        SELECT
+            tbc.id,
+            tbc.parameter_state,
+            tbc.parameter_code,
+            tbp.parameter_name parameterName,
+            tbc.parameter_with,
+            tbc.parameter_attachment,
+            tbc.parameter_instructions,
+            tbc.parameter_inputting,
+            tbc.parameter_inputting_date
+        FROM
+            jr_technology_bom_configuration tbc
+                LEFT JOIN jr_technology_bom_configuration_schedule tbcs ON tbc.parameter_code = tbcs.parameter_code
+                LEFT JOIN jr_technology_bom_parameter tbp ON tbc.parameter_part = tbp.id
+        WHERE
+            1 = 1
+        <if test="technologyBomConfiguration.parameterName != null and technologyBomConfiguration.parameterName != ''">
+            AND tbc.parameter_part = #{technologyBomConfiguration.parameterName}
+        </if>
+        <if test="technologyBomConfiguration.parameterState != null and technologyBomConfiguration.parameterState != ''">
+            AND tbc.parameter_state = #{technologyBomConfiguration.parameterState}
+        </if>
+        <if test="technologyBomConfiguration.parameterWith != null and technologyBomConfiguration.parameterWith != ''">
+            AND tbc.parameter_with = #{technologyBomConfiguration.parameterWith}
+        </if>
+        GROUP BY
+            tbc.parameter_code
+    </sql>
+
+    <select id="countTechnologyBomConfiguration" parameterType="com.erp.technology.entity.TechnologyBomConfiguration" resultType="long">
+        <include refid="countTechnologyBomConfigurationSql"/>
+    </select>
+
+    <select id="findTechnologyBomConfigurationPage" parameterType="com.erp.technology.entity.TechnologyBomConfiguration" resultType="com.erp.technology.entity.TechnologyBomConfiguration">
+        <include refid="findTechnologyBomConfigurationPageSql"/>
+    </select>
+
+    <select id="queryTechnologyBomConfiguration" resultType="com.erp.technology.entity.TechnologyBomConfiguration">
+        SELECT
+            tbc.id,
+            tbc.parameter_code
+        FROM
+            jr_technology_bom_configuration tbc
+        WHERE
+            1 = 1
+        GROUP BY
+            tbc.parameter_inputting_date
+        ORDER BY
+            tbc.parameter_inputting_date DESC
+            LIMIT 1;
+    </select>
+
+    <insert id="saveTechnologyBomConfigurationDate" parameterType="com.erp.technology.entity.TechnologyBomConfiguration">
+        INSERT INTO
+            jr_technology_bom_configuration
+        (
+            parameter_state,
+            parameter_code,
+            parameter_part,
+            parameter_with,
+            parameter_attachment,
+            parameter_instructions,
+            parameter_inputting,
+            parameter_inputting_date
+        )
+        VALUES
+            (
+                #{parameterState},
+                #{parameterCode},
+                #{parameterPart},
+                #{parameterWith},
+                #{parameterAttachment},
+                #{parameterInstructions},
+                #{parameterInputting},
+                #{parameterInputtingDate}
+            )
+    </insert>
+
+    <insert id="saveTechnologyBomConfigurationSchedule" parameterType="com.erp.technology.entity.TechnologyBomConfigurationSchedule">
+        INSERT INTO
+            jr_technology_bom_configuration_schedule
+        (
+            parameter_code,
+            parameter_drawings,
+            parameter_material,
+            parameter_specifications,
+            parameter_unit,
+            parameter_brand,
+            parameter_number,
+            parameter_replace,
+            parameter_note,
+            parameter_date,
+            parameter_material_code,
+            parameter_location
+        )
+        VALUES
+            (
+                #{parameterCode},
+                #{parameterDrawings},
+                #{parameterMaterial},
+                #{parameterSpecifications},
+                #{parameterUnit},
+                #{parameterBrand},
+                #{parameterNumber},
+                #{parameterReplace},
+                #{parameterNote},
+                #{parameterDate},
+                #{parameterMaterialCode},
+                #{parameterLocation}
+            )
+    </insert>
+
+    <select id="findTechnologyBomConfigurationModel" resultType="com.erp.technology.entity.TechnologyBomConfiguration">
+        SELECT
+            tbc.id,
+            tbc.parameter_part parameterPart,
+            tbc.parameter_with parameterWith,
+            tbc.parameter_attachment,
+            tbc.parameter_instructions,
+            tbc.parameter_code
+        FROM
+            jr_technology_bom_configuration tbc
+        WHERE
+            tbc.id = #{id}
+    </select>
+
+    <select id="queryConfigurationRefer" parameterType="String" resultType="com.erp.technology.entity.TechnologyBomConfigurationSchedule">
+        SELECT
+            tbcs.id,
+            tbcs.parameter_code,
+            tbcs.parameter_drawings,
+            tbcs.parameter_material,
+            tbcs.parameter_specifications,
+            tbcs.parameter_unit,
+            tbcs.parameter_brand,
+            tbcs.parameter_number,
+            tbcs.parameter_replace,
+            tbcs.parameter_note,
+            tbcs.parameter_material_code,
+            tbcs.parameter_location
+        FROM
+            jr_technology_bom_configuration_schedule tbcs
+        WHERE
+            tbcs.parameter_code = #{parameterCode}
+    </select>
+
+    <delete id="deleteTechnologyBomConfiguration">
+        delete from jr_technology_bom_configuration  where parameter_code = #{parameterCode}
+    </delete>
+
+    <delete id="deleteTechnologyBomConfigurationSchedule">
+        delete from jr_technology_bom_configuration_schedule  where parameter_code = #{parameterCode}
+    </delete>
+
+    <update id="confirmTechnologyBomConfiguration"  parameterType="com.erp.technology.entity.TechnologyBomConfiguration">
+        UPDATE
+            jr_technology_bom_configuration
+        set parameter_state=2
+        WHERE id=#{ids}
+    </update>
+
+    <update id="cancelTechnologyBomConfiguration"  parameterType="com.erp.technology.entity.TechnologyBomConfiguration">
+        UPDATE
+            jr_technology_bom_configuration
+        set parameter_state=1
+        WHERE id=#{ids}
+    </update>
+
+</mapper>

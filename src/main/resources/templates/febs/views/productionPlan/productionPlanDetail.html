@@ -1,0 +1,95 @@
+<style>
+    #productionPlan-detail {
+        padding: 20px 25px 25px 0;
+    }
+</style>
+<div class="layui-fluid" id="productionPlan-detail">
+    <form class="layui-form" action="" lay-filter="productionPlan-detail-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label" >机器要求：</label>
+            <div class="layui-input-block">
+                <input type="text" name="planMachine" id="configureNamesOne"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" >电脑配置：</label>
+            <div class="layui-input-block">
+                <input type="text" name="planConfiguration"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">刀具大小：</label>
+            <div class="layui-input-block">
+                <input type="text" name="planCutting"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">加工工序：</label>
+            <div class="layui-input-block">
+                <input type="text" name="planProcess"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">其他要求：</label>
+            <div class="layui-input-block">
+                <input type="text" name="planOther" id="otherRequirementsOne"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">夹具要求：</label>
+            <div class="layui-input-block">
+                <input type="text" name="planJig"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">产品形状：</label>
+            <div class="layui-input-block">
+                <input type="text" name="planShape"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">产品尺寸：</label>
+            <div class="layui-input-block">
+                <input type="text" name="planSize"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+    </form>
+</div>
+
+<script data-th-inline="javascript">
+    layui.use(['febs', 'form', 'validate','table', 'xmSelect','upload','laydate'], function () {
+        let $ = layui.$,
+            form = layui.form,
+            productionPlanNumber = [[${productionPlanNumber}]];
+
+        initPurchaseRequisitionCreatorValue();
+
+        function initPurchaseRequisitionCreatorValue() {
+            form.val("productionPlan-detail-form", {
+                "customerName": productionPlanNumber.customerName,
+                "planOrder":productionPlanNumber.planOrder,
+                "planAmount": productionPlanNumber.planAmount,
+                "planMachine":productionPlanNumber.planMachine,
+                "planConfiguration": productionPlanNumber.planConfiguration,
+                "planCutting":productionPlanNumber.planCutting,
+                "planProcess": productionPlanNumber.planProcess,
+                "planOther":productionPlanNumber.planOther,
+                "planJig": productionPlanNumber.planJig,
+                "planShape":productionPlanNumber.planShape,
+                "planSize": productionPlanNumber.planSize,
+                "planNote":productionPlanNumber.planNote,
+                "planNumber":productionPlanNumber.planNumber,
+                "planAttachment":productionPlanNumber.planAttachment
+            });
+        }
+
+    })
+</script>

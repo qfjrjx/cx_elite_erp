@@ -112,6 +112,12 @@ public class PurchaseSettlementSchedule {
     @TableField("order_number")
     private String orderNumber;
 
+    /**
+     * 是否开票
+     */
+    @TableField("whether_invoice")
+    private String whetherInvoice;
+
 
     /**
      *日期

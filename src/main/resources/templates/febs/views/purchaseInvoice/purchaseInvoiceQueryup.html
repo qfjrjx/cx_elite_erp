@@ -54,7 +54,7 @@
             <label class="layui-form-mid" >税额&nbsp;<b>:</b></label>
             <div class="layui-input-inline" style="width: 115px">
                 <input type="text" name="" id="" style="width: 115px"
-                       autocomplete="off" class="layui-input" placeholder="为空时自动生成" readonly>
+                       autocomplete="off" class="layui-input"  readonly>
             </div>
             <br>
             <br>
@@ -78,13 +78,11 @@
             validate = layui.validate,
             table = layui.table,
             purchaseInvoice = [[${purchaseInvoice}]],
-            purchaseRequisitionDate = [[${purchaseRequisitionDate}]];
+            invoiceDate = [[${invoiceDate}]];
 
         form.verify(validate);
         form.render();
         initPurchaseRequisitionCreatorValue();
-
-        var invoiceDateTurn = layui.util.toDateString(purchaseInvoice.invoiceDate, "yyyy-MM-dd")
 
         function initPurchaseRequisitionCreatorValue() {
             form.val("purchaseInvoice-queryup-form", {
@@ -92,12 +90,11 @@
                 "invoiceSupplier":purchaseInvoice.invoiceSupplier,
                 "currencyName":purchaseInvoice.currencyName,
                 "taxRateName":purchaseInvoice.taxRateName,
-                "invoiceDate":purchaseInvoice.invoiceDate,
                 "invoiceAmount": purchaseInvoice.invoiceAmount,
                 "taxMoneySum":purchaseInvoice.taxMoneySum,
                 "taxMoney":purchaseInvoice.taxMoneySum,
                 "invoiceQuantitySum":purchaseInvoice.invoiceQuantitySum,
-                "purchaseRequisitionDate": purchaseRequisitionDate
+                "invoiceDate": invoiceDate
             });
         }
 

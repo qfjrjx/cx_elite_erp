@@ -1,0 +1,56 @@
+<style>
+    #productionPlan-number {
+        padding: 20px 25px 25px 0;
+    }
+</style>
+<div class="layui-fluid" id="productionPlan-number">
+    <form class="layui-form" action="" lay-filter="productionPlan-number-form">
+        <div class="layui-form-item">
+            <label class="layui-input-block" style="width: 150px">请输入出厂编号：</label>
+            <div class="layui-input-block" style="width: 300px">
+                <input type="text" name="planFactory" id="planFactory" class="demo" placeholder = "">
+            </div>
+        </div>
+        <div class="layui-form-item" style="display: none;">
+            <label class="layui-form-label">订单号：</label>
+            <div class="layui-input-block">
+                <input type="text" name="planNumber" id="planNumber"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item febs-hide">
+            <button class="layui-btn" lay-submit="" lay-filter="productionPlan-number-form-submit" id="submit"></button>
+        </div>
+    </form>
+</div>
+<script data-th-inline="javascript">
+    layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
+        let $ = layui.$,
+            febs = layui.febs,
+            layer = layui.layer,
+            form = layui.form,
+            productionPlanSchedule = [[${productionPlanSchedule}]],
+            validate = layui.validate;
+
+        form.verify(validate);
+        form.render();
+
+        initPurchaseRequisitionCreatorValue();
+
+        function initPurchaseRequisitionCreatorValue() {
+            form.val("productionPlan-number-form", {
+                "planNumber": productionPlanSchedule.planNumber,
+            });
+        }
+
+        form.on('submit(productionPlan-number-form-submit)', function (data) {
+            febs.post(ctx + 'productionPlan/number', data.field, function () {
+                layer.closeAll();
+                febs.alert.success('新增出厂编号成功');
+                $('#productionPlan-list').find('#query').click();
+            });
+            return false;
+
+        });
+    })
+</script>

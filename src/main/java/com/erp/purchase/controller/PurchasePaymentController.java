@@ -98,10 +98,14 @@ public class PurchasePaymentController extends BaseController {
 
     @GetMapping("purchasePayment/query")
     @ResponseBody
-    public Map purchasePayment(@RequestParam String paymentNumber) {
+    public Map purchasePayment(HttpServletResponse response,@RequestParam String paymentNumber) {
         Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> mappedMovies = new HashMap<String, Object>();
         try {
             List<PurchasePaymentSchedule> purchasePaymentSchedules = this.purchasePaymentService.queryPurchasePaymentSchedule(paymentNumber);
+            /*for (PurchasePaymentSchedule movie : purchasePaymentSchedules) {
+                mappedMovies.put("paymentNumber", movie.getPaymentNumber());
+            }*/
             map.put("replies",purchasePaymentSchedules);
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,0 +1,211 @@
+<style>
+    #technology-parameter xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #technology-parameter xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="technology-parameter" lay-title="BOM参数">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="technology-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md12">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid">参数类别&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 90px">
+                                            <select id="parameterCategory"  name="parameterCategory" lay-verify="required" class="layui-form-select" >
+                                                <option value=""></option>
+                                                <option value="1">BOM配置</option>
+                                                <option value="2">部分名称</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid">状态&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 90px">
+                                            <select id="parameterState"  name="parameterState" lay-verify="required" class="layui-form-select" >
+                                                <option value=""></option>
+                                                <option value="1">启用</option>
+                                                <option value="2">禁用</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-mid" >参数名称&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 80px">
+                                            <input type="text" name="parameterName" autocomplete="off" style="width: 110px" class="layui-input" >
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="technologyConfigurationTable" lay-data="{id: 'technologyConfigurationTable'}"></table>
+
+                    <div><span style="margin-left: 845px;color: #f5222d" data-th-text="${quantityNameCount}"></span></div>
+                    <div class="layui-col-md6">
+                        <div class="layui-form-item"></div>
+                    </div>
+                    <div class="layui-col-md6 layui-col-sm12 layui-col-xs12 table-action-area">
+                        <!--搜索按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                            <i class="layui-icon">&#xe848;</i>搜索
+                        </div>
+                        <!--添加按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="technologyBomParameter:add" id="addTo">
+                            <i class="layui-icon">&#xe78a;</i>新增
+                        </div>
+                        <!--修改按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="technologyBomParameter:update" id="updateTo">
+                            <i class="layui-icon">&#xe642;</i>修改
+                        </div>
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action"
+                             shiro:hasAnyPermissions="technologyBomParameter:delete" id="deleteTo">
+                            <i class="layui-icon layui-icon-close"></i>删除
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="parameterCategory-state">
+    {{#
+    let parameterCategory = {
+    1: {title: 'BOM配置'},
+    2: {title: '部分名称'}
+    }[d.parameterCategory];
+    }}
+    <span>{{ parameterCategory.title }}</span>
+</script>
+<script type="text/html" id="parameterState-state">
+    {{#
+    let parameterState = {
+    1: {title: '启用'},
+    2: {title: '禁用'}
+    }[d.parameterState];
+    }}
+    <span>{{ parameterState.title }}</span>
+</script>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            $view = $('#technology-parameter'),
+            $query = $view.find('#query'),
+            $addTo = $view.find('#addTo'),//添加
+            $updateTo = $view.find('#updateTo'),//修改
+            $deleteTo = $view.find('#deleteTo'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'createTime', type: null},
+            tableIns;
+
+        form.render();
+
+        initTable();
+
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        $addTo.on('click', function () {
+            febs.modal.open('【BOM参数】新增', 'technology/technologyBomParameter/add', {
+                type:1,
+                btn: ['保存', '关闭'],
+                area: $(window).width() <= 750 ? '95%' : '50%',
+                yes: function (index, layero) {
+                    $('#technologyBomParameter-add').find('#submit').trigger('click');
+                    return false;
+                },
+                btn2: function () {
+                    layer.closeAll();
+                }
+            });
+        });
+
+        $updateTo.on('click', function () {
+            let checkStatus = table.checkStatus('technologyConfigurationTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要修改的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要修改的数据');
+            }else{
+                layui.each(checkStatus.data, function (key, item) {
+                    febs.modal.open('【BOM参数】 修改', 'technology/technologyBomParameter/update/' + item.id, {
+                        area: $(window).width() <= 750 ? '95%' : '50%',
+                        btn: ['保存', '关闭'],
+                        yes: function (index, layero) {
+                            $('#technologyBomParameter-update').find('#submit').trigger('click');
+                            return false;
+                        },
+                        btn2: function () {
+                            layer.closeAll();
+                        }
+                    });
+                });
+            }
+        });
+
+        $deleteTo.on('click', function () {
+            let checkStatus = table.checkStatus('technologyConfigurationTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要删除的数据');
+            } else {
+                febs.modal.confirm('删除BOM参数', '确定删除？', function () {
+                    let ids = [];
+                    layui.each(checkStatus.data, function (key, item) {
+                        ids.push(item.id)
+                    });
+                    deleteTechnologyBomParameter(ids.join(','));
+                });
+            }
+        });
+        function initTable() {
+            tableIns = febs.table.init({
+                elem: $view.find('table'),
+                id: 'technologyConfigurationTable',
+                url: ctx + 'technologyBomParameter/list',
+                page: true,
+                cols: [
+                    [
+                        {type: 'checkbox'},
+                        {field:'number',title:'序号', minWidth: 30,align:'center',templet:function (d) {
+                                return d.LAY_INDEX;}},
+                        {title: '参数类别', templet: '#parameterCategory-state',align:'center',width:90},
+                        {field: 'parameterValue', title: '参数值',align:'center', minWidth: 105},
+                        {field: 'parameterName', title: '参数名称',align:'center', minWidth: 90},
+                        {field: 'parameterSorting', title: '名排序',align:'center', minWidth: 90},
+                        {title: '状态', templet: '#parameterState-state',align:'center',width:90},
+                        {field: 'parameterDate', title: '创建时间',align:'center',templet:'<div>{{ layui.util.toDateString(d.parameterDate, "yyyy-MM-dd") }}</div>', minWidth: 115},
+                        {field: 'parameterNote', title: '备注',minWidth: 95}
+                    ]
+                ]
+            });
+        }
+
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+
+        function deleteTechnologyBomParameter(ids) {
+            febs.get(ctx + 'technologyBomParameter/delete/' + ids, null, function () {
+                febs.alert.success('删除BOM参数成功');
+                $query.click();
+            });
+        }
+    })
+</script>

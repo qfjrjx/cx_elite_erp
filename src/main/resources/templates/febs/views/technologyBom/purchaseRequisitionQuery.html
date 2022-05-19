@@ -1,0 +1,277 @@
+<style>
+    #technologyConfiguration-query xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #technologyConfiguration-query xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+    .layui-form-item .layui-input-inline {
+        width: 160px;
+    }
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="technologyConfiguration-query" lay-title="物料编码选择列表">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="parameter-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md10">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm">物料名称</label>
+                                        <div class="layui-input-inline" style="width: 100px">
+                                            <input type="text" name="productName" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label layui-form-label-sm">大类</label>
+                                        <div class="layui-input-inline" style="width: 90px">
+                                            <select name="productSubclassId">
+                                                <option value="">全部</option>
+                                                <option value="1">电脑</option>
+                                                <option value="2">键盘</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label layui-form-label-sm">小类</label>
+                                        <div class="layui-input-inline" style="width: 90px">
+                                            <select name="productSubclassId">
+                                                <option value="">全部</option>
+                                                <option value="1">整机</option>
+                                                <option value="2">配件</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm">规格型号</label>
+                                        <div class="layui-input-inline" style="width: 100px">
+                                            <input type="text" name="productSpecificationModel" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm">简拼</label>
+                                        <div class="layui-input-inline" style="width: 100px">
+                                            <input type="text" name="productNameAbbreviation" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md2 layui-col-sm12 layui-col-xs12 table-action-area">
+                                <!--搜索按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                                    <i class="layui-icon">&#xe848;</i>查询
+                                </div>
+                                <!--添加按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action " id="addTo">
+                                    <i class="layui-icon">&#xe78a;</i>确定
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="technologyConfigurationTable-query" id="technologyConfigurationTable-query" lay-data="{id: 'technologyConfigurationTable-query'}"></table>
+                    <br>
+                    <table lay-filter="technologyConfigurationTable_query" id="technologyConfigurationTable_query" lay-data="{id: 'technologyConfigurationTable_query'}"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="parameter-option">
+    <span shiro:lacksPermission="saleProduct:list,saleProduct:update,saleProduct:delete">
+        <span class="layui-badge-dot febs-bg-orange"></span> 无权限
+    </span>
+    <a lay-event="edit" shiro:hasPermission="saleProduct:update"><i
+            class="layui-icon febs-edit-area febs-blue">&#xe7a4;</i></a>
+    <a lay-event="del" shiro:hasPermission="saleProduct:delete"><i class="layui-icon febs-edit-area febs-red">&#xe7f9;</i></a>
+</script>
+<script type="text/html" id="material-state">
+    {{#
+    let materialState = {
+    1: {title: '启用', color: 'green'},
+    2: {title: '禁用', color: 'volcano'}
+    }[d.materialState];
+    }}
+    <span class="layui-badge febs-bg-{{materialState.color}}">{{ materialState.title }}</span>
+</script>
+<script langguage="JavaScript">
+    var deliveryDateTo = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate();
+</script>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+            laydate = layui.laydate,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            dropdownMenu = layui.dropdownMenu,
+            $view = $('#technologyConfiguration-query'),
+            $query = $view.find('#query'),
+            $reset = $view.find('#reset'),
+            $addTo = $view.find('#addTo'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'createDate', type: null},
+            tableIns;
+
+        form.render();
+
+        initTable();
+
+        //日期同时绑定多个
+        lay('.createTime').each(function(){
+            laydate.render({
+                elem: this,
+                range: true,
+                trigger: 'click'
+            });
+        })
+        dropdownMenu.render({
+            elem: $view.find('.action-more'),
+            click: function (name, elem, event) {
+                let checkStatus = table.checkStatus('technologyConfigurationTable-query');
+                if (name === 'delete') {
+                    if (!checkStatus.data.length) {
+                        febs.alert.warn('请选择需要删除的数据');
+                    } else {
+                        febs.modal.confirm('删除领取记录信息', '确定删除？', function () {
+                            let ids = [];
+                            layui.each(checkStatus.data, function (key, item) {
+                                ids.push(item.id)
+                            });
+                            deleteSaleProduct(ids.join(','));
+                        });
+                    }
+                }
+            },
+            options: []
+        });
+        table.on('tool(technologyConfigurationTable-query)', function (obj) {
+            let data = obj.data,
+                layEvent = obj.event;
+
+        });
+
+        table.on('sort(technologyConfigurationTable-query)', function (obj) {
+            sortObject = obj;
+            tableIns.reload({
+                initSort: obj,
+                where: $.extend(getQueryParams(), {
+                    field: obj.field,
+                    order: obj.type
+                })
+            });
+        });
+        table.on('rowDouble(technologyConfigurationTable-query)', function (obj) {
+            var data = obj.data;
+            var materialCode = data.materialCode;
+            var materialName = data.materialName;
+            var specificationsModel = data.specificationsModel;
+            var materialQuality = data.materialQuality;
+            var materialBrand = data.materialBrand;
+            var meteringCompany = data.meteringCompany;
+            var parameterNumber = data.parameterNumber;
+            var materialRemarks = data.materialRemarks;
+            var materialState = data.materialState;
+            var materialLocation = data.materialLocation;
+            $.ajax({
+                url: '/saleOrder/random',
+                success : function(data) {
+                    var random = data.data;
+                    var oldData =  table.cache["technologyConfigurationTable_query"];
+                    var dataOne={"materialCode":materialCode,"materialName":materialName,"specificationsModel":specificationsModel,"materialQuality":materialQuality,
+                        "materialBrand":materialBrand,"meteringCompany":meteringCompany,"parameterNumber":parameterNumber,"materialRemarks":materialRemarks,
+                        "materialState":materialState,"materialLocation":materialLocation};
+                    oldData.push(dataOne);
+                    layui.table.reload('technologyConfigurationTable_query',{
+                        data : oldData
+                    });
+                }
+            });
+        });
+        var tableData=new Array(); // 用于存放表格数据
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+        $addTo.on('click', function () {
+            var oldDataOne;
+            var oldData =  table.cache["technologyConfigurationTable_query"];
+            for (i=0;i<oldData.length;i++){
+                var dataOne={"parameterMaterialCode":oldData[i].materialCode,"parameterMaterial":oldData[i].materialName,
+                    "parameterSpecifications":oldData[i].specificationsModel,"parameterBrand":oldData[i].materialBrand,
+                    "parameterUnit":oldData[i].meteringCompany,"parameterNumber":oldData[i].parameterNumber,
+                    "parameterNote":oldData[i].materialRemarks,"parameterLocation":oldData[i].materialLocation};
+                oldDataOne =  table.cache["configurationUpdate"];
+                oldDataOne.push(dataOne);
+            }
+            layui.table.reload('configurationUpdate',{
+                data : oldDataOne
+            });
+            parent.layer.close(layer.index); //再执行关闭
+        });
+        $reset.on('click', function () {
+            $searchForm[0].reset();
+            tableIns.reload({where: getQueryParams(), page: {curr: 1}});
+        });
+
+        function initTable() {
+            tableIns = febs.table.init({
+                elem: '#technologyConfigurationTable-query',
+                id: 'technologyConfigurationTable-query',
+                url: ctx + 'purchaseMaterialFile/list',
+                cols: [
+                    [
+                        {type: 'checkbox'},
+                        {field: 'materialCode', title: '物料编码'},
+                        {field: 'materialName', title: '物料名称',align:'center', minWidth: 100},
+                        {field: 'specificationsModel', title: '规格型号',align:'center', minWidth: 100},
+                        {field: 'materialQuality', title: '材质',align:'center', minWidth: 100},
+                        {field: 'materialBrand', title: '品牌',align:'center', minWidth: 100},
+                        {field: 'meteringCompany', title: '单位',align:'center', minWidth: 100},
+                        {field: 'parameterNumber', title: '数量',align:'center', minWidth: 100,edit:true},
+                        {field: 'materialRemarks', title: '备注',align:'center', minWidth: 80,edit:true},
+                        {field: 'materialLocation', title: '库位',align:'center', minWidth: 80,edit:true},
+                        {title: '状态', templet: '#material-state'}
+                    ]
+                ]
+            });
+        };
+        table.render({
+            elem:'#technologyConfigurationTable_query',
+            data:tableData,
+            cols: [[
+                {field: 'materialCode', title: '物料编码',sort: true},
+                {field: 'materialName', title: '物料名称',align:'center', minWidth: 100},
+                {field: 'specificationsModel', title: '规格型号',align:'center', minWidth: 100},
+                {field: 'materialQuality', title: '材质',align:'center', minWidth: 100},
+                {field: 'materialBrand', title: '品牌',align:'center', minWidth: 100},
+                {field: 'meteringCompany', title: '单位',align:'center', minWidth: 100},
+                {field: 'parameterNumber', title: '数量',align:'center', minWidth: 100,edit:true},
+                {field: 'materialRemarks', title: '备注',align:'center', minWidth: 80,edit:true},
+                {field: 'materialLocation', title: '库位',align:'center', minWidth: 80,edit:true},
+                {title: '状态', templet: '#material-state'}
+            ]]
+        });
+        table.on('rowDouble(technologyConfigurationTable_query)', function (obj) {
+            var data = obj.data;
+            var oldData =  table.cache["technologyConfigurationTable_query"];
+            if (obj.tr.data('index') != -1) {
+                oldData.splice(obj.tr.data('index'), 1)//根据索引删除当前行
+                layui.table.reload('technologyConfigurationTable_query',{
+                    data: oldData
+                });
+            }
+        });
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            params.invalidate_ie_cache = new Date();
+            return params;
+        };
+
+
+
+    });
+</script>

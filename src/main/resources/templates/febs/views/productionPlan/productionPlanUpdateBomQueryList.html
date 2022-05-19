@@ -1,0 +1,180 @@
+<style>
+    #productionPlanUpdateBom-query xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #productionPlanUpdateBom-query xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+    .layui-form-item .layui-input-inline {
+        width: 160px;
+    }
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="productionPlanUpdateBom-query" lay-title="配置BOM选择列表">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="parameter-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md10">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm">BOM编码：</label>
+                                        <div class="layui-input-inline" style="width: 100px">
+                                            <input type="text" name="productName" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm">部分名称：</label>
+                                        <div class="layui-input-inline" style="width: 100px">
+                                            <input type="text" name="productSpecificationModel" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm">配置名称：</label>
+                                        <div class="layui-input-inline" style="width: 100px">
+                                            <input type="text" name="productNameAbbreviation" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md2 layui-col-sm12 layui-col-xs12 table-action-area">
+                                <!--搜索按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                                    <i class="layui-icon">&#xe848;</i>查询
+                                </div>
+                                <!--添加按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action " id="addTo">
+                                    <i class="layui-icon">&#xe78a;</i>确定
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="productionPlanUpdateBomTable-query" id="productionPlanUpdateBomTable-query" lay-data="{id: 'productionPlanUpdateBomTable-query'}"></table>
+                    <br>
+                    <table lay-filter="productionPlanUpdateBomTable_query" id="productionPlanUpdateBomTable_query" lay-data="{id: 'productionPlanUpdateBomTable_query'}"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="parameterWith-state">
+    {{#
+    let parameterWith = {
+    1: {title: '外购件'},
+    2: {title: '机械清单'},
+    3: {title: '随机配件'},
+    4: {title: 'JZ-8.7'},
+    5: {title: 'JZ-5.13C'}
+    }[d.parameterWith];
+    }}
+    <span>{{ parameterWith.title }}</span>
+</script>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+            laydate = layui.laydate,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            dropdownMenu = layui.dropdownMenu,
+            $view = $('#productionPlanUpdateBom-query'),
+            $query = $view.find('#query'),
+            $reset = $view.find('#reset'),
+            $addTo = $view.find('#addTo'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'createDate', type: null},
+            tableIns;
+
+        form.render();
+
+        initTable();
+
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        table.on('rowDouble(productionPlanUpdateBomTable-query)', function (obj) {
+            var data = obj.data;
+            var parameterCode = data.parameterCode;
+            var parameterName = data.parameterName;
+            var parameterWith = data.parameterWith;
+            var parameterInstructions = data.parameterInstructions;
+            $.ajax({
+                url: '/saleOrder/random',
+                success : function(data) {
+                    var random = data.data;
+                    var oldData =  table.cache["productionPlanUpdateBomTable_query"];
+                    var dataOne={"parameterCode":parameterCode,"parameterName":parameterName,"parameterWith":parameterWith,"parameterInstructions":parameterInstructions};
+                    oldData.push(dataOne);
+                    layui.table.reload('productionPlanUpdateBomTable_query',{
+                        data : oldData
+                    });
+                }
+            });
+        });
+
+        $addTo.on('click', function () {
+            var oldDataOne;
+            var oldData =  table.cache["productionPlanUpdateBomTable_query"];
+            for (i=0;i<oldData.length;i++){
+                var dataOne={"bomCode":oldData[i].parameterCode,"bomPart":oldData[i].parameterName,"bomConfiguration":oldData[i].parameterWith,"parameterInstructions":oldData[i].parameterInstructions};
+                oldDataOne =  table.cache["productionPlanUpdateBom"];
+                oldDataOne.push(dataOne);
+            }
+            layui.table.reload('productionPlanUpdateBom',{
+                data : oldDataOne
+            });
+            parent.layer.close(layer.index); //再执行关闭
+        });
+
+        var tableData=new Array(); // 用于存放表格数据
+        function initTable() {
+            tableIns = febs.table.init({
+                elem: '#productionPlanUpdateBomTable-query',
+                id: 'productionPlanUpdateBomTable-query',
+                url: ctx + 'technologyBomConfiguration/list',
+                cols: [
+                    [
+                        {type: 'checkbox'},
+                        {field: 'parameterCode', title: 'BOM编码',align:'center', minWidth: 105},
+                        {field: 'parameterName', title: '部分名称',align:'center', minWidth: 90},
+                        {title: '配置', templet: '#parameterWith-state',align:'center',width:90},
+                        {field: 'parameterInstructions', title: '说明',minWidth: 95,align:'center'}
+                    ]
+                ]
+            });
+        };
+
+        table.render({
+            elem:'#productionPlanUpdateBomTable_query',
+            data:tableData,
+            cols: [[
+                {type: 'checkbox'},
+                {field: 'parameterCode', title: 'BOM编码',align:'center', minWidth: 105},
+                {field: 'parameterName', title: '部分名称',align:'center', minWidth: 90},
+                {title: '配置', templet: '#parameterWith-state',align:'center',width:90},
+                {field: 'parameterInstructions', title: '说明',minWidth: 95,align:'center'}
+            ]]
+        });
+        table.on('rowDouble(productionPlanUpdateBomTable_query)', function (obj) {
+            var data = obj.data;
+            var oldData =  table.cache["productionPlanUpdateBomTable_query"];
+            if (obj.tr.data('index') != -1) {
+                oldData.splice(obj.tr.data('index'), 1)//根据索引删除当前行
+                layui.table.reload('productionPlanUpdateBomTable_query',{
+                    data: oldData
+                });
+            }
+        });
+
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            params.invalidate_ie_cache = new Date();
+            return params;
+        };
+    })
+</script>

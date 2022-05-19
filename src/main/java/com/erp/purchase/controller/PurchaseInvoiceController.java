@@ -122,4 +122,22 @@ public class PurchaseInvoiceController extends BaseController {
         Map<String, Object> dataTable = getDataTable(this.purchaseInvoiceService.purchasePaymentAddQuery(request,purchaseInvoiceSchedule));
         return new FebsResponse().success().data(dataTable);
     }
+
+    @ControllerEndpoint(operation = "确认", exceptionMessage = "确认失败")
+    @GetMapping("purchaseInvoice/confirm/{ids}")
+    @ResponseBody
+    @RequiresPermissions("purchaseInvoice:confirm")
+    public FebsResponse confirmPurchaseInspection(@PathVariable String ids) {
+        this.purchaseInvoiceService.confirmPurchaseInspection(ids);
+        return new FebsResponse().success();
+    }
+
+    @ControllerEndpoint(operation = "反审", exceptionMessage = "反审失败")
+    @GetMapping("purchaseInvoice/cancel/{ids}")
+    @ResponseBody
+    @RequiresPermissions("purchaseInvoice:cancel")
+    public FebsResponse cancelPurchaseInspection(@PathVariable String ids) {
+        this.purchaseInvoiceService.cancelPurchaseInspection(ids);
+        return new FebsResponse().success();
+    }
 }

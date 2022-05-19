@@ -5,31 +5,25 @@ import com.erp.common.controller.BaseController;
 import com.erp.common.entity.FebsConstant;
 import com.erp.common.entity.FebsResponse;
 import com.erp.common.entity.QueryRequest;
-import com.erp.common.exception.FebsException;
 import com.erp.common.utils.FebsUtil;
 import com.erp.sale.entity.SaleDocumentfile;
 import com.erp.sale.service.ISaleDocumentfileService;
 import com.wuwenze.poi.ExcelKit;
-import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
-
-import org.apache.commons.io.IOUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.jodconverter.DocumentConverter;
-import org.jodconverter.document.DefaultDocumentFormatRegistry;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import org.thymeleaf.util.StringUtils;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.*;
-import java.net.URLEncoder;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -47,8 +41,8 @@ public class SaleDocumentfileController extends BaseController {
 
     private final ISaleDocumentfileService saleDocumentfileService;
 
-    @Autowired
-    private DocumentConverter converter;  //用于转换
+/*    @Autowired
+    private DocumentConverter converter;  //用于转换*/
 
     @GetMapping(FebsConstant.VIEW_PREFIX + "saleDocumentfile")
     public String saleDocumentfileIndex(){
@@ -307,7 +301,7 @@ public class SaleDocumentfileController extends BaseController {
         return res;
     }
 
-    @ResponseBody
+    /*@ResponseBody
     @RequestMapping("saleDocumentFile/Preview")
     public void toPdfFile(HttpServletResponse response,@RequestParam("filePath") String filePath) {
         SaleDocumentfile documentFileBrowse = saleDocumentfileService.findSaleDocumentFileByName(filePath);
@@ -340,6 +334,6 @@ public class SaleDocumentfileController extends BaseController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
 }

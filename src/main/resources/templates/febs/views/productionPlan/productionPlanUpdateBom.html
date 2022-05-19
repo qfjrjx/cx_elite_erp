@@ -1,0 +1,185 @@
+<style>
+    #productionPlan-updateBom {
+        padding: 20px 25px 25px 0;
+    }
+</style>
+<div class="layui-fluid" id="productionPlan-updateBom">
+    <form class="layui-form" action="" lay-filter="productionPlan-updateBom-form">
+        <div class="layui-inline" >
+            <label class="layui-form-label layui-form-label-sm" >编号：</label>
+            <div class="layui-input-inline" style="width: 80px">
+                <input type="text" name="bomNumber" id="bomNumber" autocomplete="off" style="width: 110px" class="layui-input" >
+            </div>
+        </div>
+        <div class="layui-inline" >
+            <label class="layui-form-label layui-form-label-sm" >名称：</label>
+            <div class="layui-input-inline" style="width: 110px">
+                <input type="text" name="planProductName" id="planProductName" autocomplete="off" style="width: 110px" class="layui-input" >
+            </div>
+        </div>
+        <div class="layui-inline" >
+            <label class="layui-form-label layui-form-label-sm" >规格：</label>
+            <div class="layui-input-inline" style="width: 110px">
+                <input type="text" name="planSpecifications" id="planSpecifications" autocomplete="off" style="width: 110px" class="layui-input" >
+            </div>
+        </div>
+        <div class="layui-inline" >
+            <label class="layui-form-label layui-form-label-sm" >计划数量：</label>
+            <div class="layui-input-inline" style="width: 110px">
+                <input type="text" name="planAmount" id="planAmount" autocomplete="off" style="width: 110px" class="layui-input" >
+            </div>
+        </div>
+    </form>
+    <table class="layui-edge-left" lay-filter="productionPlanUpdateBom" id="productionPlanUpdateBom" lay-data="{id: 'productionPlanUpdateBom'}"></table>
+    <table lay-filter="productionPlanUpdateBom-table" id="productionPlanUpdateBom-table" lay-data="{id: 'productionPlanUpdateBom-table'}"></table>
+    <div class="layui-form-item febs-hide">
+        <button class="layui-btn" lay-submit="" lay-filter="productionPlan-updateBom-form-submit" id="submit"></button>
+    </div>
+</div>
+<script type="text/html" id="bomConfiguration-state">
+    {{#
+    let bomConfiguration = {
+    1: {title: '外购件'},
+    2: {title: '机械清单'},
+    3: {title: '随机配件'},
+    4: {title: 'JZ-8.7'},
+    5: {title: 'JZ-5.13C'}
+    }[d.bomConfiguration];
+    }}
+    <span>{{ bomConfiguration.title }}</span>
+</script>
+<script data-th-inline="javascript">
+    layui.use(['jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect' , 'validate'], function () {
+        let $ = layui.jquery,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            layer = layui.layer,
+            productionPlanSchedule = [[${productionPlanSchedule}]];
+
+        form.render();
+
+        form.render();
+
+        initPurchaseRequisitionCreatorValue();
+
+        function initPurchaseRequisitionCreatorValue() {
+            form.val("productionPlan-updateBom-form", {
+                "planProductName": productionPlanSchedule.planProductName,
+                "planSpecifications": productionPlanSchedule.planSpecifications,
+                "planAmount": productionPlanSchedule.planAmount
+            });
+        }
+
+        var tableData=new Array(); // 用于存放表格数据
+        var tableDataBom=new Array(); // 用于存放表格数据
+
+        $.ajax({
+            url: 'productionPlanUpdateBom/query'
+            ,data:{"planCode":productionPlanSchedule.planCode}
+            ,async:false
+            ,dataType:"json"
+            , success: function(data){
+                tableData=data.replies;
+            }
+        });
+
+        table.render({
+            elem:'#productionPlanUpdateBom',
+            data:tableData,
+            cols: [
+                [
+                    {type: 'checkbox'},
+                    {field:'number',title:'序号', minWidth: 30,align:'center',templet:function (d) {
+                            return d.LAY_INDEX;}},
+                    {field: 'bomPart', title: '部分名称',align:'center', minWidth: 150,event:'choice'},
+                    {title: '配置名称', templet: '#bomConfiguration-state',align:'center',width:150,event:'choiceBom'},
+                    {field: 'bomCode', title: 'BOM编码',align:'center', minWidth: 150,event:'choice'}
+                ]
+            ]
+        });
+
+        table.render({
+            elem: "#productionPlanUpdateBom-table",
+            data:tableDataBom,
+            cols: [
+                [
+                    {type: 'checkbox'},
+                    {field: 'parameterMaterialCode',title: '物料编码',align:'center', minWidth: 145},
+                    {field: 'parameterMaterial', title: '物料名称',align:'center', minWidth: 90},
+                    {field: 'parameterSpecifications', title: '规格', align:'center',minWidth: 90},
+                    {field: 'parameterBrand',title: '品牌', minWidth: 55,align:'center'},
+                    {field: 'parameterNumber',title: '数量', minWidth: 50,align:'center'},
+                    {field: 'parameterReplace',title: '替代料', minWidth: 72,align:'center'},
+                    {field: 'parameterReplaceNumber', title: '替代数量', minWidth: 72,align:'center'},
+                    {field: 'parameterNote', title: '备注', minWidth: 72,align:'center'}
+                ]
+            ]
+        });
+
+        table.on('tool(productionPlanUpdateBom)', function (obj) {
+            let data = obj.data,
+                layEvent = obj.event;
+            if (layEvent === 'choice') {
+                var tableData = layui.table.cache['productionPlanUpdateBom'];
+                var rowIndex = $(obj.tr).attr('data-index');//当前行的索引
+                if (tableData != ""){
+                    $("#parameterIndex").val(rowIndex);//获取索引
+                    tableData.splice(rowIndex,1); //删除缓存的行
+                }
+                febs.modal.view('配置BOM选择列表', "production/productionPlanUpdateBomQueryList", {
+                    area:["70%","80%"]
+                });
+            }
+            if (layEvent === 'choiceBom') {
+                if (obj.data.bomCode != null) {
+                    $.ajax({
+                        url: 'configurationRefer/query'
+                        , data: {"parameterCode": obj.data.bomCode}
+                        , async: false
+                        , dataType: "json"
+                        , success: function (data) {
+                            tableDataBom = data.replies;
+                        }
+                    });
+                    table.reload("productionPlanUpdateBom-table", {
+                        data:tableDataBom
+                    })
+                }
+            }
+        });
+
+        form.on('submit(productionPlan-updateBom-form-submit)', function (data) {
+            var bomNumber = $('#bomNumber').val();
+            var bomName = $('#planProductName').val();
+            var bomSpecifications = $('#planSpecifications').val();
+            var bomAmount = $('#planAmount').val();
+            let dataTable = new Array();
+            let productionPlanAddBom =  table.cache["productionPlanUpdateBom"];
+            for (i=0;i<productionPlanAddBom.length;i++){
+                let dataOne={
+                    "bomPart":productionPlanAddBom[i].bomPart,
+                    "bomConfiguration":productionPlanAddBom[i].bomConfiguration,
+                    "bomCode":productionPlanAddBom[i].bomCode
+
+                };
+                dataTable.push(dataOne);
+            }
+            let entity = {"bomNumber":bomNumber,"bomName":bomName,"bomSpecifications":bomSpecifications, "bomAmount":bomAmount,"planCode":productionPlanSchedule.planCode}
+            $.ajax({
+                url: '/setupBom/update',
+                type:"post",
+                data: {setupBom:JSON.stringify(entity),dataTable:JSON.stringify(dataTable)},
+                success : function(res) {
+                    layer.closeAll();
+                    $('#productionPlan-list').find('#query').click();
+                    var dataBak = [];
+                    layui.table.reload('productionPlanTable',{
+                        data:dataBak
+                    });
+                }
+            });
+            return false;
+        });
+    })
+</script>

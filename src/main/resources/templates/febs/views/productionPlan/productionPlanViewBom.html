@@ -1,0 +1,55 @@
+<style>
+    #productionPlan-viewBom {
+        padding: 20px 25px 25px 0;
+    }
+</style>
+<div class="layui-fluid" id="productionPlan-viewBom">
+    <table lay-filter="productionPlanViewBom" id="productionPlanViewBom" lay-data="{id: 'productionPlanViewBom'}"></table>
+</div>
+<script data-th-inline="javascript">
+    layui.use(['form', 'validate','table'], function () {
+        let $ = layui.$,
+            form = layui.form,
+            validate = layui.validate,
+            table = layui.table,
+            planCodeViewBom = [[${planCodeViewBom}]];
+
+        form.verify(validate);
+        form.render();
+
+        var tableData= new Array(); // 用于存放表格数据
+        $.ajax({
+            url: 'productionPlanViewBom/query'
+            ,data:{"planCode":planCodeViewBom}
+            ,async:false
+            ,dataType:"json"
+            , success: function(data){
+                tableData=data.replies;
+            }
+        });
+
+        table.render({
+            elem: "#productionPlanViewBom",
+            data:tableData,
+            cols: [
+                [
+                    {field:'number',title:'序号',align:'center',width:60,templet:function (d) {
+                            return d.LAY_INDEX;}},
+                    {field: 'bomMaterialName',title: '名称',align:'center', minWidth: 145},
+                    {field: 'bomSpecifications', title: '规格',align:'center', minWidth: 90},
+                    {field: 'bomUnit',title: '单位', minWidth: 55,align:'center'},
+                    {field: 'bomAmount',title: '数量', minWidth: 55,align:'center'},
+                    {field: 'bomMaterial',title: '替代料', minWidth: 55,align:'center'},
+                    {field: 'invoiceAmount',title: '替代料名称',minWidth: 55,align:'center',align:'center'},//未定义取值
+                    {field: 'invoiceDate',title: '替代料规格',align:'center', minWidth: 145},//未定义取值
+                    {field: 'invoiceCode', title: '是否缺件',align:'center', minWidth: 90},//未定义取值
+                    {field: 'bomNote',title: '备注', minWidth: 55,align:'center'},
+                    {field: 'invoiceSpecifications',title: '库存总量', minWidth: 55,align:'center'},//未定义取值
+                    {field: 'invoiceQuantity',title: '生产需求总量', minWidth: 55,align:'center'},//未定义取值
+                    {field: 'invoiceAmount',title: '生产领用总量',minWidth: 55,align:'center',align:'center'},//未定义取值
+                    {field: 'invoiceAmount',title: '生产实时需求量',minWidth: 55,align:'center',align:'center'}//未定义取值
+                ]
+            ]
+        });
+    })
+</script>

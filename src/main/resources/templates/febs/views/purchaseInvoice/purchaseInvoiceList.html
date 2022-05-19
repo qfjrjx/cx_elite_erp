@@ -30,7 +30,6 @@
                                     <div class="layui-inline" >
                                         <div class="layui-input-inline">
                                             <select name="invoiceDateState">
-                                                <option value=""></option>
                                                 <option value="1">登记日期</option>
                                                 <option value="2">开票日期</option>
                                             </select>
@@ -118,6 +117,14 @@
                                      "shiro:hasAnyPermissions="purchaseInvoice:delete" id="deleteTo">
                             <i class="layui-icon layui-icon-close"></i>删除
                         </div>
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
+                                     "shiro:hasAnyPermissions="purchaseInvoice:confirm" id="confirmTo">
+                            <i class="layui-icon layui-icon-close"></i>确认
+                        </div>
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
+                                     "shiro:hasAnyPermissions="purchaseInvoice:cancel" id="cancelTo">
+                            <i class="layui-icon layui-icon-close"></i>取消
+                        </div>
                     </div>
                 </div>
             </div>
@@ -163,6 +170,8 @@
             $addTo = $view.find('#addTo'),
             $updateTo = $view.find('#updateTo'),
             $deleteTo = $view.find('#deleteTo'),
+            $confirmTo = $view.find('#confirmTo'),
+            $cancelTo = $view.find('#cancelTo'),
             $reset = $view.find('#reset'),
             $searchForm = $view.find('form'),
             sortObject = {field: 'createTime', type: null},
@@ -283,6 +292,43 @@
             }
         });
 
+        $confirmTo.on('click', function () {
+            let checkStatus = table.checkStatus('purchaseInvoiceTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要确认的数据');
+            } else {
+                let ids = [];
+                layui.each(checkStatus.data, function (key, item) {
+                    ids.push(item.id)
+                    if(item.invoiceState == 2){
+                        febs.alert.warn('请勿重复确认');
+                    }else {
+                        febs.modal.confirm('确认采购发票', '是否确认？', function () {
+                            confirmPurchaseInvoice(ids.join(','));
+                        });
+                    }
+                });
+            }
+        });
+        $cancelTo.on('click', function () {
+            let checkStatus = table.checkStatus('purchaseInvoiceTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要取消的数据');
+            } else {
+                let ids = [];
+                layui.each(checkStatus.data, function (key, item) {
+                    ids.push(item.id)
+                    if(item.invoiceState == 1){
+                        febs.alert.warn('请勿重复取消');
+                    }else {
+                        febs.modal.confirm('取消采购发票', '是否取消？', function () {
+                            cancePurchaseInvoice(ids.join(','));
+                        });
+                    }
+                });
+            }
+        });
+
         function initPurchaseRequisitionTable() {
             tableIns = febs.table.init({
                 elem: '#purchaseInvoiceTable',
@@ -314,7 +360,21 @@
 
         function deletePurchaseInvoice(invoiceNumbers) {
             febs.get(ctx + 'purchaseInvoice/delete/' + invoiceNumbers, null, function () {
-                febs.alert.success('删除采购参数成功');
+                febs.alert.success('删除采购发票成功');
+                $query.click();
+            });
+        }
+
+        function cancePurchaseInvoice(ids) {
+            febs.get(ctx + 'purchaseInvoice/cancel/' + ids, null, function () {
+                febs.alert.success('取消采购发票成功');
+                $query.click();
+            });
+        }
+
+        function confirmPurchaseInvoice(ids) {
+            febs.get(ctx + 'purchaseInvoice/confirm/' + ids, null, function () {
+                febs.alert.success('确认采购发票成功');
                 $query.click();
             });
         }

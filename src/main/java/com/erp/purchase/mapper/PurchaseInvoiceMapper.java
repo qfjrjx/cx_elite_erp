@@ -37,4 +37,10 @@ public interface PurchaseInvoiceMapper extends BaseMapper<PurchaseInvoice> {
     long countPurchasePaymentAddQuery(@Param("purchaseInvoiceSchedule") PurchaseInvoiceSchedule purchaseInvoiceSchedule);
 
     IPage<PurchaseInvoiceSchedule> purchasePaymentAddQuery(Page<PurchaseInvoiceSchedule> page,@Param("purchaseInvoiceSchedule") PurchaseInvoiceSchedule purchaseInvoiceSchedule);
+
+    void savePurchaseSettlementUpdate(@Param("invoiceCode") String invoiceCode);
+
+    void confirmPurchaseInspection(@Param("ids") String ids);
+
+    void cancelPurchaseInspection(@Param("ids") String ids);
 }

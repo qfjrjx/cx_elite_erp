@@ -12,17 +12,17 @@
                        autocomplete="off" class="layui-input" placeholder="为空时自动生成" readonly>
             </div>
             <label class="layui-form-mid">日期&nbsp;<b>:</b></label>
-            <div class="layui-input-inline" style="width: 150px">
+            <div class="layui-input-inline" style="width: 130px">
                 <input type="text" name="refundPreparationDate" id="refundPreparationDate"
                        autocomplete="off" class="layui-input createDate" readonly>
             </div>
             <label class="layui-form-mid">供应商&nbsp;<b>:</b></label>
-            <div class="layui-input-inline" style="width: 145px">
+            <div class="layui-input-inline" style="width: 130px">
                 <input type="text" name="supplierName" id="supplierName" lay-verify="required" ondblclick="dblclickCustomerName()"
-                       autocomplete="off" class="layui-input" placeholder="双击选择" style="width: 145px"  readonly>
+                       autocomplete="off" class="layui-input" placeholder="双击选择" style="width: 130px"  readonly>
             </div>
             <label class="layui-form-mid">库房&nbsp;<b>:</b></label>
-            <div class="layui-input-inline" style="width: 100px">
+            <div class="layui-input-inline" style="width: 130px">
                 <select name="refundLibrary" id="refundLibrary">
                     <option value="1">外购库</option>
                     <option value="2">机加库</option>
@@ -32,39 +32,40 @@
                 </select>
             </div>
             <label class="layui-form-mid">币&nbsp;种&nbsp;<b>:</b></label>
-            <div class="layui-input-inline" style="width: 90px">
+            <div class="layui-input-inline" style="width: 130px">
                 <select id="currencyName"  name="currencyName" lay-verify="required" class="layui-form-select" >
                     <option th:each="currency:${currency}" th:value="${currency.id}">[[${currency.financeParameterName}]]</option>
                 </select>
             </div>
             <label class="layui-form-mid">税&nbsp;率&nbsp;<b>:</b></label>
-            <div class="layui-input-inline" style="width: 85px">
+            <div class="layui-input-inline" style="width: 130px">
                 <select id="taxRateName"  name="taxRateName" lay-verify="required" class="layui-form-select" >
                     <option th:each="taxRate:${taxRate}" th:value="${taxRate.id}">[[${taxRate.financeParameterName}]]</option>
                 </select>
             </div>
 
             <label class="layui-form-mid">入库单&nbsp;<b>:</b></label>
-            <div class="layui-input-inline" style="width: 120px">
+            <div class="layui-input-inline" style="width: 130px">
                 <input type="text"  name="storageNumbers" autocomplete="off" class="layui-input">
             </div>
+            <br>
+            <br>
+            <br>
+            <br>
             <label class="layui-form-mid">编码&nbsp;<b>:</b></label>
-            <div class="layui-input-inline" style="width: 120px">
+            <div class="layui-input-inline" style="width: 130px">
                 <input type="text" id="storageCode" name="storageCode" autocomplete="off" class="layui-input">
             </div>
-            <br>
-            <br>
-            <br>
             <label class="layui-form-mid">名称&nbsp;<b>:</b></label>
-            <div class="layui-input-inline" style="width: 120px">
+            <div class="layui-input-inline" style="width: 130px">
                 <input type="text" name="storageName" autocomplete="off" class="layui-input">
             </div>
-            <label class="layui-form-mid">规格&nbsp;<b>:</b></label>
-            <div class="layui-input-inline" style="width: 120px">
+            <label class="layui-form-mid">规&nbsp;&nbsp;&nbsp;&nbsp;格&nbsp;<b>:</b></label>
+            <div class="layui-input-inline" style="width: 130px">
                 <input type="text" name="storageSpecifications" autocomplete="off" class="layui-input">
             </div>
             <label class="layui-form-mid">小类&nbsp;<b>:</b></label>
-            <div class="layui-input-inline" style="width: 100px">
+            <div class="layui-input-inline" style="width: 130px">
                 <select name="storageSubclass" id="storageSubclass">
                     <option value=""></option>
                     <option value="1">键盘</option>
@@ -75,10 +76,6 @@
                 <!--搜索按钮-->
                 <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
                     <i class="layui-icon">&#xe848;</i>查询
-                </div>
-                <!--添加按钮-->
-                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action " id="addTo">
-                    <i class="layui-icon">&#xe78a;</i>确定
                 </div>
             </div>
         </div>
@@ -130,6 +127,7 @@
             sortObject = {field: 'createDate', type: null},
             purchaseRefund = [[${purchaseRefund}]],
             purchaseRequisitionDate = [[${purchaseRequisitionDate}]],
+            refundPreparationDate = [[${refundPreparationDate}]],
             tableIns;
 
 
@@ -142,7 +140,7 @@
             form.val("purchaseRefund-update-form", {
                 "refundNumber": purchaseRefund.refundNumber,
                 "supplierName": purchaseRefund.supplierName,
-                "refundPreparationDate": purchaseRefund.refundPreparationDate,
+                "refundPreparationDate": refundPreparationDate,
                 "purchaseRequisitionDate": purchaseRequisitionDate,
             });
         }
@@ -162,7 +160,6 @@
         });
         $query.on('click', function () {
             let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
-            alert(params);
             tableIns.reload({where: params, page: {curr: 1}});
         });
         table.on('sort(purchaseRefundUpdate)', function (obj) {

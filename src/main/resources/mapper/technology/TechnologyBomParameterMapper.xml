@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.technology.mapper.TechnologyBomParameterMapper">
+
+    <sql id="countTechnologyBomParametersSql" >
+        SELECT
+        COUNT( 1 )
+        FROM
+        jr_technology_bom_parameter tbp
+        WHERE
+        1 = 1
+        <if test="technologyBomParameter.parameterName != null and technologyBomParameter.parameterName != ''">
+            AND tbp.parameter_name = #{technologyBomParameter.parameterName}
+        </if>
+        <if test="technologyBomParameter.parameterCategory != null and technologyBomParameter.parameterCategory != ''">
+            AND tbp.parameter_category = #{technologyBomParameter.parameterCategory}
+        </if>
+        <if test="technologyBomParameter.parameterState != null and technologyBomParameter.parameterState != ''">
+            AND tbp.parameter_state = #{technologyBomParameter.parameterState}
+        </if>
+    </sql>
+
+    <sql id="findTechnologyBomParametersPageSql" >
+        SELECT
+            tbp.id,
+            tbp.parameter_category,
+            tbp.parameter_value,
+            tbp.parameter_name,
+            tbp.parameter_sorting,
+            tbp.parameter_state,
+            tbp.parameter_date,
+            tbp.parameter_note
+        FROM
+            jr_technology_bom_parameter tbp
+        WHERE
+        1 = 1
+        <if test="technologyBomParameter.parameterName != null and technologyBomParameter.parameterName != ''">
+            AND tbp.parameter_name = #{technologyBomParameter.parameterName}
+        </if>
+        <if test="technologyBomParameter.parameterCategory != null and technologyBomParameter.parameterCategory != ''">
+            AND tbp.parameter_category = #{technologyBomParameter.parameterCategory}
+        </if>
+        <if test="technologyBomParameter.parameterState != null and technologyBomParameter.parameterState != ''">
+            AND tbp.parameter_state = #{technologyBomParameter.parameterState}
+        </if>
+    </sql>
+
+    <select id="countTechnologyBomParameters" parameterType="com.erp.technology.entity.TechnologyBomParameter" resultType="long">
+        <include refid="countTechnologyBomParametersSql"/>
+    </select>
+
+    <select id="findTechnologyBomParametersPage" parameterType="com.erp.technology.entity.TechnologyBomParameter" resultType="com.erp.technology.entity.TechnologyBomParameter">
+        <include refid="findTechnologyBomParametersPageSql"/>
+    </select>
+
+    <select id="technologyBomParameterId" parameterType="long" resultType="com.erp.technology.entity.TechnologyBomParameter">
+        SELECT
+            tbp.id,
+            tbp.parameter_category,
+            tbp.parameter_value,
+            tbp.parameter_name,
+            tbp.parameter_sorting,
+            tbp.parameter_state,
+            tbp.parameter_date,
+            tbp.parameter_note
+        FROM
+            jr_technology_bom_parameter tbp
+        WHERE
+            tbp.id = #{id}
+    </select>
+
+    <select id="findTechnologyBomParametersList"  resultType="com.erp.technology.entity.TechnologyBomParameter">
+        SELECT
+            tbp.id,
+            tbp.parameter_name
+        FROM
+            jr_technology_bom_parameter tbp
+    </select>
+
+</mapper>
