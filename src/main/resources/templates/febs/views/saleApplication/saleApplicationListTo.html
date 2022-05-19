@@ -168,10 +168,10 @@
                 area: ["80%","60%"],
                 //closeBtn: 0, //不显示关闭按钮
                 yes: function (index, layero) {
-                    $('saleApplication-addTo').find('#submit').trigger('click');
+                    $('#saleApplication-addTo').find('#submit').trigger('click');
                 },
-            })
-        })
+            });
+        });
 
         function getQueryParams() {
             let params = $searchForm.serializeJson();

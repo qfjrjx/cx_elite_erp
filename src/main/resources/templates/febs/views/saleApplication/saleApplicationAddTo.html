@@ -5,7 +5,7 @@
 </style>
 <div class="layui-fluid" id="saleApplication-addTo">
     <form class="layui-form" action="" lay-filter="saleApplication-add-form">
-        <div class="layui-form-item <!--febs-hide-->">
+        <div class="layui-form-item febs-hide">
             <label class="layui-form-label febs-form-item-require">赋值参数：</label>
             <div class="layui-input-block">
                 <!-- 获取产品名称-->
@@ -31,7 +31,7 @@
             </div>
             <label class="layui-form-label febs-form-item-require">客户名称</label>
             <div class="layui-input-inline" style="width: 110px">
-                <input type="text" name="customerName" lay-verify="require" id="customerNameTwo" lay-reqtext="系统提示，请选择客户" ondblclick="saleCustomerProfileSelection()"
+                <input type="text" name="customerName" lay-verify="required" id="customerNameTwo" lay-reqtext="系统提示，请选择客户" ondblclick="saleCustomerProfileSelection()"
                        autocomplete="off" class="layui-input" style="width: 110px" placeholder="请双击" readonly>
             </div>
             <label class="layui-form-label febs-form-item-require">业务员</label>
@@ -42,8 +42,13 @@
                 </select>
             </div>
         </div>
+        <table class="layui-table layui-form" id="deviceweihu-table" lay-filter="deviceweihu-table"></table>
+        <div class="layui-form-item febs-hide">
+            <button class="layui-btn" lay-submit="" lay-filter="saleApplication-add-form-submit" id="submit"></button>
+            <button class="layui-btn" lay-submit="" lay-filter="saleApplication-add-form-submitData" id="submitData"></button>
+            <button type="reset" class="layui-btn" id="reset"></button>
+        </div>
     </form>
-    sadgasjhdasdjasjyd
 </div>
 <script langguage="JavaScript">
 
@@ -53,12 +58,19 @@
 </script>
 
 <script>
-    layui.use(['febs', 'form', 'laydate'], function () {
+    layui.use(['febs', 'form', 'validate','table', 'xmSelect','upload','laydate'], function () {
         let $ = layui.$,
+            febs = layui.febs,
+            layer = layui.layer,
             form = layui.form,
-            laydate = layui.laydate;
+            laydate = layui.laydate,
+            validate = layui.validate,
+            table = layui.table,
+            upload = layui.upload,
+            uploadInst;
 
-            form.render();
+        form.verify(validate);
+        form.render();
 
             // 单个日期绑定
         lay('.createDate').each(function () {
@@ -69,6 +81,72 @@
             });
         });
 
+        table.render({
+            elem: "#deviceweihu-table",
+            data: [],
+            even: true,
+                  cols: [
+                      [
+                          {type: 'checkbox'},
+                          {field: 'productName',title: '产品名称', minWidth: 95,event:'choice'},
+                          {field: 'specificationModel', title: '规格型号', minWidth: 90},
+                          {field: 'parameterOption', title: '配置', minWidth: 90,event:'specification'},
+                          {field: 'companyName',title: '单位', minWidth: 55,align:'center'},
+                          {field: 'quantityName', edit:true,title: '数量', minWidth: 55,align:'center'},
+                          {field: 'explainName',edit:true, title: '说明', minWidth: 72}
+                      ]
+                  ]
+        });
+
+        // 点击增加行后的操作
+        table.on('tool(deviceweihu-table)', function (obj) {
+            let data = obj.data,
+                layEvent = obj.event;
+            if (layEvent === 'choice') {
+                var tableData = layui.table.cache['deviceweihu-table'];
+                var rowIndex = $(obj.tr).attr('data-index');//当前行的索引
+                if (tableData != "") {
+                    $("#parameterProductName").val(data.productName);//产品名称
+                    var parameterOptions = tableData[rowIndex].parameterOption;
+                    $("#parameterOne").val(parameterOptions);//配置
+                    var quantityName = tableData[rowIndex].quantityName;
+                    $("#parameterThree").val(quantityName);//数量
+                    var explainName = tableData[rowIndex].explainName;
+                    $("#parameterFour").val(explainName);//说明
+                }
+            }
+            febs.modal.view('【产品编码选择列表】', "sale/saleProductList", {
+                area:["65%","80%"],
+                /* cancel:function (index,layero) {
+                     if (confirm('确定要关闭么')){
+                         layer.close(index)
+                     }
+                     return false;
+                 }*/
+            });
+
+        });
+
+        form.on('submit(saleApplication-add-form-submit)', function () {
+            var dataBak = [];
+            var tableBak = layui.table.cache['deviceweihu-table'];
+            alert(JSON.stringify(tableBak));
+            for (var i = 0; i < tableBak.length ; i++){
+                dataBak.push(tableBak[i]);
+            }
+            dataBak.push({
+                "productName":"",
+                "specificationModel":"",
+                "parameterOption":"",
+                "companyName":"",
+                "quantityName":"",
+                "explainName":"",
+            });
+            layui.table.reload('deviceweihu-table',{
+                data: dataBak
+            });
+            return false;
+        });
     });
 
     function saleCustomerProfileSelection(){
