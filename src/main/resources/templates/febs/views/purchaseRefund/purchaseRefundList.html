@@ -362,35 +362,15 @@
         }
         table.on('row(purchaseRefundList)', function (obj) {
             let oddNumbers = obj.data.refundNumber;
-            var dataBak = [];
-            layui.table.reload('purchaseRefundTable',{
-                data:dataBak
-            });
             $.ajax({
                 url: '/purchaseRefund/query',
                 data:{"oddNumbers":oddNumbers},
-                success : function(data) {
-                    var oldDataOne;
-                    var arr = data.replies;
-                    for(var i=0;i<arr.length;i++){
-                        var refundCode = arr[i].refundCode;
-                        var refundName = arr[i].refundName;
-                        var refundSpecifications = arr[i].refundSpecifications;
-                        var refundQuality = arr[i].refundQuality;
-                        var refundBrand = arr[i].refundBrand;
-                        var refundCompany = arr[i].refundCompany;
-                        var refundQuantity = arr[i].refundQuantity;
-                        var refundPrice = arr[i].refundPrice;
-                        var refundMoney = arr[i].refundMoney;
-                        var orderNumber = arr[i].orderNumber;
-                        var refundRemarks = arr[i].refundRemarks;
-                        var dataOne={"refundCode":refundCode,"refundName":refundName,"refundSpecifications":refundSpecifications,"refundQuality":refundQuality,"refundBrand":refundBrand,"refundCompany":refundCompany,
-                            "refundQuantity":refundQuantity,"refundPrice":refundPrice,"refundMoney":refundMoney,"orderNumber":orderNumber,"refundRemarks":refundRemarks};
-                        oldDataOne =  table.cache["purchaseRefundTable"];
-                        oldDataOne.push(dataOne);
-                    }
+                async:false
+                ,dataType:"json"
+                ,success : function(data) {
+                    purchaseTableData = data.replies;
                     layui.table.reload('purchaseRefundTable',{
-                        data : oldDataOne
+                        data : purchaseTableData
                     });
                 }
             });

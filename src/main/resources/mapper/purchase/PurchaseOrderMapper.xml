@@ -6,30 +6,52 @@
         SELECT
             COUNT( 1 )
         FROM
-            jr_purchase_order po
-        LEFT JOIN jr_purchase_order_schedule pos ON ( po.order_number = pos.odd_numbers )
-        LEFT JOIN jr_finance_parameters fpa ON ( po.currency_id = fpa.id )
-        LEFT JOIN jr_finance_parameters fpb ON ( po.tax_rate_id = fpb.id )
+            (
+                SELECT
+                po.id,
+                po.order_state,
+                po.purchase_requisition_date,
+                po.order_number,
+                po.supplier_name,
+                pos.order_money orderMoney,
+                fpa.finance_parameter_name currencyName,
+                fpb.finance_parameter_name taxRateName,
+                po.payment_method,
+                po.order_deposit,
+                po.invoice_billing_situation,
+                po.order_preparer,
+                po.order_preparation_date,
+                sum( pos.order_quantity ) orderQuantity
+                FROM
+                jr_purchase_order po
+                LEFT JOIN jr_purchase_order_schedule pos ON ( po.order_number = pos.odd_numbers )
+                LEFT JOIN jr_finance_parameters fpa ON ( po.currency_id = fpa.id )
+                LEFT JOIN jr_finance_parameters fpb ON ( po.tax_rate_id = fpb.id )
+                WHERE
+                1 = 1
+                <if test="purchaseOrder.signedDateFrom != null and purchaseOrder.signedDateFrom !=''">
+                    And po.purchase_requisition_date &gt;= #{purchaseOrder.signedDateFrom}
+                </if>
+                <if test="purchaseOrder.signedDateTo != null and purchaseOrder.signedDateTo !=''">
+                    And po.purchase_requisition_date &lt;= #{purchaseOrder.signedDateTo}
+                </if>
+                <if test="purchaseOrder.supplierNameList != null and purchaseOrder.supplierNameList != ''">
+                    AND po.supplier_name = #{purchaseOrder.supplierNameList}
+                </if>
+                <if test="purchaseOrder.orderState != null and purchaseOrder.orderState != ''">
+                    AND po.order_state = #{purchaseOrder.orderState}
+                </if>
+                <if test="purchaseOrder.orderNumber != null and purchaseOrder.orderNumber != ''">
+                    AND po.order_number = #{purchaseOrder.orderNumber}
+                </if>
+                <if test="purchaseOrder.paymentMethod != null and purchaseOrder.paymentMethod != ''">
+                    AND po.payment_method = #{purchaseOrder.paymentMethod}
+                </if>
+                GROUP BY
+                po.order_number
+            )jr_purchase_order
         WHERE
-            1 = 1
-            <if test="purchaseOrder.signedDateFrom != null and purchaseOrder.signedDateFrom !=''">
-                And po.purchase_requisition_date &gt;= #{purchaseOrder.signedDateFrom}
-            </if>
-            <if test="purchaseOrder.signedDateTo != null and purchaseOrder.signedDateTo !=''">
-                And po.purchase_requisition_date &lt;= #{purchaseOrder.signedDateTo}
-            </if>
-            <if test="purchaseOrder.supplierNameList != null and purchaseOrder.supplierNameList != ''">
-                AND po.supplier_name = #{purchaseOrder.supplierNameList}
-            </if>
-            <if test="purchaseOrder.orderState != null and purchaseOrder.orderState != ''">
-                AND po.order_state = #{purchaseOrder.orderState}
-            </if>
-            <if test="purchaseOrder.orderNumber != null and purchaseOrder.orderNumber != ''">
-                AND po.order_number = #{purchaseOrder.orderNumber}
-            </if>
-            <if test="purchaseOrder.paymentMethod != null and purchaseOrder.paymentMethod != ''">
-                AND po.payment_method = #{purchaseOrder.paymentMethod}
-            </if>
+        1 = 1
     </sql>
 
     <sql id="countPurchaseInspectionOrderSql">

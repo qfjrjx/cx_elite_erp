@@ -219,39 +219,16 @@
             });
         }
         table.on('row(purchaseSettlementList)', function (obj) {
-
             let oddNumbers = obj.data.settlementNumbers;
-            var dataBak = [];
-            layui.table.reload('purchaseSettlementTable',{
-                data:dataBak
-            });
             $.ajax({
                 url: '/purchaseSettlement/query',
                 data:{"oddNumbers":oddNumbers},
-                success : function(data) {
-                    var oldDataOne;
-                    var arr = data.replies;
-                    for(var i=0;i<arr.length;i++){
-                        var settlementCode = arr[i].settlementCode;
-                        var settlementName = arr[i].settlementName;
-                        var settlementSpecifications = arr[i].settlementSpecifications;
-                        var settlementQuality = arr[i].settlementQuality;
-                        var settlementBrand = arr[i].settlementBrand;
-                        var settlementCompany = arr[i].settlementCompany;
-                        var settlementQuantity = arr[i].settlementQuantity;
-                        var settlementPrice = arr[i].settlementPrice;
-                        var settlementMoney = arr[i].settlementMoney;
-                        var settlementCategory = arr[i].settlementCategory;
-                        var settlementSubclass = arr[i].settlementSubclass;
-                        var settlementRemarks = arr[i].settlementRemarks;
-                        var dataOne={"settlementCode":settlementCode,"settlementName":settlementName,"settlementSpecifications":settlementSpecifications,
-                            "settlementQuality":settlementQuality,"settlementBrand":settlementBrand,"settlementCompany":settlementCompany,"settlementQuantity":settlementQuantity,
-                            "settlementPrice":settlementPrice,"settlementMoney":settlementMoney,"settlementCategory":settlementCategory,"settlementSubclass":settlementSubclass,"settlementRemarks":settlementRemarks};
-                        oldDataOne =  table.cache["purchaseSettlementTable"];
-                        oldDataOne.push(dataOne);
-                    }
+                async:false
+                ,dataType:"json"
+                ,success : function(data) {
+                    purchaseTableData = data.replies;
                     layui.table.reload('purchaseSettlementTable',{
-                        data : oldDataOne
+                        data : purchaseTableData
                     });
                 }
             });

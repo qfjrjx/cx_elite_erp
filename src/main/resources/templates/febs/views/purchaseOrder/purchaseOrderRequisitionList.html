@@ -510,36 +510,15 @@
         }
         table.on('row(purchaseOrderTable)', function (obj) {
             let oddNumbers = obj.data.orderNumber;
-            var dataBak = [];
-            layui.table.reload('purchaseOrder-table',{
-                data:dataBak
-            });
             $.ajax({
                 url: '/purchaseOrder/query',
                 data:{"oddNumbers":oddNumbers},
-                success : function(data) {
-                    var oldDataOne;
-                    var arr = data.replies;
-                    for(var i=0;i<arr.length;i++){
-                        var applicationNo = arr[i].applicationNo;
-                        var orderCode = arr[i].orderCode;
-                        var materialName = arr[i].materialName;
-                        var orderSpecifications = arr[i].orderSpecifications;
-                        var orderQuality = arr[i].orderQuality;
-                        var orderBrand = arr[i].orderBrand;
-                        var orderCompany = arr[i].orderCompany;
-                        var orderQuantity = arr[i].orderQuantity;
-                        var unitPrice = arr[i].unitPrice;
-                        var orderMoney = arr[i].orderMoney;
-                        var deliveryDate = arr[i].deliveryDate;
-                        var orderRemarks = arr[i].orderRemarks;
-                        var dataOne={"applicationNo":applicationNo,"orderCode":orderCode,"materialName":materialName,"orderSpecifications":orderSpecifications,"orderQuality":orderQuality,"orderBrand":orderBrand,"orderCompany":orderCompany,
-                            "orderQuantity":orderQuantity,"unitPrice":unitPrice,"orderMoney":orderMoney,"deliveryDate":deliveryDate,"orderRemarks":orderRemarks};
-                        oldDataOne =  table.cache["purchaseOrder-table"];
-                        oldDataOne.push(dataOne);
-                    }
+                async:false
+                ,dataType:"json"
+                ,success : function(data) {
+                    purchaseTableData = data.replies;
                     layui.table.reload('purchaseOrder-table',{
-                        data : oldDataOne
+                        data : purchaseTableData
                     });
                 }
             });
