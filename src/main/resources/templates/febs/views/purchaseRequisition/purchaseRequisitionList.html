@@ -438,32 +438,15 @@
         }
         table.on('row(purchaseRequisitionTable)', function (obj) {
             let oddNumbers = obj.data.oddNumbers;
-            var dataBak = [];
-            layui.table.reload('purchaseRequisitionTableOne',{
-                data:dataBak
-            });
             $.ajax({
                 url: '/purchaseRequisition/query',
                 data:{"oddNumbers":oddNumbers},
-                success : function(data) {
-                    var oldDataOne;
-                    var arr = data.replies;
-                    for(var i=0;i<data.replies.length;i++){
-                        var applyCode = arr[i].applyCode;
-                        var applyName = arr[i].applyName;
-                        var applySpecifications = arr[i].applySpecifications;
-                        var applyQuality = arr[i].applyQuality;
-                        var applyBrand = arr[i].applyBrand;
-                        var applyCompany = arr[i].applyCompany;
-                        var applyQuantity = arr[i].applyQuantity;
-                        var deliveryDate = arr[i].deliveryDate;
-                        var applyRemarks = arr[i].applyRemarks;
-                        var dataOne={"applyCode":applyCode,"applyName":applyName,"applySpecifications":applySpecifications,"applyQuality":applyQuality,"applyBrand":applyBrand,"applyCompany":applyCompany,"applyQuantity":applyQuantity,"deliveryDate":deliveryDate,"applyRemarks":applyRemarks};
-                        oldDataOne =  table.cache["purchaseRequisitionTableOne"];
-                        oldDataOne.push(dataOne);
-                    }
+                async:false
+                ,dataType:"json"
+                , success: function(data){
+                    purchaseTableData=data.replies;
                     layui.table.reload('purchaseRequisitionTableOne',{
-                        data : oldDataOne
+                        data : purchaseTableData
                     });
                 }
             });

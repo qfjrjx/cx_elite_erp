@@ -9,6 +9,7 @@ import com.erp.sale.entity.SaleOrderAll;
 import com.erp.sale.entity.SaleOrderSchedule;
 import com.erp.sale.mapper.SaleOrderMapper;
 import com.erp.sale.service.ISaleOrderService;
+import com.google.gson.JsonArray;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.annotation.Propagation;
@@ -22,10 +23,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 /**
  * saleApplicationAll-table表 Service实现
@@ -268,9 +266,178 @@ public class SaleOrderServiceImpl extends ServiceImpl<SaleOrderMapper, SaleOrder
     }
 
     @Override
-    public void updateSaleOrder(String saleApplicationData, String dataTable, String contImg) {
+    public void updateSaleOrder(String saleOrderData, String dataTable, String contImg) throws ParseException {
+        SaleOrder saleOrder = new SaleOrder();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        JSONObject saleOrderDataKey = JSON.parseObject(saleOrderData);
+        String  oddNumbers =  saleOrderDataKey.getString("oddNumbers");
+        String  orderDate =  saleOrderDataKey.getString("orderDate");
+        String  customerName =  saleOrderDataKey.getString("customerName");
+        String  salesmanName =  saleOrderDataKey.getString("salesmanName");
+        String  currencyName =  saleOrderDataKey.getString("currencyName");
+        String  taxRate =  saleOrderDataKey.getString("taxRate");
+        String  paymentMethod =  saleOrderDataKey.getString("paymentMethod");
+        String  depositMoney =  saleOrderDataKey.getString("depositMoney");
+        String  invoiceNot =  saleOrderDataKey.getString("invoiceNot");
+        String  contactsName =  saleOrderDataKey.getString("contactsName");
+        String  mobilePhone =  saleOrderDataKey.getString("mobilePhone");
+        String  orderType =  saleOrderDataKey.getString("orderType");
+        String  afterSalesClerk =  saleOrderDataKey.getString("afterSalesClerk");
+        if (!orderDate.equals("")) {
+            Date orderDateOne = sdf.parse(orderDate);//格式化数据，取当前时间结果
+            saleOrder.setOrderDate(orderDateOne);
+        }
+        if (!customerName.equals("")) {
+            saleOrder.setCustomerName(customerName);
+        }
+        if (!salesmanName.equals("")) {
+            saleOrder.setSalesmanName(salesmanName);
+        }
+        if (!currencyName.equals("")) {
+            long currencyNameOne = Long.parseLong(currencyName);
+            saleOrder.setCurrencyId(currencyNameOne);
+        }
+        if (!taxRate.equals("")) {
+            saleOrder.setTaxRateId(Long.parseLong(taxRate));
+        }
+        if (!paymentMethod.equals("")) {
+            saleOrder.setPaymentMethodId(Long.parseLong(paymentMethod));
+        }
+        if (!depositMoney.equals("")) {
+            BigDecimal depositMoneyTo = new BigDecimal(depositMoney);
+            saleOrder.setDepositMoney(depositMoneyTo);
+        }
+        if (!invoiceNot.equals("")) {
+            saleOrder.setInvoiceNot(Integer.parseInt(invoiceNot));
+        }
+        if (!contactsName.equals("")) {
+            saleOrder.setContactsName(contactsName);
+        }
+        if (!mobilePhone.equals("")) {
+            saleOrder.setMobilePhone(mobilePhone);
+        }
+        if (!orderType.equals("")) {
+            saleOrder.setOrderType(Integer.parseInt(orderType));
+        }
+        if (!afterSalesClerk.equals("")) {
+            saleOrder.setAfterSalesClerk(afterSalesClerk);
+        }
+        if (!contImg.equals("")){
+            //截取：之前的字符串
+           /* int contImgOne = contImg.indexOf(".");
+            String contImgTwo = contImg.substring(0,contImgOne);*/
+            saleOrder.setEnclosureName(contImg);
+        }
+        saleOrder.setOddNumbers(oddNumbers);
+        //删除附表数据
+        baseMapper.deleteSaleOrderSchedule(oddNumbers);
+        JSONArray  jsonArrayOne = JSONArray.parseArray(String.valueOf(dataTable));
+        for(int i = 0; i < jsonArrayOne.size(); i++){
+            SaleOrderSchedule saleOrderSchedule = new SaleOrderSchedule();
+            String productName = jsonArrayOne.getJSONObject(i).getString("productName");
+            String specificationModel = jsonArrayOne.getJSONObject(i).getString("specificationModel");
+            String configureName =  jsonArrayOne.getJSONObject(i).getString("configureName");
+            System.out.println("-------------1>>"+configureName);
+            String companyName = jsonArrayOne.getJSONObject(i).getString("companyName");
+            String quantityName = jsonArrayOne.getJSONObject(i).getString("quantityName");
+            String unitPrice = jsonArrayOne.getJSONObject(i).getString("unitPrice");
+            String amountMoney = jsonArrayOne.getJSONObject(i).getString("amountMoney");
+            String deliveryDate = jsonArrayOne.getJSONObject(i).getString("deliveryDate");
+            String orderRemarks = jsonArrayOne.getJSONObject(i).getString("orderRemarks");
+            if (!productName.equals("")) {
+                saleOrderSchedule.setProductName(productName);
+            }if (!specificationModel.equals("")) {
+                saleOrderSchedule.setSpecificationModel(specificationModel);
+            }if (!companyName.equals("")) {
+                saleOrderSchedule.setCompanyName(companyName);
+            }if (!quantityName.equals("")) {
+                saleOrderSchedule.setQuantityName(quantityName);
+            }if (unitPrice != null && unitPrice != "") {
+                BigDecimal unitPriceTo = new BigDecimal(unitPrice);
+                saleOrderSchedule.setUnitPrice(unitPriceTo);
+            }
+            if (!amountMoney.equals("")) {
+                BigDecimal amountMoneyTo = new BigDecimal(amountMoney);
+                saleOrderSchedule.setAmountMoney(amountMoneyTo);
+            }
+            saleOrderSchedule.setOddNumbers(oddNumbers);
+            if (deliveryDate != null && deliveryDate != "") {
+                Date requestedDeliveryDates = sdf.parse(deliveryDate);//格式化数据，取当前时间结果
+                saleOrderSchedule.setDeliveryDate(requestedDeliveryDates);
+            }
 
-
+            saleOrderSchedule.setOrderRemarks(orderRemarks);
+            //将List集合转成json字符串
+            if(!configureName.equals("")) {
+                String str = configureName.substring(0,1);
+                JSONArray  jsonArrayTwo;
+                if (!str.equals("[")){
+                    JsonArray arr = new JsonArray();
+                    String[] placeName = configureName.split(",");
+                     /* System.out.println("-------------1111111>>"+placeName);*/
+                    for (int k = 0; k < placeName.length; k++) {
+                        arr.add(placeName[k]);
+                    }
+                    jsonArrayTwo = JSONArray.parseArray(String.valueOf(arr));
+                }else {
+                    jsonArrayTwo = JSONArray.parseArray(configureName);
+                }
+                //StringBuilder拼接字符串方式
+                StringBuilder strOne = new StringBuilder();
+                for (int j = 0; j < jsonArrayTwo.size(); j++) {
+                    String parameterOne = jsonArrayTwo.get(j).toString();
+                    //System.out.println("------------->>"+parameterOne);
+                    //截取：之前的字符串
+                    int start = parameterOne.indexOf(":");
+                    String allocationName = parameterOne.substring(0, start);
+                    //System.out.println("------"+allocationName);
+                    //截取：之后的字符串
+                    String str1 = parameterOne.substring(0, parameterOne.indexOf(":"));
+                    String configurationContent = parameterOne.substring(str1.length() + 1, parameterOne.length());
+                    if (allocationName.equals("机器要求")) {
+                        saleOrderSchedule.setMachineRequirements(configurationContent);
+                        strOne.append("机器要求:" + configurationContent + ",");
+                    }
+                    if (allocationName.equals("电脑配置")) {
+                        saleOrderSchedule.setComputerConfiguration(configurationContent);
+                        strOne.append("电脑配置:" + configurationContent + ",");
+                    }
+                    if (allocationName.equals("刀具大小")) {
+                        saleOrderSchedule.setToolSize(configurationContent);
+                        strOne.append("刀具大小:" + configurationContent + ",");
+                    }
+                    if (allocationName.equals("每小时产量")) {
+                        saleOrderSchedule.setHourlyProduction(configurationContent);
+                        strOne.append("每小时产量:" + configurationContent + ",");
+                    }
+                    if (allocationName.equals("加工工序")) {
+                        saleOrderSchedule.setProcessingProcedure(configurationContent);
+                        strOne.append("加工工序:" + configurationContent + ",");
+                    }
+                    if (allocationName.equals("夹具要求")) {
+                        saleOrderSchedule.setFixtureRequirements(configurationContent);
+                        strOne.append("夹具要求:" + configurationContent + ",");
+                    }
+                    if (allocationName.equals("产品形状")) {
+                        saleOrderSchedule.setProductShape(configurationContent);
+                        strOne.append("产品形状:" + configurationContent + ",");
+                    }
+                    if (allocationName.equals("产品尺寸")) {
+                        saleOrderSchedule.setProductSize(configurationContent);
+                        strOne.append("产品尺寸:" + configurationContent + ",");
+                    }
+                    if (allocationName.equals("其他要求")) {
+                        saleOrderSchedule.setOtherRequirements(configurationContent);
+                        strOne.append("其他要求:" + configurationContent + ",");
+                    }
+                }
+                saleOrderSchedule.setConfigureName(strOne.toString());
+                //添加到数据库附表
+                baseMapper.addSaleOrderSchedule(saleOrderSchedule);
+            }
+        }
+        //修改数据库主表
+        baseMapper.updateSaleOrder(saleOrder);
 
     }
 

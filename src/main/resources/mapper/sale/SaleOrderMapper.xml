@@ -308,4 +308,29 @@
             sos.odd_numbers = #{oddNumbersTwo}
     </select>
 
+    <!--删除附表数据-->
+    <delete id="deleteSaleOrderSchedule">
+        delete from jr_sale_order_schedule where odd_numbers = #{oddNumbers}
+    </delete>
+
+    <!--进行修改主表的数据-->
+    <update id = "updateSaleOrder" parameterType = "com.erp.sale.entity.SaleOrder" >
+        UPDATE jr_sale_order so
+        SET
+            so.order_date = #{orderDate},
+            so.customer_name = #{customerName},
+            so.salesman_name = #{salesmanName},
+            so.currency_id = #{currencyId},
+            so.tax_rate_id = #{taxRateId},
+            so.payment_method_id = #{paymentMethodId},
+            so.deposit_money = #{depositMoney},
+            so.invoice_not = #{invoiceNot},
+            so.contacts_name = #{contactsName},
+            so.mobile_phone = #{mobilePhone},
+            so.enclosure_name = #{enclosureName},
+            so.order_type = #{orderType},
+            so.after_sales_clerk = #{afterSalesClerk}
+        WHERE so.odd_numbers = #{oddNumbers}
+    </update>
+
 </mapper>

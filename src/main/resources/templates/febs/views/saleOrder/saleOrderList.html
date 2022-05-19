@@ -121,6 +121,16 @@
                              shiro:hasAnyPermissions="saleOrder:update" id="updateTo">
                             <i class="layui-icon">&#xe642;</i>修改
                         </div>
+                        <!--确认按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="saleOrder:confirm" id="confirmTo">
+                            <i class="layui-icon layui-icon-ok-circle"></i>确认
+                        </div>
+                        <!--取消按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="saleOrder:cancel" id="cancelTo">
+                            <i class="layui-icon layui-icon-close-fill"></i>取消
+                        </div>
                         <!--修改按钮-->
                         <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action"
                              shiro:hasAnyPermissions="saleOrder:export" id="exportTo">
@@ -170,6 +180,7 @@
             $query = $view.find('#query'),
             $addTo = $view.find('#addTo'),
             $updateTo = $view.find('#updateTo'),//修改
+            $confirmTo = $view.find('#confirmTo'),
             $deleteTo = $view.find('#deleteTo'),
             $exportTo = $view.find('#exportTo'),
             $reset = $view.find('#reset'),
@@ -392,6 +403,28 @@
                 });
             }
         });
+        $confirmTo.on('click', function () {
+            let checkStatus = table.checkStatus('saleOrderTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要确认的数据');
+            } else {
+                layui.each(checkStatus.data, function (key, item) {
+                    febs.modal.view("", 'sale/saleOrder/confirm/' + item.id, {
+                        btn: ['关闭'],
+                        area: ["80%","60%"],
+                        yes: function (index, layero) {
+                            layer.closeAll();
+                        }
+                    });
+                });
+            }
+        });
+        function confirmSaleOrder(ids) {
+            febs.get(ctx + 'purchaseOrder/confirm/' + ids, null, function () {
+                febs.alert.success('确认采购参数成功');
+                $query.click();
+            });
+        }
 
         $deleteTo.on('click', function () {
             let checkStatus = table.checkStatus('saleOrderTable');

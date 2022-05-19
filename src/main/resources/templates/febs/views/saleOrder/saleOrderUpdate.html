@@ -240,7 +240,7 @@
                                                  return "";
                                              }
                                                 }},
-                                         {field: 'deliveryTime',title: '交货日期', minWidth: 72,event: 'deliveryDateOne',templet:'<div>{{ layui.util.toDateString(d.deliveryTime, "yyyy-MM-dd") }}</div>'},
+                                         {field: 'deliveryDate',title: '交货日期', minWidth: 72,event: 'deliveryDateOne',templet:'<div>{{ layui.util.toDateString(d.deliveryDate, "yyyy-MM-dd") }}</div>'},
                                          {field: 'orderRemarks',edit:true, title: '备注', minWidth: 72}
                                      ]
                                   ]
@@ -410,9 +410,9 @@
                                     var rowIndex = $(obj.tr).attr('data-index');//当前行的索引
                                     for (i=0;i<tableDas.length;i++){
                                         if (tableDas[rowIndex].productName == tableDas[i].productName && tableDas[rowIndex].configureName == tableDas[i].configureName){
-                                            tableData = {"productName":tableDas[i].productName,"specificationModel":tableDas[i].specificationModel,"configureName":dataOne,"companyName":tableDas[i].companyName,"quantityName":tableDas[i].quantityName,"unitPrice":tableDas[i].unitPrice,"amountMoney":tableDas[i].amountMoney,"deliveryTime":tableDas[i].deliveryTime,"orderRemarks":tableDas[i].orderRemarks};
+                                            tableData = {"productName":tableDas[i].productName,"specificationModel":tableDas[i].specificationModel,"configureName":dataOne,"companyName":tableDas[i].companyName,"quantityName":tableDas[i].quantityName,"unitPrice":tableDas[i].unitPrice,"amountMoney":tableDas[i].amountMoney,"deliveryDate":tableDas[i].deliveryDate,"orderRemarks":tableDas[i].orderRemarks};
                                         }else{
-                                            tableData = {"productName":tableDas[i].productName,"specificationModel":tableDas[i].specificationModel,"configureName":tableDas[i].configureName,"companyName":tableDas[i].companyName,"quantityName":tableDas[i].quantityName,"unitPrice":tableDas[i].unitPrice,"amountMoney":tableDas[i].amountMoney,"deliveryTime":tableDas[i].deliveryTime,"orderRemarks":tableDas[i].orderRemarks};
+                                            tableData = {"productName":tableDas[i].productName,"specificationModel":tableDas[i].specificationModel,"configureName":tableDas[i].configureName,"companyName":tableDas[i].companyName,"quantityName":tableDas[i].quantityName,"unitPrice":tableDas[i].unitPrice,"amountMoney":tableDas[i].amountMoney,"deliveryDate":tableDas[i].deliveryDate,"orderRemarks":tableDas[i].orderRemarks};
                                         }
                                         dataBak.push(tableData);
                                     }
@@ -444,7 +444,7 @@
                "quantityName":null,
                "unitPrice":null,
                "amountMoney":null,
-               "deliveryTime":orderDeliveryDateTo,
+               "deliveryDate":orderDeliveryDateTo,
                "orderRemarks":""
            });
           // console.log(dataBak);
@@ -456,6 +456,7 @@
         });
         form.on('submit(saleOrder-update-form-submitData)', function (data) {
             var dataThree = new Array();
+            var dataConfigureName = [];
             let saleOrderData = {
                 "oddNumbers":data.field.oddNumbers,//单号
                 "orderDate":data.field.orderDate,//日期
@@ -481,7 +482,7 @@
                     "quantityName":saleOrderUpdate_table[i].quantityName,
                     "unitPrice":saleOrderUpdate_table[i].unitPrice,
                     "amountMoney":saleOrderUpdate_table[i].amountMoney,
-                    "deliveryTime":saleOrderUpdate_table[i].deliveryTime,
+                    "deliveryDate":saleOrderUpdate_table[i].deliveryDate,
                     "orderRemarks":saleOrderUpdate_table[i].orderRemarks};
                 dataThree.push(dataOne);
             }
