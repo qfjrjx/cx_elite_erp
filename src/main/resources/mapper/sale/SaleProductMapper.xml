@@ -7,8 +7,18 @@
             COUNT( 1 )
         FROM
             jr_technology_product tp
+            LEFT JOIN jr_purchase_parameters pp ON ( tp.product_metering_company_id = pp.id )
         WHERE
             1 = 1
+        <if test="saleProduct.productName != null and saleProduct.productName != ''">
+            AND tp.product_name = #{saleProduct.productName}
+        </if>
+        <if test="saleProduct.specificationModel != null and saleProduct.specificationModel != ''">
+            AND tp.product_specification_model = #{saleProduct.specificationModel}
+        </if>
+        <if test="saleProduct.productName != null and saleProduct.productName != ''">
+            AND tp.product_name LIKE CONCAT('%',#{saleProduct.productName},'%')
+        </if>
     </sql>
     <sql id="findSaleProductsSql">
        SELECT
@@ -23,6 +33,13 @@
             LEFT JOIN jr_purchase_parameters pp ON ( tp.product_metering_company_id = pp.id )
         WHERE
 	tp.product_state = 1
+        <if test="saleProduct.productName != null and saleProduct.productName != ''">
+            AND tp.product_name = #{saleProduct.productName}
+        </if>
+        <if test="saleProduct.specificationModel != null and saleProduct.specificationModel != ''">
+            AND tp.product_specification_model = #{saleProduct.specificationModel}
+        </if>
+        order by tp.id asc
     </sql>
     <select id="countSaleProducts" parameterType="com.erp.sale.entity.SaleProduct" resultType="long">
         <include refid="countSaleProductsSql"/>
