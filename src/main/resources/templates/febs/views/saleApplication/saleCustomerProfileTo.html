@@ -70,7 +70,7 @@ let customerState = {
 2: {title: '禁用', color: 'volcano'}
 }[d.customerState];
 }}
-    <span class="layui-badge febs-bg-{{customerState.color}}">{{ customerState.title }}</span>
+    <span class="layui-badge febs-bg-{{customerState.color}}">{{customerState.title}}</span>
 </script>
 <script data-th-inline="none" type="text/javascript">
     layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
@@ -93,43 +93,17 @@ let customerState = {
 
         initTable();
 
-       /* dropdownMenu.render({
-            elem: $view.find('.action-more'),
-            click: function (name, elem, event) {
-                let checkStatus = table.checkStatus('saleCustomerProfileTable');
-            },
-            options: []
-        });
-
-        table.on('tool(saleCustomerProfileTable)', function (obj) {
-            let data = obj.data,
-                layEvent = obj.event;
-        });
-
-        table.on('sort(saleCustomerProfileTable)', function (obj) {
-            sortObject = obj;
-            tableIns.reload({
-                initSort: obj,
-                where: $.extend(getQueryParams(), {
-                    field: obj.field,
-                    order: obj.type
-                })
-            });
-        });*/
-
-        // 搜索按钮
         $query.on('click', function () {
             let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
             tableIns.reload({where: params, page: {curr: 1}});
         });
 
-        // 刷新按钮
+
         $reset.on('click', function () {
             // 查询条件重置
             $searchForm[0].reset();
-            tableIns.reload({where: getQueryParams(), page: {curr: 1} })
-        })
-
+            tableIns.reload({where: getQueryParams(), page: {curr: 1}});
+        });
 
         function initTable() {
             tableIns = febs.table.init({
@@ -147,29 +121,18 @@ let customerState = {
                     {field: 'customerContacts', title: '联系人',align:'center', minWidth: 100},
                     {field: 'contactNumber', title: '联系电话', minWidth: 100}
                 ]],done: function (res, curr, count) {
-                    $('#febs-saleCustomerProfileTo').find('.layui-card-body').find("table").find("tbody").children("tr").on('dblclick', function () {
-                        var id = JSON.stringify($('#febs-saleCustomerProfileTo').find('.layui-table-body').find("table" ).find("tbody").find(".layui-table-hover").data('index'));
+                    $('#febs-saleCustomerProfileTo').find('.layui-table-body').find("table" ).find("tbody").children("tr").on('dblclick',function() {
+                        var id = JSON.stringify($('#febs-saleCustomerProfileTo').find('.layui-table-body').find("table").find("tbody").find(".layui-table-hover").data('index'));
                         var obj = res.data[id];
-                        var customerNameTwo = $("#customerNameTwo").val();// 客户名称
-                        var contactsNameOne = $("#contactsNameOne").val();// 联系人
-                        var mobilePhoneOne = $("#mobilePhoneOne").val(); // 手机
-                         if (customerNameTwo!=null && customerNameTwo!=""){
-                             $("#customerNameTwo").attr("value","");
-                         } if (contactsNameOne!=null && contactsNameOne!=""){
-                             $("#contactsNameOne").attr("value","");
-                         } if (mobilePhoneOne!=null && mobilePhoneOne!=""){
-                             $("#mobilePhoneOne").attr("value","");
-                         }
-                        $("#customerNameTwo").attr("value", obj.customerFullName); // 客户名称回填
+                        var customerName = $("#customerName").val();
+                        if (customerName!=null && customerName!=""){
+                            $("#customerName").attr("value","");
+                        }
 
-                        // 业务员工名称回填
-                        var personnelNames = obj.personnelName;
-                        $("#personnelNameOne").val(personnelNames);
-
-                        // 重新渲染
-                       form.render("select");
-                       parent.layer.close(layer.index)
+                        $('#customerName').attr("value", obj.customerFullName);
+                        parent.layer.close(layer.index);
                     })
+
                 }
             });
         }
@@ -186,7 +149,6 @@ let customerState = {
             params.invalidate_ie_cache = new Date();
             return params;
         }
-
     })
 </script>
-
+<div>sddcxsadcdsacsd</div>

@@ -74,7 +74,6 @@
         </div>
     </div>
 </div>
-<div>dsjfbhdsjfnhsdnkl</div>
 <script data-th-inline="none" type="text/javascript">
     layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
         let $ = layui.jquery,
@@ -129,6 +128,11 @@
             });
         });
 
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        })
+
         $addTo.on('click', function () {
             var oldDatas;
             var parameterProductName = document.getElementById("parameterProductName"); // 获取产品名称
@@ -141,7 +145,7 @@
             var dateList = []; // 存储选中的数据
             //循环表格数据
             for (var i in oldDataDel) {
-                //判断未选中数据
+                //判断选中数据
                 if (!oldDataDel[i].LAY_CHECKED) {
                     //存入数组
                     dateList.push(oldDataDel[i]);
@@ -183,5 +187,12 @@
                 {field: 'productRemark', title: '备注',align:'center', minWidth: 80}
             ]]
         });
+
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            params.invalidate_ie_cache = new Date();
+            return params;
+        };
+
     })
 </script>
