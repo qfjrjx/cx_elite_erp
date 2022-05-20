@@ -50,6 +50,8 @@
         </div>
     </form>
 </div>
+
+<!--关系下拉列表是否显示-->
 <script langguage="JavaScript">
 
     var now = new Date();
@@ -81,6 +83,7 @@
             });
         });
 
+        // 给table赋值上字段
         table.render({
             elem: "#deviceweihu-table",
             data: [],
@@ -98,7 +101,7 @@
                   ]
         });
 
-        // 点击增加行后的操作
+        // 点击增加行后再次点击产品名称下面的空白行的操作的操作
         table.on('tool(deviceweihu-table)', function (obj) {
             let data = obj.data,
                 layEvent = obj.event;
@@ -115,7 +118,7 @@
                     $("#parameterFour").val(explainName);//说明
                 }
             }
-            febs.modal.view('【产品编码选择列表】', "sale/saleProductList", {
+            febs.modal.view('【产品编码选择列表】', "sale/saleProductListTo", {
                 area:["65%","80%"],
                 /* cancel:function (index,layero) {
                      if (confirm('确定要关闭么')){
@@ -130,7 +133,6 @@
         form.on('submit(saleApplication-add-form-submit)', function () {
             var dataBak = [];
             var tableBak = layui.table.cache['deviceweihu-table'];
-            alert(JSON.stringify(tableBak));
             for (var i = 0; i < tableBak.length ; i++){
                 dataBak.push(tableBak[i]);
             }
