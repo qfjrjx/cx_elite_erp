@@ -50,19 +50,19 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="layui-col-md2 layui-col-sm12 layui-col-xs12 table-action-area">
+                            <div class="layui-col-md4 layui-col-sm12 layui-col-xs12">
                                 <!-- 搜索按钮-->
                                 <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
                                     <i class="layui-icon">&#xe848;</i>查询
+                                </div>
+                                <!-- 刷新按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action " id="reset">
+                                    <i class="layui-icon">&#xe79b;</i>刷新
                                 </div>
                                 <!-- 添加按钮-->
                                 <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action " id="addTo">
                                     <i class="layui-icon">&#xe78a;</i>确定
                                 </div>
-                                <!-- 刷新按钮-->
-                                <!--<div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action " id="reset">
-                                    <i class="layui-icon">&#xe79b;</i>刷新
-                                </div>-->
                             </div>
                         </div>
                     </form>
@@ -131,7 +131,12 @@
         $query.on('click', function () {
             let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
             tableIns.reload({where: params, page: {curr: 1}});
-        })
+        });
+
+        $reset.on('click', function () {
+            $searchForm[0].reset();
+            tableIns.reload({where: getQueryParams(), page: {curr: 1}})
+        });
 
         $addTo.on('click', function () {
             var oldDatas;
@@ -171,10 +176,10 @@
             });
             parent.layer.close(layer.index)
 
-        })
+        });
 
         // 用于存放选中的数据
-        var tableData = new Array();;
+        var tableData = new Array();
         table.render({
             elem: '#saleProduct-table',
             data:tableData,

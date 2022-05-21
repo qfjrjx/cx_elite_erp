@@ -16,9 +16,6 @@
         <if test="saleProduct.specificationModel != null and saleProduct.specificationModel != ''">
             AND tp.product_specification_model = #{saleProduct.specificationModel}
         </if>
-        <if test="saleProduct.productName != null and saleProduct.productName != ''">
-            AND tp.product_name LIKE CONCAT('%',#{saleProduct.productName},'%')
-        </if>
     </sql>
     <sql id="findSaleProductsSql">
        SELECT
