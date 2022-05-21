@@ -168,9 +168,50 @@
                 btn: ['增加行','删除行','全部删除','保存', '关闭'],
                 area: ["80%","60%"],
                 //closeBtn: 0, //不显示关闭按钮
+                // 点击增加行按钮增加一行
                 yes: function (index, layero) {
                     $('#saleApplication-addTo').find('#submit').trigger('click');
                 },
+                btn2: function () {
+                    // 获取当前选中行
+                    let checkStatus = table.checkStatus('deviceweihu-table');
+                    // 获取表格中的数据
+                    demo = table.cache["deviceweihu-table"];
+                    if (checkStatus.data.length < 1) {
+                        layer.alert("请选择一条数据操作");
+                        return false;
+                    }else {
+                        var tableList = []; // 存储未选中的数据
+                        // 循环表格中的数据
+                        for (var i in demo) {
+                            //判断未选中数据
+                            if (!demo[i].LAY_CHECKED) {
+                                //存入数组
+                                tableList.push(demo[i]);
+                            }
+                        }
+                        //重载表格
+                        table.reload('deviceweihu-table', {
+                            data: tableList
+                        });
+                    }
+                    return false;
+                },
+                btn3: function () {
+                    var dataBak = [];
+                    //重载表格
+                    table.reload('deviceweihu-table', {
+                        data: dataBak
+                    });
+                    return false;
+                },
+                btn4: function () {
+                    $('#saleApplication-addTo').find('#submitData').trigger('click');
+                    return false;
+                },
+                btn5: function () {
+                    layer.closeAll();
+                }
             });
         });
 

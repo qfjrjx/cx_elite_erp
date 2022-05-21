@@ -249,6 +249,7 @@
 
         });
 
+        // 点击增加行按钮增加一行
         form.on('submit(saleApplication-add-form-submit)', function () {
             var dataBak = [];
             var tableBak = layui.table.cache['deviceweihu-table'];
@@ -265,6 +266,30 @@
             });
             layui.table.reload('deviceweihu-table',{
                 data: dataBak
+            });
+            return false;
+        });
+
+        // 保存表格数据
+        form.on('submit(saleApplication-add-form-submitData)', function (data) {
+            var dataThree = new Array();
+            let saleApplicationData = {transferData: data.field.transferData,customerName:data.field.customerName,salesmanName:data.field.personnelName}
+            alert(JSON.stringify(saleApplicationData));
+            var contImg = "";
+            alert("326356");
+            var deviceweihuTable =  table.cache["deviceweihu-table"];
+            for (i=0;i<deviceweihuTable.length;i++){
+                var dataOne={"productName":deviceweihuTable[i].productName,"specificationModel":deviceweihuTable[i].specificationModel,"parameterOption":deviceweihuTable[i].parameterOption,"companyName":deviceweihuTable[i].companyName,"quantityName":deviceweihuTable[i].quantityName,"explainName":deviceweihuTable[i].explainName};
+                dataThree.push(dataOne);
+            }
+            $.ajax({
+                url: '/saleApplication/add',
+                type:"post",
+                data: {saleApplication:JSON.stringify(saleApplicationData),dataTable:JSON.stringify(dataThree),contImg:contImg},
+                success : function(res) {
+                    layer.closeAll();
+                    $('#febs-saleApplicationTo').find('#query').click();
+                }
             });
             return false;
         });

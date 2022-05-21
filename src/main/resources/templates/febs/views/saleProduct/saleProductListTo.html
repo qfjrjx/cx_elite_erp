@@ -147,10 +147,10 @@
             var parameterThree = document.getElementById("parameterThree");
             var parameterFour = document.getElementById("parameterFour");
             oldDataDel =  table.cache["deviceweihu-table"];
-            var dateList = []; // 存储选中的数据
+            var dateList = []; // 存储未选中的数据
             //循环表格数据
             for (var i in oldDataDel) {
-                //判断选中数据
+                //判断未选中数据
                 if (!oldDataDel[i].LAY_CHECKED) {
                     //存入数组
                     dateList.push(oldDataDel[i]);
