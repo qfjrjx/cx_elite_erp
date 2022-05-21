@@ -189,7 +189,7 @@
                     {field: 'salesmanName', title: '业务员',align:'center', minWidth: 75},
                     {field: 'productName', title: '产品名称', minWidth: 95},
                     {field: 'specificationModel', title: '规格型号', minWidth: 90},
-                    {field: 'configureName', title: '配置', minWidth: 90, /*templet: dispose*/},
+                    {field: 'configureName', title: '配置', minWidth: 90, templet: dispose},
                     {field: 'companyName', title: '单位', minWidth: 50,align:'center'},
                     {field: 'quantityName', title: '数量', minWidth: 50,align:'center'},
                     {title: '附件', minWidth: 90,align:'center',toolbar: '#enclosure-name'},
@@ -223,7 +223,7 @@
                 layEvent = obj.event;
             let fileName = data.enclosureName;
             if (layEvent === 'see') {
-                febs.modal.view(data.specificationModel, 'sale/saleApplication/detail/' + data.scheduleId, {
+                febs.modal.view(data.specificationModel, 'sale/saleApplication/detailTo/' + data.scheduleId, {
                     btn: ['关闭'],
                     area: $(window).width() <= 750 ? '95%' : '50%',
                     yes: function (index, layero) {
@@ -359,7 +359,18 @@
             params.invalidate_ie_cache = new Date();
             return params;
         }
-    })
+    });
+
+    function dispose(d) {
+        var dispose = d.configureName;
+        if ('' == dispose || null == dispose || undefined == dispose) {
+            return '';
+        }
+        if (dispose.length > 0) {
+            return '<a class="layui-table-link" href="javascript:void(0);" lay-event="see">查看</a>&nbsp;' + d.configureName +' ';
+        }
+    }
+
 
     function dblclickCustomerName(){
         layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
