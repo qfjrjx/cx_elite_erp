@@ -117,16 +117,135 @@
                     var explainName = tableData[rowIndex].explainName;
                     $("#parameterFour").val(explainName);//说明
                 }
+                // 弹出产品编码选择列表页面
+                febs.modal.view('【产品编码选择列表】', "sale/saleProductListTo", {
+                    area:["65%","80%"],
+                    /* cancel:function (index,layero) {
+                         if (confirm('确定要关闭么')){
+                             layer.close(index)
+                         }
+                         return false;
+                     }*/
+                });
             }
-            febs.modal.view('【产品编码选择列表】', "sale/saleProductListTo", {
-                area:["65%","80%"],
-                /* cancel:function (index,layero) {
-                     if (confirm('确定要关闭么')){
-                         layer.close(index)
-                     }
-                     return false;
-                 }*/
-            });
+            if (layEvent === 'specification') {
+                var productNameOne  = data.productName;
+                if (productNameOne == "") {
+                    febs.alert.warn('请选择产品');
+                    return false;
+                } else {
+                    var parameterOptionOne  = data.parameterOption.toString();
+                    var parameterOptionTwo = parameterOptionOne.split(",");
+                    var machineRequirementsOne = "";
+                    var computerConfigurationOne = "";
+                    var toolSizeOne = "";
+                    var hourlyProductionOne = "";
+                    var processingProcedureOne = "";
+                    var fixtureRequirementsOne = "";
+                    var productShapeOne = "";
+                    var productSizeOne = "";
+                    var otherRequirementsOne = "";
+                    for(var i=0;i<parameterOptionTwo.length;i++){
+                        var parameterOptionThree = parameterOptionTwo[i].split(":")[0];
+                        var parameterOptionFour = parameterOptionTwo[i].split(":")[1];
+                        if (parameterOptionThree=="机器要求"){
+                            machineRequirementsOne = parameterOptionFour;
+                        }if (parameterOptionThree=="电脑配置"){
+                            computerConfigurationOne = parameterOptionFour;
+                        }if (parameterOptionThree=="刀具大小"){
+                            toolSizeOne = parameterOptionFour;
+                        }if (parameterOptionThree=="每小时产量"){
+                            hourlyProductionOne = parameterOptionFour;
+                        }if (parameterOptionThree=="加工工序"){
+                            processingProcedureOne = parameterOptionFour;
+                        }if (parameterOptionThree=="夹具要求"){
+                            fixtureRequirementsOne = parameterOptionFour;
+                        }if (parameterOptionThree=="产品形状"){
+                            productShapeOne = parameterOptionFour;
+                        }if (parameterOptionThree=="产品尺寸"){
+                            productSizeOne = parameterOptionFour;
+                        }if (parameterOptionThree=="其他要求"){
+                            otherRequirementsOne = parameterOptionFour;
+                        }
+                    }
+                    febs.modal.open('订单配置选择列表', 'sale/specificationListTo/', {
+                        area: ["30%", "65%"],
+                        btn: ['保存', '关闭'],
+                        data: {
+                            machineRequirementsOne: machineRequirementsOne,
+                            computerConfigurationOne: computerConfigurationOne,
+                            toolSizeOne: toolSizeOne,
+                            hourlyProductionOne: hourlyProductionOne,
+                            processingProcedureOne: processingProcedureOne,
+                            fixtureRequirementsOne: fixtureRequirementsOne,
+                            productShapeOne: productShapeOne,
+                            productSizeOne: productSizeOne,
+                            otherRequirementsOne: otherRequirementsOne
+                        },
+                        yes: function (index, layero) {
+                            let dataOne = new Array();
+                            let dataBak = [];
+
+                            let tableDas = layui.table.cache["deviceweihu-table"];
+                            /* 机器要求*/
+                            let machineRequirements = document.getElementById("machineRequirements").value;
+                            /*电脑配置*/
+                            let computerConfiguration = document.getElementById("computerConfiguration").value;
+                            /*刀具大小*/
+                            let toolSize = document.getElementById("toolSize").value;
+                            /*每小时产量*/
+                            var hourlyProduction = document.getElementById("hourlyProduction").value;
+                            /*加工工序*/
+                            var processingProcedure = document.getElementById("processingProcedure").value;
+                            /*夹具要求*/
+                            var fixtureRequirements = document.getElementById("fixtureRequirements").value;
+                            /*产品形状*/
+                            var productShape = document.getElementById("productShape").value;
+                            /*产品尺寸*/
+                            var productSize = document.getElementById("productSize").value;
+                            /*其他要求*/
+                            var otherRequirements = document.getElementById("otherRequirements").value;
+                            if (machineRequirements !=""){
+                                dataOne.push("机器要求:"+machineRequirements);
+                            }if (computerConfiguration !=""){
+                                dataOne.push("电脑配置:"+computerConfiguration);
+                            }if (toolSize !=""){
+                                dataOne.push("刀具大小:"+toolSize);
+                            }if (hourlyProduction !=""){
+                                dataOne.push("每小时产量:"+hourlyProduction);
+                            }if (processingProcedure !=""){
+                                dataOne.push("加工工序:"+processingProcedure);
+                            }if (fixtureRequirements !=""){
+                                dataOne.push("夹具要求:"+fixtureRequirements);
+                            }if (productShape !=""){
+                                dataOne.push("产品形状:"+productShape);
+                            }if (productSize !=""){
+                                dataOne.push("产品尺寸:"+productSize);
+                            }if (otherRequirements !=""){
+                                dataOne.push("其他要求:"+otherRequirements);
+                            }
+                            var tableData;
+                            var rowIndex = $(obj.tr).attr('data-index');//当前行的索引
+                            for (i=0;i<tableDas.length;i++){
+                                if (tableDas[rowIndex].productName == tableDas[i].productName && tableDas[rowIndex].parameterOption==tableDas[i].parameterOption){
+                                    tableData = {"id":tableDas[i].id,"productName":tableDas[i].productName,"specificationModel":tableDas[i].specificationModel,"parameterOption":dataOne,"companyName":tableDas[i].companyName,"quantityName":tableDas[i].quantityName,"explainName":tableDas[i].explainName};
+                                }else{
+                                    tableData = {"id":tableDas[i].id,"productName":tableDas[i].productName,"specificationModel":tableDas[i].specificationModel,"parameterOption":tableDas[i].parameterOption,"companyName":tableDas[i].companyName,"quantityName":tableDas[i].quantityName,"explainName":tableDas[i].explainName};
+                                }
+                                dataBak.push(tableData);
+                            }
+                            layui.table.reload('deviceweihu-table',{
+                                data:dataBak
+                            });
+                            parent.layer.close(layer.index)
+                        },
+                        btn2: function () {
+                            parent.layer.close(layer.index)
+                        }
+                    });
+                }
+            }
+
 
         });
 
