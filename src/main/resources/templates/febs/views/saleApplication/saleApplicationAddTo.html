@@ -274,9 +274,7 @@
         form.on('submit(saleApplication-add-form-submitData)', function (data) {
             var dataThree = new Array();
             let saleApplicationData = {transferData: data.field.transferData,customerName:data.field.customerName,salesmanName:data.field.personnelName}
-            alert(JSON.stringify(saleApplicationData));
             var contImg = "";
-            alert("326356");
             var deviceweihuTable =  table.cache["deviceweihu-table"];
             for (i=0;i<deviceweihuTable.length;i++){
                 var dataOne={"productName":deviceweihuTable[i].productName,"specificationModel":deviceweihuTable[i].specificationModel,"parameterOption":deviceweihuTable[i].parameterOption,"companyName":deviceweihuTable[i].companyName,"quantityName":deviceweihuTable[i].quantityName,"explainName":deviceweihuTable[i].explainName};

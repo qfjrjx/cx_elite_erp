@@ -79,6 +79,31 @@
                         <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" shiro:hasAnyPermissions="saleApplication:addTo" id="addTo">
                             <i class="layui-icon">&#xe78a;</i>新增
                         </div>
+                        <!-- 修改按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="saleApplication:update" id="updateTo">
+                            <i class="layui-icon">&#xe642;</i>修改
+                        </div>
+                        <!-- 设计回复按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="saleApplication:design" id="designReply">
+                            <i class="layui-icon layui-icon-chart-screen"></i>设计回复
+                        </div>
+                        <!-- 采购回复按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="saleApplication:purchase" id="purchaseReply">
+                            <i class="layui-icon layui-icon-form"></i>采购回复
+                        </div>
+                        <!-- 生产回复按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="saleApplication:production" id="productionReply">
+                            <i class="layui-icon layui-icon-component"></i>生产回复
+                        </div>
+                        <!-- 装配回复按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="saleApplication:assembling" id="assemblingReply">
+                            <i class="layui-icon layui-icon-util"></i>装配回复
+                        </div>
                     </div>
                     <div>dfhsjsdk</div>
                 </div>
@@ -86,6 +111,36 @@
         </div>
     </div>
 </div>
+<script type="text/html" id="enclosure-name">
+    {{# if(d.enclosureName != null){ }}
+    <a lay-event="browse" shiro:hasPermission="saleApplication:browse">浏览</a>
+    <a lay-event="download" shiro:hasPermission="saleApplication:download">下载</a>
+    {{# } }}
+</script>
+<!--设计回复-->
+<script type="text/html" id="design-reply">
+    {{# if(d.designReply != null){ }}
+    <a lay-event="design" shiro:hasPermission="saleApplication:design">已回复</a>
+    {{# } }}
+</script>
+<!--采购回复-->
+<script type="text/html" id="purchase-reply">
+    {{# if(d.purchaseReply != null){ }}
+    <a lay-event="purchaseReply" shiro:hasPermission="saleApplication:purchase">已回复</a>
+    {{# } }}
+</script>
+<!--生产回复-->
+<script type="text/html" id="production-reply">
+    {{# if(d.productionReply != null){ }}
+    <a lay-event="productionReply" shiro:hasPermission="saleApplication:production">已回复</a>
+    {{# } }}
+</script>
+<!--装配回复-->
+<script type="text/html" id="assembling-reply">
+    {{# if(d.assemblingReply != null){ }}
+    <a lay-event="assemblingReply" shiro:hasPermission="saleApplication:assembling">已回复</a>
+    {{# } }}
+</script>
 <script data-th-inline="none" type="text/javascript">
     layui.use(['febs', 'jquery', 'table', 'form', 'laydate', 'form'], function () {
         let $ = layui.jquery,
@@ -98,6 +153,7 @@
             $searchForm = $view.find('form'),
             $reset = $view.find('#reset'),
             $addTo = $view.find('#addTo'),
+            $updateTo = $view.find("#updateTo"),
             signedDateFrom,
             signedDateTo,
             sortObject = {field: 'createTime', type: null},
@@ -161,6 +217,63 @@
             $("#customerName").attr("value", "");
             tableIns.reload({where: getQueryParams(), page: {curr: 1} })
         });
+
+        table.on('tool(saleApplicationTableTo)', function (obj) {
+            let data = obj.data,
+                layEvent = obj.event;
+            let fileName = data.enclosureName;
+            if (layEvent === 'see') {
+                febs.modal.view(data.specificationModel, 'sale/saleApplication/detail/' + data.scheduleId, {
+                    btn: ['关闭'],
+                    area: $(window).width() <= 750 ? '95%' : '50%',
+                    yes: function (index, layero) {
+                        layer.closeAll();
+                    }
+                });
+            }
+            if (layEvent === 'download') {
+                window.location.href = encodeURI("saleDocumentFile/down/?fileName="+fileName);
+            }
+            if (layEvent === 'browse') {
+                window.open("/saleDocumentFile/Preview?filePath="+ fileName  );
+            }
+            if (layEvent === 'design') {
+                febs.modal.view('【销售申请】设计回复', 'sale/saleApplication/design/' + data.scheduleId, {
+                    btn: ['关闭'],
+                    area: $(window).width() <= 750 ? '95%' : '30%',
+                    yes: function (index, layero) {
+                        layer.closeAll();
+                    }
+                });
+            }
+            if (layEvent === 'purchaseReply') {
+                febs.modal.view('【销售申请】采购回复', 'sale/saleApplication/purchase/' + data.scheduleId, {
+                    btn: ['关闭'],
+                    area: $(window).width() <= 750 ? '95%' : '30%',
+                    yes: function (index, layero) {
+                        layer.closeAll();
+                    }
+                });
+            }
+            if (layEvent === 'productionReply') {
+                febs.modal.view('【销售申请】生产回复', 'sale/saleApplication/production/' + data.scheduleId, {
+                    btn: ['关闭'],
+                    area: $(window).width() <= 750 ? '95%' : '30%',
+                    yes: function (index, layero) {
+                        layer.closeAll();
+                    }
+                });
+            }
+            if (layEvent === 'assemblingReply') {
+                febs.modal.view('【销售申请】装配回复', 'sale/saleApplication/assembling/' + data.scheduleId, {
+                    btn: ['关闭'],
+                    area: $(window).width() <= 750 ? '95%' : '30%',
+                    yes: function (index, layero) {
+                        layer.closeAll();
+                    }
+                });
+            }
+        });
         
         // 新增按钮
         $addTo.on('click', function () {
@@ -213,6 +326,25 @@
                     layer.closeAll();
                 }
             });
+        });
+
+        $updateTo.on('click', function () {
+            let checkStatus = table.checkStatus('saleApplicationTableTo');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要修改的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要修改的数据');
+            }else{
+                layui.each(checkStatus.data, function (key, item) {
+                    febs.modal.open('【销售申请】修改', 'sale/saleApplication/updateTo/' + item.id, {
+                        area: ["80%","60%"],
+                        btn: ['增加行','删除行','全部删除','保存', '关闭'],
+                        yes: function (index, layero) {
+                            $('#saleApplication-update').find('#submit').trigger('click');
+                        },
+                    });
+                });
+            }
         });
 
         function getQueryParams() {
