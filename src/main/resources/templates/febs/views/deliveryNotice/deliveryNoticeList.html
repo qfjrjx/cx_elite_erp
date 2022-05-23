@@ -1,0 +1,468 @@
+<style>
+    #delivery-noticeList xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #delivery-noticeList xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+    .layui-form-item .layui-input-inline {
+        width: 160px;
+    }
+    /* 表格头部背景色 */
+     /* th {
+          background-color: #8D8D8D; !* MediumSeaGreen *!
+          color: #d49d6c;
+          font-weight: bold
+      }*/
+    ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+    }
+    ::-webkit-scrollbar-button,
+    ::-webkit-scrollbar-button:vertical {
+        display: none;
+    }
+    ::-webkit-scrollbar-track,
+    ::-webkit-scrollbar-track:vertical {
+        background-color: black;
+    }
+    ::-webkit-scrollbar-track-piece {
+        background-color: #f5f5f5;
+    }
+    ::-webkit-scrollbar-thumb,
+    ::-webkit-scrollbar-thumb:vertical {
+        margin-right: 10px;
+        background-color: #a6a6a6;
+    }
+    ::-webkit-scrollbar-thumb:hover,
+    ::-webkit-scrollbar-thumb:vertical:hover {
+        background-color: #aaa;
+    }
+    ::-webkit-scrollbar-corner,
+    ::-webkit-scrollbar-corner:vertical {
+        background-color: #535353;
+    }
+    /* 偶数行背景色 */
+    .layui-table[lay-even] tr:nth-child(even) {
+        /* background-color: #aaffaa; */
+        background-color: #eeffee;
+    }
+    /* 鼠标指向表格时,奇数行背景颜色 */
+    .layui-table tbody tr:hover,.layui-table-hover {
+        background-color: #eeffee;
+    }
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="delivery-noticeList" lay-title="发货通知">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="parameter-table-form">
+
+                    </form>
+                    <table lay-filter="saleDeliveryNoticeTable" lay-data="{id: 'saleDeliveryNoticeTable'}"></table>
+                    <div class="layui-col-md8">
+                        <div class="layui-form-item"></div>
+                    </div>
+                    <div class="layui-col-md4 layui-col-sm12 layui-col-xs12 table-action-area">
+                        <!--查询按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                            <i class="layui-icon">&#xe848;</i>查询
+                        </div>
+                        <!-- 刷新表格按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain table-action" id="reset">
+                            <i class="layui-icon">&#xe79b;</i>刷新
+                        </div>
+                        <!--添加按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "shiro:hasAnyPermissions="saleDeliveryNotice:add" id="addTo">
+                            <i class="layui-icon">&#xe78a;</i>新增
+                        </div>
+                        <!--删除按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "shiro:hasAnyPermissions="saleDeliveryNotice:delete" id="deleteTo">
+                            <i class="layui-icon">&#xe8a1;</i>删除
+                        </div>
+                        <!--修改按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="saleDeliveryNotice:update" id="updateTo">
+                            <i class="layui-icon">&#xe642;</i>修改
+                        </div>
+                        <!--确认按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="saleDeliveryNotice:confirm" id="confirmTo">
+                            <i class="layui-icon layui-icon-ok-circle"></i>确认
+                        </div>
+                        <!--取消按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="saleDeliveryNotice:cancel" id="cancelTo">
+                            <i class="layui-icon layui-icon-close-fill"></i>取消
+                        </div>
+                        <!--修改按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action"
+                             shiro:hasAnyPermissions="saleDeliveryNotice:export" id="exportTo">
+                            <i class="layui-icon">&#xe7a8;</i>导出
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="order-type">
+    {{#
+    let orderType = {
+    1: {title: '配件'},
+    2: {title: '整机'}
+        }[d.orderType];
+    }}
+    <span>{{ orderType.title }}</span>
+</script>
+<script type="text/html" id="deliveryNotice-state">
+    {{#
+    let deliveryNoticeState = {
+    1: {title: '登记'},
+    2: {title: '确认'},
+    3: {title: '出库'},
+    4: {title: '回单'}
+        }[d.deliveryNoticeState];
+    }}
+    <span>{{ deliveryNoticeState.title }}</span>
+</script>
+<script type="text/html" id="enclosure-name">
+    {{# if(d.enclosureName != null){ }}
+    <a lay-event="browse" shiro:hasPermission="saleDeliveryNotice:browse">浏览</a>
+    <a lay-event="download" shiro:hasPermission="saleDeliveryNotice:download">下载</a>
+    {{# } }}
+</script>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+            laydate = layui.laydate,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            dropdownMenu = layui.dropdownMenu,
+            $view = $('#delivery-noticeList'),
+            $query = $view.find('#query'),
+            $addTo = $view.find('#addTo'),
+            $updateTo = $view.find('#updateTo'),//修改
+            $confirmTo = $view.find('#confirmTo'),
+            $deleteTo = $view.find('#deleteTo'),
+            $exportTo = $view.find('#exportTo'),
+            $reset = $view.find('#reset'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'createDate', type: null},
+            startTimeFrom,
+            endTimeTo,
+            tableIns;
+
+        form.render();
+
+        initTable();
+
+        //日期同时绑定多个
+        lay('.createTime').each(function(){
+            laydate.render({
+                elem: this,
+                range: true,
+                trigger: 'click'
+            });
+        })
+        dropdownMenu.render({
+            elem: $view.find('.action-more'),
+            click: function (name, elem, event) {
+                let checkStatus = table.checkStatus('saleDeliveryNoticeTable');
+                if (name === 'delete') {
+                    if (!checkStatus.data.length) {
+                        febs.alert.warn('请选择需要删除的数据');
+                    } else {
+                        febs.modal.confirm('删除领取记录信息', '确定删除？', function () {
+                            let ids = [];
+                            layui.each(checkStatus.data, function (key, item) {
+                                ids.push(item.id)
+                            });
+                            deletePersonnelSalaryChange(ids.join(','));
+                        });
+                    }
+                }
+            },
+            options: [{
+                name: 'add',
+                title: '新增',
+                perms: 'personnelSalaryChange:add'
+            }, {
+                name: 'delete',
+                title: '删除',
+                perms: 'personnelSalaryChange:delete'
+            }]
+        });
+        table.on('tool(saleDeliveryNoticeTable)', function (obj) {
+            let data = obj.data,
+                layEvent = obj.event;
+            let fileName = data.enclosureName;
+            if (layEvent === 'see') {
+                febs.modal.view(data.specificationModel, 'sale/saleDeliveryNotice/detail/' + data.orderScheduleId, {
+                    btn: ['关闭'],
+                    area: $(window).width() <= 750 ? '95%' : '50%',
+                    yes: function (index, layero) {
+                        layer.closeAll();
+                    }
+                });
+            }
+            if (layEvent === 'download') {
+                window.location.href = encodeURI("saleDocumentFile/down/?fileName="+fileName);
+            }
+            if (layEvent === 'browse') {
+                window.open("/saleDocumentFile/Preview?filePath="+ fileName  );
+            }
+
+        });
+
+        table.on('sort(saleDeliveryNoticeTable)', function (obj) {
+            sortObject = obj;
+            tableIns.reload({
+                initSort: obj,
+                where: $.extend(getQueryParams(), {
+                    field: obj.field,
+                    order: obj.type
+                })
+            });
+        });
+
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        $reset.on('click', function () {
+            $searchForm[0].reset();
+            startTimeFrom = null;
+            endTimeTo = null;
+            $("#customerName").attr("value","");
+            tableIns.reload({where: getQueryParams(), page: {curr: 1}});
+        });
+        $addTo.on('click', function () {
+            febs.modal.open('', 'sale/saleDeliveryNotice/add', {
+                type:1,
+                title:['【发货通知】新增','color:#b1e791;background-color:#347b6b;'],
+                btn: ['增加行','全部删除','保存', '关闭'],
+                area: $(window).width() <= 750 ? ['80%', '80%'] : ['80%', '80%'],
+                yes: function (index, layero) {
+                    $('#deliveryNotice-add').find('#submit').trigger('click');
+                },
+                btn2: function () {
+                    var dataBak = [];
+                    layui.table.reload('deliveryNoticeTable',{
+                        data:dataBak
+                    });
+                    layer.closeAll();
+                },
+                btn3: function () {
+                    $('#deliveryNotice-add').find('#submitData').trigger('click');
+                    return false;
+                },
+                btn4: function () {
+                    layer.closeAll();
+                }
+            });
+        });
+        $updateTo.on('click', function () {
+            let checkStatus = table.checkStatus('saleDeliveryNoticeTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要修改的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要修改的数据');
+            }else{
+                layui.each(checkStatus.data, function (key, item) {
+                    febs.modal.open('【销售订单】修改', 'sale/saleDeliveryNotice/update/' + item.id, {
+                        area: ["80%","60%"],
+                        btn: ['增加行','删除行','全部删除','保存', '关闭'],
+                        yes: function (index, layero) {
+                            $('#saleDeliveryNotice-update').find('#submit').trigger('click');
+                        },
+                        btn2: function () {
+                            let checkStatus = table.checkStatus('saleDeliveryNoticeUpdate-table')
+                                , checkStatusDate = table.cache["saleDeliveryNoticeUpdate-table"];//获取表格中的数据
+                            if (checkStatus.data.length < 1) {
+                                layer.alert("请选择一条数据操作");
+                                return false;
+                            }else {
+                                var dateList = [];//存储未选中的数据
+                                //循环表格数据
+                                for (var i in checkStatusDate) {
+                                    //判断未选中数据
+                                    if (!checkStatusDate[i].LAY_CHECKED) {
+                                        //存入数组
+                                        dateList.push(checkStatusDate[i]);
+                                    }
+                                }
+                                //重载表格
+                                table.reload('saleDeliveryNoticeUpdate-table', {
+                                    data: dateList
+                                });
+
+                            }
+                            return false;
+                        },
+                        btn3: function () {
+                            var dataBak = [];
+                            layui.table.reload('saleDeliveryNoticeUpdate-table',{
+                                data:dataBak
+                            });
+                            return false;
+                        },
+                        btn4: function () {
+                            $('#saleDeliveryNotice-update').find('#submitData').trigger('click');
+                            return false;
+                        },
+                        btn5: function () {
+                            layer.closeAll();
+                        }
+                    });
+                });
+            }
+        });
+        $confirmTo.on('click', function () {
+            let checkStatus = table.checkStatus('saleDeliveryNoticeTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要确认的数据');
+            } else {
+                layui.each(checkStatus.data, function (key, item) {
+                    febs.modal.view("", 'sale/saleDeliveryNotice/confirm/' + item.id, {
+                        btn: ['关闭'],
+                        area: ["80%","60%"],
+                        yes: function (index, layero) {
+                            layer.closeAll();
+                        }
+                    });
+                });
+            }
+        });
+        function confirmSaleDeliveryNotice(ids) {
+            febs.get(ctx + 'purchaseOrder/confirm/' + ids, null, function () {
+                febs.alert.success('确认采购参数成功');
+                $query.click();
+            });
+        }
+
+        $deleteTo.on('click', function () {
+            let checkStatus = table.checkStatus('saleDeliveryNoticeTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要删除的数据');
+            } else {
+                febs.modal.confirm('删除参数信息', '确定删除？', function () {
+                    let ids = [];
+                    layui.each(checkStatus.data, function (key, item) {
+                        ids.push(item.id)
+                    });
+                    deletePersonnelSalaryChange(ids.join(','));
+                });
+            }
+        });
+        $exportTo.on('click', function () {
+            let params = getQueryParams();
+            params.pageSize = $view.find(".layui-laypage-limits option:selected").val();
+            params.pageNum = $view.find(".layui-laypage-em").next().html();
+            febs.download(ctx + 'personnelSalaryChange/excel', params, '员工合同表.xlsx');
+        });
+        function initTable() {
+            tableIns = febs.table.init({
+                elem: $view.find('table'),
+                id: 'saleDeliveryNoticeTable',
+                url: ctx + 'saleDeliveryNotice/list',
+                height: 'full-200',
+                cols: [[
+                    {type: 'checkbox'},
+                    {field:'number',title:'序号', minWidth: 100,align:'center',templet:function (d) {
+                            return d.LAY_INDEX;}},
+                    {field: 'id', title: '编号',hide:true,sort: true},
+                    {title: '状态',templet: '#deliveryNotice-state',align:'center', minWidth: 100},
+                    {field: 'shipmentNo', title: '发货单号',align:'center', minWidth: 110},
+                    {field: 'deliveryDate', title: '发货日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.orderDate, "yyyy-MM-dd") }}</div>', minWidth: 115},
+                    {field: 'customerName', title: '销售客户',align:'center', minWidth: 100},
+                    {field: 'salesmanName', title: '业务员',align:'center', minWidth: 100},
+                    {field: 'afterSalesClerk', title: '售后员',align:'center', minWidth: 100},
+                    {field: 'productName', title: '产品名称', minWidth: 100},
+                    {field: 'specificationModel', title: '规格型号', minWidth: 100},
+                    {field: 'machineConfiguration', title: '配置', minWidth: 100, templet: dispose},
+                    {field: 'thisShipment', title: '发货数量', minWidth: 100,align:'center'},
+                    {field: 'unitPrice', title: '金额', minWidth: 100,align:'center',
+                        templet: function (data) {
+                                var price = data.thisShipment*parseFloat(data.unitPrice).toFixed(2); //设置小数点后个数
+                                return price;
+                        }},
+                    {field: 'currencyName', title: '币种', minWidth: 100,align:'center'},
+                    {field: 'orderNumber', title: '订单号',align:'center', minWidth: 110},
+                    {field: 'contactsName', title: '联系人', minWidth: 100,align:'center'},
+                    {field: 'contactNumber', title: '联系电话', minWidth: 100,align:'center'},
+                    {field: 'receivingAddress', title: '收货地址', minWidth: 100,align:'center'},
+                    {field: 'preparerName', title: '制单人', minWidth: 100,align:'center'},
+                    {field: 'warehouseName', title: '出库人', minWidth: 100,align:'center'},
+                    {field: 'logisticsCompany', title: '物流公司', minWidth: 100,align:'center'},
+                    {field: 'orderPostage', title: '邮费', minWidth: 100,align:'center',templet:function (data) {
+                            if (data.orderPostage != null){
+                                var orderPostage = parseFloat(data.orderPostage).toFixed(2); //设置小数点后个数
+                                return orderPostage;
+                            }else {
+                                return "";
+                            }
+                        }},
+                    {field: 'driverName', title: '司机姓名', minWidth: 100,align:'center'},
+                    {field: 'driverTelephone', title: '司机电话', minWidth: 100,align:'center'},
+                    {field: 'plateNumber', title: '车牌号', minWidth: 100,align:'center'},
+                    {field: 'receiptNo', title: '回单号', minWidth: 100,align:'center'},
+                    {field: 'orderReceipt', title: '回单', minWidth: 100,align:'center'},
+                    {field: 'shippingNoticeRemarks', title: '备注', minWidth: 100,align:'center'}
+                ]],
+                done: function (res, curr, count){
+                    $("table").css("width", "100%");
+                },
+            });
+        }
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            let signedDate = params.signedDate;
+            if (signedDate) {
+                startTimeFrom = signedDate.split(' - ')[0];
+                endTimeTo = signedDate.split(' - ')[1];
+            }
+            params.startTimeFrom = startTimeFrom;
+            params.endTimeTo = endTimeTo;
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+
+
+        function deletePersonnelSalaryChange(ids) {
+            febs.get(ctx + 'personnelSalaryChange/delete/' + ids, null, function () {
+                febs.alert.success('删除调薪记录成功');
+                $query.click();
+            });
+        }
+
+        function dispose(d) {
+            var dispose = d.machineConfiguration;
+            if ('' == dispose || null == dispose || undefined == dispose) {
+                return '';
+            }
+            if (dispose.length > 0) {
+                return '<a class="layui-table-link" href="javascript:void(0);" lay-event="see">查看</a>&nbsp;' + d.machineConfiguration +' ';
+            }
+        }
+    })
+    function dblclickCustomerName(){
+        layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
+            let $ = layui.$,
+                febs = layui.febs;
+
+            febs.modal.open('客户选择列表', 'sale/jumpSaleCustomerProfile', {
+                area:["75%","90%"],
+                yes: function (index, layero) {
+
+                }
+
+            });
+        });
+    }
+</script>

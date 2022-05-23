@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.sale.mapper.SaleDeliveryNoticeMapper">
+
+    <sql id="countSaleDeliveryNoticeSql" >
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_sale_delivery_notice sdn
+            LEFT JOIN jr_sale_delivery_notice_schedule sdns ON (sdn.shipment_no = sdns.shipment_no)
+            WHERE
+            1 = 1
+    </sql>
+    <sql id="findSaleDeliveryNoticeSql" >
+        SELECT
+            sdns.delivery_notice_state deliveryNoticeState,
+            sdn.shipment_no shipmentNo,
+            sdn.delivery_date deliveryDate,
+            sdn.customer_name customerName,
+            sdn.salesman_name salesmanName,
+            sdn.after_sales_clerk afterSalesClerk,
+            sdns.product_name productName,
+            sdns.specification_model specificationModel,
+            sdns.machine_configuration machineConfiguration,
+            sdns.this_shipment thisShipment,
+            sdns.unit_price unitPrice,
+            sdns.currency_name currencyName,
+            sdns.order_number orderNumber,
+            sdns.contacts_name contactsName,
+            sdns.contact_number contactNumber,
+            sdn.receiving_address receivingAddress,
+            sdn.preparer_name preparerName,
+            sdns.warehouse_name warehouseName,
+            sdns.logistics_company logisticsCompany,
+            sdns.order_postage orderPostage,
+            sdns.driver_name driverName,
+            sdns.driver_telephone driverTelephone,
+            sdns.plate_number plateNumber,
+            sdns.receipt_no receiptNo,
+            sdns.order_receipt orderReceipt,
+            sdns.shipping_notice_remarks shippingNoticeRemarks
+        FROM
+            jr_sale_delivery_notice sdn
+            LEFT JOIN jr_sale_delivery_notice_schedule sdns ON (sdn.shipment_no = sdns.shipment_no)
+        WHERE
+        1 = 1
+
+    </sql>
+
+    <select id="countSaleDeliveryNotice" parameterType="com.erp.sale.entity.SaleDeliveryNoticeAll" resultType="long">
+        <include refid="countSaleDeliveryNoticeSql"/>
+    </select>
+
+    <select id="findSaleDeliveryNoticePage" parameterType="com.erp.sale.entity.SaleDeliveryNoticeAll" resultType="com.erp.sale.entity.SaleDeliveryNoticeAll">
+        <include refid="findSaleDeliveryNoticeSql"/>
+    </select>
+
+    <select id="saleDeliveryNoticeList" parameterType="com.erp.sale.entity.SaleDeliveryNoticeAll" resultType="com.erp.sale.entity.SaleDeliveryNoticeAll">
+        SELECT
+            sos.id,
+            sos.product_name productName,
+            sos.specification_model specificationModel,
+            sos.configure_name machineConfiguration,
+            so.invoice_not invoiceNot,
+            sos.quantity_name orderCount,
+            sdns.number_sent numberSent,
+            sos.quantity_name thisShipment,
+            sos.unit_price unitPrice,
+            fpa.finance_parameter_name currencyName,
+            so.order_type orderType,
+            sos.odd_numbers orderNumber,
+            sdns.shipping_notice_remarks shippingNoticeRemarks
+        FROM
+            jr_sale_order so
+            LEFT JOIN jr_sale_order_schedule sos ON ( so.odd_numbers = sos.odd_numbers )
+            LEFT JOIN jr_finance_parameters fpa ON ( so.currency_id = fpa.id )
+            LEFT JOIN jr_sale_delivery_notice sdn ON ( so.id = sdn.customer_id )
+            LEFT JOIN jr_sale_delivery_notice_schedule sdns ON ( sdn.shipment_no = sdns.shipment_no )
+        WHERE
+            so.customer_id = #{customerData}
+            AND sos.write_off_status = 1
+    </select>
+
+    <!--查询出最后一个发货单号-->
+    <select id="querySaleDeliveryNotice" resultType="com.erp.sale.entity.SaleDeliveryNotice">
+        SELECT
+            sdn.shipment_no shipmentNo,
+            sdn.delivery_date deliveryDate,
+            sdn.customer_name customerName,
+            sdn.salesman_name salesmanName,
+            sdn.after_sales_clerk afterSalesClerk,
+            sdn.receiving_address receivingAddress,
+            sdn.preparer_name preparerName,
+            sdn.create_date createDate
+        FROM
+            jr_sale_delivery_notice sdn
+        GROUP BY
+            sdn.create_date
+        ORDER BY
+            sdn.create_date DESC
+            LIMIT 1;
+    </select>
+
+    <insert id="addSaleDeliveryNotice" parameterType="com.erp.sale.entity.SaleDeliveryNotice">
+        INSERT INTO jr_sale_delivery_notice (
+                    shipment_no ,
+                    delivery_date ,
+                    customer_id ,
+                    customer_name ,
+                    salesman_name ,
+                    order_type ,
+                    storage_room ,
+                    consignee_name ,
+                    receiving_phone ,
+                    receiving_address ,
+                    after_sales_clerk ,
+                    order_bookkeeping ,
+                    preparer_name ,
+                    create_date  )
+        VALUES
+                    (#{shipmentNo},
+                     #{deliveryDate},
+                     #{customerId},
+                     #{customerName},
+                     #{salesmanName},
+                     #{orderType},
+                     #{storageRoom},
+                     #{consigneeName},
+                     #{receivingPhone},
+                     #{receivingAddress},
+                     #{afterSalesClerk},
+                     #{orderBookkeeping},
+                     #{preparerName},
+                     #{createDate}
+            )
+    </insert>
+
+    <insert id="addSaleDeliveryNoticeSchedule" parameterType="com.erp.sale.entity.SaleDeliveryNoticeSchedule">
+        INSERT INTO jr_sale_delivery_notice_schedule (
+                    delivery_notice_state, /*状态*/
+                    shipment_no ,  /*发货单号*/
+                    order_schedule_id , /*订单附表id*/
+                    schedule_storage_room , /*库房*/
+                    product_name , /*产品名称*/
+                    specification_model , /*规格型号*/
+                    machine_configuration , /*机器配置*/
+                    invoice_not , /*是否开票*/
+                    order_count , /*订单数*/
+                    number_sent , /*已发数*/
+                    this_shipment , /*本次发货（发货数量）*/
+                    unit_price , /*单价*/
+                    currency_name , /*币种*/
+                    order_number , /*订单号*/
+                    category_name , /*类别*/
+                    preferential_amount , /*优惠金额*/
+                    order_postage , /*邮费*/
+                    shipping_notice_remarks /*备注*/
+
+                   )
+        VALUES
+                    (#{deliveryNoticeState},
+                     #{shipmentNo},
+                     #{orderScheduleId},
+                     #{scheduleStorageRoom},
+                     #{productName},
+                     #{specificationModel},
+                     #{machineConfiguration},
+                     #{invoiceNot},
+                     #{orderCount},
+                     #{numberSent},
+                     #{thisShipment},
+                     #{unitPrice},
+                     #{currencyName},
+                     #{orderNumber},
+                     #{categoryName},
+                     #{preferentialAmount},
+                     #{orderPostage},
+                     #{shippingNoticeRemarks}
+
+            )
+    </insert>
+
+
+
+
+</mapper>
