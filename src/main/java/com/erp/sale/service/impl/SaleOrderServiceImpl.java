@@ -126,6 +126,7 @@ public class SaleOrderServiceImpl extends ServiceImpl<SaleOrderMapper, SaleOrder
         }
         JSONObject saleOrderDataKey = JSON.parseObject(saleOrderData);
         String  orderDate =  saleOrderDataKey.getString("orderDate");
+        String  customerId =  saleOrderDataKey.getString("customerId");
         String  customerName =  saleOrderDataKey.getString("customerName");
         String  salesmanName =  saleOrderDataKey.getString("salesmanName");
         String  currencyName =  saleOrderDataKey.getString("currencyName");
@@ -141,7 +142,10 @@ public class SaleOrderServiceImpl extends ServiceImpl<SaleOrderMapper, SaleOrder
             Date orderDateOne = sdf.parse(orderDate);//格式化数据，取当前时间结果
             saleOrder.setOrderDate(orderDateOne);
         }
-        if (!customerName.equals("")) {
+        if (!customerId.equals("")) {
+            long customerIdOne = Long.parseLong(customerId);
+            saleOrder.setCustomerId(customerIdOne);
+        }if (!customerName.equals("")) {
             saleOrder.setCustomerName(customerName);
         }
         if (!salesmanName.equals("")) {

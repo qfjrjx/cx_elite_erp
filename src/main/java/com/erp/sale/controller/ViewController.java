@@ -497,4 +497,21 @@ public class ViewController {
         }
     }
 
+    //跳转到业务人员页面
+    @GetMapping("saleDeliveryNotice/list")
+    @RequiresPermissions("saleDeliveryNotice:view")
+    public String saleDeliveryNoticeIndex(){
+        return FebsUtil.view("deliveryNotice/deliveryNoticeList");
+    }
+
+    //销售订单添加
+    @GetMapping("saleDeliveryNotice/add")
+    @RequiresPermissions("saleDeliveryNotice:add")
+    public String saleDeliveryNoticeAdd(Model model) {
+        //查询业务员信息
+        List<SaleBusinessPersonnel> saleBusiness  = saleBusinessPersonnelService.queryBusinessPersonnel();
+        model.addAttribute("saleBusiness",saleBusiness);
+        return FebsUtil.view("deliveryNotice/deliveryNoticeAdd");
+    }
+
 }
