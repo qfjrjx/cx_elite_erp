@@ -247,4 +247,10 @@ public class SaleOrderAll {
     @TableField("create_date")
     private Date createDate;
 
+    /**
+     * 状态  1-未核销，2-已核销
+     */
+    @TableField("write_off_status")
+    private String writeOffStatus;
+
 }

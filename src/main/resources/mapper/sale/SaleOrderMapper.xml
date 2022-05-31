@@ -80,7 +80,8 @@
                 sos.product_shape productShape,
                 sos.product_size productSize,
                 sos.other_requirements otherRequirements,
-                so.create_date createDate
+                so.create_date createDate,
+                sos.write_off_status writeOffStatus
             FROM
                 jr_sale_order so
             LEFT JOIN jr_sale_order_schedule sos ON ( so.odd_numbers = sos.odd_numbers )
@@ -161,6 +162,7 @@
         INSERT INTO jr_sale_order (
                     odd_numbers ,
                     order_date ,
+                    customer_id ,
                     customer_name ,
                     salesman_name ,
                     currency_id ,
@@ -177,6 +179,7 @@
         VALUES
                     (#{oddNumbers},
                      #{orderDate},
+                     #{customerId},
                      #{customerName},
                      #{salesmanName},
                      #{currencyId},
@@ -212,7 +215,8 @@
                     fixture_requirements ,
                     product_shape ,
                     product_size ,
-                    other_requirements)
+                    other_requirements,
+                    write_off_status )
         VALUES
                     (#{oddNumbers},
                      #{productName},
@@ -232,7 +236,8 @@
                      #{fixtureRequirements},
                      #{productShape},
                      #{productSize},
-                     #{otherRequirements}
+                     #{otherRequirements},
+                     #{writeOffStatus}
             )
     </insert>
 

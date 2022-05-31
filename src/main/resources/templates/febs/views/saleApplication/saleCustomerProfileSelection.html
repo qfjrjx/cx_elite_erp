@@ -167,16 +167,20 @@
                         var customerNameTwo = $("#customerNameTwo").val();
                         var contactsNameOne = $("#contactsNameOne").val();//联系人
                         var mobilePhoneOne = $("#mobilePhoneOne").val(); //手机
+                        var customerId = $("#customerId").val(); //客户id
                         if (customerNameTwo!=null && customerNameTwo!=""){
                             $("#customerNameTwo").attr("value","");
                         } if (contactsNameOne!=null && contactsNameOne!=""){
                             $("#contactsNameOne").attr("value","");
                         } if (mobilePhoneOne!=null && mobilePhoneOne!=""){
                             $("#mobilePhoneOne").attr("value","");
+                        }if (customerId!=null && customerId!=""){
+                            $("#customerId").attr("value","");
                         }
                         $("#customerNameTwo").attr("value",obj.customerFullName);/*业务人员名称添加回填*/
                         $("#contactsNameOne").attr("value",obj.customerContacts);/*联系人回填*/
                         $("#mobilePhoneOne").attr("value",obj.contactNumber);/*手机回填*/
+                        $("#customerId").attr("value",obj.id);/*客户id回填*/
                         var personnelNames = obj.personnelName;
 
                         $("#personnelNameOne").val(personnelNames);

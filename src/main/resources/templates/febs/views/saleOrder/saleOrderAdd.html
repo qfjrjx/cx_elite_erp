@@ -39,6 +39,7 @@
             <div class="layui-input-inline" style="width: 110px">
                 <input type="text" name="customerName" lay-verify="required"  id="customerNameTwo" lay-reqtext="系统提示，请选择客户"  ondblclick="saleCustomerProfileSelection()"
                        autocomplete="off" class="layui-input" style="width: 110px" placeholder="请双击" readonly>
+                <input type="hidden" name="customerId" lay-verify="required"  id="customerId">
             </div>
             <label class="layui-form-label febs-form-item-require">业&nbsp;&nbsp;务&nbsp;员</label>
             <div class="layui-input-inline" style="width: 110px" id="content">
@@ -434,6 +435,7 @@
             var dataThree = new Array();
             let saleOrderData = {
                 "orderDate":data.field.orderDate,//日期
+                "customerId":data.field.customerId,//客户id
                 "customerName":data.field.customerName,//客户
                 "salesmanName":data.field.salesmanName,//业务员
                 "currencyName":data.field.currencyName,//币种

@@ -1,0 +1,579 @@
+<style>
+    #deliveryNotice-add {
+        padding: 20px 25px 25px 0;
+        background-color: #f8f3f3;
+    }
+    ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+    }
+    ::-webkit-scrollbar-button,
+    ::-webkit-scrollbar-button:vertical {
+        display: none;
+    }
+    ::-webkit-scrollbar-track,
+    ::-webkit-scrollbar-track:vertical {
+        background-color: black;
+    }
+    ::-webkit-scrollbar-track-piece {
+        background-color: #f5f5f5;
+    }
+    ::-webkit-scrollbar-thumb,
+    ::-webkit-scrollbar-thumb:vertical {
+        margin-right: 10px;
+        background-color: #a6a6a6;
+    }
+    ::-webkit-scrollbar-thumb:hover,
+    ::-webkit-scrollbar-thumb:vertical:hover {
+        background-color: #aaa;
+    }
+    ::-webkit-scrollbar-corner,
+    ::-webkit-scrollbar-corner:vertical {
+        background-color: #535353;
+    }
+</style>
+<div class="layui-fluid" id="deliveryNotice-add">
+    <form class="layui-form" action="" lay-filter="deliveryNotice-add-form">
+        <div class="layui-form-item febs-hide">
+            <label class="layui-form-label febs-form-item-require">赋值参数：</label>
+            <div class="layui-input-block">
+                <!--获取产品名称-->
+                <input type="text" name="parameterProductName" id="parameterProductName">
+                <!--获取配置-->
+                <input type="text" name="parameterConfigure" id="parameterConfigure">
+                <!--获取单位-->
+                <input type="text" name="parameterCompany" id="parameterCompany">
+                <!--获取数量-->
+                <input type="text" name="parameterQuantity" id="parameterQuantity">
+                <!--获取单价-->
+                <input type="text" name="parameterUnitPrice" id="parameterUnitPrice">
+                <!--获取金额-->
+                <input type="text" name="parameterAmountMoney" id="parameterAmountMoney">
+                <!--获取备注-->
+                <input type="text" name="parameterExplain" id="parameterExplain">
+            </div>
+        </div>
+        <div class="layui-form-item">
+         <!--   <label class="layui-form-label febs-form-item-require" >单&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号</label>
+            <div class="layui-input-inline" style="width: 120px">
+                <input type="text" name="oddNumbers" id="oddNumbers" style="width: 120px"
+                       autocomplete="off" class="layui-input" placeholder="为空时自动生成" readonly>
+            </div>-->
+            <label class="layui-form-label layui-form-label-sm">发货日期</label>
+            <div class="layui-input-inline" style="width: 120px">
+                <input type="text" name="deliveryDate" id="deliveryDate"
+                       autocomplete="off" class="layui-input createDate" readonly>
+            </div>
+            <label class="layui-form-label layui-form-label-sm">销售客户</label>
+            <div class="layui-input-inline" style="width: 210px">
+                <input type="text" name="customerName" lay-verify=""  id="customerNameTwo" lay-reqtext="系统提示，请选择客户"  ondblclick="saleCustomerProfileSelection()"
+                       autocomplete="off" class="layui-input" style="width: 210px" placeholder="请双击" readonly>
+                <input type="hidden" name="customerId" lay-verify=""  id="customerId">
+            </div>
+            <label class="layui-form-label layui-form-label-sm">业&nbsp;&nbsp;务&nbsp;员</label>
+            <div class="layui-input-inline" style="width: 90px" id="content">
+                <select id="personnelNameOne"  name="salesmanName" type="select" lay-verify=""  class="layui-form-select selector" lay-filter="salesmanName">
+                    <option value="" >请选择...</option>
+                    <option th:each="saleBusiness:${saleBusiness}" th:value="${saleBusiness.personnelName}">[[${saleBusiness.personnelName}]]</option>
+                </select>
+            </div>
+            <label class="layui-form-label layui-form-label-sm">订单类型</label>
+            <div class="layui-input-inline" style="width: 90px">
+                <select name="orderType" id="orderType" lay-filter="orderType" type="select" class="layui-form-select selector">
+                    <option value="1">配件</option>
+                    <option value="2" class="selected">整机</option>
+                    <option value="3">废品</option>
+                </select>
+            </div>
+            <label class="layui-form-label layui-form-label-sm">库房</label>
+            <div class="layui-input-inline" style="width: 90px">
+                <select name="storageRoom" id="storageRoom" lay-filter="storageRoom">
+                    <option value=""></option>
+                    <option value="1">外购库</option>
+                    <option value="2" selected>机加库</option>
+                    <option value="3">废品库</option>
+                    <option value="4">成品库</option>
+                </select>
+            </div>
+            <label class="layui-form-label layui-form-label-sm">收货人</label>
+            <div class="layui-input-inline" style="width: 120px">
+                <input type="text" name="consigneeName" id="consigneeName" style="width: 120px"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label layui-form-label-sm">收货手机</label>
+            <div class="layui-input-inline" style="width: 120px">
+                <input type="text" name="receivingPhone" id="receivingPhone" style="width: 120px"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+            <label class="layui-form-label layui-form-label-sm">收货地址</label>
+            <div class="layui-input-inline" style="width: 395px">
+                <input type="text" name="receivingAddress" id="receivingAddress" style="width: 395px"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+            <label class="layui-form-label layui-form-label-sm">售&nbsp;&nbsp;后&nbsp;员</label>
+            <div class="layui-input-inline" style="width: 90px" >
+                <select name="afterSalesClerk" id="afterSalesClerk" type="select" class="layui-form-select selector" lay-filter="afterSalesClerk">
+                    <option value="" ></option>
+                    <option th:each="saleBusiness:${saleBusiness}" th:value="${saleBusiness.personnelName}">[[${saleBusiness.personnelName}]]</option>
+                </select>
+            </div>
+            <label class="layui-form-label layui-form-label-sm">是否记账</label>
+            <div class="layui-input-inline" style="width: 90px">
+                <select name="orderBookkeeping" id="orderBookkeeping">
+                    <option value="1">是</option>
+                    <option value="2">否</option>
+                </select>
+            </div>
+        </div>
+        <table lay-filter="deliveryNotice-table" id="deliveryNotice-table" lay-data="{id: 'deliveryNotice-table'}"></table>
+       <br>
+        <!-- <div style="width:100%; height:100%; border: 1px solid #cccccc; margin-left: auto;margin-right: auto;top: 0px;bottom: 0px;left: 0px;right: 0px;">
+
+        </div>-->
+        <table lay-filter="deliveryNoticeTable" id="deliveryNoticeTable" lay-data="{id: 'deliveryNoticeTable'}"></table>
+        <div class="layui-form-item febs-hide">
+            <button class="layui-btn" lay-submit="" lay-filter="deliveryNotice-add-form-submit" id="submit"></button>
+            <button class="layui-btn" lay-submit="" lay-filter="deliveryNotice-add-form-submitData" id="submitData"></button>
+            <button type="reset" class="layui-btn" id="reset"></button>
+        </div>
+    </form>
+</div>
+<script langguage="JavaScript">
+    var now = new Date();
+    deliveryDate.value=new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate();
+    var orderDeliveryDateTo = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate();
+
+</script>
+<script type="text/html" id="order-type">
+    {{#
+    let orderType = {
+    1: {title: '配件'},
+    2: {title: '整机'}
+    }[d.orderType];
+    }}
+    <span>{{ orderType.title }}</span>
+</script>
+<script type="text/html" id="invoice-not">
+    {{#
+    let invoiceNot = {
+    "": {title: ''},
+    1: {title: '是'},
+    2: {title: '否'}
+    }[d.invoiceNot];
+    }}
+    <span>{{invoiceNot.title}}</span>
+</script>
+<script>
+    layui.use(['febs', 'form', 'validate','table', 'xmSelect','upload','laydate'], function () {
+        let $ = layui.$,
+            febs = layui.febs,
+            layer = layui.layer,
+            form = layui.form,
+            laydate = layui.laydate,
+            validate = layui.validate,
+            table = layui.table,
+            tableIns;
+
+
+        form.verify(validate);
+        form.render();
+
+        var deliveryNoticeData = new Array(); // 用于存放表格数据
+        initTable(deliveryNoticeData);
+
+        $("#sel").val("B");
+        form.render('select','selFilter');
+
+        //日期同时绑定多个
+        lay('.createDate').each(function(){
+            laydate.render({
+                elem: this
+                ,trigger: 'click'
+            });
+        });
+
+         var documentWidth = $(document).width();
+        function initTable(deliveryNoticeData) {
+            tableIns = febs.table.init({
+                elem: "#deliveryNotice-table",
+                data: deliveryNoticeData,
+                even: true,
+                height:200,
+                skin:'row',
+                cellMinWidth: 80, //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+                page:false,
+                cols: [
+                    [
+                      /*  {minWidth: 50,align: 'center',templet:function (d) {
+                                    return '<button type="button" class="layui-btn layui-btn-sm" onclick="btnAdd()">\n' +
+                                           '<i class="layui-icon">&#xe654;</i>\n' +
+                                           '</button>';
+                            }},*/
+                        {field: 'id',title: 'ID', hide:true, minWidth: 70,align:'center'},
+                        {field: 'productName', title: '产品名称', minWidth: 120},
+                        {field: 'specificationModel', title: '规格型号', width:180,align:'center'},
+                        {field: 'machineConfiguration', hide:true, title: '配置', width:100,align:'center'},
+                        {title: '是否开票', templet: '#invoice-not', align: 'center', minWidth: 90},
+                        {field: 'orderCount', title: '订单数', minWidth: 60, align: 'center'},
+                        /*{field: 'specificationModel', title: '库存数', minWidth: 90},*/
+                        {field: 'numberSent', title: '已发数', minWidth: 60,align:'center',templet:function (d) {
+                                if (d.numberSent != null){
+                                    return d.numberSent;
+                                }else {
+                                    return '<span>0</span>';
+                                  /*  return '<span class="layui-font-red">无</span>';*/
+                                }
+                            }},
+                        {field: 'thisShipment', title: '本次发货', minWidth: 90, align: 'center', edit: true},
+                        {field: 'unitPrice',
+                            title: '单价',
+                            minWidth: 55,
+                            align: 'center',
+                            templet: function (data) {
+                                if (data.unitPrice != null) {
+                                    var price = parseFloat(data.unitPrice).toFixed(2); //设置小数点后个数
+                                    return price;
+                                } else {
+                                    return "";
+                                }
+                            }
+                        },
+                        {field: 'currencyName', title: '币种', minWidth: 90, align: 'center'},
+                        {title: '订单类型', templet: '#order-type', align: 'center', minWidth: 100, align: 'center'},
+                        {field: 'orderNumber', title: '订单号', minWidth: 110, align: 'center'},
+                        {field: 'machineCode', title: '机器码', minWidth: 90, edit: true, align: 'center'},
+                        {field: 'shippingNoticeRemarks', edit: true, title: '备注', minWidth: 72}
+                    ]
+                ],
+            });
+        }
+        table.on('rowDouble(deliveryNotice-table)', function (obj) {
+            var data = obj.data;
+            var orderScheduleId = data.id;
+            var productName = data.productName;
+            var specificationModel = data.specificationModel;
+            var machineConfiguration = data.machineConfiguration;
+            var invoiceNot = data.invoiceNot;
+            var orderCount = data.orderCount;
+            var numberSent = data.numberSent;
+            var thisShipment = data.thisShipment;
+            var unitPrice = data.unitPrice;
+            var currencyName = data.currencyName;
+            var orderType = data.orderType;
+            var orderNumber = data.orderNumber;
+            var oldData =  table.cache["deliveryNoticeTable"];
+            var dataOne={
+                "id":orderScheduleId,
+                "storageRoom":"",
+                "productName":productName,
+                "specificationModel":specificationModel,
+                "machineConfiguration":machineConfiguration,
+                "invoiceNot":invoiceNot,
+                "orderCount":orderCount,
+                "numberSent":numberSent,
+                "thisShipment":thisShipment,
+                "unitPrice":unitPrice,
+                "currencyName":currencyName,
+                "orderType":orderType,
+                "orderNumber":orderNumber,
+                "categoryName":"",
+                "preferentialAmount":"",
+                "orderPostage":"",
+                "shippingNoticeRemarks":""
+            };
+            oldData.push(dataOne);
+            layui.table.reload('deliveryNoticeTable',{
+                data : oldData
+            });
+            var deliveryNoticeOldData =  table.cache["deliveryNotice-table"];
+            if (obj.tr.data('index') != -1) {
+                deliveryNoticeOldData.splice(obj.tr.data('index'), 1)//根据索引删除当前行
+                layui.table.reload('deliveryNotice-table',{
+                    data: deliveryNoticeOldData
+                });
+            }
+
+        });
+        //监听数据表格中到的下拉框
+        form.on('select(categoryName)', function (data) {
+            var elem = $(data.elem);
+            var trElem = elem.parents('tr');
+            var tableData = table.cache['deliveryNoticeTable'];
+            // 更新到表格的缓存数据中，才能在获得选中行等等其他的方法中得到更新之后的值
+            tableData[trElem.data('index')][elem.attr('name')] = data.value;
+            //修改状态 ....这里省略一个ajax请求... 传值：表单变化后的值传递到后台数据库进行实时修改，例如，根据id修改这条数据的状态。
+        });
+        //监听行单击事件  给每一行数据绑定点击事件T
+        //row(tableBigType)  表格的id
+        table.on('edit(deliveryNotice-table)', function(obj){
+            trData = obj.data
+            var tdQuantityName =  trData.quantityName;
+            if (tdQuantityName !="" && tdQuantityName != undefined){
+                var tdUnitPrice = trData.unitPrice;
+                if (tdQuantityName != null && tdUnitPrice != null){
+                    var Money  = parseInt(tdQuantityName) * parseInt(tdUnitPrice);
+                    trData.amountMoney = Money;
+                }
+                obj.update(obj.data);
+            }
+        });
+        table.render({
+            elem: "#deliveryNoticeTable",
+            data:[],
+            even:true,
+            height:160,
+            skin:'row',
+           /* done: function (res, curr, count) {
+                $(".layui-table-body, .layui-table-box, .layui-table-cell").css('overflow', 'visible');
+            },*/
+            cols: [
+                [
+                    /*{minWidth: 50,align: 'center',templet:function (d) {
+                            return '  <button type="button" class="layui-btn layui-btn-sm" onclick="">\n' +
+                                '  <i class="layui-icon">&#xe67e;</i>\n' +
+                                '  </button>';
+                        }},*/
+                    {field: 'id',title: 'ID', hide:true, minWidth: 70,align:'center'},
+                    {field: 'storageRoom',title: '库房', minWidth: 70,align:'center'},
+                    {field: 'productName',title: '产品名称', minWidth: 120,event:'choice',align:'center'},
+                    {field: 'specificationModel', title: '规格型号',width:documentWidth*180/1200,align:'center'},
+                    {field: 'machineConfiguration', hide:true, title: '配置', width:100,align:'center'},
+                    {title: '是否开票',templet: '#invoice-not',align:'center', minWidth: 90},
+                    {field: 'orderCount', title: '订单数', minWidth: 100,align:'center'},
+                    /*{field: 'specificationModel', title: '库存数', minWidth: 90},*/
+                    {field: 'numberSent', title: '已发数', minWidth: 100,align:'center',templet:function (d) {
+                            if (d.numberSent != null){
+                                return d.numberSent;
+                            }else {
+                                return '<span>0</span>';
+                                /*  return '<span class="layui-font-red">无</span>';*/
+                            }
+                        }},
+                    {field: 'thisShipment', title: '本次发货', minWidth: 90, edit: true,align:'center'},
+                    {field: 'unitPrice', edit:true,title: '单价', minWidth: 100,align:'center',templet:function (data) {
+                            if (data.unitPrice != null){
+                                var price = parseFloat(data.unitPrice).toFixed(2); //设置小数点后个数
+                                return price;
+                            }else {
+                                return "";
+                            }
+                        }},
+                    {field: 'currencyName', title: '币种', minWidth: 90,align:'center'},
+                    {field: 'orderType', hide:true, title: '订单类型', minWidth: 90,align:'center'},
+                    {field: 'orderNumber', title: '订单号', minWidth: 110,align:'center'},
+                    {field: 'categoryName', title: '类别',width: 100,templet: function (d) {
+                            // 模板的实现方式也是多种多样，这里简单返回固定的
+                            return '<select name="categoryName" lay-filter="categoryName" lay-verify="" data-value="' + d.categoryName + '" >\n' +
+                                '        <option value=""></option>\n' +
+                                '        <option value="1">机器</option>\n' +
+                                '        <option value="2">配件</option>\n' +
+                                '        <option value="3">废品</option>\n' +
+                                '        <option value="4">送</option>\n' +
+                                '        <option value="5">换</option>\n' +
+                                '        <option value="6">优惠</option>\n' +
+                                '        <option value="7">不包邮</option>\n' +
+                                '        <option value="8">维修</option>\n' +
+                                '      </select>';
+                        }},
+                    {field: 'preferentialAmount', title: '优惠金额', edit:true,minWidth: 90,align:'center',style:'color:#d49d6c'},
+                    {field: 'orderPostage', title: '邮费',edit:true, minWidth: 90,align:'center'},
+                    {field: 'shippingNoticeRemarks',edit:true, title: '备注', minWidth: 90},
+                    {field: 'secondDelete',hide:true,title: '测试',minWidth: 90}
+                ]
+            ],
+            done: function (res, curr, count) {
+                count || this.elem.next('.layui-table-view').find('.layui-table-header').css('overflow', 'visible');
+                layui.each($('select'), function (index, item) {
+                    var elem = $(item);
+                    elem.val(elem.data('value')).parents('div.layui-table-cell').css('overflow', 'visible');
+                });
+            },
+
+        });
+
+        table.on('rowDouble(deliveryNoticeTable)', function (obj) {
+            var data = obj.data;
+            if (data.secondDelete != null){
+                var oldData =  table.cache["deliveryNoticeTable"];
+                if (obj.tr.data('index') != -1) {
+                    oldData.splice(obj.tr.data('index'), 1)//根据索引删除当前行
+                    layui.table.reload('deliveryNoticeTable',{
+                        data: oldData
+                    });
+                }
+            }else {
+                var orderScheduleId = data.id;
+                var productName = data.productName;
+                var specificationModel = data.specificationModel;
+                var machineConfiguration = data.machineConfiguration;
+                var invoiceNot = data.invoiceNot;
+                var orderCount = data.orderCount;
+                var numberSent = data.numberSent;
+                var thisShipment = data.thisShipment;
+                var unitPrice = data.unitPrice;
+                var currencyName = data.currencyName;
+                var orderType = data.orderType;
+                var orderNumber = data.orderNumber;
+                var oldData =  table.cache["deliveryNotice-table"];
+                var dataOne={
+                    "id":orderScheduleId,
+                    "productName":productName,
+                    "specificationModel":specificationModel,
+                    "machineConfiguration":machineConfiguration,
+                    "invoiceNot":invoiceNot,
+                    "orderCount":orderCount,
+                    "numberSent":numberSent,
+                    "thisShipment":thisShipment,
+                    "unitPrice":unitPrice,
+                    "currencyName":currencyName,
+                    "orderType":orderType,
+                    "orderNumber":orderNumber,
+                    "machineCode":"",
+                    "shippingNoticeRemarks":""
+                };
+                oldData.push(dataOne);
+                layui.table.reload('deliveryNotice-table',{
+                    data : oldData
+                });
+                var oldData =  table.cache["deliveryNoticeTable"];
+                if (obj.tr.data('index') != -1) {
+                    oldData.splice(obj.tr.data('index'), 1)//根据索引删除当前行
+                    layui.table.reload('deliveryNoticeTable',{
+                        data: oldData
+                    });
+                }
+            }
+        });
+
+        table.on('tool(deliveryNotice-table)', function (obj) {
+            let data = obj.data,
+                layEvent = obj.event;
+            if (layEvent === 'deliveryDateOne') {
+                var field = $(this).data('field');  //获取当前对象的字段名称，（如：field:'velappr'）
+                laydate.render({
+                    elem: this.firstChild
+                    , show: true //直接显示
+                    , closeStop: this  //这里代表的意思是：点击 this 所在元素阻止关闭事件冒泡。如果不设定，则无法弹出控件
+                    , done: function (value) {
+                        data[field] = value; //修改后的值
+                        obj.update(data);
+                    }
+                });
+            }
+
+        });
+        form.on('submit(deliveryNotice-add-form-submit)', function (data) {
+            //获取时间戳
+            //var timestamp = new Date().getTime();
+           var dataBak = [];
+           var tableBak = layui.table.cache['deliveryNoticeTable'];
+           for (var i=0;i<tableBak.length; i++){
+               dataBak.push(tableBak[i]);
+           }
+           dataBak.push({
+               "storageRoom":"",
+               "productName":"",
+               "specificationModel":"",
+               "invoiceNot":"",
+               "orderCount":"",
+               "numberSent":"",
+               "thisShipment":"",
+               "unitPrice":null,
+               "currencyName":"",
+               "orderType":"",
+               "orderNumber":"",
+               "categoryName":"",
+               "preferentialAmount":"",
+               "orderPostage":"",
+               "shippingNoticeRemarks":"",
+               "secondDelete":"1"
+           });
+          // console.log(dataBak);
+           layui.table.reload('deliveryNoticeTable',{
+               data:dataBak
+           });
+            return false;
+
+        });
+        let userName = currentUser.username;
+        form.on('submit(deliveryNotice-add-form-submitData)', function (data) {
+            var dataThree = new Array();
+            let saleDeliveryNoticeData = {
+                "deliveryDate":data.field.deliveryDate,//日期
+                "customerId":data.field.customerId,//客户ID
+                "customerName":data.field.customerName,//客户
+                "salesmanName":data.field.salesmanName,//业务员
+                "orderType":data.field.orderType,//订单类型
+                "storageRoom":data.field.storageRoom,//库房
+                "consigneeName":data.field.consigneeName,//收货人
+                "receivingPhone":data.field.receivingPhone,//收货手机
+                "receivingAddress":data.field.receivingAddress,//收货地址
+                "afterSalesClerk":data.field.afterSalesClerk,//售后员
+                "orderBookkeeping":data.field.orderBookkeeping,//是否记账
+                "preparerName":userName,//制单人
+            }
+            var deliveryNotice_table =  table.cache["deliveryNoticeTable"];
+            for (i=0;i<deliveryNotice_table.length;i++){
+                var dataOne={
+                    "orderScheduleId":deliveryNotice_table[i].id,
+                    "storageRoom":deliveryNotice_table[i].storageRoom,
+                    "productName":deliveryNotice_table[i].productName,
+                    "specificationModel":deliveryNotice_table[i].specificationModel,
+                    "machineConfiguration":deliveryNotice_table[i].machineConfiguration,
+                    "invoiceNot":deliveryNotice_table[i].invoiceNot,
+                    "orderCount":deliveryNotice_table[i].orderCount,
+                    "numberSent":deliveryNotice_table[i].numberSent,
+                    "thisShipment":deliveryNotice_table[i].thisShipment,
+                    "unitPrice":deliveryNotice_table[i].unitPrice,
+                    "currencyName":deliveryNotice_table[i].currencyName,
+                    "orderType":deliveryNotice_table[i].orderType,
+                    "orderNumber":deliveryNotice_table[i].orderNumber,
+                    "categoryName":deliveryNotice_table[i].categoryName,
+                    "preferentialAmount":deliveryNotice_table[i].preferentialAmount,
+                    "orderPostage":deliveryNotice_table[i].orderPostage,
+                    "machineCode":deliveryNotice_table[i].machineCode,
+                    "shippingNoticeRemarks":deliveryNotice_table[i].shippingNoticeRemarks};
+                dataThree.push(dataOne);
+            }
+            $.ajax({
+                url: '/saleDeliveryNotice/add',
+                type:"post",
+                data: {saleDeliveryNoticeData:JSON.stringify(saleDeliveryNoticeData),dataTable:JSON.stringify(dataThree)},
+                success : function(res) {
+                    layer.closeAll();
+                    $('#delivery-noticeList').find('#query').click();
+                }
+            });
+            return false;
+        });
+        window.saleCustomerProfileSelection = function (){
+            febs.modal.open('客户选择列表', 'sale/saleCustomerProfileSelection', {
+                area:["75%","70%"],
+                end : function() {
+                    var customerData = document.getElementById("customerId").value;
+                    if (customerData != "" &&　customerData　!= null){
+                        $.ajax({
+                            url: 'saleDeliveryNoticeData/list/'
+                            ,data:{"customerData":customerData}
+                            ,async:false
+                            ,dataType:"json"
+                            , success: function(data){
+                                var deliveryNoticeData = new Array(); // 用于存放表格数据
+                                deliveryNoticeData=data.replies
+                                initTable(deliveryNoticeData);
+                            }
+                        });
+                    }else {
+                        var deliveryNoticeData = new Array(); // 用于存放表格数据
+                        initTable(deliveryNoticeData);
+                    }
+                } /*,// 右上⾓关闭按钮的点击事件
+                cancel: function(){
+                }*/
+            });
+        }
+
+    });
+</script>
