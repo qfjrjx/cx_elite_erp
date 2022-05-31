@@ -68,4 +68,6 @@ public interface IPurchaseOrderService extends IService<PurchaseOrder> {
     IPage<PurchaseOrder> queryPurchaseInspectionOrder(QueryRequest request, String supplierName);
 
     IPage<PurchaseOrder> findPurchasePriceChanges(QueryRequest request, PurchaseOrder purchaseOrder);
+
+    List<PurchaseOrder> purchasePriceChangesExport(PurchaseOrder purchaseOrder);
 }

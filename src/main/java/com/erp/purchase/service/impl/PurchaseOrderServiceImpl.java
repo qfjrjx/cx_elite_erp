@@ -299,4 +299,9 @@ public class PurchaseOrderServiceImpl extends ServiceImpl<PurchaseOrderMapper, P
         page.setTotal(baseMapper.countPurchasePriceChanges(purchaseOrder));
         return baseMapper.findPurchasePriceChanges(page,purchaseOrder);
     }
+
+    @Override
+    public List<PurchaseOrder> purchasePriceChangesExport(PurchaseOrder purchaseOrder) {
+        return baseMapper.purchasePriceChangesExport(purchaseOrder);
+    }
 }

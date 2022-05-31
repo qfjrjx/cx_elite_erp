@@ -59,6 +59,7 @@ public class PurchaseRefundServiceImpl extends ServiceImpl<PurchaseRefundMapper,
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void createPurchaseRefund(String purchaseRefund, String dataTable) throws ParseException {
+        SimpleDateFormat simpleDateFormatOne = new SimpleDateFormat("yyyy-MM-dd");//设置日期格式
         /*采购退货*/
         PurchaseRefund purchaseRefundDate = new PurchaseRefund();
         /*LWLTH22030003*/
@@ -78,6 +79,7 @@ public class PurchaseRefundServiceImpl extends ServiceImpl<PurchaseRefundMapper,
         String  currencyId =  object.getString("currencyId");
         String  taxRateId =  object.getString("taxRateId");
         String  refundLibrary =  object.getString("refundLibrary");
+        String  refundDate =  object.getString("refundDate");
         //查询最后一个单号
         PurchaseRefund purchaseRefundOne = null;
         purchaseRefundOne = baseMapper.queryPurchaseRefund();
@@ -110,7 +112,8 @@ public class PurchaseRefundServiceImpl extends ServiceImpl<PurchaseRefundMapper,
         //制单日期
         purchaseRefundDate.setRefundPreparationDate(today);//把获取系统当前时间赋值给实体对象
         purchaseRefundDate.setRefundState("1");
-        purchaseRefundDate.setRefundDate(today);
+        Date refundDateOne = simpleDateFormatOne.parse(refundDate);//格式化系统当前时间
+        purchaseRefundDate.setRefundDate(refundDateOne);
         purchaseRefundDate.setSupplierName(supplierName);
         purchaseRefundDate.setCurrencyId(Long.parseLong(currencyId));
         purchaseRefundDate.setTaxRateId(Long.parseLong(taxRateId));

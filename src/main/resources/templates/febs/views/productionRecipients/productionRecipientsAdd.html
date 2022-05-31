@@ -1,0 +1,359 @@
+<style>
+    #productionRecipients-add {
+        padding: 20px 25px 25px 0;
+    }
+</style>
+<div class="layui-fluid" id="productionRecipients-add">
+    <form class="layui-form" action="" lay-filter="productionRecipients-add-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label febs-form-item-require">日&nbsp;期</label>
+            <div class="layui-input-inline" style="width: 120px">
+                <input type="text" name="orderDates" id="orderDates"
+                       autocomplete="off" class="layui-input createDate" readonly>
+            </div>
+            <label class="layui-form-mid layui-form-label-sm">库房</label>
+            <div class="layui-input-inline" style="width: 145px">
+                <select name="recipientsWarehouse" lay-verify="required" id="recipientsWarehouse">
+                    <option value=""></option>
+                    <option value="1">外购库</option>
+                    <option value="2">机加库</option>
+                    <option value="3">废品库</option>
+                    <option value="4">资产库</option>
+                    <option value="5">成品库</option>
+                </select>
+            </div>
+            <label class="layui-form-mid">机器码</label>
+            <div class="layui-input-inline" style="width: 115px">
+                <input type="text" name="recipientsMachine" id="recipientsMachine" lay-verify="required" ondblclick="dblclickRecipientsMachineAdd()"
+                       autocomplete="off" class="layui-input" placeholder="双击选择" style="width: 115px"  readonly>
+            </div>
+            <label class="layui-form-label febs-form-item-require" >领用部门</label>
+            <div class="layui-input-inline" id="recipients-add-dept" style="width: 190px">
+            </div>
+            <label class="layui-form-mid layui-form-label-sm">领用人</label>
+            <div class="layui-input-inline" style="width: 145px">
+                <input type="text" name="recipientsPeople" id="recipientsPeople" autocomplete="off" class="layui-input" lay-verify="required">
+            </div>
+            <!--隐藏客户和机器型号属性-->
+            <div class="layui-input-inline" style="width: 145px">
+                <input type="text" name="recipientsCustomer" id="recipientsCustomer" autocomplete="off" class="layui-input" lay-verify="required" style="display: none;">
+            </div>
+            <div class="layui-input-inline" style="width: 145px" >
+                <input type="text" name="recipientsModel" id="recipientsModel" autocomplete="off" class="layui-input" lay-verify="required" style="display: none;">
+            </div>
+            <div class="layui-col-md2 layui-col-sm12 layui-col-xs12 table-action-area">
+                <!--搜索按钮-->
+                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                    <i class="layui-icon">&#xe848;</i>查询
+                </div>
+            </div>
+        </div>
+        <table lay-filter="productionRecipientsAdd" id="productionRecipientsAdd" lay-data="{id: 'productionRecipientsAdd'}"></table>
+        <br>
+        <table lay-filter="productionRecipientsAdd-table" id="productionRecipientsAdd-table" lay-data="{id: 'productionRecipientsAdd-table'}"></table>
+        <div class="layui-form-item febs-hide">
+            <button class="layui-btn" lay-submit="" lay-filter="productionRecipients-add-form-submit" id="submit"></button>
+            <button type="reset" class="layui-btn" id="reset"></button>
+        </div>
+    </form>
+</div>
+<script type="text/html" id="recipientsWarehouse-method">
+    {{#
+    let recipientsWarehouse = {
+    1: {title: '外购库'},
+    2: {title: '机加库'},
+    3: {title: '废品库'},
+    4: {title: '资产库'},
+    5: {title: '成品库'}
+    }[d.recipientsWarehouse];
+    }}
+    <span>{{ recipientsWarehouse.title }}</span>
+</script>
+<script langguage="JavaScript">
+    var now = new Date();
+    orderDates.value=new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate();
+    var orderDeliveryDateTo = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate();
+
+</script>
+<script>
+    layui.use(['jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect' , 'validate'], function () {
+        let $ = layui.jquery,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            layer = layui.layer,
+            laydate = layui.laydate,
+            $view = $('#productionRecipients-add'),
+            $query = $view.find('#query'),
+            $searchForm = $view.find('form'),
+            tableIns,
+            deptXmlSelect;
+
+        form.render();
+
+        initTable();
+
+        //日期同时绑定多个
+        lay('.createDate').each(function(){
+            laydate.render({
+                elem: this
+                ,trigger: 'click'
+            });
+        });
+
+        deptXmlSelect = xmSelect.render({
+            el: '#recipients-add-dept',
+            model: {label: {type: 'text'}},
+            tree: {
+                show: true,
+                strict: false,
+                showLine: false,
+                clickCheck: true,
+                expandedKeys: [-1],
+            },
+            name: 'deptId',
+            theme: {
+                color: '#52c41a',
+            },
+            prop: {
+                value: 'id'
+            },
+            height: 'auto',
+            on: function(data){
+                if(data.isAdd){
+                    return data.change.slice(0, 1)
+                }
+            }
+        });
+        febs.get(ctx + 'dept/select/tree', null, function (data) {
+            deptXmlSelect.update(
+                data
+            )
+        });
+
+        $query.on('click', function () {
+            layui.table(initTable());
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        table.on('rowDouble(productionRecipientsAdd)', function (obj) {
+            var data = obj.data;
+            var bomMaterialName = data.bomMaterialName;
+            var bomSpecifications = data.bomSpecifications;
+            var bomUnit = data.bomUnit;
+            var settlementPrice = data.settlementPrice;
+            var bomAmount = data.bomAmount;
+            var recipientsNote = data.recipientsNote;
+            var bomBrand = data.bomBrand;
+            var planQuality = data.planQuality;
+            var bomLocation = data.bomLocation;
+            var settlementMoney = data.settlementMoney;
+            var recipientsWarehouse = $('#recipientsWarehouse').val();
+            var bomMaterialCode = data.bomMaterialCode;
+            alert(data.settlementMoney)
+            $.ajax({
+                url: '/saleOrder/random',
+                success : function(data) {
+                    var random = data.data;
+                    var oldData =  table.cache["productionRecipientsAdd-table"];
+                    var dataOne={"recipientsMaterial":bomMaterialName,
+                        "recipientsSpecifications":bomSpecifications,"recipientsUnit":bomUnit,
+                        "recipientsNumber":bomAmount,"recipientsNote":recipientsNote,
+                        "recipientsBrand":bomBrand,"settlementPrice":settlementPrice,
+                        "recipientsMass":planQuality,"recipientsLocation":bomLocation,
+                        "recipientsWarehouse":recipientsWarehouse,"recipientsLack":settlementMoney,"lackMaterialCode":bomMaterialCode};
+                    oldData.push(dataOne);
+                    layui.table.reload('productionRecipientsAdd-table',{
+                        data : oldData
+                    });
+                }
+            });
+        });
+
+        var tableData=new Array(); // 用于存放表格数据
+        function initTable() {
+            tableIns = febs.table.init({
+                elem: '#productionRecipientsAdd',
+                id: 'productionRecipientsAdd',
+                url: ctx + 'productionRecipients/queryList',
+                where:{
+                    planNumber:$('#recipientsMachine').val()
+                },
+                cols: [
+                    [
+                        {type: 'checkbox'},
+                        {field: 'bomMaterialName', title: '名称',align:'center', minWidth: 150},
+                        {field: 'bomSpecifications', title: '规格型号',align:'center', minWidth: 150},
+                        {field: 'bomUnit', title: '单位',align:'center', minWidth: 100},
+                        {field: 'settlementQuantity', title: 'BOM数量',align:'center', minWidth: 60,
+                            templet: function (data) {
+                                if (data.settlementQuantity != undefined){
+                                    return data.settlementQuantity;
+                                }else {
+                                    return 0;
+                                }
+                            }},//未定义
+                        {field: 'settlementPrice', title: '库存数量',align:'center', minWidth: 100,
+                            templet: function (data) {
+                                if (data.settlementPrice != undefined){
+                                    return data.settlementPrice;
+                                }else {
+                                    return 1;
+                                }
+                            }},//未定义
+                        {field: 'meteringCompany', title: '已领数量',align:'center', minWidth: 100,
+                            templet: function (data) {
+                                if (data.meteringCompany != undefined){
+                                    return data.meteringCompany;
+                                }else {
+                                    return 0;
+                                }
+                            }},//未定义
+                        {field: 'bomAmount', title: '计划领用数',align:'center',minWidth: 80,edit: true,
+                            templet: function (data) {
+                                if (data.bomAmount != undefined){
+                                    return data.bomAmount;
+                                }else {
+                                    return 0;
+                                }
+                            }},//未定义
+                        {field: 'settlementQuantity', title: '可领用数', align: 'center', minWidth: 80,
+                            templet: function (data) {
+                                if (data.settlementQuantity != undefined){
+                                    return data.settlementQuantity();
+                                }else {
+                                        return 0;
+                                }
+                            }
+                        },//未定义
+                        {
+                            field: 'settlementMoney',
+                            title: '缺件数',
+                            align:'center',
+                            minWidth: 80,
+                            templet: function (data) {
+                                if (data.settlementPrice == undefined){
+                                    var price = 0 - parseInt(data.bomAmount);
+                                    return price;
+                                }
+                            }
+                        },//未定义
+                        {field: 'recipientsNote', title: '备注',align:'center', minWidth: 80,edit: true},
+                        {field: 'bomBrand', title: '品牌',align:'center', minWidth: 80,hide:true},
+                        {field: 'planQuality', title: '材质',align:'center', minWidth: 80,hide:true},
+                        {field: 'bomLocation', title: '库位',align:'center', minWidth: 80,hide:true},
+                        {field: 'bomMaterialCode', title: '物料编码',align:'center', minWidth: 80,hide:true}
+                    ]
+                ]
+            });
+        };
+        table.render({
+            elem: '#productionRecipientsAdd-table',
+            data: tableData,
+            cols: [
+                [
+                    {type: 'checkbox'},
+                    {title: '库房', templet: '#recipientsWarehouse-method',align:'center',width:90},
+                    {field: 'recipientsMaterial', title: '物料名称',align:'center', minWidth: 150},
+                    {field: 'recipientsSpecifications', title: '规格型号',align:'center', minWidth: 100},
+                    {field: 'recipientsUnit', title: '单位',align:'center', minWidth: 60},
+                    {field: 'settlementPrice', title: '库存数量',align:'center', minWidth: 100},
+                    {field: 'recipientsNumber', title: '领用数',align:'center',minWidth: 80},
+                    {field: 'recipientsNote', title: '备注',align:'center', minWidth: 80},
+                    {field: 'recipientsBrand', title: '品牌',align:'center', minWidth: 80,hide:true},
+                    {field: 'recipientsMass', title: '材质',align:'center', minWidth: 80,hide:true},
+                    {field: 'recipientsLocation', title: '库位',align:'center', minWidth: 80,hide:true},
+                    {field: 'lackMaterialCode', title: '物料编码',align:'center', minWidth: 80},
+                    {
+                        field: 'recipientsLack',
+                        title: '缺件数',
+                        align:'center',
+                        minWidth: 80,
+                        templet: function (data) {
+                            if (data.settlementPrice == undefined){
+                                var ss = 0 - parseInt(data.recipientsNumber);
+                            }
+                            return ss;
+                        }
+                    }
+                ]
+            ]
+        })
+
+        table.on('rowDouble(productionRecipientsAdd-table)', function (obj) {
+            var data = obj.data;
+            var oldData =  table.cache["productionRecipientsAdd-table"];
+            if (obj.tr.data('index') != -1) {
+                oldData.splice(obj.tr.data('index'), 1)//根据索引删除当前行
+                layui.table.reload('productionRecipientsAdd-table',{
+                    data: oldData
+                });
+            }
+        });
+
+        form.on('submit(productionRecipients-add-form-submit)', function (data) {
+            var recipientsWarehouse = $('#recipientsWarehouse').val();
+            var recipientsMachine = $('#recipientsMachine').val();
+            var recipientsDepartment = deptXmlSelect.getValue('valueStr');
+            var recipientsPeople = $('#recipientsPeople').val();
+            var recipientsCustomer = $('#recipientsCustomer').val();
+            var recipientsModel = $('#recipientsModel').val();
+            let dataThree = new Array();
+            let productionRecipients =  table.cache["productionRecipientsAdd-table"];
+            for (i=0;i<productionRecipients.length;i++){
+                alert(productionRecipients[i].recipientsMaterial)
+                let dataOne={
+                    "recipientsMaterial":productionRecipients[i].recipientsMaterial,
+                    "recipientsSpecifications":productionRecipients[i].recipientsSpecifications,
+                    "recipientsUnit":productionRecipients[i].recipientsUnit,
+                    "settlementPrice":productionRecipients[i].settlementPrice,
+                    "recipientsNumber":productionRecipients[i].recipientsNumber,
+                    "recipientsNote":productionRecipients[i].recipientsNote,
+                    "recipientsBrand":productionRecipients[i].recipientsBrand,
+                    "recipientsMass":productionRecipients[i].recipientsMass,
+                    "recipientsLocation":productionRecipients[i].recipientsLocation,
+                    "recipientsLack":productionRecipients[i].recipientsLack,
+                    "lackMaterialCode":productionRecipients[i].lackMaterialCode
+                };
+                alert(222)
+                alert(productionRecipients[i].recipientsLack)
+                dataThree.push(dataOne);
+            }
+            let entity = {recipientsWarehouse:recipientsWarehouse,recipientsMachine: recipientsMachine,recipientsDepartment:recipientsDepartment,
+                recipientsPeople: recipientsPeople,recipientsCustomer:recipientsCustomer,recipientsModel:recipientsModel}
+            $.ajax({
+                url: '/productionRecipients/adds',
+                type:"post",
+                data: {recipients:JSON.stringify(entity),dataTable:JSON.stringify(dataThree)},
+                success : function(res) {
+                    layer.closeAll();
+                    $('#productionRecipients-list').find('#query').click();
+                    var dataBak = [];
+                    layui.table.reload('productionRecipientsTable',{
+                        data:dataBak
+                    });
+                }
+            });
+            return false;
+        });
+
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+    })
+    function dblclickRecipientsMachineAdd(){
+        layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
+            let $ = layui.$,
+                febs = layui.febs;
+            febs.modal.open('整机计划选择列表', 'production/dblclickRecipientsMachineAdd', {
+                area:["55%","60%"],
+                yes: function (index, layero) {
+                }
+
+            });
+        });
+    }
+</script>

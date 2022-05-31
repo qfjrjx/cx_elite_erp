@@ -106,6 +106,14 @@
 
         let userName = currentUser.username;
 
+        //日期同时绑定多个
+        lay('.createDate').each(function(){
+            laydate.render({
+                elem: this
+                ,trigger: 'click'
+            });
+        });
+
         var tableData=new Array(); // 用于存放表格数据
         $query.on('click', function () {
             layui.table(initTable());

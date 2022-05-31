@@ -4,6 +4,9 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.erp.common.converter.TimeConverter;
+import com.wuwenze.poi.annotation.Excel;
+import com.wuwenze.poi.annotation.ExcelField;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -17,6 +20,7 @@ import java.util.Date;
  */
 @Data
 @TableName("jr_purchase_order")
+@Excel("价格分析")
 public class PurchaseOrder {
 
     /**
@@ -47,6 +51,7 @@ public class PurchaseOrder {
      * 供应商
      */
     @TableField("supplier_name")
+    @ExcelField(value = "供应商")
     private String supplierName;
 
     private String supplierNameList;
@@ -95,6 +100,7 @@ public class PurchaseOrder {
      * 制单日期
      */
     @TableField("order_preparation_date")
+    @ExcelField(value = "制单日期", writeConverter = TimeConverter.class)
     private Date orderPreparationDate;
 
     /**
@@ -129,11 +135,13 @@ public class PurchaseOrder {
     /**
      * 物料名称
      */
+    @ExcelField(value = "物料名称")
     private String materialName;
 
     /**
      * 规格
      */
+    @ExcelField(value = "规格")
     private String orderSpecifications;
 
     /**
@@ -149,12 +157,14 @@ public class PurchaseOrder {
     /**
      * 单位
      */
+    @ExcelField(value = "单位")
     private String orderCompany;
 
 
     /**
      * 单价
      */
+    @ExcelField(value = "单价")
     private BigDecimal unitPrice;
 
 
@@ -166,6 +176,7 @@ public class PurchaseOrder {
     /**
      * 小类
      */
+    @ExcelField(value = "类别")
     private String orderSubclass;
 
     /**

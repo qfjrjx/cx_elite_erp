@@ -198,7 +198,6 @@
         form.on('submit(purchaseClosed-update-form-submit)', function (data) {
             let dataThree = new Array();
             let purchaseClosedRequisitionTable =  table.cache["purchaseClosedRequisitionList"];
-            layer.msg(111);
             for (i=0;i<purchaseClosedRequisitionTable.length;i++){
                 let dataOne={
                     "orderNumber":purchaseClosedRequisitionTable[i].applicationNo,

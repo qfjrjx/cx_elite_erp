@@ -1,0 +1,300 @@
+<style>
+    #productionStatistical-list xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #productionStatistical-list xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="productionStatistical-list" lay-title="生产统计">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="productionStatistical-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md12">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid layui-form-label-sm" style="width: 130px">订&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;单&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;日&nbsp;&nbsp;&nbsp;&nbsp;期：</label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <input type="text" id="start_date" name="signedDateFrom" placeholder="" lay-verify='date' class="layui-input"/>
+                                            <i class="layui-icon" id="start_date_icon"></i>
+                                        </div>
+                                        <label class="layui-form-mid">至：</label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <input type="text" id="end_date" name="signedDateTo" placeholder="" lay-verify='date' class="layui-input"/>
+                                            <i class="layui-icon " id="end_date_icon"></i>
+                                        </div>
+                                        <label class="layui-form-mid layui-form-label-sm" style="width: 110px">订&nbsp;&nbsp;&nbsp;&nbsp;单&nbsp;&nbsp;&nbsp;号：</label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <input type="text" name="planNumber" autocomplete="off"  class="layui-input" >
+                                        </div>
+                                        <label class="layui-form-mid layui-form-label-sm">状态：</label>
+                                        <div class="layui-input-inline" style="width: 70px">
+                                            <select name="planState">
+                                                <option value="">全部</option>
+                                                <option value="1">未完</option>
+                                                <option value="2">完成</option>
+                                            </select>
+                                        </div>
+                                        <label class="layui-form-mid layui-form-label-sm" >机器码：</label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <input type="text" name="planCode" autocomplete="off"  class="layui-input" >
+                                        </div>
+                                        <label class="layui-form-mid layui-form-label-sm" >名称：</label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <input type="text" name="planProductName" autocomplete="off"  class="layui-input" >
+                                        </div>
+                                        <label class="layui-form-mid layui-form-label-sm" style="width: 110px">规格型号：</label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <input type="text" name="planSpecifications" autocomplete="off"  class="layui-input" >
+                                        </div>
+                                        <label class="layui-form-mid layui-form-label-sm">类别：</label>
+                                        <div class="layui-input-inline" style="width: 70px">
+                                            <select name="planStates">
+                                                <option value="">全部</option>
+                                                <option value="1">整机</option>
+                                                <option value="2">配件</option>
+                                            </select>
+                                        </div>
+                                        <br>
+                                        <label class="layui-form-mid layui-form-label-sm" style="width: 130px">生产实际完成日期：</label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <input type="text" name="signedDateFromOne" id="signedDateFromOne"
+                                                   autocomplete="off" class="layui-input createDate" readonly>
+                                        </div>
+                                        <label class="layui-form-mid">至：</label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <input type="text" name="signedDateToOne" id="signedDateToOne"
+                                                   autocomplete="off" class="layui-input createDate" readonly>
+                                        </div>
+                                        <label class="layui-form-mid layui-form-label-sm" style="width: 110px">生产负责人：</label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <input type="text" name="planHead" autocomplete="off" class="layui-input" >
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="productionStatisticalTable" lay-data="{id: 'productionStatisticalTable'}"></table>
+
+                    <div class="layui-col-md6">
+                        <div class="layui-form-item"></div>
+                    </div>
+                    <div class="layui-col-md6 layui-col-sm12 layui-col-xs12 table-action-area">
+                        <!--搜索按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                            <i class="layui-icon">&#xe848;</i>搜索
+                        </div>
+                        <!-- 刷新表格按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain table-action" id="reset">
+                            <i class="layui-icon">&#xe79b;</i>刷新
+                        </div>
+                        <!--添加按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="productionStatistical:arrange" id="arrangeTo">
+                            <i class="layui-icon">&#xe78a;</i>安排生产
+                        </div>
+                        <!--修改按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="productionStatistical:export" id="exportTo">
+                            <i class="layui-icon">&#xe642;</i>导出
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="planState-state">
+    {{#
+    let planState = {
+    1: {title: '未完'},
+    2: {title: '完成'}
+    }[d.planState];
+    }}
+    <span>{{ planState.title }}</span>
+</script>
+<script>
+    layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+            laydate = layui.laydate,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            $view = $('#productionStatistical-list'),
+            $query = $view.find('#query'),
+            $arrangeTo = $view.find('#arrangeTo'),//安排生产
+            $exportTo = $view.find('#exportTo'),//导出
+            $reset = $view.find('#reset'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'createTime', type: null},
+            startTimeFrom,
+            endTimeTo,
+            tableIns;
+
+        form.render();
+
+        initTable();
+
+        //日期同时绑定多个
+        lay('.createDate').each(function(){
+            laydate.render({
+                elem: this
+                ,trigger: 'click'
+            });
+        });
+
+        var firstDate = new Date();
+        firstDate.setDate(1); //本月第一天
+        var datetime =firstDate.getFullYear() + '-' + (firstDate.getMonth() + 1) + '-' + firstDate.getDate();
+        //开始日期
+        var start = laydate.render({
+            elem: '#start_date',
+            max: 0 ,//设置一个默认最大值//最大值为当前日期
+            trigger: 'click',
+            value: new Date(firstDate),//初始赋值,//默认值本月第一天
+            done:function(value,date){
+                if(value && (value>$("#end_date").val())){
+                    /*开始时间大于结束时间时，清空结束时间*/
+                    $("#end_date").val("");
+                }
+                end.config.min ={
+                    year:date.year,
+                    month:date.month-1,
+                    date: date.date,
+                };
+            }
+        });
+        //结束日期
+        var end = laydate.render({
+            elem: '#end_date',
+            min : datetime,//最大值为当前日期
+            trigger: 'click',
+            value: new Date(),//初始赋值,//默认当前时间
+            done:function(value,date){
+                start.config.max={
+                    year:date.year,
+                    month:date.month-1,
+                    date: date.date,
+                }
+            }
+        });
+
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        $reset.on('click', function () {
+            $searchForm[0].reset();
+            tableIns.reload({where: getQueryParams(), page: {curr: 1}});
+        });
+
+        $arrangeTo.on('click', function () {
+            let checkStatus = table.checkStatus('productionStatisticalTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择一条数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条数据');
+            }else {
+                layui.each(checkStatus.data, function (key, item) {
+                    febs.modal.open('【安排生产】 新增', 'production/productionStatistical/arrange/' + item.id, {
+                        type: 1,
+                        btn: ['确定', '取消'],
+                        area:["30%","70%"],
+                        yes: function (index, layero) {
+                            $('#productionStatistical-arrange').find('#submit').trigger('click');
+                            return false;
+                        },
+                        btn2: function () {
+                            layer.closeAll();
+                        }
+                    });
+                });
+            }
+        });
+
+        $exportTo.on('click', function () {
+            let params = getQueryParams();
+            params.pageSize = $view.find(".layui-laypage-limits option:selected").val();
+            params.pageNum = $view.find(".layui-laypage-em").next().html();
+            febs.download(ctx + 'productionStatistical/excel', params, '生产统计.xlsx');
+        });
+
+        table.on('tool(productionStatisticalTable)', function (obj) {
+            let data = obj.data,
+                layEvent = obj.event;
+            if (layEvent === 'see') {
+                febs.modal.view(data.planProductName, 'production/productionPlan/detail/' + data.planCode, {
+                    btn: ['关闭'],
+                    area: $(window).width() <= 750 ? '95%' : '50%',
+                    yes: function (index, layero) {
+                        layer.closeAll();
+                    }
+                });
+            }
+        });
+
+        function initTable() {
+            tableIns = febs.table.init({
+                elem: $view.find('table'),
+                id: 'productionStatisticalTable',
+                url: ctx + 'productionPlan/list',
+                where:{
+                    signedDateFrom:$('#signedDateFrom').val(),
+                    signedDateTo:$('#signedDateTo').val()
+                },
+                page: true,
+                cols: [
+                    [
+                        {type: 'checkbox'},
+                        {field:'number',title:'序号', minWidth: 30,align:'center',templet:function (d) {
+                                return d.LAY_INDEX;}},
+                        {title: '状态', templet: '#planState-state',align:'center',width:60},
+                        {field: 'planDate', title: '交货日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.planDate, "yyyy-MM-dd") }}</div>', minWidth: 115},
+                        {field: 'planNumber', title: '订单号',align:'center', minWidth: 105},
+                        {field: 'planCustomerName', title: '客户名称',align:'center', minWidth: 90},
+                        {field: 'planProductName', title: '产品名称',align:'center', minWidth: 90},
+                        {field: 'planSpecifications', title: '规格型号', minWidth: 95},
+                        {field: 'planCode', title: '机器码', minWidth: 105,align:'center'},
+                        {field: 'planConfiguration', title: '配置', minWidth: 90,align:'center',templet: dispose},
+                        {field: 'planUnit', title: '单位', minWidth: 90,align:'center'},
+                        {field: 'planAmount', title: '数量', minWidth: 90,align:'center'},
+                        {field: 'planMoney', title: '金额',align:'center', minWidth: 90},
+                        {field: 'planHead', title: '生产负责人',align:'center', minWidth: 90},
+                        {field: 'planInvoice', title: '发货状态', minWidth: 95,align:'center'},
+                        {field: 'planExpectDate', title: '生产预计完成', minWidth: 90,align:'center'},
+                        {field: 'planActualDate', title: '生产实际完成', minWidth: 90,align:'center'},
+                        {field: 'planWage', title: '生产工资', minWidth: 90,align:'center'},
+                        {field: 'planHeadOne', title: '生产负责人',align:'center', minWidth: 90},
+                        {field: 'planExpectDateOne', title: '生产预计完成', minWidth: 90,align:'center'},
+                        {field: 'planActualDateOne', title: '生产实际完成', minWidth: 90,align:'center'},
+                        {field: 'planWageOne', title: '生产工资', minWidth: 90,align:'center'},
+                        {field: 'planContent', title: '生产内容', minWidth: 90,align:'center'}
+                    ]
+                ]
+            });
+        }
+
+        function dispose(d) {
+            var dispose = d.planConfiguration;
+            if ('' == dispose || null == dispose || undefined == dispose) {
+                return '';
+            }
+            if (dispose.length > 0) {
+                return '<a class="layui-table-link" href="javascript:void(0);" lay-event="see">查看</a>&nbsp;' + d.planConfiguration +' ';
+            }
+        }
+
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+    })
+</script>

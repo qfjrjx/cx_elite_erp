@@ -14,12 +14,12 @@
             </div>
             <label class="layui-form-label">客&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;户：</label>
             <div class="layui-input-inline" style="width: 90px">
-                <input type="text" name="customerName" lay-verify="required"  id="customerNameTwo" lay-reqtext="系统提示，请选择客户"  ondblclick="saleCustomerProfileSelection()"
+                <input type="text" name="customerName" lay-verify="required"  id="customerNameAdd" lay-reqtext="系统提示，请选择客户"  ondblclick="saleCustomerProfileSelectionAdd()"
                        autocomplete="off" class="layui-input" style="width: 110px" placeholder="请双击" readonly>
             </div>
             <label class="layui-form-label">销售订单：</label>
             <div class="layui-input-inline" style="width: 90px">
-                <input type="text" name="planOrder" lay-verify="required"  id="oddNumbersTwo" lay-reqtext="系统提示，请选择客户"  ondblclick="saleOrderList()"
+                <input type="text" name="planOrder" lay-verify="required"  id="oddNumbersTwo"  ondblclick="saleOrderList()"
                        autocomplete="off" class="layui-input" style="width: 110px" placeholder="请双击" readonly>
             </div>
             <label class="layui-form-label">数&nbsp;量：</label>
@@ -117,11 +117,24 @@
                        autocomplete="off" class="layui-input" placeholder="">
             </div>
         </div>
-
         <div class="layui-form-item" style="display: none;">
             <label class="layui-form-label">制单人：</label>
             <div class="layui-input-block">
                 <input type="text" name="userName" id="userName"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item" style="display: none;">
+            <label class="layui-form-label">金额：</label>
+            <div class="layui-input-block">
+                <input type="text" name="planMoney" id="amountMoneyOne"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item" style="display: none;">
+            <label class="layui-form-label">单位：</label>
+            <div class="layui-input-block">
+                <input type="text" name="planUnit" id="companyNameOne"
                        autocomplete="off" class="layui-input" placeholder="">
             </div>
         </div>
@@ -141,17 +154,27 @@
 
 </script>
 <script>
-    layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
+    layui.use(['febs', 'form', 'validate', 'xmSelect', 'laydate'], function () {
         let $ = layui.$,
             febs = layui.febs,
             layer = layui.layer,
             form = layui.form,
             validate = layui.validate,
             upload = layui.upload,
+            laydate = layui.laydate,
             uploadInst;
 
         form.verify(validate);
         form.render();
+
+        //日期同时绑定多个
+        lay('.createDate').each(function(){
+            laydate.render({
+                elem: this
+                ,trigger: 'click'
+            });
+        });
+
         //上传图片
         uploadInst = upload.render({
             elem: '#uploadPic' //绑定元素
@@ -188,8 +211,6 @@
         });
 
         form.on('submit(productionPlan-add-form-submit)', function (data) {
-            /*var planAttachment = data.field.planAttachment;
-            alert(planAttachment)*/
             febs.post(ctx + 'productionPlan/add', data.field,function () {
                 layer.closeAll();
                 febs.alert.success('新增参数成功');
@@ -201,12 +222,12 @@
 
     });
 
-    function saleCustomerProfileSelection(){
+    function saleCustomerProfileSelectionAdd(){
         layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
             let $ = layui.$,
                 febs = layui.febs;
 
-            febs.modal.open('客户选择列表', 'sale/saleCustomerProfileSelection', {
+            febs.modal.open('客户选择列表', 'production/saleCustomerProfileSelection', {
                 area:["75%","70%"],
                 yes: function (index, layero) {
                 }
@@ -220,7 +241,7 @@
             let $ = layui.$,
                 febs = layui.febs;
 
-            febs.modal.open('客户选择列表', 'production/saleOrderListQuery', {
+            febs.modal.open('销售订单选择列表', 'production/saleOrderListQuery', {
                 area:["75%","70%"],
                 yes: function (index, layero) {
                 }

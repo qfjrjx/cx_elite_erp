@@ -4,8 +4,11 @@ package com.erp.production.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.erp.common.entity.QueryRequest;
+import com.erp.production.entity.ProductionLack;
 import com.erp.production.entity.ProductionRecipients;
+import com.erp.production.entity.ProductionRecipientsSchedule;
 
+import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -35,16 +38,16 @@ public interface IProductionRecipientsService extends IService<ProductionRecipie
     /**
      * 新增
      *
-     * @param productionRecipients productionRecipients
+     * @param recipients recipients
      */
-    void createProductionRecipients(ProductionRecipients productionRecipients);
+    void createProductionRecipients(String recipients ,String dataTable) throws ParseException;
 
     /**
      * 修改
      *
-     * @param productionRecipients productionRecipients
+     * @param recipients recipients
      */
-    void updateProductionRecipients(ProductionRecipients productionRecipients);
+    void updateProductionRecipients(String recipients, String dataTable) throws ParseException;
 
     /**
      * 删除
@@ -52,4 +55,16 @@ public interface IProductionRecipientsService extends IService<ProductionRecipie
      * @param productionRecipients productionRecipients
      */
     void deleteProductionRecipients(ProductionRecipients productionRecipients);
+
+    List<ProductionRecipientsSchedule> queryProductionRecipients(String recipientsCode);
+
+    ProductionRecipients productionRecipientsId(Long id);
+
+    void cancelProductionRecipients(String ids);
+
+    void confirmProductionRecipients(String ids);
+
+    List<ProductionLack> queryProductionRecipientsLack(String recipientsCode);
+
+    IPage<ProductionLack> findProductionLackPage(QueryRequest request, ProductionLack productionLack);
 }

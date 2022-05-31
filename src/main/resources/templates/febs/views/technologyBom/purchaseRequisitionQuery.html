@@ -203,7 +203,7 @@
                 var dataOne={"parameterMaterialCode":oldData[i].materialCode,"parameterMaterial":oldData[i].materialName,
                     "parameterSpecifications":oldData[i].specificationsModel,"parameterBrand":oldData[i].materialBrand,
                     "parameterUnit":oldData[i].meteringCompany,"parameterNumber":oldData[i].parameterNumber,
-                    "parameterNote":oldData[i].materialRemarks,"parameterLocation":oldData[i].materialLocation};
+                    "parameterNote":oldData[i].materialRemarks,"parameterLocation":oldData[i].materialLocation,"parameterQuality":oldData[i].materialQuality};
                 oldDataOne =  table.cache["configurationUpdate"];
                 oldDataOne.push(dataOne);
             }
@@ -233,7 +233,7 @@
                         {field: 'meteringCompany', title: '单位',align:'center', minWidth: 100},
                         {field: 'parameterNumber', title: '数量',align:'center', minWidth: 100,edit:true},
                         {field: 'materialRemarks', title: '备注',align:'center', minWidth: 80,edit:true},
-                        {field: 'materialLocation', title: '库位',align:'center', minWidth: 80,edit:true},
+                        {field: 'materialLocation', title: '库位',align:'center', minWidth: 80},
                         {title: '状态', templet: '#material-state'}
                     ]
                 ]

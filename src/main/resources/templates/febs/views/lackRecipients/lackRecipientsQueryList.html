@@ -1,0 +1,227 @@
+<style>
+    #lackRecipientsAdd-list xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #lackRecipientsAdd-list xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+    .layui-form-item .layui-input-inline {
+        width: 160px;
+    }
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="lackRecipientsAdd-list" lay-title="缺件选择列表">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="lackRecipients-add-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md10">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm">缺件单号</label>
+                                        <div class="layui-input-inline" style="width: 100px">
+                                            <input type="text" name="lackCode" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm">名称</label>
+                                        <div class="layui-input-inline" style="width: 100px">
+                                            <input type="text" name="lackMaterial" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm">规格型号</label>
+                                        <div class="layui-input-inline" style="width: 100px">
+                                            <input type="text" name="lackSpecifications" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm">机器码</label>
+                                        <div class="layui-input-inline" style="width: 100px">
+                                            <input type="text" name="lackMachine" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md2 layui-col-sm12 layui-col-xs12 table-action-area">
+                                <!--搜索按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                                    <i class="layui-icon">&#xe848;</i>查询
+                                </div>
+                                <!--添加按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action " id="addTo">
+                                    <i class="layui-icon">&#xe78a;</i>确定
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="lackRecipientsAddListTable" id="lackRecipientsAddListTable" lay-data="{id: 'lackRecipientsAddListTable'}"></table>
+                    <br>
+                    <table lay-filter="lackRecipientsAddList-table" id="lackRecipientsAddList-table" lay-data="{id: 'lackRecipientsAddList-table'}"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="lackWarehouse-method">
+    {{#
+    let lackWarehouse = {
+    1: {title: '外购库'},
+    2: {title: '机加库'},
+    3: {title: '废品库'},
+    4: {title: '资产库'},
+    5: {title: '成品库'}
+    }[d.lackWarehouse];
+    }}
+    <span>{{ lackWarehouse.title }}</span>
+</script>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['jquery','form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            $view = $('#lackRecipientsAdd-list'),
+            $query = $view.find('#query'),
+            $reset = $view.find('#reset'),
+            $addTo = $view.find('#addTo'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'createDate', type: null},
+            tableIns;
+
+        form.render();
+
+        initTable();
+
+        table.on('rowDouble(lackRecipientsAddListTable)', function (obj) {
+            var data = obj.data;
+            var lackWarehouse = data.lackWarehouse;
+            var lackCode = data.lackCode;
+            var lackMachine = data.lackMachine;
+            var lackMaterial = data.lackMaterial;
+            var lackSpecifications = data.lackSpecifications;
+            var recipientsMass = data.recipientsMass;
+            var recipientsBrand = data.recipientsBrand;
+            var lackUnit = data.lackUnit;
+            var meteringCompany = data.meteringCompany;
+            var lackNumber = data.lackNumber;
+            var recipientsNumber = data.recipientsNumber;
+            var recipientsNote = data.recipientsNote;
+            var recipientsLocation = data.recipientsLocation;
+            var lackMaterialCode = data.lackMaterialCode;
+            $.ajax({
+                url: '/saleOrder/random',
+                success : function(data) {
+                    var random = data.data;
+                    var oldData =  table.cache["lackRecipientsAddList-table"];
+                    var dataOne={"lackWarehouse":lackWarehouse,"lackCode":lackCode,
+                        "lackMachine":lackMachine,"lackMaterial":lackMaterial,
+                        "lackSpecifications":lackSpecifications,"recipientsMass":recipientsMass,
+                        "recipientsBrand":recipientsBrand,"lackUnit":lackUnit,
+                        "meteringCompany":meteringCompany,"lackNumber":lackNumber,"recipientsNumber":recipientsNumber,
+                        "recipientsNote":recipientsNote,"recipientsLocation":recipientsLocation, "lackMaterialCode":lackMaterialCode};
+                    oldData.push(dataOne);
+                    layui.table.reload('lackRecipientsAddList-table',{
+                        data : oldData
+                    });
+                }
+            });
+        });
+
+        var tableData=new Array(); // 用于存放表格数据
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        $addTo.on('click', function () {
+            var oldDataOne;
+            var oldData =  table.cache["lackRecipientsAddList-table"];
+            for (i=0;i<oldData.length;i++){
+                var dataOne={"recipientsLackCode":oldData[i].lackCode,"lackMachine":oldData[i].lackMachine,
+                    "lackMaterial":oldData[i].lackMaterial,"lackSpecifications":oldData[i].lackSpecifications,
+                    "lackUnit":oldData[i].lackUnit,"orderBrand":oldData[i].meteringCompany,
+                    "lackNumber":oldData[i].lackNumber,"recipientsNumber":oldData[i].recipientsNumber,
+                    "lackNote":oldData[i].recipientsNote,"lackLocation":oldData[i].recipientsLocation,
+                    "lackCoding":oldData[i].lackMaterialCode};
+                oldDataOne =  table.cache["lackRecipientsAdd-table"];
+                oldDataOne.push(dataOne);
+            }
+            layui.table.reload('lackRecipientsAdd-table',{
+                data : oldDataOne
+            });
+            parent.layer.close(layer.index); //再执行关闭
+        });
+
+        function initTable() {
+            tableIns = febs.table.init({
+                elem: '#lackRecipientsAddListTable',
+                id: 'lackRecipientsAddListTable',
+                url: ctx + 'lackRecipientsAdd/list',
+                limits: [3,5,10],
+                limit: 5, //每页默认显示的数量
+                cols: [
+                    [
+                        {type: 'checkbox'},
+                        {title: '库房', templet: '#lackWarehouse-method',align:'center',width:90},
+                        {field: 'lackCode', title: '缺件单号',align:'center', minWidth: 100},
+                        {field: 'lackMachine', title: '机器码',align:'center', minWidth: 120},
+                        {field: 'lackMaterial', title: '名称',align:'center', minWidth: 100},
+                        {field: 'lackSpecifications', title: '规格型号',align:'center', minWidth: 100},
+                        {field: 'recipientsMass', title: '材质',align:'center', minWidth: 100},
+                        {field: 'recipientsBrand', title: '品牌',align:'center', minWidth: 100},
+                        {field: 'lackUnit', title: '单位',align:'center', minWidth: 60},
+                        {field: 'meteringCompany', title: '库存数量',align:'center', minWidth: 100},//未定义
+                        {field: 'lackNumber', title: '缺件数量',align:'center', minWidth: 60},
+                        {field: 'recipientsNumber', title: '已领数量',align:'center', minWidth: 100},
+                        {field: 'recipientsNote', title: '备注',align:'center', minWidth: 80},
+                        {field: 'recipientsLocation', title: '库位',align:'center', minWidth: 100,hide:true},
+                        {field: 'lackMaterialCode', title: '物料编码',align:'center', minWidth: 80,hide:true}
+                    ]
+                ]
+            });
+        };
+
+        table.render({
+            elem:'#lackRecipientsAddList-table',
+            data:tableData,
+            cols: [[
+                {type: 'checkbox'},
+                {title: '库房', templet: '#lackWarehouse-method',align:'center',width:90},
+                {field: 'lackCode', title: '缺件单号',align:'center', minWidth: 100},
+                {field: 'lackMachine', title: '机器码',align:'center', minWidth: 120},
+                {field: 'lackMaterial', title: '名称',align:'center', minWidth: 100},
+                {field: 'lackSpecifications', title: '规格型号',align:'center', minWidth: 100},
+                {field: 'recipientsMass', title: '材质',align:'center', minWidth: 100},
+                {field: 'recipientsBrand', title: '品牌',align:'center', minWidth: 100},
+                {field: 'lackUnit', title: '单位',align:'center', minWidth: 60},
+                {field: 'meteringCompany', title: '库存数量',align:'center', minWidth: 100},//未定义
+                {field: 'lackNumber', title: '缺件数量',align:'center', minWidth: 60},
+                {field: 'recipientsNumber', title: '已领数量',align:'center', minWidth: 100},
+                {field: 'recipientsNote', title: '备注',align:'center', minWidth: 80},
+                {field: 'recipientsLocation', title: '库位',align:'center', minWidth: 100,hide:true},
+                {field: 'lackMaterialCode', title: '物料编码',align:'center', minWidth: 80,hide:true}
+            ]]
+        });
+
+        table.on('rowDouble(lackRecipientsAddList-table)', function (obj) {
+            var data = obj.data;
+            var oldData =  table.cache["lackRecipientsAddList-table"];
+            if (obj.tr.data('index') != -1) {
+                oldData.splice(obj.tr.data('index'), 1)//根据索引删除当前行
+                layui.table.reload('lackRecipientsAddList-table',{
+                    data: oldData
+                });
+            }
+        });
+
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            params.invalidate_ie_cache = new Date();
+            return params;
+        };
+    })
+</script>

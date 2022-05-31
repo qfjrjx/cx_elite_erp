@@ -167,7 +167,6 @@
             febs = layui.febs,
             form = layui.form,
             table = layui.table,
-            dropdownMenu = layui.dropdownMenu,
             $view = $('#productionPlan-list'),
             $query = $view.find('#query'),
             $addTo = $view.find('#addTo'),//添加
@@ -180,8 +179,8 @@
             $reset = $view.find('#reset'),
             $searchForm = $view.find('form'),
             sortObject = {field: 'createTime', type: null},
-            signedDateFrom,
-            signedDateTo,
+            startTimeFrom,
+            endTimeTo,
             tableIns;
 
         form.render();
@@ -231,6 +230,9 @@
 
         $reset.on('click', function () {
             $searchForm[0].reset();
+            startTimeFrom = null;
+            endTimeTo = null;
+            $("#customerNameTwo").attr("value","");
             tableIns.reload({where: getQueryParams(), page: {curr: 1}});
         });
 
@@ -278,11 +280,11 @@
                 febs.alert.warn('请选择需要删除的数据');
             } else {
                 febs.modal.confirm('删除生产计划', '确定删除？', function () {
-                    let planNumber = [];
+                    let planCode = [];
                     layui.each(checkStatus.data, function (key, item) {
-                        planNumber.push(item.planNumber)
+                        planCode.push(item.planCode)
                     });
-                    deleteProductionPlan(planNumber.join(','));
+                    deleteProductionPlan(planCode.join(','));
                 });
             }
         });
@@ -469,7 +471,7 @@
             let data = obj.data,
                 layEvent = obj.event;
             if (layEvent === 'see') {
-                febs.modal.view(data.planProductName, 'production/productionPlan/detail/' + data.planNumber, {
+                febs.modal.view(data.planProductName, 'production/productionPlan/detail/' + data.planCode, {
                     btn: ['关闭'],
                     area: $(window).width() <= 750 ? '95%' : '50%',
                     yes: function (index, layero) {
@@ -532,8 +534,8 @@
             }
         }
 
-        function deleteProductionPlan(planNumber) {
-            febs.get(ctx + 'productionPlan/delete/' + planNumber, null, function () {
+        function deleteProductionPlan(planCode) {
+            febs.get(ctx + 'productionPlan/delete/' + planCode, null, function () {
                 febs.alert.success('删除生产计划成功');
                 $query.click();
             });

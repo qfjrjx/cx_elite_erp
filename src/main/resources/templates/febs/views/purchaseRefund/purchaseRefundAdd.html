@@ -27,7 +27,7 @@
                                     </div>
                                     <label class="layui-form-mid">日&nbsp;期&nbsp;<b>:</b></label>
                                     <div class="layui-input-inline" style="width: 115px">
-                                        <input type="text" name="transferDatas" id="transferDatas"
+                                        <input type="text" name="refundDate" id="refundDate"
                                                autocomplete="off" class="layui-input createDate" readonly>
                                     </div>
                                     <label class="layui-form-mid">供应商&nbsp;<b>:</b></label>
@@ -145,7 +145,7 @@
 <script langguage="JavaScript">
 
     var now = new Date();
-    transferDatas.value=new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate();
+    refundDate.value=new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate();
 
 </script>
 <script data-th-inline="none" type="text/javascript">
@@ -153,6 +153,7 @@
         let $ = layui.jquery,
             febs = layui.febs,
             form = layui.form,
+            laydate = layui.laydate,
             table = layui.table,
             layer = layui.layer,
             $view = $('#purchaseRefund-add'),
@@ -173,6 +174,14 @@
             let data = obj.data,
                 layEvent = obj.event;
 
+        });
+
+        //日期同时绑定多个
+        lay('.createDate').each(function(){
+            laydate.render({
+                elem: this
+                ,trigger: 'click'
+            });
         });
 
         table.on('sort(purchaseRefundAdd)', function (obj) {
@@ -380,6 +389,7 @@
             var refundLibrary = $('#refundLibrary').val();
             var currencyNameAdd = $('#currencyNameAdd').val();
             var taxRateNameAdd = $('#taxRateNameAdd').val();
+            var refundDate = $('#refundDate').val();
             let dataThree = new Array();
             let purchaseRefundTable =  table.cache["purchaseRefundAdd-table"];
             for (i=0;i<purchaseRefundTable.length;i++){
@@ -405,7 +415,7 @@
                 dataThree.push(dataOne);
             }
             let entity = {userName:userName,refundLibrary: refundLibrary,supplierName:supplierName,currencyId: currencyNameAdd,
-                taxRateId: taxRateNameAdd}
+                taxRateId: taxRateNameAdd,refundDate:refundDate}
             $.ajax({
                 url: '/purchaseRefund/add',
                 type:"post",

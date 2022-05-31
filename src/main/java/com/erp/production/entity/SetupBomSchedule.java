@@ -101,4 +101,16 @@ public class SetupBomSchedule {
     @TableField("bom_location")
     private String bomLocation;
 
+    /**
+     * 机器BOM
+     */
+    @TableField("plan_machine_bom")
+    private String planMachineBom;
+
+    /**
+     * 材质
+     */
+    @TableField("plan_quality")
+    private String planQuality;
+
 }

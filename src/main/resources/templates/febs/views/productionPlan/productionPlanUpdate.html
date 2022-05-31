@@ -109,6 +109,14 @@
             </div>
         </div>
 
+        <div class="layui-form-item" style="display: none;">
+            <label class="layui-form-label">机器码：</label>
+            <div class="layui-input-block">
+                <input type="text" name="planCode" id="planCode"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+
         <div class="layui-form-item febs-hide">
             <button class="layui-btn" lay-submit="" lay-filter="productionPlan-update-form-submit" id="submit"></button>
         </div>
@@ -151,7 +159,8 @@
                 "planNote":productionPlanSchedule.planNote,
                 "planNumber":productionPlanSchedule.planNumber,
                 "planAttachment":productionPlanSchedule.planAttachment,
-                "planDate":planDateOnt
+                "planDate":planDateOnt,
+                "planCode":productionPlanSchedule.planCode
             });
         }
 

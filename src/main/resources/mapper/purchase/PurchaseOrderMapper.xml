@@ -247,6 +247,44 @@
         <include refid="findPurchasePriceChangesSql"/>
     </select>
 
+    <select id="purchasePriceChangesExport" parameterType="com.erp.purchase.entity.PurchaseOrder" resultType="com.erp.purchase.entity.PurchaseOrder">
+        SELECT
+        po.order_preparation_date orderPreparationDate,
+        pos.material_name materialName,
+        pos.order_specifications orderSpecifications,
+        pos.order_company orderCompany,
+        pos.order_subclass orderSubclass,
+        po.supplier_name,
+        pos.unit_price unitPrice
+        FROM
+        jr_purchase_order po
+        LEFT JOIN
+        jr_purchase_order_schedule pos ON ( po.order_number = pos.odd_numbers )
+        WHERE
+        1 = 1
+        <if test="purchaseOrder.signedDateFrom != null and purchaseOrder.signedDateFrom !=''">
+            And po.order_preparation_date &gt;= #{purchaseOrder.signedDateFrom}
+        </if>
+        <if test="purchaseOrder.signedDateTo != null and purchaseOrder.signedDateTo !=''">
+            And po.order_preparation_date &lt;= #{purchaseOrder.signedDateTo}
+        </if>
+        <if test="purchaseOrder.supplierName != null and purchaseOrder.supplierName != ''">
+            AND po.supplier_name = #{purchaseOrder.supplierName}
+        </if>
+        <if test="purchaseOrder.orderCode != null and purchaseOrder.orderCode != ''">
+            AND pos.order_code = #{purchaseOrder.orderCode}
+        </if>
+        <if test="purchaseOrder.materialName != null and purchaseOrder.materialName != ''">
+            AND pos.material_name = #{purchaseOrder.materialName}
+        </if>
+        <if test="purchaseOrder.orderSpecifications != null and purchaseOrder.orderSpecifications != ''">
+            AND pos.order_specifications = #{purchaseOrder.orderSpecifications}
+        </if>
+        <if test="purchaseOrder.orderSubclass != null and purchaseOrder.orderSubclass != ''">
+            AND pos.order_subclass = #{purchaseOrder.orderSubclass}
+        </if>
+    </select>
+
     <!--查询出最后一个采购订单单号-->
     <select id="queryPurchaseOrder" resultType="com.erp.purchase.entity.PurchaseOrder">
          SELECT

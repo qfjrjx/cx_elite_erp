@@ -115,6 +115,7 @@
             laydate = layui.laydate,
             febs = layui.febs,
             form = layui.form,
+            table = layui.table,
             $view = $('#purchasePriceChanges-list'),
             $query = $view.find('#query'),
             $analysisTo = $view.find('#analysisTo'),
@@ -167,9 +168,14 @@
 
         function initPurchaseRequisitionTable() {
             tableIns = febs.table.init({
-                elem: '#purchasePriceChangesTable',
+                elem: $view.find('table'),
                 id: 'purchasePriceChangesTable',
                 url: ctx + 'purchasePriceChanges/list',
+                page: true,
+                where:{
+                    signedDateFrom:$('#signedDateFrom').val(),
+                    signedDateTo:$('#signedDateTo').val()
+                },
                 cols: [[
                     {type: 'checkbox'},
                     {field:'number',title:'序列号',align:'center',width:100,templet:function (d) {

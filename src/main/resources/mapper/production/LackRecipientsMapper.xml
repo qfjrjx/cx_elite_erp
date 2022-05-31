@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.production.mapper.LackRecipientsMapper">
+
+    <sql id="countLackRecipientsSql">
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_lack_recipients lr
+        LEFT JOIN t_dept td on lr.lack_department = td.DEPT_ID
+        WHERE
+            1 = 1
+        <if test="lackRecipients.signedDateFrom != null and lackRecipients.signedDateFrom !=''">
+            And lr.lack_date &gt;= #{lackRecipients.signedDateFrom}
+        </if>
+        <if test="lackRecipients.signedDateTo != null and lackRecipients.signedDateTo !=''">
+            And lr.lack_date &lt;= #{lackRecipients.signedDateTo}
+        </if>
+        <if test="lackRecipients.lackState != null and lackRecipients.lackState != ''">
+            AND lr.lack_state = #{lackRecipients.lackState}
+        </if>
+        <if test="lackRecipients.lackCode != null and lackRecipients.lackCode != ''">
+            AND lr.lack_code = #{lackRecipients.lackCode}
+        </if>
+        <if test="lackRecipients.lackMachine != null and lackRecipients.lackMachine != ''">
+            AND lr.lack_machine = #{lackRecipients.lackMachine}
+        </if>
+        <if test="lackRecipients.lackDepartment != null and lackRecipients.lackDepartment != ''">
+            AND lr.lack_department = #{lackRecipients.lackDepartment}
+        </if>
+        <if test="lackRecipients.lackPeople != null and lackRecipients.lackPeople != ''">
+            AND lr.lack_people = #{lackRecipients.lackPeople}
+        </if>
+        <if test="lackRecipients.lackWarehouse != null and lackRecipients.lackWarehouse != ''">
+            AND lr.lack_warehouse = #{lackRecipients.lackWarehouse}
+        </if>
+    </sql>
+
+    <sql id="findLackRecipientsPageSql">
+        SELECT
+            lr.id,
+            lr.lack_state,
+            lr.lack_date,
+            lr.lack_code,
+            lr.lack_machine,
+            lr.lack_warehouse,
+            td.DEPT_NAME lackDepartment,
+            lr.lack_people,
+            lr.lack_outbound,
+            lr.lack_outbound_date
+        FROM
+            jr_lack_recipients lr
+        LEFT JOIN t_dept td on lr.lack_department = td.DEPT_ID
+        WHERE
+            1 = 1
+        <if test="lackRecipients.signedDateFrom != null and lackRecipients.signedDateFrom !=''">
+            And lr.lack_date &gt;= #{lackRecipients.signedDateFrom}
+        </if>
+        <if test="lackRecipients.signedDateTo != null and lackRecipients.signedDateTo !=''">
+            And lr.lack_date &lt;= #{lackRecipients.signedDateTo}
+        </if>
+        <if test="lackRecipients.lackState != null and lackRecipients.lackState != ''">
+            AND lr.lack_state = #{lackRecipients.lackState}
+        </if>
+        <if test="lackRecipients.lackCode != null and lackRecipients.lackCode != ''">
+            AND lr.lack_code = #{lackRecipients.lackCode}
+        </if>
+        <if test="lackRecipients.lackMachine != null and lackRecipients.lackMachine != ''">
+            AND lr.lack_machine = #{lackRecipients.lackMachine}
+        </if>
+        <if test="lackRecipients.lackDepartment != null and lackRecipients.lackDepartment != ''">
+            AND lr.lack_department = #{lackRecipients.lackDepartment}
+        </if>
+        <if test="lackRecipients.lackPeople != null and lackRecipients.lackPeople != ''">
+            AND lr.lack_people = #{lackRecipients.lackPeople}
+        </if>
+        <if test="lackRecipients.lackWarehouse != null and lackRecipients.lackWarehouse != ''">
+            AND lr.lack_warehouse = #{lackRecipients.lackWarehouse}
+        </if>
+        GROUP BY
+            lr.lack_code
+    </sql>
+
+    <select id="countLackRecipients" parameterType="com.erp.production.entity.LackRecipients" resultType="long">
+        <include refid="countLackRecipientsSql"/>
+    </select>
+
+    <select id="findLackRecipientsPage" parameterType="com.erp.production.entity.ProductionPlan" resultType="com.erp.production.entity.LackRecipients">
+        <include refid="findLackRecipientsPageSql"/>
+    </select>
+
+    <select id="queryLackRecipients" parameterType="String" resultType="com.erp.production.entity.LackRecipientsSchedule">
+        SELECT
+            lrs.id,
+            lrs.lack_coding,
+            lrs.lack_material,
+            lrs.lack_specifications,
+            lrs.lack_unit,
+            lrs.lack_number,
+            lrs.lack_location,
+            lrs.lack_note,
+            lrs.lack_machine,
+            lrs.inventory_number,
+            lrs.recipients_number,
+            lrs.the_number,
+            lrs.recipients_lack_code
+        FROM
+            jr_lack_recipients_schedule lrs
+        WHERE
+            1 = 1
+          AND lrs.lack_code = #{lackCode}
+    </select>
+
+    <select id="queryLackRecipientsOne" resultType="com.erp.production.entity.LackRecipients">
+        SELECT
+            lr.id,
+            lr.lack_state,
+            lr.lack_date,
+            lr.lack_code,
+            lr.lack_machine,
+            lr.lack_warehouse,
+            td.DEPT_NAME lackDepartment,
+            lr.lack_people,
+            lr.lack_outbound,
+            lr.lack_outbound_date
+        FROM
+            jr_lack_recipients lr
+        LEFT JOIN t_dept td on lr.lack_department = td.DEPT_ID
+        WHERE
+            1 = 1
+        ORDER BY
+            lr.lack_create_date DESC
+            LIMIT 1
+    </select>
+
+    <insert id="saveLackRecipientsSchedule" parameterType="com.erp.production.entity.LackRecipientsSchedule">
+        INSERT INTO
+            jr_lack_recipients_schedule
+        (
+            lack_code,
+            lack_coding,
+            lack_material,
+            lack_specifications,
+            lack_unit,
+            lack_number,
+            lack_location,
+            lack_note,
+            lack_machine,
+            inventory_number,
+            recipients_number,
+            the_number,
+            recipients_lack_code
+        )
+        VALUES
+            (
+                #{lackCode},
+                #{lackCoding},
+                #{lackMaterial},
+                #{lackSpecifications},
+                #{lackUnit},
+                #{lackNumber},
+                #{lackLocation},
+                #{lackNote},
+                #{lackMachine},
+                #{inventoryNumber},
+                #{recipientsNumber},
+                #{theNumber},
+                #{recipientsLackCode}
+            )
+    </insert>
+
+    <insert id="saveLackRecipients" parameterType="com.erp.production.entity.LackRecipients">
+        INSERT INTO
+            jr_lack_recipients
+        (
+            lack_state,
+            lack_date,
+            lack_code,
+            lack_machine,
+            lack_warehouse,
+            lack_department,
+            lack_people,
+            lack_outbound,
+            lack_outbound_date,
+            lack_create_date,
+            lack_create_name
+        )
+        VALUES
+            (
+                #{lackState},
+                #{lackDate},
+                #{lackCode},
+                #{lackMachine},
+                #{lackWarehouse},
+                #{lackDepartment},
+                #{lackPeople},
+                #{lackOutbound},
+                #{lackOutboundDate},
+                #{lackCreateDate},
+                #{lackCreateName}
+            )
+    </insert>
+
+    <select id="lackRecipientsId" parameterType="Long" resultType="com.erp.production.entity.LackRecipients">
+        SELECT
+            lr.id,
+            lr.lack_state,
+            lr.lack_date,
+            lr.lack_code,
+            lr.lack_machine,
+            lr.lack_warehouse,
+            td.DEPT_NAME lackDepartment,
+            lr.lack_people,
+            lr.lack_outbound,
+            lr.lack_outbound_date
+        FROM
+            jr_lack_recipients lr
+        LEFT JOIN t_dept td on lr.lack_department = td.DEPT_ID
+        WHERE
+            1 = 1
+          AND lr.id = #{id}
+    </select>
+
+    <delete id="deleteLackRecipientsSchedule">
+        delete from jr_lack_recipients_schedule  where lack_code = #{lackCodeOne}
+    </delete>
+
+    <update id="cancelLackRecipients"  parameterType="com.erp.production.entity.LackRecipients">
+        UPDATE
+            jr_lack_recipients
+        set lack_state= 1
+        WHERE id = #{ids}
+    </update>
+
+    <update id="confirmLackRecipients"  parameterType="com.erp.production.entity.LackRecipients">
+        UPDATE
+            jr_lack_recipients
+        set lack_state= 2
+        WHERE id = #{ids}
+    </update>
+</mapper>

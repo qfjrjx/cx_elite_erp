@@ -55,4 +55,6 @@ public interface PurchaseOrderMapper extends BaseMapper<PurchaseOrder> {
     PurchaseOrderSchedule queryPaymentPrevious(@Param("invoiceSpecifications") String invoiceSpecifications);
 
     long countPurchasePriceChanges(@Param("purchaseOrder") PurchaseOrder purchaseOrder);
+
+    List<PurchaseOrder> purchasePriceChangesExport(@Param("purchaseOrder") PurchaseOrder purchaseOrder);
 }

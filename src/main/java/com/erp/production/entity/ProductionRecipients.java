@@ -25,10 +25,10 @@ public class ProductionRecipients {
     private Integer id;
 
     /**
-     * 物料名称
+     * 状态1：登记2：确认3：出库
      */
-    @TableField("recipients_material")
-    private String recipientsMaterial;
+    @TableField("recipients_state")
+    private String recipientsState;
 
     /**
      * 制单时间
@@ -101,5 +101,8 @@ public class ProductionRecipients {
      */
     @TableField("recipients_lack_recipients")
     private String recipientsLackRecipients;
+
+    private transient String signedDateFrom;
+    private transient String signedDateTo;
 
 }

@@ -72,11 +72,11 @@ public class ProductionPlanController extends BaseController {
     }
 
     @ControllerEndpoint(operation = "删除ProductionPlan", exceptionMessage = "删除ProductionPlan失败")
-    @GetMapping("productionPlan/delete/{planNumber}")
+    @GetMapping("productionPlan/delete/{planCode}")
     @ResponseBody
     @RequiresPermissions("productionPlan:delete")
-    public FebsResponse deleteProductionPlan(@PathVariable String planNumber) {
-        this.productionPlanService.deleteProductionPlan(planNumber);
+    public FebsResponse deleteProductionPlan(@PathVariable String planCode) {
+        this.productionPlanService.deleteProductionPlan(planCode);
         return new FebsResponse().success();
     }
 
@@ -160,5 +160,47 @@ public class ProductionPlanController extends BaseController {
             e.printStackTrace();
         }
         return map;
+    }
+
+    /**
+     * 生产领用根据机器码查询
+     * @param request
+     * @param
+     * @return
+     */
+    @GetMapping("productionRecipients/queryList")
+    @ResponseBody
+    public FebsResponse productionRecipientsAddQuery(QueryRequest request, SetupBomSchedule setupBomSchedule) {
+        Map<String, Object> dataTable = getDataTable(this.productionPlanService.productionRecipientsAddQuery(request,setupBomSchedule));
+        return new FebsResponse().success().data(dataTable);
+    }
+
+    /**
+     * 安排生产
+     * @param productionPlan
+     * @return
+     * @throws ParseException
+     */
+    @ControllerEndpoint(operation = "新增ProductionPlan", exceptionMessage = "新增ProductionPlan失败")
+    @PostMapping("productionStatistical/arrange")
+    @ResponseBody
+    @RequiresPermissions("productionStatistical:arrange")
+    public FebsResponse updateProductionStatistical(@Valid ProductionPlan productionPlan) throws ParseException {
+        this.productionPlanService.updateProductionStatistical(productionPlan);
+        return new FebsResponse().success();
+    }
+
+    /**
+     * 生产统计导出
+     * @param
+     * @param productionPlan
+     * @param response
+     */
+    @ControllerEndpoint(operation = "导出PersonnelDormitoryInformation", exceptionMessage = "导出Excel失败")
+    @GetMapping("productionStatistical/excel")
+    @RequiresPermissions("productionStatistical:export")
+    public void productionStatistical(ProductionPlan productionPlan, HttpServletResponse response) {
+        List<ProductionPlan> productionPlans = this.productionPlanService.productionStatisticalExport(productionPlan);
+        ExcelKit.$Export(ProductionPlan.class, response).downXlsx(productionPlans, false);
     }
 }

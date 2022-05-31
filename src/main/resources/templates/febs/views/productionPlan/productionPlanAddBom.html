@@ -24,14 +24,17 @@
                 </div>
             </div>
             <div class="layui-inline" >
-                <label class="layui-form-label layui-form-label-sm" >计划数量：</label>
+                <label class="layui-form-label layui-form-label-sm" style="width: 110px">计划数量：</label>
                 <div class="layui-input-inline" style="width: 110px">
                     <input type="text" name="planAmount" id="planAmount" autocomplete="off" style="width: 110px" class="layui-input" >
                 </div>
             </div>
         </form>
-    <table lay-filter="productionPlanAddBom-table" id="productionPlanAddBom-table" lay-data="{id: 'productionPlanAddBom-table'}"></table>
-    <table class="layui-edge-left" lay-filter="productionPlanAddBom" id="productionPlanAddBom" lay-data="{id: 'productionPlanAddBom'}"></table>
+    <div class="divleft">
+        <table lay-filter="productionPlanAddBom-table" id="productionPlanAddBom-table" lay-data="{id: 'productionPlanAddBom-table'}"></table>
+    </div>
+    <div class="divright">
+        <table class="layui-edge-left" lay-filter="productionPlanAddBom" id="productionPlanAddBom" lay-data="{id: 'productionPlanAddBom'}"></table></div>
     <div class="layui-form-item febs-hide">
         <button class="layui-btn" lay-submit="" lay-filter="productionPlan-addBom-form-submit" id="submit"></button>
     </div>
@@ -100,9 +103,9 @@
                 {type: 'checkbox'},
                     {field:'number',title:'序号', minWidth: 30,align:'center',templet:function (d) {
                             return d.LAY_INDEX;}},
-                {field: 'parameterName', title: '部分名称',align:'center', minWidth: 150,event:'choice'},
-                {title: '配置名称', templet: '#parameterWith-state',align:'center',width:150,event:'choiceBom'},
-                {field: 'parameterCode', title: 'BOM编码',align:'center', minWidth: 150,event:'choice'}
+                {field: 'parameterName', title: '部分名称',align:'center', minWidth: 250,event:'choice'},
+                {title: '配置名称', templet: '#parameterWith-state',align:'center',minWidth :250,event:'choiceBom'},
+                {field: 'parameterCode', title: 'BOM编码',align:'center', minWidth: 150,event:'choice',hide:true}
             ]
             ]
         });

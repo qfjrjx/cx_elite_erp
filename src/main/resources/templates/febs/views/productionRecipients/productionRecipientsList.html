@@ -1,10 +1,436 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<style>
+    #productionRecipients-list xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #productionRecipients-list xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="productionRecipients-list" lay-title="生产领用">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="productionRecipients-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md12">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid layui-form-label-sm">状态</label>
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <select name="recipientsState">
+                                                <option value=""></option>
+                                                <option value="1">登记</option>
+                                                <option value="2">确认</option>
+                                                <option value="3">出库</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid layui-form-label-sm">日期&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <input type="text" id="start_date" name="signedDateFrom" placeholder="" lay-verify='date' class="layui-input"/>
+                                            <i class="layui-icon" id="start_date_icon"></i>
+                                        </div>
+                                        <label class="layui-form-mid">至：</label>
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <input type="text" id="end_date" name="signedDateTo" placeholder="" lay-verify='date' class="layui-input"/>
+                                            <i class="layui-icon " id="end_date_icon"></i>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-mid layui-form-label-sm">单号</label>
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <input type="text" name="recipientsCode" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label layui-form-label-sm">领用部门</label>
+                                        <div class="layui-input-inline" id="dept" name="recipientsDepartment">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-mid layui-form-label-sm">领用人</label>
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <input type="text" name="recipientsPeople" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid layui-form-label-sm">库房</label>
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <select name="recipientsWarehouse">
+                                                <option value=""></option>
+                                                <option value="1">外购库</option>
+                                                <option value="2">机加库</option>
+                                                <option value="3">废品库</option>
+                                                <option value="4">资产库</option>
+                                                <option value="5">成品库</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-mid layui-form-label-sm">机器码</label>
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <input type="text" name="recipientsMachine" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-mid layui-form-label-sm">型号</label>
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <input type="text" name="recipientsModel" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="productionRecipientsTable" id="productionRecipientsTable" lay-data="{id: 'productionRecipientsTable'}"></table>
+                    <div class="layui-col-md6">
+                        <div class="layui-form-item"></div>
+                    </div>
+                    <div class="layui-col-md6 layui-col-sm12 layui-col-xs12 table-action-area">
+                        <!--搜索按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                            <i class="layui-icon">&#xe848;</i>查询
+                        </div>
+                        <!-- 刷新表格按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain table-action" id="reset">
+                            <i class="layui-icon">&#xe79b;</i>刷新
+                        </div>
+                        <!-- 缺件查阅按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
+                                     "shiro:hasAnyPermissions="productionRecipients:lack" id="lackTo">
+                            <i class="layui-icon">&#xe848;</i>缺件查阅
+                        </div>
+                        <!--添加按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
+                                     "shiro:hasAnyPermissions="productionRecipients:add" id="addTo">
+                            <i class="layui-icon">&#xe78a;</i>新增
+                        </div>
+                        <!--修改按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="productionRecipients:update" id="updateTo">
+                            <i class="layui-icon">&#xe642;</i>修改
+                        </div>
+                        <!--确认按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
+                                     "shiro:hasAnyPermissions="productionRecipients:confirm" id="confirmTo">
+                            <i class="layui-icon layui-icon-ok-circle"></i>确认
+                        </div>
+                        <!--取消按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
+                                     "shiro:hasAnyPermissions="productionRecipients:cancel" id="cancelTo">
+                            <i class="layui-icon layui-icon-close"></i>取消
+                        </div>
+                    </div>
+                    <br>
+                    <br>
+                    <table lay-filter="productionRecipients-table" id="productionRecipients-table" lay-data="{id: 'productionRecipients-table'}"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="recipientsState-state">
+    {{#
+    let recipientsState = {
+    1: {title: '登记'},
+    2: {title: '确认'},
+    3: {title: '出库'}
+    }[d.recipientsState];
+    }}
+    <span>{{ recipientsState.title }}</span>
+</script>
+<script type="text/html" id="recipientsWarehouse-method">
+    {{#
+    let recipientsWarehouse = {
+    1: {title: '外购库'},
+    2: {title: '机加库'},
+    3: {title: '废品库'},
+    4: {title: '资产库'},
+    5: {title: '成品库'}
+    }[d.recipientsWarehouse];
+    }}
+    <span>{{ recipientsWarehouse.title }}</span>
+</script>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+            laydate = layui.laydate,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            $view = $('#productionRecipients-list'),
+            $query = $view.find('#query'),
+            $addTo = $view.find('#addTo'),
+            $updateTo = $view.find('#updateTo'),
+            $confirmTo = $view.find('#confirmTo'),
+            $cancelTo = $view.find('#cancelTo'),
+            $lackTo = $view.find('#lackTo'),
+            $reset = $view.find('#reset'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'createTime', type: null},
+            tableIns,
+            deptXmlSelect;
 
-</body>
-</html>
+        form.render();
+        initPurchaseRequisitionTable();
+
+        var firstDate = new Date();
+        firstDate.setDate(1); //本月第一天
+        var datetime =firstDate.getFullYear() + '-' + (firstDate.getMonth() + 1) + '-' + firstDate.getDate();
+        //开始日期
+        var start = laydate.render({
+            elem: '#start_date',
+            max: 0 ,//设置一个默认最大值//最大值为当前日期
+            trigger: 'click',
+            value: new Date(firstDate),//初始赋值,//默认值本月第一天
+            done:function(value,date){
+                if(value && (value>$("#end_date").val())){
+                    /*开始时间大于结束时间时，清空结束时间*/
+                    $("#end_date").val("");
+                }
+                end.config.min ={
+                    year:date.year,
+                    month:date.month-1,
+                    date: date.date,
+                };
+            }
+        });
+        //结束日期
+        var end = laydate.render({
+            elem: '#end_date',
+            min : datetime,//最大值为当前日期
+            trigger: 'click',
+            value: new Date(),//初始赋值,//默认当前时间
+            done:function(value,date){
+                start.config.max={
+                    year:date.year,
+                    month:date.month-1,
+                    date: date.date,
+                }
+            }
+        });
+
+        deptXmlSelect = xmSelect.render({
+            el: '#dept',
+            model: {label: {type: 'text'}},
+            tree: {
+                show: true,
+                strict: false,
+                showLine: false,
+                clickCheck: true,
+                expandedKeys: [-1],
+            },
+            name: 'deptId',
+            theme: {
+                color: '#52c41a',
+            },
+            prop: {
+                value: 'id'
+            },
+            height: 'auto',
+            on: function(data){
+                if(data.isAdd){
+                    return data.change.slice(0, 1)
+                }
+            }
+        });
+        febs.get(ctx + 'dept/select/tree', null, function (data) {
+            deptXmlSelect.update(
+                data
+            )
+        });
+        var purchaseTableData = new Array(); // 用于存放表格数据
+
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        $reset.on('click', function () {
+            $searchForm[0].reset();
+            tableIns.reload({where: getQueryParams(), page: {curr: 1}});
+        });
+
+        $addTo.on('click', function () {
+            febs.modal.open('【BOM领用】 新增', 'production/productionRecipients/add', {
+                btn: ['保存', '关闭'],
+                area: ["80%","60%"],
+                yes: function (index, layero) {
+                    $('#productionRecipients-add').find('#submit').trigger('click');
+                    return false;
+                },
+                btn2: function () {
+                    layer.closeAll();
+                }
+            });
+        });
+
+        $updateTo.on('click', function () {
+            let checkStatus = table.checkStatus('productionRecipientsTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要修改的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要修改的数据');
+            }else{
+                layui.each(checkStatus.data, function (key, item) {
+                    febs.modal.open('【BOM领用】 修改', 'production/productionRecipients/update/' + item.id, {
+                        area: ["80%","60%"],
+                        btn: ['保存', '关闭'],
+                        yes: function (index, layero) {
+                            $('#productionRecipients-update').find('#submit').trigger('click');
+                            return false;
+                        },
+                        btn2: function () {
+                            layer.closeAll();
+                        }
+                    });
+                });
+            }
+        });
+
+        $confirmTo.on('click', function () {
+            let checkStatus = table.checkStatus('productionRecipientsTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要确认的数据');
+            } else {
+                let ids = [];
+                layui.each(checkStatus.data, function (key, item) {
+                    ids.push(item.id)
+                    if(item.recipientsState == 2){
+                        febs.alert.warn('请勿重复确认');
+                    }else {
+                        febs.modal.confirm('确认生产领用', '是否确认？', function () {
+                            confirmProductionRecipients(ids.join(','));
+                        });
+                    }
+                });
+            }
+        });
+
+        $cancelTo.on('click', function () {
+            let checkStatus = table.checkStatus('productionRecipientsTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要取消的数据');
+            } else {
+                let ids = [];
+                layui.each(checkStatus.data, function (key, item) {
+                    ids.push(item.id)
+                    if(item.recipientsState == 1){
+                        febs.alert.warn('请勿重复取消');
+                    }else {
+                        febs.modal.confirm('取消生产领用', '是否取消？', function () {
+                            cancelProductionRecipients(ids.join(','));
+                        });
+                    }
+                });
+            }
+        });
+
+        $lackTo.on('click', function () {
+            let checkStatus = table.checkStatus('productionRecipientsTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要查阅的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要查阅的数据');
+            }else{
+                layui.each(checkStatus.data, function (key, item) {
+                    if(item.recipientsLackCode == null){
+                        febs.alert.warn('不缺件');
+                    }else {
+                        febs.modal.open('【BOM领用】 缺件查阅', 'production/productionRecipients/lack/' + item.recipientsLackCode, {
+                            area: ["80%","60%"],
+                        });
+                    }
+                });
+            }
+        });
+
+        function initPurchaseRequisitionTable() {
+            tableIns = febs.table.init({
+                elem: '#productionRecipientsTable',
+                id: 'productionRecipientsTable',
+                url: ctx + 'productionRecipients/list',
+                cols: [[
+                    {type: 'checkbox'},
+                    {field:'number',title:'序号',align:'center',width:60,templet:function (d) {
+                            return d.LAY_INDEX;}},
+                    {title: '状态', templet: '#recipientsState-state',align:'center',width:60},
+                    {field: 'recipientsDate', title: '制单时间',align:'center',templet:'<div>{{ layui.util.toDateString(d.recipientsDate, "yyyy-MM-dd") }}</div>', minWidth: 110, sort: true},
+                    {field: 'recipientsCode', title: '单号', minWidth: 145,align:'center'},
+                    {field: 'recipientsLackCode', title: '缺件单号', minWidth: 120,align:'center'},
+                    {field: 'recipientsDepartment', title: '领用部门', minWidth: 120,align:'center'},
+                    {field: 'recipientsPeople',title: '领用人', minWidth: 55,align:'center'},
+                    {field: 'recipientsMachine', title: '机器码', minWidth: 95,align:'center'},
+                    {field: 'recipientsCustomer', title: '客户', minWidth: 80,align:'center'},
+                    {field: 'recipientsModel', title: '机器型号', minWidth: 80,align:'center'},
+                    {title: '库房', templet: '#recipientsWarehouse-method',align:'center',width:90},
+                    {field: 'recipientsOutbound', title: '出库人', minWidth: 90,align:'center'},
+                    {field: 'recipientsOutboundDate', title: '出库日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.recipientsOutboundDate, "yyyy-MM-dd HH:mm:ss") }}</div>', minWidth: 160, sort: true},
+                    {field: 'recipientsLackRecipients', title: '缺件领用', minWidth: 95,align:'center'}
+                ]]
+            });
+        }
+        table.on('row(productionRecipientsTable)', function (obj) {
+            let recipientsCode = obj.data.recipientsCode;
+            $.ajax({
+                url: '/productionRecipients/query',
+                data:{"recipientsCode":recipientsCode},
+                async:false
+                ,dataType:"json"
+                , success: function(data){
+                    purchaseTableData=data.replies;
+                    layui.table.reload('productionRecipients-table',{
+                        data : purchaseTableData
+                    });
+                }
+            });
+        });
+
+        table.render({
+            elem:'#productionRecipients-table',
+            data:purchaseTableData,
+            cols: [[
+                {field: 'recipientsMaterial',title: '物料名称', minWidth: 95,align:'center'},
+                {field: 'recipientsSpecifications', title: '规格型号', minWidth: 90,align:'center'},
+                {field: 'recipientsMass', title: '材质', minWidth: 90,align:'center'},
+                {field: 'recipientsBrand',title: '品牌', minWidth: 55,align:'center'},
+                {field: 'recipientsUnit',title: '单位', minWidth: 55,align:'center'},
+                {field: 'recipientsNumber',title: '数量', minWidth: 55,align:'center'},
+                {field: 'recipientsPrice', edit:true,title: '机加工单价',minWidth: 55,align:'center',templet:function (data) {
+                        var price = parseFloat(data.recipientsPrice).toFixed(2); //设置小数点后个数
+                        return price;}},
+                {field: 'recipientsLocation',title: '库位', minWidth: 55,align:'center'},
+                {field: 'recipientsNote', title: '备注', minWidth: 72,align:'center'}
+            ]]
+        });
+
+        function getQueryParams(flag) {
+            deptId = deptXmlSelect.getValue('valueStr');
+            if (flag) {
+                deptId = '';
+            }
+            let params = $searchForm.serializeJson();
+            params.recipientsDepartment = deptId;
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+
+        function cancelProductionRecipients(ids) {
+            febs.get(ctx + 'productionRecipients/cancel/' + ids, null, function () {
+                febs.alert.success('取消生产领用成功');
+                $query.click();
+            });
+        }
+
+        function confirmProductionRecipients(ids) {
+            febs.get(ctx + 'productionRecipients/confirm/' + ids, null, function () {
+                febs.alert.success('确认生产领用成功');
+                $query.click();
+            });
+        }
+    })
+</script>

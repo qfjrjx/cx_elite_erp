@@ -96,4 +96,10 @@ public class TechnologyBomConfigurationSchedule {
     @TableField("parameter_location")
     private String parameterLocation;
 
+    /**
+     * 材质
+     */
+    @TableField("parameter_quality")
+    private String parameterQuality;
+
 }

@@ -77,4 +77,30 @@ public class ProductionRecipientsSchedule {
     @TableField("recipients_note")
     private String recipientsNote;
 
+    /**
+     * 单号
+     */
+    @TableField("recipients_code")
+    private String recipientsCode;
+
+    /**
+     * 缺件数
+     */
+    @TableField("recipients_lack")
+    private String recipientsLack;
+
+    /**
+     * 库存数量
+     */
+    @TableField("recipients_inventory")
+    private String recipientsInventory;
+
+    /**
+     * 是否缺件 1：是 2：否
+     *//*
+    @TableField("whether_lack")
+    private String whetherLack;*/
+
+    private String recipientsWarehouse;
+
 }

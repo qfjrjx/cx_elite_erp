@@ -55,7 +55,7 @@ public interface IProductionPlanService extends IService<ProductionPlan> {
      *
      * @param planNumber productionPlan
      */
-    void deleteProductionPlan(String planNumber);
+    void deleteProductionPlan(String planCode);
 
     ProductionPlanSchedule productionPlanScheduleId(Long id);
 
@@ -65,13 +65,19 @@ public interface IProductionPlanService extends IService<ProductionPlan> {
 
     ProductionPlan productionPlanId(Long id);
 
-    ProductionPlanSchedule productionPlanPlanNumber(String planNumber);
+    ProductionPlanSchedule productionPlanPlanNumber(String planCode);
 
-    void createSetupBom(String setupBom, String dataTable);
+    void createSetupBom(String setupBom, String dataTable) throws ParseException;
 
     List<SetupBom> queryProductionPlanUpdateBom(String planCode);
 
     void updateSetupBom(String setupBom, String dataTable);
 
     List<SetupBomSchedule> queryProductionPlanViewBom(String planCode);
+
+    IPage<SetupBomSchedule> productionRecipientsAddQuery(QueryRequest request, SetupBomSchedule setupBomSchedule);
+
+    void updateProductionStatistical(ProductionPlan productionPlan);
+
+    List<ProductionPlan> productionStatisticalExport(ProductionPlan productionPlan);
 }

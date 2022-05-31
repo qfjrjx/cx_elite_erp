@@ -1,0 +1,208 @@
+<style>
+    #febs-saleCustomerProfileAdd xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #febs-saleCustomerProfileAdd xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+
+    /*    .layui-form-item .layui-input-inline {
+            width: 100px;
+        }*/
+
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="febs-saleCustomerProfileAdd" lay-title="客户选择列表">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="parameter-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md8">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm" >名称简拼</label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <input type="text" name="abbreviationOfFullName" autocomplete="off" style="width: 110px" class="layui-input" >
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm" >客户名称</label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <input type="text" name="customerFullName" autocomplete="off" style="width: 120px" class="layui-input" >
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm">业&nbsp;&nbsp;务&nbsp;员</label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <select id="personnelName"  name="personnelName" lay-verify="required" class="layui-form-select" >
+                                                <option value="" >全部</option>
+                                                <option th:each="saleBusiness:${saleBusiness}" th:value="${saleBusiness.personnelName}">[[${saleBusiness.personnelName}]]</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md4 layui-col-sm12 layui-col-xs12 table-action-area">
+                                <!--搜索按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                                    <i class="layui-icon">&#xe848;</i>查询
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="saleCustomerProfileTableAdd" lay-data="{id: 'saleCustomerProfileTableAdd'}"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="customer-state">
+    {{#
+    let customerState = {
+    1: {title: '启用', color: 'green'},
+    2: {title: '禁用', color: 'volcano'}
+    }[d.customerState];
+    }}
+    <span class="layui-badge febs-bg-{{customerState.color}}">{{ customerState.title }}</span>
+</script>
+<script type="text/html" id="saleCustomerProfile-parameterCategory">
+    {{#
+    let parameterCategory = {
+    1: {title: '付款方式'},
+    2: {title: '结算方式'},
+    3: {title: '业务区域'},
+    4: {title: '运输费用'}
+    }[d.parameterCategory];
+    }}
+    <span>{{ parameterCategory.title }}</span>
+</script>
+<script type="text/html" id="parameter-option">
+    <span shiro:lacksPermission="saleCustomerProfile:view,saleCustomerProfile:update,saleCustomerProfile:delete">
+        <span class="layui-badge-dot febs-bg-orange"></span> 无权限
+    </span>
+    <a lay-event="detail" shiro:hasPermission="saleCustomerProfile:view"><i
+            class="layui-icon febs-edit-area febs-green">&#xe7a5;<font size="3px"></font></i>
+    </a>
+</script>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+            laydate = layui.laydate,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            dropdownMenu = layui.dropdownMenu,
+            $view = $('#febs-saleCustomerProfileAdd'),
+            $query = $view.find('#query'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'createTime', type: null},
+            createdDateFrom,
+            createdDateTo,
+            tableIns;
+
+        form.render();
+
+        initTable();
+
+
+//日期同时绑定多个
+        lay('.createTime').each(function(){
+            laydate.render({
+                elem: this,
+                range: true,
+                trigger: 'click'
+            });
+        })
+        dropdownMenu.render({
+            elem: $view.find('.action-more'),
+            click: function (name, elem, event) {
+                let checkStatus = table.checkStatus('saleCustomerProfileTableAdd');
+            },
+            options: []
+        });
+
+        table.on('tool(saleCustomerProfileTableAdd)', function (obj) {
+            let data = obj.data,
+                layEvent = obj.event;
+        });
+
+        table.on('sort(saleCustomerProfileTableAdd)', function (obj) {
+            sortObject = obj;
+            tableIns.reload({
+                initSort: obj,
+                where: $.extend(getQueryParams(), {
+                    field: obj.field,
+                    order: obj.type
+                })
+            });
+        });
+
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+        function initTable() {
+            tableIns = febs.table.init({
+                elem: $view.find('table'),
+                id: 'saleCustomerProfileTableAdd',
+                url: ctx + 'saleCustomerProfile/list',
+                cols: [[
+                    {type: 'checkbox'},
+                    {field:'number',title:'',align:'center',width:100,templet:function (d) {
+                            return d.LAY_INDEX;}},
+                    {title: '状态', templet: '#customer-state',align:'center', minWidth: 100},
+                    {field: 'customerAbbreviation', title: '客户简称',align:'center', minWidth: 100},
+                    {field: 'customerFullName', title: '客户名称',align:'center', minWidth: 100},
+                    {field: 'personnelName', title: '业务员', align:'center',minWidth: 100},
+                    {field: 'customerContacts', title: '联系人',align:'center', minWidth: 100},
+                    {field: 'contactNumber', title: '联系电话', minWidth: 100}
+
+                ]],done: function(res, curr, count){
+                    $('#febs-saleCustomerProfileAdd').find('.layui-table-body').find("table" ).find("tbody").children("tr").on('dblclick',function(){
+                        var id = JSON.stringify($('#febs-saleCustomerProfileAdd').find('.layui-table-body').find("table" ).find("tbody").find(".layui-table-hover").data('index'));
+                        var obj = res.data[id];
+                        var customerNameTwo = $("#customerNameTwo").val();
+                        var contactsNameOne = $("#contactsNameOne").val();//联系人
+                        var mobilePhoneOne = $("#mobilePhoneOne").val(); //手机
+                        if (customerNameTwo!=null && customerNameTwo!=""){
+                            $("#customerNameTwo").attr("value","");
+                        } if (contactsNameOne!=null && contactsNameOne!=""){
+                            $("#contactsNameOne").attr("value","");
+                        } if (mobilePhoneOne!=null && mobilePhoneOne!=""){
+                            $("#mobilePhoneOne").attr("value","");
+                        }
+                        $("#customerNameAdd").attr("value",obj.customerFullName);/*业务人员名称添加回填*/
+                        $("#contactsNameOne").attr("value",obj.customerContacts);/*联系人回填*/
+                        $("#mobilePhoneOne").attr("value",obj.contactNumber);/*手机回填*/
+                        var personnelNames = obj.personnelName;
+
+                        $("#personnelNameOne").val(personnelNames);
+                        //重新渲染
+                        form.render("select");
+                        parent.layer.close(layer.index)
+                    })
+
+                }
+            });
+        }
+
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            let signedTime = params.signedTime;
+            if (signedTime) {
+                createdDateFrom = signedTime.split(' - ')[0];
+                createdDateTo = signedTime.split(' - ')[1];
+            }
+            params.createdDateFrom = createdDateFrom;
+            params.createdDateTo = createdDateTo;
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+
+    })
+
+</script>
+

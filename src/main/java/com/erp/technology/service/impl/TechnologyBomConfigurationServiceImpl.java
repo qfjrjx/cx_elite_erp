@@ -122,6 +122,7 @@ public class TechnologyBomConfigurationServiceImpl extends ServiceImpl<Technolog
             String parameterNote = jsonArrayOne.getJSONObject(i).getString("parameterNote");
             String parameterMaterialCode = jsonArrayOne.getJSONObject(i).getString("parameterMaterialCode");
             String parameterLocation = jsonArrayOne.getJSONObject(i).getString("parameterLocation");
+            String parameterQuality = jsonArrayOne.getJSONObject(i).getString("parameterQuality");
 
             technologyBomConfigurationSchedule.setParameterDrawings(parameterDrawings);
             technologyBomConfigurationSchedule.setParameterMaterial(parameterMaterial);
@@ -133,6 +134,7 @@ public class TechnologyBomConfigurationServiceImpl extends ServiceImpl<Technolog
             technologyBomConfigurationSchedule.setParameterNote(parameterNote);
             technologyBomConfigurationSchedule.setParameterMaterialCode(parameterMaterialCode);
             technologyBomConfigurationSchedule.setParameterLocation(parameterLocation);
+            technologyBomConfigurationSchedule.setParameterQuality(parameterQuality);
             baseMapper.saveTechnologyBomConfigurationSchedule(technologyBomConfigurationSchedule);
         }
         baseMapper.saveTechnologyBomConfigurationDate(technologyBomConfigurationDate);
@@ -179,6 +181,8 @@ public class TechnologyBomConfigurationServiceImpl extends ServiceImpl<Technolog
             String parameterNote = jsonArrayOne.getJSONObject(i).getString("parameterNote");
             String parameterMaterialCode = jsonArrayOne.getJSONObject(i).getString("parameterMaterialCode");
             String parameterLocation = jsonArrayOne.getJSONObject(i).getString("parameterLocation");
+            String parameterQuality = jsonArrayOne.getJSONObject(i).getString("parameterQuality");
+
             technologyBomConfigurationSchedule.setParameterDrawings(parameterDrawings);
             technologyBomConfigurationSchedule.setParameterMaterial(parameterMaterial);
             technologyBomConfigurationSchedule.setParameterSpecifications(parameterSpecifications);
@@ -189,6 +193,7 @@ public class TechnologyBomConfigurationServiceImpl extends ServiceImpl<Technolog
             technologyBomConfigurationSchedule.setParameterNote(parameterNote);
             technologyBomConfigurationSchedule.setParameterMaterialCode(parameterMaterialCode);
             technologyBomConfigurationSchedule.setParameterLocation(parameterLocation);
+            technologyBomConfigurationSchedule.setParameterQuality(parameterQuality);
             baseMapper.saveTechnologyBomConfigurationSchedule(technologyBomConfigurationSchedule);
         }
         baseMapper.saveTechnologyBomConfigurationDate(technologyBomConfigurationDate);

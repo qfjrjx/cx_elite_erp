@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -147,6 +148,17 @@ public class ProductionPlanSchedule {
     /**
      * 机器码
      */
+    @TableField("plan_code")
     private String planCode;
+
+    /**
+     * 金额
+     */
+    private BigDecimal planMoney;
+
+    /**
+     * 单位
+     */
+    private String planUnit;
 
 }

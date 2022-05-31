@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -77,8 +78,8 @@ public class ProductionPlanServiceImpl extends ServiceImpl<ProductionPlanMapper,
         //格式化当前月
         String month = simpleDateFormat.format(date);
         //对象转json
-        String s= JSON.toJSONString(productionPlanSchedule);
-        JSONObject object = JSON.parseObject(s);
+        String jsonString = JSON.toJSONString(productionPlanSchedule);
+        JSONObject object = JSON.parseObject(jsonString);
         Date planDate =  object.getDate("planDate");
         String customerName =  object.getString("customerName");
         String planOrder =  object.getString("planOrder");
@@ -95,6 +96,8 @@ public class ProductionPlanServiceImpl extends ServiceImpl<ProductionPlanMapper,
         String productName =  object.getString("productName");
         String specificationModel =  object.getString("specificationModel");
         String planAttachment =  object.getString("planAttachment");
+        String planMoney =  object.getString("planMoney");
+        String planUnit =  object.getString("planUnit");
         //查询出最后一个工作安排单号
         ProductionPlan productionPlanOne = null;
         productionPlanOne = baseMapper.queryProductionPlan();
@@ -130,6 +133,9 @@ public class ProductionPlanServiceImpl extends ServiceImpl<ProductionPlanMapper,
             productionPlan.setPlanProductName(productName);
             productionPlan.setPlanSpecifications(specificationModel);
             productionPlan.setPlanNumber(planOrder);
+            BigDecimal planMoneyTo = new BigDecimal(planMoney);
+            productionPlan.setPlanMoney(planMoneyTo);
+            productionPlan.setPlanUnit(planUnit);
             String planConfigurationOnt = null;
             if (planMachine != null){
                 String s1 = "机器要求："+planMachine;
@@ -159,6 +165,7 @@ public class ProductionPlanServiceImpl extends ServiceImpl<ProductionPlanMapper,
             productionPlanScheduleDate.setPlanNote(planNote);
             productionPlanScheduleDate.setPlanDate(planDate);
             productionPlanScheduleDate.setPlanAttachment(planAttachment);
+            productionPlanScheduleDate.setPlanCode(planCodeNo);
             baseMapper.saveProductionPlanScheduleDate(productionPlanScheduleDate);
             baseMapper.saveProductionPlan(productionPlan);
         }
@@ -166,7 +173,7 @@ public class ProductionPlanServiceImpl extends ServiceImpl<ProductionPlanMapper,
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateProductionPlan(ProductionPlanSchedule productionPlanSchedule) {
-        baseMapper.deleteProductionPlanSchedule(productionPlanSchedule.getPlanNumber());
+        baseMapper.deleteProductionPlanSchedule(productionPlanSchedule.getPlanCode());
         //对象转json
         String s= JSON.toJSONString(productionPlanSchedule);
         JSONObject object = JSON.parseObject(s);
@@ -184,6 +191,7 @@ public class ProductionPlanServiceImpl extends ServiceImpl<ProductionPlanMapper,
         String planNote =  object.getString("planNote");
         String planNumber =  object.getString("planNumber");
         String planAttachment =  object.getString("planAttachment");
+        String planCode =  object.getString("planCode");
         //生产计划附表
         ProductionPlanSchedule productionPlanScheduleDate = new ProductionPlanSchedule();
         //附表数据
@@ -201,6 +209,7 @@ public class ProductionPlanServiceImpl extends ServiceImpl<ProductionPlanMapper,
         productionPlanScheduleDate.setPlanDate(planDate);
         productionPlanScheduleDate.setPlanNumber(planNumber);
         productionPlanScheduleDate.setPlanAttachment(planAttachment);
+        productionPlanScheduleDate.setPlanCode(planCode);
         String planConfigurationOnt = null;
         if (planMachine != null){
             String s1 = "机器要求："+planMachine;
@@ -224,9 +233,9 @@ public class ProductionPlanServiceImpl extends ServiceImpl<ProductionPlanMapper,
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deleteProductionPlan(String planNumber) {
-        baseMapper.deleteProductionPlanSchedule(planNumber);
-        baseMapper.deleteProductionPlan(planNumber);
+    public void deleteProductionPlan(String planCode) {
+        baseMapper.deleteProductionPlanSchedule(planCode);
+        baseMapper.deleteProductionPlan(planCode);
 	}
 
     @Override
@@ -250,17 +259,50 @@ public class ProductionPlanServiceImpl extends ServiceImpl<ProductionPlanMapper,
     }
 
     @Override
-    public ProductionPlanSchedule productionPlanPlanNumber(String planNumber) {
-        return baseMapper.productionPlanPlanNumber(planNumber);
+    public ProductionPlanSchedule productionPlanPlanNumber(String planCode) {
+        return baseMapper.productionPlanPlanNumber(planCode);
     }
 
     @Override
-    public void createSetupBom(String setupBom, String dataTable) {
+    public void createSetupBom(String setupBom, String dataTable) throws ParseException {
+        ProductionPlan productionPlan = new ProductionPlan();
+        String initCode = "LCPBOM";
+        String planMachineBomNo = null;
+        Date date = new Date();
+        //获取当前年
+        String yearLast = new SimpleDateFormat("yy", Locale.CHINESE).format(Calendar.getInstance().getTime());Date d = new Date(); //打印当前月
+        //获取当月
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM");
+        //格式化当前月
+        String month = simpleDateFormat.format(date);
         JSONObject object = JSON.parseObject(setupBom);
         String  planCode =  object.getString("planCode");
         JSONArray jsonArrayOne = JSONArray.parseArray(dataTable);
         SetupBom setupBomData = new SetupBom();
         SetupBomSchedule setupBomSchedule = new SetupBomSchedule();
+        //查询出最后一个机器BOM单号
+        ProductionPlan productionPlanOne = null;
+        productionPlanOne = baseMapper.queryProductionPlanMachine();
+        if (productionPlanOne.getPlanMachineBom() != null){
+            String planMachineBom = productionPlanOne.getPlanMachineBom();
+            /*机器BOM案例 LCPBOM22050014*/
+            String planMachineBomOne = planMachineBom.substring(10,14);
+            int planMachineBoms = Integer.parseInt(planMachineBomOne);
+            String planCodesOne = null;
+            if (planMachineBoms<1000) {
+                planCodesOne = String.format("%04d", planMachineBoms + 1);
+            }
+            planMachineBomNo = initCode+yearLast+month+planCodesOne;
+            productionPlan.setPlanMachineBom(planMachineBomNo);
+        }else {
+            for (int i=1;i<100;i++){
+                //机器码
+                String planCodesThree = String.format("%04d",i);
+                planMachineBomNo = initCode+yearLast+month+planCodesThree;
+                productionPlan.setPlanMachineBom(planMachineBomNo);
+                break;
+            }
+        }
         for(int i = 0; i < jsonArrayOne.size(); i++){
             String parameterName = jsonArrayOne.getJSONObject(i).getString("parameterName");
             String parameterWith = jsonArrayOne.getJSONObject(i).getString("parameterWith");
@@ -286,14 +328,18 @@ public class ProductionPlanServiceImpl extends ServiceImpl<ProductionPlanMapper,
                     setupBomSchedule.setBomUnit(setupBomSchedules.get(j).getParameterUnit());
                     setupBomSchedule.setTreeSecondaryId(2);
                     setupBomSchedule.setBomLocation(setupBomSchedules.get(j).getParameterLocation());
+                    setupBomSchedule.setPlanMachineBom(planMachineBomNo);
+                    setupBomSchedule.setPlanQuality(setupBomSchedules.get(j).getParameterQuality());
                     baseMapper.saveSetupBomSchedule(setupBomSchedule);
                 }
             }
             baseMapper.saveSetupBomData(setupBomData);
         }
-        ProductionPlan productionPlan = new ProductionPlan();
-        productionPlan.setPlanMachineBom("1");
         productionPlan.setPlanCode(planCode);
+        SimpleDateFormat simpleDateFormatTwo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
+        String dates = simpleDateFormatTwo.format(new Date());//系统当前时间
+        Date today = simpleDateFormatTwo.parse(dates);//格式化系统当前时间
+        productionPlan.setPlanMachineBomDate(today);
         baseMapper.updatePlanMachineBom(productionPlan);
     }
 
@@ -306,6 +352,7 @@ public class ProductionPlanServiceImpl extends ServiceImpl<ProductionPlanMapper,
     public void updateSetupBom(String setupBom, String dataTable) {
         JSONObject object = JSON.parseObject(setupBom);
         String  planCode =  object.getString("planCode");
+        ProductionPlan productionPlanData = baseMapper.queryPlanMachineBom(planCode);
         baseMapper.deleteSetupBom(planCode);
         baseMapper.deleteSetupBomSchedule(planCode);
         JSONArray jsonArrayOne = JSONArray.parseArray(dataTable);
@@ -336,16 +383,15 @@ public class ProductionPlanServiceImpl extends ServiceImpl<ProductionPlanMapper,
                     setupBomSchedule.setBomUnit(setupBomSchedules.get(j).getParameterUnit());
                     setupBomSchedule.setTreeSecondaryId(2);
                     setupBomSchedule.setBomLocation(setupBomSchedules.get(j).getParameterLocation());
-
-
-
+                    setupBomSchedule.setPlanMachineBom(productionPlanData.getPlanMachineBom());
+                    setupBomSchedule.setPlanQuality(setupBomSchedules.get(j).getParameterQuality());
                     baseMapper.saveSetupBomSchedule(setupBomSchedule);
                 }
             }
             baseMapper.saveSetupBomData(setupBomData);
         }
         ProductionPlan productionPlan = new ProductionPlan();
-        productionPlan.setPlanMachineBom("1");
+        productionPlan.setPlanMachineBom(productionPlanData.getPlanMachineBom());
         productionPlan.setPlanCode(planCode);
         baseMapper.updatePlanMachineBom(productionPlan);
     }
@@ -353,5 +399,23 @@ public class ProductionPlanServiceImpl extends ServiceImpl<ProductionPlanMapper,
     @Override
     public List<SetupBomSchedule> queryProductionPlanViewBom(String planCode) {
         return baseMapper.queryProductionPlanViewBom(planCode);
+    }
+
+    @Override
+    public IPage<SetupBomSchedule> productionRecipientsAddQuery(QueryRequest request, SetupBomSchedule setupBomSchedule) {
+        Page<ProductionPlan> page = new Page<>(request.getPageNum(), request.getPageSize());
+        page.setSearchCount(false);
+        page.setTotal(baseMapper.countProductionRecipientsAddQuery(setupBomSchedule));
+        return baseMapper.queryProductionRecipientsAddQuery(page,setupBomSchedule);
+    }
+
+    @Override
+    public void updateProductionStatistical(ProductionPlan productionPlan) {
+        baseMapper.updateProductionStatistical(productionPlan);
+    }
+
+    @Override
+    public List<ProductionPlan> productionStatisticalExport(ProductionPlan productionPlan) {
+        return baseMapper.productionStatisticalExport(productionPlan);
     }
 }

@@ -20,7 +20,8 @@
                                     </div>
                                     <label class="layui-form-mid">日&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;期&nbsp;<b>:</b></label>
                                     <div class="layui-input-inline" style="width: 115px">
-                                        <input type="text" class="layui-input" name="invoiceDate" id="invoiceDate" placeholder="">
+                                        <input type="text" name="invoiceDate" id="invoiceDate"
+                                               autocomplete="off" class="layui-input createDate" readonly>
                                     </div>
                                     <label class="layui-form-mid">发&nbsp;&nbsp;票&nbsp;&nbsp;号&nbsp;<b>:</b></label>
                                     <div class="layui-input-inline" style="width: 115px">
@@ -128,6 +129,7 @@
         let $ = layui.jquery,
             febs = layui.febs,
             form = layui.form,
+            laydate = layui.laydate,
             table = layui.table,
             layer = layui.layer,
             $view = $('#purchaseInvoice-add'),
@@ -143,6 +145,14 @@
         initTable();
 
         let userName = currentUser.username;
+
+        //日期同时绑定多个
+        lay('.createDate').each(function(){
+            laydate.render({
+                elem: this
+                ,trigger: 'click'
+            });
+        });
 
         $query.on('click', function () {
             layui.table(initTable());

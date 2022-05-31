@@ -1,0 +1,189 @@
+<style>
+    #recipientsMachine-list xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #recipientsMachine-list xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="recipientsMachine-list" lay-title="供应商选择列表">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="parameter-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md11">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-mid layui-form-label-sm">日期&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <input type="text" id="start_dates" name="signedDateFrom" placeholder="" lay-verify='date' class="layui-input"/>
+                                            <i class="layui-icon" id="start_date_icons"></i>
+                                        </div>
+                                        <label class="layui-form-mid">至：</label>
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <input type="text" id="end_dates" name="signedDateTo" placeholder="" lay-verify='date' class="layui-input"/>
+                                            <i class="layui-icon " id="end_date_icons"></i>
+                                        </div>
+                                        <label class="layui-form-mid" >机器码&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 90px">
+                                            <input type="text" name="planCode" autocomplete="off" style="width: 90px" class="layui-input" >
+                                        </div>
+                                        <label class="layui-form-mid" >规格型号&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 90px">
+                                            <input type="text" name="planSpecifications" autocomplete="off" style="width: 90px" class="layui-input" >
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md1 layui-col-sm12 layui-col-xs12 table-action-area">
+                                <!--搜索按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                                    <i class="layui-icon">&#xe848;</i>查询
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="recipientsMachineList" lay-data="{id: 'recipientsMachineList'}"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="supplier-state">
+    {{#
+    let supplierState = {
+    1: {title: '启用', color: 'green'},
+    2: {title: '禁用', color: 'volcano'}
+    }[d.supplierState];
+    }}
+    <span class="layui-badge febs-bg-{{supplierState.color}}">{{ supplierState.title }}</span>
+</script>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+            laydate = layui.laydate,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            dropdownMenu = layui.dropdownMenu,
+            $view = $('#recipientsMachine-list'),
+            $query = $view.find('#query'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'createTime', type: null},
+            createdDateFrom,
+            createdDateTo,
+            tableIns;
+
+        form.render();
+
+        initTable();
+
+        var firstDate = new Date();
+        firstDate.setDate(1); //本月第一天
+        var datetime =firstDate.getFullYear() + '-' + (firstDate.getMonth() + 1) + '-' + firstDate.getDate();
+        //开始日期
+        var start = laydate.render({
+            elem: '#start_dates',
+            max: 0 ,//设置一个默认最大值//最大值为当前日期
+            trigger: 'click',
+            value: new Date(firstDate),//初始赋值,//默认值本月第一天
+            done:function(value,date){
+                if(value && (value>$("#end_dates").val())){
+                    /*开始时间大于结束时间时，清空结束时间*/
+                    $("#end_dates").val("");
+                }
+                end.config.min ={
+                    year:date.year,
+                    month:date.month-1,
+                    date: date.date,
+                };
+            }
+        });
+        //结束日期
+        var end = laydate.render({
+            elem: '#end_dates',
+            min : datetime,//最大值为当前日期
+            trigger: 'click',
+            value: new Date(),//初始赋值,//默认当前时间
+            done:function(value,date){
+                start.config.max={
+                    year:date.year,
+                    month:date.month-1,
+                    date: date.date,
+                }
+            }
+        });
+
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+        dropdownMenu.render({
+            elem: $view.find('.action-more'),
+            click: function (name, elem, event) {
+                let checkStatus = table.checkStatus('recipientsMachineList');
+            },
+            options: []
+        });
+
+        table.on('sort(recipientsMachineList)', function (obj) {
+            sortObject = obj;
+            tableIns.reload({
+                initSort: obj,
+                where: $.extend(getQueryParams(), {
+                    field: obj.field,
+                    order: obj.type
+                })
+            });
+        });
+
+        function initTable() {
+            tableIns = febs.table.init({
+                elem: $view.find('table'),
+                id: 'recipientsMachineList',
+                url: ctx + 'productionPlan/list',
+                cols: [[
+                    {field: 'planDate', title: '交货日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.planDate, "yyyy-MM-dd") }}</div>', minWidth: 115},
+                    {field: 'planNumber', title: '销售订单',align:'center', minWidth: 150},
+                    {field: 'planProductName', title: '产品名称', align:'center',minWidth: 200},
+                    {field: 'planSpecifications', title: '规格型号',align:'center', minWidth: 100},
+                    {field: 'planCode', title: '机器码',align:'center', minWidth: 90},
+                    {field: 'planMachineBom', title: '机器BOM', align:'center',minWidth: 95},
+                    {field: 'planConfiguration', title: '主要配置', align:'center',minWidth: 95},
+                    {field: 'planNote', title: '备注', align:'center',minWidth: 95},
+                    {field: 'planCustomerName', title: '客户', align:'center',minWidth: 95}
+                ]],done: function(res, curr, count){
+                    $('#recipientsMachine-list').find('.layui-table-body').find("table" ).find("tbody").children("tr").on('dblclick',function(){
+                        var id = JSON.stringify($('#recipientsMachine-list').find('.layui-table-body').find("table" ).find("tbody").find(".layui-table-hover").data('index'));
+                        var obj = res.data[id];
+                        $("#recipientsMachine").attr("value",obj.planCode);/*机器码回填*/
+                        $("#recipientsModel").attr("value",obj.planSpecifications);/*机器型号回填*/
+                        $("#recipientsCustomer").attr("value",obj.planCustomerName);/*客户回填*/
+                        parent.layer.close(layer.index)
+                    })
+                }
+            });
+        }
+
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            let signedTime = params.signedTime;
+            if (signedTime) {
+                createdDateFrom = signedTime.split(' - ')[0];
+                createdDateTo = signedTime.split(' - ')[1];
+            }
+            params.createdDateFrom = createdDateFrom;
+            params.createdDateTo = createdDateTo;
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+
+    })
+
+</script>
+

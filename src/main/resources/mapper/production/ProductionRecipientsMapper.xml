@@ -1,5 +1,324 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.erp.production.mapper.ProductionRecipientsMapper">
+    <sql id="countProductionRecipientsSql">
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_production_recipients pr
+        LEFT JOIN t_dept td ON pr.recipients_department = td.DEPT_ID
+        WHERE
+            1 = 1
+        <if test="productionRecipients.signedDateFrom != null and productionRecipients.signedDateFrom !=''">
+            And pr.recipients_date &gt;= #{productionRecipients.signedDateFrom}
+        </if>
+        <if test="productionRecipients.signedDateTo != null and productionRecipients.signedDateTo !=''">
+            And pr.recipients_date &lt;= #{productionRecipients.signedDateTo}
+        </if>
+        <if test="productionRecipients.recipientsState != null and productionRecipients.recipientsState != ''">
+            AND pr.recipients_state = #{productionRecipients.recipientsState}
+        </if>
+        <if test="productionRecipients.recipientsCode != null and productionRecipients.recipientsCode != ''">
+            AND pr.recipients_code = #{productionRecipients.recipientsCode}
+        </if>
+        <if test="productionRecipients.recipientsDepartment != null and productionRecipients.recipientsDepartment != ''">
+            AND pr.recipients_department = #{productionRecipients.recipientsDepartment}
+        </if>
+        <if test="productionRecipients.recipientsPeople != null and productionRecipients.recipientsPeople != ''">
+            AND pr.recipients_people = #{productionRecipients.recipientsPeople}
+        </if>
+        <if test="productionRecipients.recipientsMachine != null and productionRecipients.recipientsMachine != ''">
+            AND pr.recipients_machine = #{productionRecipients.recipientsMachine}
+        </if>
+        <if test="productionRecipients.recipientsModel != null and productionRecipients.recipientsModel != ''">
+            AND pr.recipients_model = #{productionRecipients.recipientsModel}
+        </if>
+        <if test="productionRecipients.recipientsWarehouse != null and productionRecipients.recipientsWarehouse != ''">
+            AND pr.recipients_warehouse = #{productionRecipients.recipientsWarehouse}
+        </if>
+    </sql>
 
+    <sql id="findProductionRecipientsPageSql">
+        SELECT
+            pr.id,
+            pr.recipients_state,
+            pr.recipients_date,
+            pr.recipients_code,
+            pr.recipients_lack_code,
+            td.DEPT_NAME recipientsDepartment,
+            pr.recipients_people,
+            pr.recipients_machine,
+            pr.recipients_customer,
+            pr.recipients_model,
+            pr.recipients_warehouse,
+            pr.recipients_outbound,
+            pr.recipients_outbound_date,
+            pr.recipients_lack_recipients
+        FROM
+            jr_production_recipients pr
+        LEFT JOIN t_dept td ON pr.recipients_department = td.DEPT_ID
+        WHERE
+            1 = 1
+        <if test="productionRecipients.signedDateFrom != null and productionRecipients.signedDateFrom !=''">
+            And pr.recipients_date &gt;= #{productionRecipients.signedDateFrom}
+        </if>
+        <if test="productionRecipients.signedDateTo != null and productionRecipients.signedDateTo !=''">
+            And pr.recipients_date &lt;= #{productionRecipients.signedDateTo}
+        </if>
+        <if test="productionRecipients.recipientsState != null and productionRecipients.recipientsState != ''">
+            AND pr.recipients_state = #{productionRecipients.recipientsState}
+        </if>
+        <if test="productionRecipients.recipientsCode != null and productionRecipients.recipientsCode != ''">
+            AND pr.recipients_code = #{productionRecipients.recipientsCode}
+        </if>
+        <if test="productionRecipients.recipientsDepartment != null and productionRecipients.recipientsDepartment != ''">
+            AND pr.recipients_department = #{productionRecipients.recipientsDepartment}
+        </if>
+        <if test="productionRecipients.recipientsPeople != null and productionRecipients.recipientsPeople != ''">
+            AND pr.recipients_people = #{productionRecipients.recipientsPeople}
+        </if>
+        <if test="productionRecipients.recipientsMachine != null and productionRecipients.recipientsMachine != ''">
+            AND pr.recipients_machine = #{productionRecipients.recipientsMachine}
+        </if>
+        <if test="productionRecipients.recipientsModel != null and productionRecipients.recipientsModel != ''">
+            AND pr.recipients_model = #{productionRecipients.recipientsModel}
+        </if>
+        <if test="productionRecipients.recipientsWarehouse != null and productionRecipients.recipientsWarehouse != ''">
+            AND pr.recipients_warehouse = #{productionRecipients.recipientsWarehouse}
+        </if>
+    </sql>
+
+    <sql id="countProductionLackSql">
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_production_lack pl
+        WHERE
+            1 = 1
+    </sql>
+
+    <sql id="findProductionLackPageSql">
+        SELECT
+            pl.lack_warehouse,
+            pl.lack_code,
+            pl.lack_machine,
+            pl.lack_material,
+            pl.lack_specifications,
+            prs.recipients_mass,
+            prs.recipients_brand,
+            pl.lack_unit,
+            pl.lack_number,
+            prs.recipients_number,
+            prs.recipients_note,
+            prs.recipients_location,
+            pl.lack_material_code
+        FROM
+            jr_production_lack pl
+                LEFT JOIN jr_production_recipients_schedule prs ON pl.recipients_code = prs.recipients_code
+    </sql>
+
+    <select id="countProductionRecipients" parameterType="com.erp.production.entity.ProductionRecipients" resultType="long">
+        <include refid="countProductionRecipientsSql"/>
+    </select>
+
+    <select id="findProductionRecipientsPage" parameterType="com.erp.production.entity.ProductionRecipients" resultType="com.erp.production.entity.ProductionRecipients">
+        <include refid="findProductionRecipientsPageSql"/>
+    </select>
+
+    <!--缺件查询-->
+    <select id="countProductionLack" parameterType="com.erp.production.entity.ProductionLack" resultType="long">
+        <include refid="countProductionLackSql"/>
+    </select>
+
+    <select id="findProductionLackPage" parameterType="com.erp.production.entity.ProductionLack" resultType="com.erp.production.entity.ProductionLack">
+        <include refid="findProductionLackPageSql"/>
+    </select>
+
+    <select id="queryProductionRecipients" parameterType="String" resultType="com.erp.production.entity.ProductionRecipientsSchedule">
+        SELECT
+            prs.id,
+            prs.recipients_material,
+            prs.recipients_specifications,
+            prs.recipients_mass,
+            prs.recipients_brand,
+            prs.recipients_unit,
+            prs.recipients_number,
+            prs.recipients_price,
+            prs.recipients_location,
+            prs.recipients_note,
+            prs.recipients_code,
+            pr.recipients_warehouse
+        FROM
+            jr_production_recipients_schedule prs
+        LEFT JOIN jr_production_recipients pr ON prs.recipients_code = pr.recipients_code
+        WHERE
+            1 = 1
+          AND prs.recipients_code = #{recipientsCode}
+    </select>
+
+    <select id="queryProductionRecipientsOne" resultType="com.erp.production.entity.ProductionRecipients">
+        SELECT
+            pr.recipients_code
+        FROM
+            jr_production_recipients pr
+        WHERE
+            1 = 1
+        ORDER BY
+            pr.recipients_date DESC
+            LIMIT 1
+    </select>
+
+    <insert id="saveProductionLack" parameterType="com.erp.production.entity.ProductionLack">
+        INSERT INTO
+            jr_production_lack
+        (
+            recipients_code,
+            lack_date,
+            lack_code,
+            lack_material,
+            lack_specifications,
+            lack_machine,
+            lack_warehouse,
+            lack_number,
+            lack_unit,
+            lack_recipients
+        )
+        VALUES
+            (
+                #{recipientsCode},
+                #{lackDate},
+                #{lackCode},
+                #{lackMaterial},
+                #{lackSpecifications},
+                #{lackMachine},
+                #{lackWarehouse},
+                #{lackNumber},
+                #{lackUnit},
+                #{lackRecipients}
+            )
+    </insert>
+
+    <insert id="saveProductionRecipientsSchedule" parameterType="com.erp.production.entity.ProductionRecipientsSchedule">
+        INSERT INTO
+            jr_production_recipients_schedule
+        (
+            recipients_material,
+            recipients_specifications,
+            recipients_mass,
+            recipients_brand,
+            recipients_unit,
+            recipients_number,
+            recipients_price,
+            recipients_location,
+            recipients_note,
+            recipients_code,
+            recipients_lack,
+            recipients_inventory
+        )
+        VALUES
+            (
+                #{recipientsMaterial},
+                #{recipientsSpecifications},
+                #{recipientsMass},
+                #{recipientsBrand},
+                #{recipientsUnit},
+                #{recipientsNumber},
+                #{recipientsPrice},
+                #{recipientsLocation},
+                #{recipientsNote},
+                #{recipientsCode},
+                #{recipientsLack},
+                #{recipientsInventory}
+            )
+    </insert>
+
+    <insert id="saveProductionRecipients" parameterType="com.erp.production.entity.ProductionRecipients">
+        INSERT INTO
+            jr_production_recipients
+        (
+            recipients_state,
+            recipients_date,
+            recipients_code,
+            recipients_lack_code,
+            recipients_department,
+            recipients_people,
+            recipients_machine,
+            recipients_customer,
+            recipients_model,
+            recipients_warehouse,
+            recipients_outbound,
+            recipients_outbound_date,
+            recipients_lack_recipients
+        )
+        VALUES
+            (
+                #{recipientsState},
+                #{recipientsDate},
+                #{recipientsCode},
+                #{recipientsLackCode},
+                #{recipientsDepartment},
+                #{recipientsPeople},
+                #{recipientsMachine},
+                #{recipientsCustomer},
+                #{recipientsModel},
+                #{recipientsWarehouse},
+                #{recipientsOutbound},
+                #{recipientsOutboundDate},
+                #{recipientsLackRecipients}
+            )
+    </insert>
+
+    <!--修改回显-->
+    <select id="productionRecipientsId" parameterType="Long" resultType="com.erp.production.entity.ProductionRecipients">
+        SELECT
+            pr.recipients_date,
+            pr.recipients_warehouse,
+            pr.recipients_machine,
+            td.DEPT_NAME recipientsDepartment,
+            pr.recipients_people,
+            pr.recipients_code
+        FROM
+            jr_production_recipients pr
+        LEFT JOIN t_dept td ON pr.recipients_department = td.DEPT_ID
+        WHERE
+            1=1
+          AND pr.id = #{id}
+    </select>
+
+    <delete id="deleteProductionRecipients">
+        delete from jr_production_recipients_schedule  where recipients_code = #{recipientsCode}
+    </delete>
+
+    <update id="cancelProductionRecipients"  parameterType="com.erp.production.entity.ProductionRecipients">
+        UPDATE
+            jr_production_recipients
+        set recipients_state= 1
+        WHERE id = #{ids}
+    </update>
+
+    <update id="confirmProductionRecipients"  parameterType="com.erp.production.entity.ProductionRecipients">
+        UPDATE
+            jr_production_recipients
+        set recipients_state= 2
+        WHERE id = #{ids}
+    </update>
+
+    <select id="queryProductionRecipientsLack" parameterType="String" resultType="com.erp.production.entity.ProductionLack">
+        SELECT
+            pl.recipients_code,
+            pl.lack_date,
+            pl.lack_code,
+            pl.lack_material,
+            pl.lack_specifications,
+            pl.lack_machine,
+            pl.lack_warehouse,
+            pl.lack_number,
+            pl.lack_unit,
+            pl.lack_recipients
+        FROM
+            jr_production_lack pl
+        WHERE
+            1 = 1
+          AND pl.lack_code = #{recipientsCode}
+    </select>
 </mapper>

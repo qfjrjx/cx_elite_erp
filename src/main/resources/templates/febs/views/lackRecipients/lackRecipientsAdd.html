@@ -1,0 +1,182 @@
+<style>
+    #lackRecipients-add {
+        padding: 20px 25px 25px 0;
+    }
+</style>
+<div class="layui-fluid" id="lackRecipients-add">
+    <form class="layui-form" action="" lay-filter="lackRecipients-add-form">
+        <div class="layui-form-item">
+            <label class="layui-form-mid">日期&nbsp;<b>:</b></label>
+            <div class="layui-input-inline" style="width: 100px">
+                <input type="text" name="lackRecipientsDate" id="lackRecipientsDate"
+                       autocomplete="off" class="layui-input createDate" readonly>
+            </div>
+            <label class="layui-form-label febs-form-item-require" >领用部门</label>
+            <div class="layui-input-inline" id="lack-add-dept" style="width: 190px">
+            </div>
+            <label class="layui-form-mid layui-form-label-sm">领用人</label>
+            <div class="layui-input-inline" style="width: 145px">
+                <input type="text" name="recipientsPeople" id="recipientsPeople" autocomplete="off" class="layui-input" lay-verify="required">
+            </div>
+            <label class="layui-form-mid layui-form-label-sm">库房</label>
+            <div class="layui-input-inline" style="width: 145px">
+                <select name="recipientsWarehouse" lay-verify="required" id="recipientsWarehouse">
+                    <option value=""></option>
+                    <option value="1">外购库</option>
+                    <option value="2">机加库</option>
+                    <option value="3">废品库</option>
+                    <option value="4">资产库</option>
+                    <option value="5">成品库</option>
+                </select>
+            </div>
+        </div>
+        <table class="layui-table layui-form" id="lackRecipientsAdd-table" lay-filter="lackRecipientsAdd-table"></table>
+        <div class="layui-form-item febs-hide">
+            <button class="layui-btn" lay-submit="" lay-filter="lackRecipients-add-form-submit" id="submit"></button>
+            <button type="reset" class="layui-btn" id="reset"></button>
+        </div>
+    </form>
+</div>
+<script langguage="JavaScript">
+
+    var now = new Date();
+    lackRecipientsDate.value=new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate();
+    var deliveryDateTo = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate();
+</script>
+<script>
+    layui.use(['febs', 'form', 'validate','table', 'xmSelect','upload','laydate'], function () {
+        let $ = layui.$,
+            febs = layui.febs,
+            layer = layui.layer,
+            form = layui.form,
+            laydate = layui.laydate,
+            validate = layui.validate,
+            table = layui.table,
+            deptXmlSelect;
+
+
+        form.verify(validate);
+        form.render();
+
+        //日期同时绑定多个
+        lay('.createDate').each(function(){
+            laydate.render({
+                elem: this
+                ,trigger: 'click'
+            });
+        });
+
+        let userName = currentUser.username;
+        deptXmlSelect = xmSelect.render({
+            el: '#lack-add-dept',
+            model: {label: {type: 'text'}},
+            tree: {
+                show: true,
+                strict: false,
+                showLine: false,
+                clickCheck: true,
+                expandedKeys: [-1],
+            },
+            name: 'deptId',
+            theme: {
+                color: '#52c41a',
+            },
+            prop: {
+                value: 'id'
+            },
+            height: 'auto',
+            on: function(data){
+                if(data.isAdd){
+                    return data.change.slice(0, 1)
+                }
+            }
+        });
+        febs.get(ctx + 'dept/select/tree', null, function (data) {
+            deptXmlSelect.update(
+                data
+            )
+        });
+
+        table.render({
+            elem: "#lackRecipientsAdd-table",
+            data:[],
+            even:true,
+            cols: [
+                [
+                    {type: 'checkbox'},
+                    {field: 'recipientsLackCode',title: '缺件单号',align:'center', minWidth: 145,event:'choice'},
+                    {field: 'lackMachine',title: '机器码', align:'center',minWidth: 115},
+                    {field: 'lackMaterial', title: '名称',align:'center', minWidth: 90},
+                    {field: 'lackSpecifications', title: '规格型号', align:'center',minWidth: 90},
+                    {field: 'lackUnit',title: '单位', minWidth: 55,align:'center'},
+                    {field: 'inventoryNumber',title: '库存数量', minWidth: 55,align:'center'},//未定义
+                    {field: 'lackNumber',title: '缺件数量', minWidth: 55,align:'center'},
+                    {field: 'recipientsNumber',title: '已领数量', minWidth: 50,align:'center'},
+                    {field: 'theNumber',edit:true, title: '本次领用数量', minWidth: 72},
+                    {field: 'lackNote',edit:true, title: '备注', minWidth: 72},
+                    {field: 'lackLocation',edit:true, title: '库位', minWidth: 72,hide:true},
+                    {field: 'lackCoding',edit:true, title: '物料编码', minWidth: 72,hide:true}
+                ]
+            ]
+        });
+
+        table.on('tool(lackRecipientsAdd-table)', function (obj) {
+            let data = obj.data,
+                layEvent = obj.event;
+            if (layEvent === 'choice') {
+                var tableData = layui.table.cache['lackRecipientsAdd-table'];
+                var rowIndex = $(obj.tr).attr('data-index');//当前行的索引
+                if (tableData != ""){
+                    $("#parameterIndex").val(rowIndex);//获取索引
+                    tableData.splice(rowIndex,1); //删除缓存的行
+                }
+                febs.modal.view('缺件选择列表', "production/lackRecipientsQueryList", {
+                    area:["70%","80%"]
+                });
+            }
+        });
+
+        form.on('submit(lackRecipients-add-form-submit)', function (data) {
+            var recipientsPeople = $('#recipientsPeople').val();
+            var recipientsWarehouse = $('#recipientsWarehouse').val();
+            var lackRecipientsDate = $('#lackRecipientsDate').val();
+            var recipientsDepartment = deptXmlSelect.getValue('valueStr');
+            let dataThree = new Array();
+            let lackRecipientsAdd =  table.cache["lackRecipientsAdd-table"];
+            for (i=0;i<lackRecipientsAdd.length;i++){
+                let dataOne={
+                    "recipientsLackCode":lackRecipientsAdd[i].recipientsLackCode,
+                    "lackMachine":lackRecipientsAdd[i].lackMachine,
+                    "lackMaterial":lackRecipientsAdd[i].lackMaterial,
+                    "lackSpecifications":lackRecipientsAdd[i].lackSpecifications,
+                    "lackUnit":lackRecipientsAdd[i].lackUnit,
+                    "inventoryNumber":lackRecipientsAdd[i].inventoryNumber,
+                    "lackNumber":lackRecipientsAdd[i].lackNumber,
+                    "recipientsNumber":lackRecipientsAdd[i].recipientsNumber,
+                    "theNumber":lackRecipientsAdd[i].theNumber,
+                    "lackNote":lackRecipientsAdd[i].lackNote,
+                    "lackLocation":lackRecipientsAdd[i].lackLocation,
+                    "lackCoding":lackRecipientsAdd[i].lackCoding
+                };
+                dataThree.push(dataOne);
+            }
+            let entity = {userName:userName,recipientsWarehouse:recipientsWarehouse,lackRecipientsDate: lackRecipientsDate,recipientsDepartment:recipientsDepartment,
+                recipientsPeople: recipientsPeople}
+            $.ajax({
+                url: '/lackRecipients/add',
+                type:"post",
+                data: {lackRecipients:JSON.stringify(entity),dataTable:JSON.stringify(dataThree)},
+                success : function(res) {
+                    layer.closeAll();
+                    $('#lackRecipients-list').find('#query').click();
+                    var dataBak = [];
+                    layui.table.reload('lackRecipientsTable',{
+                        data:dataBak
+                    });
+                }
+            });
+            return false;
+        });
+
+    })
+</script>

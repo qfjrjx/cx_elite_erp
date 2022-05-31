@@ -4,9 +4,14 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.erp.common.converter.TimeConverter;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.wuwenze.poi.annotation.Excel;
+import com.wuwenze.poi.annotation.ExcelField;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -17,6 +22,7 @@ import java.util.Date;
  */
 @Data
 @TableName("jr_production_plan")
+@Excel("生产计划")
 public class ProductionPlan {
 
     /**
@@ -29,6 +35,7 @@ public class ProductionPlan {
      * 状态：1 登记 2 完成
      */
     @TableField("plan_state")
+    @ExcelField(value = "状态", writeConverterExp = "1=登记,2=完成")
     private String planState;
 
     /**
@@ -36,42 +43,49 @@ public class ProductionPlan {
      */
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     @TableField("plan_date")
+    @ExcelField(value = "交货日期", writeConverter = TimeConverter.class)
     private Date planDate;
 
     /**
      * 订单号
      */
     @TableField("plan_number")
+    @ExcelField(value = "订单号")
     private String planNumber;
 
     /**
      * 客户名称
      */
     @TableField("plan_customer_name")
+    @ExcelField(value = "客户名称")
     private String planCustomerName;
 
     /**
      * 产品名称
      */
     @TableField("plan_product_name")
+    @ExcelField(value = "产品名称")
     private String planProductName;
 
     /**
      * 规格型号
      */
     @TableField("plan_specifications")
+    @ExcelField(value = "规格型号")
     private String planSpecifications;
 
     /**
      * 机器码
      */
     @TableField("plan_code")
+    @ExcelField(value = "机器码")
     private String planCode;
 
     /**
      * 配置
      */
     @TableField("plan_configuration")
+    @ExcelField(value = "配置")
     private String planConfiguration;
 
     private String configureName;
@@ -144,5 +158,103 @@ public class ProductionPlan {
 
     private transient String signedDateFrom;
     private transient String signedDateTo;
+
+    private transient String signedDateFromOne;
+    private transient String signedDateToOne;
+
+    /**
+     * 设置BOM日期
+     */
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
+    @TableField("plan_machine_bom_date")
+    private Date planMachineBomDate;
+
+    /**
+     * 金额
+     */
+    @TableField("plan_money")
+    @ExcelField(value = "金额")
+    private BigDecimal planMoney;
+
+    /**
+     * 生产负责人
+     */
+    @TableField("plan_head")
+    @ExcelField(value = "生产负责人")
+    private String planHead;
+
+    /**
+     * 生产预计完成
+     */
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern="yyyy-MM-dd")
+    @ExcelField(value = "生产预计完成", writeConverter = TimeConverter.class)
+    @TableField("plan_expect_date")
+    private Date planExpectDate;
+
+    /**
+     * 生产实际完成
+     */
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern="yyyy-MM-dd")
+    @ExcelField(value = "生产实际完成", writeConverter = TimeConverter.class)
+    @TableField("plan_actual_date")
+    private Date planActualDate;
+
+    /**
+     * 生产工资
+     */
+    @TableField("plan_wage")
+    @ExcelField(value = "生产工资")
+    private BigDecimal planWage;
+
+    /**
+     * 生产负责人
+     */
+    @TableField("plan_head_one")
+    @ExcelField(value = "生产负责人")
+    private String planHeadOne;
+
+    /**
+     * 生产预计完成
+     */
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern="yyyy-MM-dd")
+    @ExcelField(value = "生产预计完成", writeConverter = TimeConverter.class)
+    @TableField("plan_expect_date_one")
+    private Date planExpectDateOne;
+
+    /**
+     * 生产实际完成
+     */
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern="yyyy-MM-dd")
+    @ExcelField(value = "生产实际完成", writeConverter = TimeConverter.class)
+    @TableField("plan_actual_date_one")
+    private Date planActualDateOne;
+
+    /**
+     * 生产工资
+     */
+    @TableField("plan_wage_one")
+    @ExcelField(value = "生产工资")
+    private BigDecimal planWageOne;
+
+    /**
+     * 生产内容
+     */
+    @TableField("plan_content")
+    @ExcelField(value = "生产内容")
+    private String planContent;
+
+    /**
+     * 单位
+     */
+    @TableField("plan_unit")
+    @ExcelField(value = "单位")
+    private String planUnit;
+
+    @ExcelField(value = "数量")
+    private String planAmount;
 
 }

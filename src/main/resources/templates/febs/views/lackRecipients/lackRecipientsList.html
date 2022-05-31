@@ -1,0 +1,508 @@
+<style>
+    #lackRecipients-list xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #lackRecipients-list xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="lackRecipients-list" lay-title="缺件领用">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="lackRecipients-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md12">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid layui-form-label-sm">状态</label>
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <select name="lackState">
+                                                <option value=""></option>
+                                                <option value="1">登记</option>
+                                                <option value="2">确认</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid layui-form-label-sm">日期&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <input type="text" id="start_date" name="signedDateFrom" placeholder="" lay-verify='date' class="layui-input"/>
+                                            <i class="layui-icon" id="start_date_icon"></i>
+                                        </div>
+                                        <label class="layui-form-mid">至：</label>
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <input type="text" id="end_date" name="signedDateTo" placeholder="" lay-verify='date' class="layui-input"/>
+                                            <i class="layui-icon " id="end_date_icon"></i>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-mid layui-form-label-sm">单号</label>
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <input type="text" name="lackCode" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-mid layui-form-label-sm">机器码</label>
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <input type="text" name="lackMachine" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label layui-form-label-sm">领用部门</label>
+                                        <div class="layui-input-inline" id="dept" name="lackDepartment">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-mid layui-form-label-sm">领用人</label>
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <input type="text" name="lackPeople" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid layui-form-label-sm">库房</label>
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <select name="lackWarehouse">
+                                                <option value=""></option>
+                                                <option value="1">外购库</option>
+                                                <option value="2">机加库</option>
+                                                <option value="3">废品库</option>
+                                                <option value="4">资产库</option>
+                                                <option value="5">成品库</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="lackRecipientsTable" id="lackRecipientsTable" lay-data="{id: 'lackRecipientsTable'}"></table>
+                    <div class="layui-col-md6">
+                        <div class="layui-form-item"></div>
+                    </div>
+                    <div class="layui-col-md6 layui-col-sm12 layui-col-xs12 table-action-area">
+                        <!--搜索按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                            <i class="layui-icon">&#xe848;</i>查询
+                        </div>
+                        <!-- 刷新表格按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain table-action" id="reset">
+                            <i class="layui-icon">&#xe79b;</i>刷新
+                        </div>
+                        <!--添加按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
+                                     "shiro:hasAnyPermissions="lackRecipients:add" id="addTo">
+                            <i class="layui-icon">&#xe78a;</i>新增
+                        </div>
+                        <!--修改按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="lackRecipients:update" id="updateTo">
+                            <i class="layui-icon">&#xe642;</i>修改
+                        </div>
+                        <!--确认按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
+                                     "shiro:hasAnyPermissions="lackRecipients:confirm" id="confirmTo">
+                            <i class="layui-icon layui-icon-ok-circle"></i>确认
+                        </div>
+                        <!--取消按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
+                                     "shiro:hasAnyPermissions="lackRecipients:cancel" id="cancelTo">
+                            <i class="layui-icon layui-icon-close"></i>取消
+                        </div>
+                    </div>
+                    <br>
+                    <br>
+                    <table lay-filter="lackRecipients-table" id="lackRecipients-table" lay-data="{id: 'lackRecipients-table'}"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="lackState-state">
+    {{#
+    let lackState = {
+    1: {title: '登记'},
+    2: {title: '确认'},
+    3: {title: '出库'}
+    }[d.lackState];
+    }}
+    <span>{{ lackState.title }}</span>
+</script>
+<script type="text/html" id="lackWarehouse-method">
+    {{#
+    let lackWarehouse = {
+    1: {title: '外购库'},
+    2: {title: '机加库'},
+    3: {title: '废品库'},
+    4: {title: '资产库'},
+    5: {title: '成品库'}
+    }[d.lackWarehouse];
+    }}
+    <span>{{ lackWarehouse.title }}</span>
+</script>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+            laydate = layui.laydate,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            $view = $('#lackRecipients-list'),
+            $query = $view.find('#query'),
+            $addTo = $view.find('#addTo'),
+            $updateTo = $view.find('#updateTo'),
+            $confirmTo = $view.find('#confirmTo'),
+            $cancelTo = $view.find('#cancelTo'),
+            $lackTo = $view.find('#lackTo'),
+            $reset = $view.find('#reset'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'createTime', type: null},
+            tableIns,
+            deptXmlSelect;
+
+        form.render();
+        initPurchaseRequisitionTable();
+
+        var firstDate = new Date();
+        firstDate.setDate(1); //本月第一天
+        var datetime =firstDate.getFullYear() + '-' + (firstDate.getMonth() + 1) + '-' + firstDate.getDate();
+        //开始日期
+        var start = laydate.render({
+            elem: '#start_date',
+            max: 0 ,//设置一个默认最大值//最大值为当前日期
+            trigger: 'click',
+            value: new Date(firstDate),//初始赋值,//默认值本月第一天
+            done:function(value,date){
+                if(value && (value>$("#end_date").val())){
+                    /*开始时间大于结束时间时，清空结束时间*/
+                    $("#end_date").val("");
+                }
+                end.config.min ={
+                    year:date.year,
+                    month:date.month-1,
+                    date: date.date,
+                };
+            }
+        });
+        //结束日期
+        var end = laydate.render({
+            elem: '#end_date',
+            min : datetime,//最大值为当前日期
+            trigger: 'click',
+            value: new Date(),//初始赋值,//默认当前时间
+            done:function(value,date){
+                start.config.max={
+                    year:date.year,
+                    month:date.month-1,
+                    date: date.date,
+                }
+            }
+        });
+
+        deptXmlSelect = xmSelect.render({
+            el: '#dept',
+            model: {label: {type: 'text'}},
+            tree: {
+                show: true,
+                strict: false,
+                showLine: false,
+                clickCheck: true,
+                expandedKeys: [-1],
+            },
+            name: 'deptId',
+            theme: {
+                color: '#52c41a',
+            },
+            prop: {
+                value: 'id'
+            },
+            height: 'auto',
+            on: function(data){
+                if(data.isAdd){
+                    return data.change.slice(0, 1)
+                }
+            }
+        });
+        febs.get(ctx + 'dept/select/tree', null, function (data) {
+            deptXmlSelect.update(
+                data
+            )
+        });
+
+        var lackTableData = new Array(); // 用于存放表格数据
+
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        $reset.on('click', function () {
+            $searchForm[0].reset();
+            tableIns.reload({where: getQueryParams(), page: {curr: 1}});
+        });
+
+        $addTo.on('click', function () {
+            febs.modal.open('【缺件领用】 新增', 'production/lackRecipients/add', {
+                btn: ['增加行','删除行','删除整单','保存', '关闭'],
+                area: ["80%","60%"],
+                yes: function (index, layero) {
+                    var dataBak = [];
+                    var tableBak = layui.table.cache['lackRecipientsAdd-table'];
+                    for (var i=0;i<tableBak.length; i++){
+                        dataBak.push(tableBak[i]);
+                    }
+                    dataBak.push({
+                        "recipientsLackCode":"",
+                        "lackMachine":"",
+                        "lackMaterial":"",
+                        "lackSpecifications":"",
+                        "lackUnit":"",
+                        "orderBrand":"",
+                        "lackNumber":"",
+                        "recipientsNumber":"",
+                        "lackNumber":"",
+                        "lackNote":"",
+                    });
+                    console.log(dataBak);
+                    layui.table.reload('lackRecipientsAdd-table',{
+                        data:dataBak
+                    });
+                },
+                btn2: function () {
+                    let checkStatus = table.checkStatus('lackRecipientsAdd-table')
+                        , demo = table.cache["lackRecipientsAdd-table"];//获取表格中的数据
+                    if (checkStatus.data.length < 1) {
+                        layer.alert("请选择一条数据操作");
+                        return false;
+                    }else {
+                        var tablelist = [];//存储未选中的数据
+                        //循环表格数据
+                        for (var i in demo) {
+                            //判断未选中数据
+                            if (!demo[i].LAY_CHECKED) {
+                                //存入数组
+                                tablelist.push(demo[i]);
+                            }
+                        }
+                        //重载表格
+                        table.reload('lackRecipientsAdd-table', {
+                            data: tablelist
+                        });
+
+                    }
+                    return false;
+                },
+                btn3: function () {
+                    var dataBak = [];
+                    layui.table.reload('lackRecipientsAdd-table',{
+                        data:dataBak
+                    });
+                    return false;
+                },
+                btn4: function () {
+                    $('#lackRecipients-add').find('#submit').trigger('click');
+                    return false;
+                },
+                btn5: function () {
+                    layer.closeAll();
+                }
+            });
+        });
+
+        $updateTo.on('click', function () {
+            let checkStatus = table.checkStatus('lackRecipientsTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要修改的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要修改的数据');
+            }else{
+                layui.each(checkStatus.data, function (key, item) {
+                    febs.modal.open('【缺件领用】 修改', 'production/lackRecipients/update/' + item.id, {
+                        area: ["80%","60%"],
+                        btn: ['增加行','删除行','删除整单','保存', '关闭'],
+                        yes: function (index, layero) {
+                            var buttonArr = [];
+                            var tableBak = layui.table.cache['lackRecipientsUpdate-table'];//获取之前编辑过的全部数据，前提是编辑数据是要更新缓存，buttonList 为表格的id
+                            for (var i = 0; i < tableBak.length; i++) {
+                                buttonArr.push(tableBak[i]);      //将之前的数组存储
+                            }
+                            buttonArr.push({
+                                "recipientsLackCode":"",
+                                "lackMachine":"",
+                                "lackMaterial":"",
+                                "lackSpecifications":"",
+                                "lackUnit":"",
+                                "orderBrand":"",
+                                "lackNumber":"",
+                                "recipientsNumber":"",
+                                "lackNumber":"",
+                                "lackNote":"",
+                            });
+                            table.reload('lackRecipientsUpdate-table',{
+                                data:buttonArr
+                            });
+                        },
+                        btn2: function () {
+                            let checkStatus = table.checkStatus('lackRecipientsUpdate-table')
+                                , demo = table.cache["lackRecipientsUpdate-table"];//获取表格中的数据
+                            if (checkStatus.data.length < 1) {
+                                layer.alert("请选择一条数据操作");
+                                return false;
+                            }else {
+                                var tablelist = [];//存储未选中的数据
+                                //循环表格数据
+                                for (var i in demo) {
+                                    //判断未选中数据
+                                    if (!demo[i].LAY_CHECKED) {
+                                        //存入数组
+                                        tablelist.push(demo[i]);
+                                    }
+                                }
+                                //重载表格
+                                table.reload('lackRecipientsUpdate-table', {
+                                    data: tablelist
+                                });
+
+                            }
+                            return false;
+                        },
+                        btn3: function () {
+                            var dataBak = [];
+                            layui.table.reload('lackRecipientsUpdate-table',{
+                                data:dataBak
+                            });
+                            return false;
+                        },
+                        btn4: function () {
+                            $('#lackRecipients-update').find('#submit').trigger('click');
+                            return false;
+                        },
+                        btn5: function () {
+                            layer.closeAll();
+                        }
+                    });
+                });
+            }
+        });
+
+        $confirmTo.on('click', function () {
+            let checkStatus = table.checkStatus('lackRecipientsTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要确认的数据');
+            } else {
+                let ids = [];
+                layui.each(checkStatus.data, function (key, item) {
+                    ids.push(item.id)
+                    if(item.lackState == 2){
+                        febs.alert.warn('请勿重复确认');
+                    }else {
+                        febs.modal.confirm('确认缺件领用', '是否确认？', function () {
+                            confirmLackRecipients(ids.join(','));
+                        });
+                    }
+                });
+            }
+        });
+
+        $cancelTo.on('click', function () {
+            let checkStatus = table.checkStatus('lackRecipientsTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要取消的数据');
+            } else {
+                let ids = [];
+                layui.each(checkStatus.data, function (key, item) {
+                    ids.push(item.id)
+                    if(item.lackState == 1){
+                        febs.alert.warn('请勿重复取消');
+                    }else {
+                        febs.modal.confirm('取消生产领用', '是否取消？', function () {
+                            cancelLackRecipients(ids.join(','));
+                        });
+                    }
+                });
+            }
+        });
+
+        function initPurchaseRequisitionTable() {
+            tableIns = febs.table.init({
+                elem: '#lackRecipientsTable',
+                id: 'lackRecipientsTable',
+                url: ctx + 'lackRecipients/list',
+                cols: [[
+                    {type: 'checkbox'},
+                    {field:'number',title:'序号',align:'center',width:60,templet:function (d) {
+                            return d.LAY_INDEX;}},
+                    {title: '状态', templet: '#lackState-state',align:'center',width:60},
+                    {field: 'lackDate', title: '日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.lackDate, "yyyy-MM-dd") }}</div>', minWidth: 110, sort: true},
+                    {field: 'lackCode', title: '单号', minWidth: 145,align:'center'},
+                    {field: 'lackMachine', title: '机器码', minWidth: 120,align:'center'},
+                    {title: '库房', templet: '#lackWarehouse-method',align:'center',width:90},
+                    {field: 'lackDepartment', title: '领用部门', minWidth: 95,align:'center'},
+                    {field: 'lackPeople',title: '领用人', minWidth: 55,align:'center'},
+                    {field: 'lackOutbound', title: '出库人', minWidth: 90,align:'center'},
+                    {field: 'lackOutboundDate', title: '出库日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.lackOutboundDate, "yyyy-MM-dd HH:mm:ss") }}</div>', minWidth: 160, sort: true}
+                ]]
+            });
+        }
+
+        table.on('row(lackRecipientsTable)', function (obj) {
+            let lackCode = obj.data.lackCode;
+            $.ajax({
+                url: '/lackRecipients/query',
+                data:{"lackCode":lackCode},
+                async:false
+                ,dataType:"json"
+                , success: function(data){
+                    lackTableData=data.replies;
+                    layui.table.reload('lackRecipients-table',{
+                        data : lackTableData
+                    });
+                }
+            });
+        });
+
+        table.render({
+            elem:'#lackRecipients-table',
+            data:lackTableData,
+            cols: [[
+                {field:'number',title:'序号',align:'center',width:60,templet:function (d) {
+                        return d.LAY_INDEX;}},
+                {field: 'lackCoding',title: '编码', minWidth: 95,align:'center'},
+                {field: 'lackMaterial', title: '物料名称', minWidth: 90,align:'center'},
+                {field: 'lackSpecifications', title: '规格型号', minWidth: 90,align:'center'},
+                {field: 'lackUnit',title: '单位', minWidth: 55,align:'center'},
+                {field: 'lackNumber',title: '数量', minWidth: 55,align:'center'},
+                {field: 'lackLocation',title: '库位', minWidth: 55,align:'center'},
+                {field: 'lackNote', title: '备注', minWidth: 72,align:'center'}
+            ]]
+        });
+
+        function getQueryParams(flag) {
+            deptId = deptXmlSelect.getValue('valueStr');
+            if (flag) {
+                deptId = '';
+            }
+            let params = $searchForm.serializeJson();
+            params.lackDepartment = deptId;
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+
+        function cancelLackRecipients(ids) {
+            febs.get(ctx + 'lackRecipients/cancel/' + ids, null, function () {
+                febs.alert.success('取消缺件领用成功');
+                $query.click();
+            });
+        }
+
+        function confirmLackRecipients(ids) {
+            febs.get(ctx + 'lackRecipients/confirm/' + ids, null, function () {
+                febs.alert.success('确认缺件领用成功');
+                $query.click();
+            });
+        }
+    })
+</script>

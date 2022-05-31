@@ -1,0 +1,63 @@
+<style>
+    #productionRecipients-lack {
+        padding: 20px 25px 25px 0;
+    }
+</style>
+<div class="layui-fluid" id="productionRecipients-lack">
+    <table lay-filter="productionRecipientsLack" id="productionRecipientsLack" lay-data="{id: 'productionRecipientsLack'}"></table>
+</div>
+<script type="text/html" id="lackWarehouse-method">
+    {{#
+    let lackWarehouse = {
+    1: {title: '外购库'},
+    2: {title: '机加库'},
+    3: {title: '废品库'},
+    4: {title: '资产库'},
+    5: {title: '成品库'}
+    }[d.lackWarehouse];
+    }}
+    <span>{{ lackWarehouse.title }}</span>
+</script>
+<script data-th-inline="javascript">
+    layui.use(['form', 'validate','table'], function () {
+        let $ = layui.$,
+            form = layui.form,
+            validate = layui.validate,
+            table = layui.table,
+            recipientsLackCode = [[${recipientsLackCode}]];
+
+        form.verify(validate);
+        form.render();
+
+        var tableData= new Array(); // 用于存放表格数据
+        $.ajax({
+            url: 'productionRecipientsLack/query'
+            ,data:{"recipientsCode":recipientsLackCode}
+            ,async:false
+            ,dataType:"json"
+            , success: function(data){
+                tableData=data.replies;
+            }
+        });
+
+        table.render({
+            elem: "#productionRecipientsLack",
+            data:tableData,
+            cols: [
+                [
+                    {field:'number',title:'序号',align:'center',width:60,templet:function (d) {
+                            return d.LAY_INDEX;}},
+                    {field: 'lackDate', title: '日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.lackDate, "yyyy-MM-dd") }}</div>', minWidth: 110, sort: true},
+                    {field: 'lackCode', title: '缺件单号',align:'center', minWidth: 90},
+                    {field: 'lackMaterial',title: '物料名称', minWidth: 55,align:'center'},
+                    {field: 'lackSpecifications',title: '规格型号', minWidth: 55,align:'center'},
+                    {field: 'lackMachine',title: '机床编号', minWidth: 55,align:'center'},
+                    {title: '仓库名称', templet: '#lackWarehouse-method',align:'center',width:90},
+                    {field: 'lackNumber',title: '缺件数量',align:'center', minWidth: 145},
+                    {field: 'lackUnit', title: '单位',align:'center', minWidth: 90},
+                    {field: 'lackRecipients',title: '是否领用', minWidth: 55,align:'center'}
+                ]
+            ]
+        });
+    })
+</script>

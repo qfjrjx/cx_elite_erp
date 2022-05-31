@@ -32,11 +32,11 @@ public interface ProductionPlanMapper extends BaseMapper<ProductionPlan> {
 
     ProductionPlanSchedule productionPlanScheduleId(@Param("id") Long id);
 
-    void deleteProductionPlanSchedule(@Param("planNumber") String planNumber);
+    void deleteProductionPlanSchedule(@Param("planCode") String planCode);
 
     void updateProductionPlan(@Param("productionPlan") ProductionPlan productionPlan);
 
-    void deleteProductionPlan(@Param("planNumber") String planNumber);
+    void deleteProductionPlan(@Param("planCode") String planCode);
 
     void numberProductionPlan(@Param("productionPlan") ProductionPlan productionPlan);
 
@@ -44,7 +44,7 @@ public interface ProductionPlanMapper extends BaseMapper<ProductionPlan> {
 
     ProductionPlan productionPlanId(@Param("id") Long id);
 
-    ProductionPlanSchedule productionPlanPlanNumber(@Param("planNumber") String planNumber);
+    ProductionPlanSchedule productionPlanPlanNumber(@Param("planCode") String planCode);
 
     void saveSetupBomSchedule(SetupBomSchedule setupBomSchedule);
 
@@ -59,4 +59,16 @@ public interface ProductionPlanMapper extends BaseMapper<ProductionPlan> {
     void deleteSetupBomSchedule(@Param("planCode") String planCode);
 
     List<SetupBomSchedule> queryProductionPlanViewBom(@Param("planCode") String planCode);
+
+    ProductionPlan queryProductionPlanMachine();
+
+    ProductionPlan queryPlanMachineBom(@Param("planCode") String planCode);
+
+    IPage<SetupBomSchedule> queryProductionRecipientsAddQuery(Page<ProductionPlan> page,@Param("setupBomSchedule") SetupBomSchedule setupBomSchedule);
+
+    long countProductionRecipientsAddQuery(@Param("setupBomSchedule") SetupBomSchedule setupBomSchedule);
+
+    void updateProductionStatistical(@Param("productionPlan") ProductionPlan productionPlan);
+
+    List<ProductionPlan> productionStatisticalExport(@Param("productionPlan") ProductionPlan productionPlan);
 }

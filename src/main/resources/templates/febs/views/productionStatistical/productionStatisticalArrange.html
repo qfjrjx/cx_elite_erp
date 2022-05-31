@@ -1,0 +1,145 @@
+<style>
+    #productionStatistical-arrange {
+        padding: 20px 25px 25px 0;
+    }
+</style>
+<div class="layui-fluid" id="productionStatistical-arrange">
+    <form class="layui-form" action="" lay-filter="productionStatistical-arrange-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label" >生产负责人：</label>
+            <div class="layui-input-block">
+                <input type="text" name="planHead" id="planHead" ondblclick="productionHead()" lay-verify="required"
+                       autocomplete="off" class="layui-input" placeholder="请双击" readonly>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" >生产预计完成：</label>
+            <div class="layui-input-block">
+                <input type="text" name="planExpectDate" id="planExpectDate"
+                       autocomplete="off" class="layui-input createDate" readonly>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">生产工资：</label>
+            <div class="layui-input-block">
+                <input type="text" name="planWage"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">生产负责人：</label>
+            <div class="layui-input-block">
+                <input type="text" name="planHeadOne"id="planHeadOne" ondblclick="productionHeadOne()"
+                       autocomplete="off" class="layui-input" placeholder="请双击" readonly>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">生产预计完成：</label>
+            <div class="layui-input-block">
+                <input type="text" name="planExpectDateOne" id="planExpectDateOne"
+                       autocomplete="off" class="layui-input createDate" readonly>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">生产工资：</label>
+            <div class="layui-input-block">
+                <input type="text" name="planWageOne"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">生产内容：</label>
+            <div class="layui-input-block">
+                <textarea name="planContent" maxlength="100" class="layui-textarea" placeholder=""></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item" style="display: none;">
+            <label class="layui-form-label">id：</label>
+            <div class="layui-input-block">
+                <textarea name="id" maxlength="100" class="layui-textarea" placeholder=""></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item febs-hide">
+            <button class="layui-btn" lay-submit="" lay-filter="productionStatistical-arrange-form-submit" id="submit"></button>
+        </div>
+    </form>
+</div>
+
+<script data-th-inline="javascript">
+    layui.use(['febs', 'form', 'validate','table', 'xmSelect','upload','laydate'], function () {
+        let $ = layui.$,
+            febs = layui.febs,
+            layer = layui.layer,
+            laydate = layui.laydate,
+            form = layui.form,
+            productionPlan = [[${productionPlan}]],
+            planExpectDate = [[${planExpectDate}]],
+            planExpectDateOne = [[${planExpectDateOne}]],
+            upload = layui.upload,
+            uploadInst;
+
+        initPurchaseRequisitionCreatorValue();
+
+        function initPurchaseRequisitionCreatorValue() {
+            form.val("productionStatistical-arrange-form", {
+                "planExpectDate":planExpectDate,
+                "planExpectDateOne":planExpectDateOne,
+                "planHead":productionPlan.planHead,
+                "planHeadOne":productionPlan.planHeadOne,
+                "planWage":productionPlan.planWage,
+                "planWageOne":productionPlan.planWageOne,
+                "planContent":productionPlan.planContent,
+                "id":productionPlan.id
+            })
+        }
+
+        form.on('submit(productionStatistical-arrange-form-submit)', function (data) {
+            febs.post(ctx + 'productionStatistical/arrange', data.field,function () {
+                layer.closeAll();
+                febs.alert.success('安排生产成功');
+                $('#productionStatistical-list').find('#query').click();
+            });
+            return false;
+
+        });
+
+        //日期同时绑定多个
+        lay('.createDate').each(function(){
+            laydate.render({
+                elem: this
+                ,trigger: 'click'
+            });
+        });
+
+    })
+
+    function productionHead(){
+        layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
+            let $ = layui.$,
+                febs = layui.febs;
+
+            febs.modal.open('生产负责人选择列表', 'production/productionHead', {
+                area:["60%","90%"],
+                yes: function (index, layero) {
+
+                }
+
+            });
+        });
+    }
+
+    function productionHeadOne(){
+        layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
+            let $ = layui.$,
+                febs = layui.febs;
+
+            febs.modal.open('生产负责人选择列表', 'production/productionHeadOne', {
+                area:["60%","90%"],
+                yes: function (index, layero) {
+
+                }
+
+            });
+        });
+    }
+</script>

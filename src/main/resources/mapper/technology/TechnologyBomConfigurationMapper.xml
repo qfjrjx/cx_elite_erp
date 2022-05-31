@@ -114,7 +114,8 @@
             parameter_note,
             parameter_date,
             parameter_material_code,
-            parameter_location
+            parameter_location,
+            parameter_quality
         )
         VALUES
             (
@@ -129,7 +130,8 @@
                 #{parameterNote},
                 #{parameterDate},
                 #{parameterMaterialCode},
-                #{parameterLocation}
+                #{parameterLocation},
+                #{parameterQuality}
             )
     </insert>
 
@@ -160,7 +162,8 @@
             tbcs.parameter_replace,
             tbcs.parameter_note,
             tbcs.parameter_material_code,
-            tbcs.parameter_location
+            tbcs.parameter_location,
+            tbcs.parameter_quality
         FROM
             jr_technology_bom_configuration_schedule tbcs
         WHERE

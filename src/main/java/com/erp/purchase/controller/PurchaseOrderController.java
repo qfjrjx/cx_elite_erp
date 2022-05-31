@@ -91,15 +91,15 @@ public class PurchaseOrderController extends BaseController {
 
     /**
      * 价格变动导出
-     * @param queryRequest
+     * @param
      * @param purchaseOrder
      * @param response
      */
     @ControllerEndpoint(operation = "导出purchasePriceChanges", exceptionMessage = "导出Excel失败")
     @GetMapping("purchasePriceChanges/excel")
     @RequiresPermissions("purchasePriceChanges:export")
-    public void export(QueryRequest queryRequest, PurchaseOrder purchaseOrder, HttpServletResponse response) {
-        List<PurchaseOrder> purchaseOrders = this.purchaseOrderService.findPurchasePriceChanges(queryRequest, purchaseOrder).getRecords();
+    public void export(PurchaseOrder purchaseOrder, HttpServletResponse response) {
+        List<PurchaseOrder> purchaseOrders = this.purchaseOrderService.purchasePriceChangesExport(purchaseOrder);
         ExcelKit.$Export(PurchaseOrder.class, response).downXlsx(purchaseOrders, false);
     }
 

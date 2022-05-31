@@ -32,6 +32,15 @@
         <if test="productionPlan.planSpecifications != null and productionPlan.planSpecifications != ''">
             AND pp.plan_specifications = #{productionPlan.planSpecifications}
         </if>
+        <if test="productionPlan.planHead != null and productionPlan.planHead != ''">
+            AND pp.plan_head = #{productionPlan.planHead} or pp.plan_head_one = #{productionPlan.planHead}
+        </if>
+        <if test="productionPlan.signedDateFromOne != null and productionPlan.signedDateFromOne !=''">
+            And pp.plan_actual_date &gt;= #{productionPlan.signedDateFromOne} or pp.plan_actual_date_one &gt;= #{productionPlan.signedDateFromOne}
+        </if>
+        <if test="productionPlan.signedDateToOne != null and productionPlan.signedDateToOne !=''">
+            And pp.plan_actual_date &lt;= #{productionPlan.signedDateToOne} or pp.plan_actual_date_one &gt;= #{productionPlan.signedDateFromOne}
+        </if>
     </sql>
 
     <sql id="findProductionPlansPageSql" >
@@ -55,16 +64,29 @@
             pp.plan_instructions_three,
             pp.plan_voucher,
             pp.plan_voucher_date,
-            pp.plan_note
+            pp.plan_note,
+            pp.plan_money,
+            pp.plan_head,
+            pp.plan_expect_date,
+            pp.plan_actual_date,
+            pp.plan_wage,
+            pp.plan_head_one,
+            pp.plan_expect_date_one,
+            pp.plan_actual_date_one,
+            pp.plan_wage_one,
+            pp.plan_content,
+            pp.plan_unit,
+            pps.plan_amount
         FROM
             jr_production_plan pp
+        LEFT JOIN jr_production_plan_schedule pps ON pp.plan_code = pps.plan_code
         WHERE
             1 = 1
         <if test="productionPlan.signedDateFrom != null and productionPlan.signedDateFrom !=''">
-            And pp.plan_voucher_date &gt;= #{productionPlan.signedDateFrom}
+            And pp.plan_date &gt;= #{productionPlan.signedDateFrom}
         </if>
         <if test="productionPlan.signedDateTo != null and productionPlan.signedDateTo !=''">
-            And pp.plan_voucher_date &lt;= #{productionPlan.signedDateTo}
+            And pp.plan_date &lt;= #{productionPlan.signedDateTo}
         </if>
         <if test="productionPlan.planState != null and productionPlan.planState != ''">
             AND pp.plan_state = #{productionPlan.planState}
@@ -84,8 +106,51 @@
         <if test="productionPlan.planSpecifications != null and productionPlan.planSpecifications != ''">
             AND pp.plan_specifications = #{productionPlan.planSpecifications}
         </if>
-        GROUP BY
-            pp.plan_number
+        <if test="productionPlan.planHead != null and productionPlan.planHead != ''">
+            AND pp.plan_head = #{productionPlan.planHead} or pp.plan_head_one = #{productionPlan.planHead}
+        </if>
+        <if test="productionPlan.signedDateFromOne != null and productionPlan.signedDateFromOne !=''">
+            And pp.plan_actual_date &gt;= #{productionPlan.signedDateFromOne} or pp.plan_actual_date_one &gt;= #{productionPlan.signedDateFromOne}
+        </if>
+        <if test="productionPlan.signedDateToOne != null and productionPlan.signedDateToOne !=''">
+            And pp.plan_actual_date &lt;= #{productionPlan.signedDateToOne} or pp.plan_actual_date_one &gt;= #{productionPlan.signedDateFromOne}
+        </if>
+    </sql>
+
+    <sql id="queryProductionRecipientsAddQuerySql">
+        SELECT
+            sb.plan_number,
+            sb.bom_part,
+            sb.bom_configuration,
+            sb.bom_code,
+            pp.plan_product_name,
+            sbs.bom_material_name,
+            sbs.bom_specifications,
+            sbs.bom_unit,
+            sbs.bom_amount,
+            sbs.bom_material,
+            sbs.bom_note,
+            sb.tree_id,
+            sbs.tree_secondary_id,
+            sbs.plan_quality,
+            sbs.bom_brand,
+            sbs.bom_location,
+            sbs.bom_material_code
+        FROM
+            jr_production_plan pp
+        LEFT JOIN jr_setup_bom sb ON pp.plan_code = sb.plan_number
+        LEFT JOIN jr_setup_bom_schedule sbs ON sb.plan_number = sbs.plan_number
+        WHERE
+            sbs.plan_number = #{setupBomSchedule.planNumber}
+    </sql>
+
+    <sql id="countProductionRecipientsAddQuerySql">
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_setup_bom_schedule sbs
+        WHERE
+            1 = 1
     </sql>
 
     <select id="countProductionPlans" parameterType="com.erp.production.entity.ProductionPlan" resultType="long">
@@ -96,13 +161,90 @@
         <include refid="findProductionPlansPageSql"/>
     </select>
 
+    <select id="queryProductionRecipientsAddQuery" parameterType="com.erp.production.entity.SetupBomSchedule" resultType="com.erp.production.entity.SetupBomSchedule">
+        <include refid="queryProductionRecipientsAddQuerySql"/>
+    </select>
+
+    <select id="countProductionRecipientsAddQuery" parameterType="com.erp.production.entity.SetupBomSchedule" resultType="long">
+        <include refid="countProductionRecipientsAddQuerySql"/>
+    </select>
+
+    <select id="productionStatisticalExport" parameterType="com.erp.production.entity.ProductionPlan" resultType="com.erp.production.entity.ProductionPlan">
+        SELECT
+            pp.id,
+            pp.plan_state,
+            pp.plan_date,
+            pp.plan_number,
+            pp.plan_customer_name,
+            pp.plan_product_name,
+            pp.plan_specifications,
+            pp.plan_code,
+            pp.plan_configuration,
+            pp.plan_machine_bom,
+            pp.plan_invoice,
+            pp.plan_factory,
+            pp.plan_machining,
+            pp.plan_assembly,
+            pp.plan_instructions_one,
+            pp.plan_instructions_two,
+            pp.plan_instructions_three,
+            pp.plan_voucher,
+            pp.plan_voucher_date,
+            pp.plan_note,
+            pp.plan_money,
+            pp.plan_head,
+            pp.plan_expect_date,
+            pp.plan_actual_date,
+            pp.plan_wage,
+            pp.plan_head_one,
+            pp.plan_expect_date_one,
+            pp.plan_actual_date_one,
+            pp.plan_wage_one,
+            pp.plan_content,
+            pp.plan_unit,
+            pps.plan_amount
+        FROM
+            jr_production_plan pp
+        LEFT JOIN jr_production_plan_schedule pps ON pp.plan_code = pps.plan_code
+        WHERE
+            1 = 1
+        <if test="productionPlan.signedDateFrom != null and productionPlan.signedDateFrom !=''">
+            And pp.plan_date &gt;= #{productionPlan.signedDateFrom}
+        </if>
+        <if test="productionPlan.signedDateTo != null and productionPlan.signedDateTo !=''">
+            And pp.plan_date &lt;= #{productionPlan.signedDateTo}
+        </if>
+        <if test="productionPlan.planState != null and productionPlan.planState != ''">
+            AND pp.plan_state = #{productionPlan.planState}
+        </if>
+        <if test="productionPlan.planCustomerName != null and productionPlan.planCustomerName != ''">
+            AND pp.plan_customer_name = #{productionPlan.planCustomerName}
+        </if>
+        <if test="productionPlan.planNumber != null and productionPlan.planNumber != ''">
+            AND pp.plan_number = #{productionPlan.planNumber}
+        </if>
+        <if test="productionPlan.planCode != null and productionPlan.planCode != ''">
+            AND pp.plan_code = #{productionPlan.planCode}
+        </if>
+        <if test="productionPlan.planProductName != null and productionPlan.planProductName != ''">
+            AND pp.plan_product_name = #{productionPlan.planProductName}
+        </if>
+        <if test="productionPlan.planSpecifications != null and productionPlan.planSpecifications != ''">
+            AND pp.plan_specifications = #{productionPlan.planSpecifications}
+        </if>
+        <if test="productionPlan.planHead != null and productionPlan.planHead != ''">
+            AND pp.plan_head = #{productionPlan.planHead} or pp.plan_head_one = #{productionPlan.planHead}
+        </if>
+    </select>
+
     <select id="queryProductionPlan" resultType="com.erp.production.entity.ProductionPlan">
         SELECT
             pp.id,
             pp.plan_state,
             pp.plan_date,
             pp.plan_number,
-            pp.plan_code
+            pp.plan_code,
+            pp.plan_machine_bom
         FROM
             jr_production_plan pp
         WHERE
@@ -129,7 +271,8 @@
             plan_note,
             plan_attachment,
             plan_number,
-            plan_date
+            plan_date,
+            plan_code
         )
         VALUES
             (
@@ -146,7 +289,8 @@
                 #{planNote},
                 #{planAttachment},
                 #{planNumber},
-                #{planDate}
+                #{planDate},
+                #{planCode}
             )
     </insert>
 
@@ -163,7 +307,10 @@
             plan_voucher,
             plan_voucher_date,
             plan_code,
-            plan_configuration
+            plan_configuration,
+            plan_note,
+            plan_money,
+            plan_unit
         )
         VALUES
             (
@@ -176,7 +323,10 @@
                 #{planVoucher},
                 #{planVoucherDate},
                 #{planCode},
-                #{planConfiguration}
+                #{planConfiguration},
+                #{planNote},
+                #{planMoney},
+                #{planUnit}
             )
     </insert>
 
@@ -202,18 +352,18 @@
             pp.plan_code
         FROM
             jr_production_plan pp
-                LEFT JOIN jr_production_plan_schedule pps ON pp.plan_number = pps.plan_number
+                LEFT JOIN jr_production_plan_schedule pps ON pp.plan_code = pps.plan_code
         WHERE
             1=1
         AND pp.id = #{id}
     </select>
 
     <delete id="deleteProductionPlanSchedule">
-        delete from jr_production_plan_schedule  where plan_number = #{planNumber}
+        delete from jr_production_plan_schedule  where plan_code = #{planCode}
     </delete>
 
     <delete id="deleteProductionPlan">
-        delete from jr_production_plan  where plan_number = #{planNumber}
+        delete from jr_production_plan  where plan_code = #{planCode}
     </delete>
 
     <update id="updateProductionPlan"  parameterType="com.erp.production.entity.ProductionPlan">
@@ -248,7 +398,14 @@
             pp.plan_assembly,
             pp.plan_instructions_one,
             pp.plan_instructions_two,
-            pp.plan_instructions_three
+            pp.plan_instructions_three,
+            pp.plan_head,
+            pp.plan_expect_date,
+            pp.plan_wage,
+            pp.plan_head_one,
+            pp.plan_expect_date_one,
+            pp.plan_wage_one,
+            pp.plan_content
         FROM
             jr_production_plan pp
         WHERE
@@ -275,10 +432,10 @@
             pp.plan_number
         FROM
             jr_production_plan pp
-                LEFT JOIN jr_production_plan_schedule pps ON pp.plan_number = pps.plan_number
+                LEFT JOIN jr_production_plan_schedule pps ON pp.plan_code = pps.plan_code
         WHERE
             1=1
-          AND pp.plan_number = #{planNumber}
+          AND pp.plan_code = #{planCode}
     </select>
 
     <insert id="saveSetupBomSchedule" parameterType="com.erp.production.entity.SetupBomSchedule">
@@ -297,7 +454,9 @@
             plan_number,
             bom_unit,
             bom_location,
-            tree_secondary_id
+            tree_secondary_id,
+            plan_machine_bom,
+            plan_quality
         )
         VALUES
             (
@@ -313,7 +472,9 @@
                 #{planNumber},
                 #{bomUnit},
                 #{bomLocation},
-                #{treeSecondaryId}
+                #{treeSecondaryId},
+                #{planMachineBom},
+                #{planQuality}
             )
     </insert>
 
@@ -340,7 +501,7 @@
     <update id="updatePlanMachineBom"  parameterType="com.erp.production.entity.ProductionPlan">
         UPDATE
             jr_production_plan
-        set plan_machine_bom= #{productionPlan.planMachineBom}
+        set plan_machine_bom= #{productionPlan.planMachineBom},plan_machine_bom_date= #{productionPlan.planMachineBomDate}
         WHERE plan_code=#{productionPlan.planCode}
     </update>
 
@@ -386,5 +547,41 @@
         WHERE
             sbs.plan_number = #{planCode}
     </select>
+
+    <select id="queryPlanMachineBom" parameterType="String" resultType="com.erp.production.entity.ProductionPlan">
+        SELECT
+            pp.plan_machine_bom
+        FROM
+            jr_production_plan pp
+        WHERE
+            1=1
+          AND pp.plan_code = #{planCode}
+    </select>
+
+    <select id="queryProductionPlanMachine" resultType="com.erp.production.entity.ProductionPlan">
+        SELECT
+            pp.id,
+            pp.plan_state,
+            pp.plan_date,
+            pp.plan_number,
+            pp.plan_code,
+            pp.plan_machine_bom
+        FROM
+            jr_production_plan pp
+        WHERE
+            1 = 1
+        ORDER BY
+            pp.plan_machine_bom_date DESC
+            LIMIT 1
+    </select>
+
+    <update id="updateProductionStatistical"  parameterType="com.erp.production.entity.ProductionPlan">
+        UPDATE
+            jr_production_plan
+        set plan_head= #{productionPlan.planHead},plan_expect_date= #{productionPlan.planExpectDate},plan_actual_date= #{productionPlan.planActualDate},
+            plan_wage= #{productionPlan.planWage},plan_head_one= #{productionPlan.planHeadOne},plan_expect_date_one= #{productionPlan.planExpectDateOne},
+            plan_actual_date_one= #{productionPlan.planActualDateOne},plan_wage_one= #{productionPlan.planWageOne},plan_content= #{productionPlan.planContent}
+        WHERE id=#{productionPlan.id}
+    </update>
 
 </mapper>
