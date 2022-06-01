@@ -584,4 +584,11 @@
         WHERE id=#{productionPlan.id}
     </update>
 
+    <update id="shipmentProductionPlan"  parameterType="com.erp.production.entity.ProductionPlan">
+        UPDATE
+            jr_production_plan
+        set plan_invoice= #{productionPlan.planInvoice}
+        WHERE plan_number=#{productionPlan.planNumber}
+    </update>
+
 </mapper>

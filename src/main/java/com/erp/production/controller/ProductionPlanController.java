@@ -107,6 +107,15 @@ public class ProductionPlanController extends BaseController {
         return new FebsResponse().success();
     }
 
+    //关联出货
+    @PostMapping("productionPlan/shipment")
+    @ResponseBody
+    @RequiresPermissions("productionPlan:shipment")
+    public FebsResponse shipmentProductionPlan(@Valid ProductionPlan productionPlan){
+        this.productionPlanService.shipmentProductionPlan(productionPlan);
+        return new FebsResponse().success();
+    }
+
     //附件上传
     @PostMapping("productionPlan/upload")
     @ResponseBody

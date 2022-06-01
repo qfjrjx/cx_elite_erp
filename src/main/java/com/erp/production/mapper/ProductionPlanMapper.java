@@ -71,4 +71,6 @@ public interface ProductionPlanMapper extends BaseMapper<ProductionPlan> {
     void updateProductionStatistical(@Param("productionPlan") ProductionPlan productionPlan);
 
     List<ProductionPlan> productionStatisticalExport(@Param("productionPlan") ProductionPlan productionPlan);
+
+    void shipmentProductionPlan(@Param("productionPlan") ProductionPlan productionPlan);
 }

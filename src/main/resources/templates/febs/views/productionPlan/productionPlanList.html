@@ -175,6 +175,7 @@
             $addBOM = $view.find('#addBOM'),
             $updateBOM = $view.find('#updateBOM'),
             $numberTo = $view.find('#numberTo'),
+            $shipmentTo = $view.find('#shipmentTo'),
             $uploadTo = $view.find('#uploadTo'),
             $reset = $view.find('#reset'),
             $searchForm = $view.find('form'),
@@ -303,6 +304,30 @@
                         area:["30%","20%"],
                         yes: function (index, layero) {
                             $('#productionPlan-number').find('#submit').trigger('click');
+                            return false;
+                        },
+                        btn2: function () {
+                            layer.closeAll();
+                        }
+                    });
+                });
+            }
+        });
+
+        $shipmentTo.on('click', function () {
+            let checkStatus = table.checkStatus('productionPlanTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要关联的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要关联的数据');
+            }else {
+                layui.each(checkStatus.data, function (key, item) {
+                    febs.modal.open('【关联发货】', 'production/productionPlan/shipment/' + item.id, {
+                        type: 1,
+                        btn: ['确定', '取消'],
+                        area:["30%","20%"],
+                        yes: function (index, layero) {
+                            $('#productionPlan-shipment').find('#submit').trigger('click');
                             return false;
                         },
                         btn2: function () {

@@ -80,4 +80,6 @@ public interface IProductionPlanService extends IService<ProductionPlan> {
     void updateProductionStatistical(ProductionPlan productionPlan);
 
     List<ProductionPlan> productionStatisticalExport(ProductionPlan productionPlan);
+
+    void shipmentProductionPlan(ProductionPlan productionPlan);
 }

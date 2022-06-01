@@ -74,11 +74,32 @@ public class ViewController {
         }
     }
 
+    //出厂编号
     @GetMapping("productionPlan/number/{id}")
     @RequiresPermissions("productionPlan:number")
     public String productionPlanNumber(@PathVariable Long id, Model model) throws ParseException {
         productionPlanModel(id, model, false);
         return FebsUtil.view("productionPlan/productionPlanNumber");
+    }
+
+    //关联出货
+    @GetMapping("productionPlan/shipment/{id}")
+    @RequiresPermissions("productionPlan:shipment")
+    public String productionPlanShipment(@PathVariable Long id, Model model) throws ParseException {
+        productionPlanModel(id, model, false);
+        return FebsUtil.view("productionPlan/productionPlanShipment");
+    }
+
+    //销售发货查询
+    @GetMapping("saleProductionPlanShipmentList")
+    public String saleProductionPlanShipmentList(){
+        return FebsUtil.view("productionPlan/saleProductionPlanShipmentList");
+    }
+
+    //客户查询
+    @GetMapping("productionPlanShipmentCustomerNameList")
+    public String productionPlanShipmentCustomerNameList(){
+        return FebsUtil.view("productionPlan/productionPlanShipmentCustomerNameList");
     }
 
     //附件上传

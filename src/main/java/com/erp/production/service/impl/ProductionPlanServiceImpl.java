@@ -418,4 +418,9 @@ public class ProductionPlanServiceImpl extends ServiceImpl<ProductionPlanMapper,
     public List<ProductionPlan> productionStatisticalExport(ProductionPlan productionPlan) {
         return baseMapper.productionStatisticalExport(productionPlan);
     }
+
+    @Override
+    public void shipmentProductionPlan(ProductionPlan productionPlan) {
+        baseMapper.shipmentProductionPlan(productionPlan);
+    }
 }

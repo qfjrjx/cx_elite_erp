@@ -1,0 +1,193 @@
+<style>
+    #febs-saleProductionPlanShipment xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #febs-saleProductionPlanShipment xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="febs-saleProductionPlanShipment" lay-title="发货订单选择列表">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="shipment-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md11">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-mid" >销售客户&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 90px">
+                                            <input type="text" name="customerName" lay-verify="required"  id="customerNameOne" lay-reqtext="系统提示，请选择客户"  ondblclick="productionPlanShipmentCustomerNameList()"
+                                                   autocomplete="off" class="layui-input" style="width: 90px" placeholder="请双击" readonly>
+                                        </div>
+                                        <label class="layui-form-mid" >产品名称&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 90px">
+                                            <input type="text" name="productName" autocomplete="off" style="width: 90px" class="layui-input" >
+                                        </div>
+                                        <label class="layui-form-mid" >规格型号&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 90px">
+                                            <input type="text" name="specificationModel" autocomplete="off" style="width: 90px" class="layui-input" >
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-col-md1 layui-col-sm12 layui-col-xs12 table-action-area">
+                                <!--搜索按钮-->
+                                <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                                    <i class="layui-icon">&#xe848;</i>查询
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="saleProductionPlanShipmentTable" lay-data="{id: 'saleProductionPlanShipmentTable'}"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+            laydate = layui.laydate,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            dropdownMenu = layui.dropdownMenu,
+            $view = $('#febs-saleProductionPlanShipment'),
+            $query = $view.find('#query'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'createTime', type: null},
+            createdDateFrom,
+            createdDateTo,
+            tableIns;
+
+        form.render();
+
+        initTable();
+
+        //日期同时绑定多个
+        lay('.createTime').each(function(){
+            laydate.render({
+                elem: this,
+                range: true,
+                trigger: 'click'
+            });
+        })
+        dropdownMenu.render({
+            elem: $view.find('.action-more'),
+            click: function (name, elem, event) {
+                let checkStatus = table.checkStatus('saleProductionPlanShipmentTable');
+            },
+            options: []
+        });
+
+        table.on('sort(saleProductionPlanShipmentTable)', function (obj) {
+            sortObject = obj;
+            tableIns.reload({
+                initSort: obj,
+                where: $.extend(getQueryParams(), {
+                    field: obj.field,
+                    order: obj.type
+                })
+            });
+        });
+
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        function initTable() {
+            tableIns = febs.table.init({
+                elem: $view.find('table'),
+                id: 'saleProductionPlanShipmentTable',
+                url: ctx + 'saleDeliveryNotice/list',
+                cols: [[
+                    {field: 'shipmentNo', title: '发货单号',align:'center', minWidth: 150},
+                    {field: 'customerName', title: '销售客户', align:'center',minWidth: 200},
+                    {field: 'productName', title: '产品名称',align:'center', minWidth: 90},
+                    {field: 'specificationModel', title: '规格型号',align:'center', minWidth: 100},
+                    {field: 'machineConfiguration', title: '配置', minWidth: 100, templet: dispose},
+                    {field: 'thisShipment', title: '发货数量', align:'center',minWidth: 200},
+                    {field: 'unitPrice', title: '单价',align:'center', minWidth: 100},
+                    {field: 'unitPrice', title: '金额', minWidth: 100,align:'center',
+                        templet: function (data) {
+                            var price = data.thisShipment*parseFloat(data.unitPrice).toFixed(2); //设置小数点后个数
+                            return price;
+                        }},
+                    {field: 'currencyName', title: '币种', align:'center',minWidth: 200},
+                    {field: 'orderNumber', title: '订单号',align:'center', minWidth: 150},
+                    {field: 'contactsName', title: '联系人',align:'center', minWidth: 100},
+                    {field: 'contactNumber', title: '联系电话',align:'center', minWidth: 90},
+                    {field: 'receivingAddress', title: '收货地址', align:'center',minWidth: 95}
+                ]],done: function(res, curr, count){
+                    $('#febs-saleProductionPlanShipment').find('.layui-table-body').find("table" ).find("tbody").children("tr").on('dblclick',function(){
+                        var id = JSON.stringify($('#febs-saleProductionPlanShipment').find('.layui-table-body').find("table" ).find("tbody").find(".layui-table-hover").data('index'));
+                        var obj = res.data[id];
+                        //单位
+                        var shipmentNoOne = obj.shipmentNo;
+                        $("#shipmentNoOne").val(shipmentNoOne);
+                        parent.layer.close(layer.index)
+                    })
+                }
+            });
+        }
+
+        table.on('tool(saleProductionPlanShipmentTable)', function (obj) {
+            let data = obj.data,
+                layEvent = obj.event;
+            if (layEvent === 'see') {
+                febs.modal.view(data.specificationModel, 'sale/saleDeliveryNotice/detail/' + data.orderScheduleId, {
+                    btn: ['关闭'],
+                    area: $(window).width() <= 750 ? '95%' : '50%',
+                    yes: function (index, layero) {
+                        layer.closeAll();
+                    }
+                });
+            }
+
+        });
+
+        function dispose(d) {
+            var dispose = d.machineConfiguration;
+            if ('' == dispose || null == dispose || undefined == dispose) {
+                return '';
+            }
+            if (dispose.length > 0) {
+                return '<a class="layui-table-link" href="javascript:void(0);" lay-event="see">查看</a>&nbsp;' + d.machineConfiguration +' ';
+            }
+        }
+
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            let signedTime = params.signedTime;
+            if (signedTime) {
+                createdDateFrom = signedTime.split(' - ')[0];
+                createdDateTo = signedTime.split(' - ')[1];
+            }
+            params.createdDateFrom = createdDateFrom;
+            params.createdDateTo = createdDateTo;
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+
+    })
+
+    function productionPlanShipmentCustomerNameList(){
+        layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
+            let $ = layui.$,
+                febs = layui.febs;
+
+            febs.modal.open('客户选择列表', 'production/productionPlanShipmentCustomerNameList', {
+                area:["75%","70%"],
+                yes: function (index, layero) {
+                }
+
+            });
+        });
+    }
+
+</script>

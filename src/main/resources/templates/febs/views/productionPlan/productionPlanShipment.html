@@ -1,0 +1,70 @@
+<style>
+  #productionPlan-shipment {
+    padding: 20px 25px 25px 0;
+  }
+</style>
+<div class="layui-fluid" id="productionPlan-shipment">
+  <form class="layui-form" action="" lay-filter="productionPlan-shipment-form">
+    <div class="layui-form-item">
+      <label class="layui-input-block" style="width: 150px">请输入出厂编号：</label>
+      <div class="layui-input-block" style="width: 300px">
+        <input type="text" name="planInvoice" lay-verify="required"  id="shipmentNoOne" lay-reqtext="系统提示，请选择客户"  ondblclick="saleProductionPlanShipmentList()"
+               autocomplete="off" class="layui-input" style="width: 110px" placeholder="请双击" readonly>
+      </div>
+    </div>
+    <div class="layui-form-item" style="display: none;">
+      <label class="layui-form-label">订单号：</label>
+      <div class="layui-input-block">
+        <input type="text" name="planNumber" id="planNumber"
+               autocomplete="off" class="layui-input" placeholder="">
+      </div>
+    </div>
+    <div class="layui-form-item febs-hide">
+      <button class="layui-btn" lay-submit="" lay-filter="productionPlan-shipment-form-submit" id="submit"></button>
+    </div>
+  </form>
+</div>
+<script data-th-inline="javascript">
+  layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
+    let $ = layui.$,
+            febs = layui.febs,
+            layer = layui.layer,
+            form = layui.form,
+            productionPlanSchedule = [[${productionPlanSchedule}]],
+            validate = layui.validate;
+
+    form.verify(validate);
+    form.render();
+
+    initPurchaseRequisitionCreatorValue();
+
+    function initPurchaseRequisitionCreatorValue() {
+      form.val("productionPlan-shipment-form", {
+        "planNumber": productionPlanSchedule.planNumber,
+      });
+    }
+
+    form.on('submit(productionPlan-shipment-form-submit)', function (data) {
+      febs.post(ctx + 'productionPlan/shipment', data.field, function () {
+        layer.closeAll();
+        febs.alert.success('新增关联出货成功');
+        $('#productionPlan-list').find('#query').click();
+      });
+      return false;
+
+    });
+  })
+  function saleProductionPlanShipmentList(){
+    layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
+      let $ = layui.$,
+              febs = layui.febs;
+
+      febs.modal.open('发货订单选择列表', 'production/saleProductionPlanShipmentList', {
+        area:["75%","70%"],
+        yes: function (index, layero) {
+        }
+
+      });
+    });
+  }
+</script>
