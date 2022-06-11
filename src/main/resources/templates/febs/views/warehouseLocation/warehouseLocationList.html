@@ -1,0 +1,217 @@
+<style>
+    #warehouse-location xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #warehouse-location xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="warehouse-location" lay-title="库房区位">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="warehouse-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md8">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label layui-form-label-sm">状态</label>
+                                        <div class="layui-input-inline">
+                                            <select name="locationState">
+                                                <option value=""></option>
+                                                <option value="1">启用</option>
+                                                <option value="2">禁用</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label layui-form-label-sm">库房编码</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="locationCode" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-label layui-form-label-sm">库房名称</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="locationName" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="warehouseLocationTable" lay-data="{id: 'warehouseLocationTable'}"></table>
+                    <div class="layui-col-md6">
+                        <div class="layui-form-item"></div>
+                    </div>
+                    <div class="layui-col-md6 layui-col-sm12 layui-col-xs12 table-action-area">
+                        <!--搜索按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                            <i class="layui-icon">&#xe848;</i>查询
+                        </div>
+                        <!-- 刷新表格按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain table-action" id="reset">
+                            <i class="layui-icon">&#xe79b;</i>刷新
+                        </div>
+                        <!--添加按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
+                                     "shiro:hasAnyPermissions="warehouseLocation:add" id="addTo">
+                            <i class="layui-icon">&#xe78a;</i>新增
+                        </div>
+                        <!--修改按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="warehouseLocation:update" id="updateTo">
+                            <i class="layui-icon">&#xe642;</i>修改
+                        </div>
+                        <!--删除按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
+                                     "shiro:hasAnyPermissions="warehouseLocation:delete" id="deleteTo">
+                            <i class="layui-icon">&#xe8a1;</i>删除
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="location-state">
+    {{#
+    let locationState = {
+    1: {title: '启用', color: 'green'},
+    2: {title: '禁用', color: 'volcano'}
+    }[d.locationState];
+    }}
+    <span class="layui-badge febs-bg-{{locationState.color}}">{{ locationState.title }}</span>
+</script>
+<script type="text/html" id="location-type">
+    {{#
+    let locationType = {
+    1: {title: '物料'},
+    2: {title: '成品'},
+    3: {title: '原料'},
+    4: {title: '资产'}
+    }[d.locationType];
+    }}
+    <span>{{ locationType.title }}</span>
+</script>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['jquery', 'form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            $view = $('#warehouse-location'),
+            $query = $view.find('#query'),
+            $addTo = $view.find('#addTo'),
+            $updateTo = $view.find('#updateTo'),
+            $deleteTo = $view.find('#deleteTo'),
+            $reset = $view.find('#reset'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'createTime', type: null},
+            tableIns;
+
+        form.render();
+
+        initPurchaseParametersTable();
+
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        $reset.on('click', function () {
+            $searchForm[0].reset();
+            tableIns.reload({where: getQueryParams(), page: {curr: 1}});
+        });
+
+        $addTo.on('click', function () {
+            febs.modal.open('【库房区位】新增', 'warehouse/warehouseLocation/add', {
+                type:1,
+                btn: ['保存', '关闭'],
+                area: $(window).width() <= 750 ? '95%' : '50%',
+                yes: function (index, layero) {
+                    $('#warehouseLocation-add').find('#submit').trigger('click');
+                    return false;
+                },
+                btn2: function () {
+                    layer.closeAll();
+                }
+            });
+        });
+
+        $updateTo.on('click', function () {
+            let checkStatus = table.checkStatus('warehouseLocationTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要修改的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要修改的数据');
+            }else{
+                layui.each(checkStatus.data, function (key, item) {
+                    febs.modal.open('【库房区位】 修改', 'warehouse/warehouseLocation/update/' + item.id, {
+                        area: $(window).width() <= 750 ? '95%' : '50%',
+                        btn: ['保存', '关闭'],
+                        yes: function (index, layero) {
+                            $('#warehouseLocation-update').find('#submit').trigger('click');
+                            return false;
+                        },
+                        btn2: function () {
+                            layer.closeAll();
+                        }
+                    });
+                });
+            }
+        });
+
+        $deleteTo.on('click', function () {
+            let checkStatus = table.checkStatus('warehouseLocationTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要删除的数据');
+            } else {
+                febs.modal.confirm('删除库房区位', '确定删除？', function () {
+                    let ids = [];
+                    layui.each(checkStatus.data, function (key, item) {
+                        ids.push(item.id)
+                    });
+                    deleteWarehouseLocation(ids.join(','));
+                });
+            }
+        });
+
+        function initPurchaseParametersTable() {
+            tableIns = febs.table.init({
+                elem: $view.find('table'),
+                id: 'warehouseLocationTable',
+                url: ctx + 'warehouseLocation/list',
+                cols: [[
+                    {type: 'checkbox'},
+                    {field:'number',title:'序列号',align:'center',width:100,templet:function (d) {
+                            return d.LAY_INDEX;}},
+                    {title: '状态', templet: '#location-state',align:'center'},
+                    {title: '库房类型', templet: '#location-type',align:'center'},
+                    {field: 'locationName', title: '库房名称', minWidth: 100,align:'center'},
+                    {field: 'locationSorting', title: '排序', minWidth: 100,align:'center'},
+                    {field: 'locationNote', title: '备注', minWidth: 100,align:'center'},
+                    {field: 'locationCreate', title: '创建人', minWidth: 100,align:'center'},
+                    {field: 'locationCreateDate', title: '创建时间',align:'center',templet:'<div>{{ layui.util.toDateString(d.locationCreateDate, "yyyy-MM-dd HH:mm:ss") }}</div>', minWidth: 170, sort: true}
+
+                ]]
+            });
+        }
+
+        function deleteWarehouseLocation(ids) {
+            febs.get(ctx + 'warehouseLocation/delete/' + ids, null, function () {
+                febs.alert.success('删除库房区位成功');
+                $query.click();
+            });
+        }
+
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+    })
+</script>

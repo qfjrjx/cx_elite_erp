@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.warehouse.mapper.WarehouseLocationMapper">
+    <sql id="countWarehouseLocationsSql">
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_warehouse_location wl
+        WHERE
+            1 = 1
+        <if test="warehouseLocation.locationState != null and warehouseLocation.locationState != ''">
+            AND wl.location_state = #{warehouseLocation.locationState}
+        </if>
+        <if test="warehouseLocation.locationCode != null and warehouseLocation.locationCode != ''">
+            AND wl.location_code = #{warehouseLocation.locationCode}
+        </if>
+        <if test="warehouseLocation.locationName != null and warehouseLocation.locationName != ''">
+            AND wl.location_name = #{warehouseLocation.locationName}
+        </if>
+    </sql>
+
+    <sql id="findWarehouseLocationsPageSql">
+        SELECT
+            wl.id,
+            wl.location_state,
+            wl.location_type,
+            wl.location_name,
+            wl.location_sorting,
+            wl.location_note,
+            wl.location_create,
+            wl.location_create_date,
+            wl.location_code
+        FROM
+            jr_warehouse_location wl
+        WHERE
+            1 = 1
+        <if test="warehouseLocation.locationState != null and warehouseLocation.locationState != ''">
+            AND wl.location_state = #{warehouseLocation.locationState}
+        </if>
+        <if test="warehouseLocation.locationCode != null and warehouseLocation.locationCode != ''">
+            AND wl.location_code = #{warehouseLocation.locationCode}
+        </if>
+        <if test="warehouseLocation.locationName != null and warehouseLocation.locationName != ''">
+            AND wl.location_name = #{warehouseLocation.locationName}
+        </if>
+    </sql>
+
+    <select id="countWarehouseLocations" parameterType="com.erp.warehouse.entity.WarehouseLocation" resultType="long">
+        <include refid="countWarehouseLocationsSql"/>
+    </select>
+
+    <select id="findWarehouseLocationsPage" parameterType="com.erp.warehouse.entity.WarehouseLocation" resultType="com.erp.warehouse.entity.WarehouseLocation">
+        <include refid="findWarehouseLocationsPageSql"/>
+    </select>
+
+    <select id="queryWarehouseLocation" resultType="com.erp.warehouse.entity.WarehouseLocation">
+        SELECT
+            wl.id,
+            wl.location_state,
+            wl.location_type,
+            wl.location_name,
+            wl.location_sorting,
+            wl.location_note,
+            wl.location_create,
+            wl.location_create_date,
+            wl.location_code
+        FROM
+            jr_warehouse_location wl
+        WHERE
+            1 = 1
+        ORDER BY
+            wl.location_create_date DESC
+            LIMIT 1
+    </select>
+
+    <insert id="saveWarehouseLocation" parameterType="com.erp.warehouse.entity.WarehouseLocation">
+        INSERT INTO
+            jr_warehouse_location
+        (
+            location_state,
+            location_type,
+            location_name,
+            location_sorting,
+            location_note,
+            location_create,
+            location_create_date,
+            location_code
+        )
+        VALUES
+            (
+                #{locationState},
+                #{locationType},
+                #{locationName},
+                #{locationSorting},
+                #{locationNote},
+                #{locationCreate},
+                #{locationCreateDate},
+                #{locationCode}
+            )
+    </insert>
+
+    <select id="warehouseLocationId" parameterType="Long" resultType="com.erp.warehouse.entity.WarehouseLocation">
+        SELECT
+            wl.id,
+            wl.location_state,
+            wl.location_type,
+            wl.location_name,
+            wl.location_sorting,
+            wl.location_note,
+            wl.location_create,
+            wl.location_create_date,
+            wl.location_code
+        FROM
+            jr_warehouse_location wl
+        WHERE
+            1 = 1
+          AND wl.id = #{id}
+    </select>
+
+    <delete id="deleteWarehouseLocation">
+        delete from jr_warehouse_location  where id = #{id}
+    </delete>
+
+    <select id="queryLocationName" resultType="com.erp.warehouse.entity.WarehouseLocation">
+        SELECT
+            wl.location_name,
+            wl.location_sorting
+        FROM
+            jr_warehouse_location wl
+        WHERE
+            1 = 1
+          AND wl.location_type = 1
+    </select>
+
+</mapper>

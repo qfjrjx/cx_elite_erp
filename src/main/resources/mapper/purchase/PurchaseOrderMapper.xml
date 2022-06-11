@@ -61,6 +61,7 @@
             jr_purchase_order po
         WHERE
             1 = 1
+        And po.order_state = '3'
     </sql>
 
     <sql id="countPurchasePriceChangesSql">
@@ -174,6 +175,7 @@
         SELECT
             po.id,
             po.order_number,
+            po.order_deposit,
             pos.material_name,
             pos.order_specifications,
             pos.order_company,
@@ -182,7 +184,11 @@
             pos.order_money,
             pos.order_remarks,
             pos.order_subclass,
-            pos.order_category
+            pos.order_category,
+            pos.order_location,
+            pos.order_quality,
+            pos.order_brand,
+            pos.order_code
         FROM
             jr_purchase_order po
                 LEFT JOIN jr_purchase_order_schedule pos ON ( po.order_number = pos.odd_numbers )
@@ -361,7 +367,8 @@
                 delivery_date,
                 order_remarks,
                 order_subclass,
-                order_category
+                order_category,
+                order_location
              )
         VALUES
             (
@@ -379,7 +386,8 @@
              #{deliveryDate},
              #{orderRemarks},
              #{orderSubclass},
-             #{orderCategory}
+             #{orderCategory},
+             #{orderLocation}
             )
     </insert>
 

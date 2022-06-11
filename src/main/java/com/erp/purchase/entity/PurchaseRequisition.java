@@ -131,6 +131,11 @@ public class PurchaseRequisition {
      */
     private String applyCancel;
 
+    /**
+     * 库位
+     */
+    private String applyLocation;
+
     private transient String signedDateFrom;
     private transient String signedDateTo;
 

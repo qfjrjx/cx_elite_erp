@@ -57,20 +57,16 @@
                                     <div class="layui-inline">
                                         <label class="layui-form-mid layui-form-label-sm">库房</label>
                                         <div class="layui-input-inline">
-                                            <select name="settlementLibrary">
+                                            <select id="settlementLibrary"  name="settlementLibrary" lay-verify="required" class="layui-form-select" >
                                                 <option value=""></option>
-                                                <option value="1">外购库</option>
-                                                <option value="2">机加库</option>
-                                                <option value="3">废品库</option>
-                                                <option value="4">资产库</option>
-                                                <option value="5">成品库</option>
+                                                <option th:each="location:${location}" th:value="${location.locationSorting}">[[${location.locationName}]]</option>
                                             </select>
                                         </div>
                                     </div>
                                     <div class="layui-inline">
                                         <label class="layui-form-mid layui-form-label-sm">口径</label>
                                         <div class="layui-input-inline">
-                                            <select name="settlementLibrary">
+                                            <select name="settlementUse">
                                                 <option value=""></option>
                                                 <option value="1">采购退货</option>
                                                 <option value="2">采购入库</option>
@@ -118,20 +114,6 @@
     }}
     <span>{{ settlementState.title }}</span>
 </script>
-
-<script type="text/html" id="settlementLibrary-state">
-    {{#
-    let settlementLibrary = {
-    1: {title: '外购库'},
-    2: {title: '机加库'},
-    3: {title: '废品库'},
-    4: {title: '资产库'},
-    5: {title: '成品库'}
-    }[d.settlementLibrary];
-    }}
-    <span>{{ settlementLibrary.title }}</span>
-</script>
-
 <script type="text/html" id="settlementUse-state">
     {{#
     let settlementUse = {
@@ -174,6 +156,7 @@
 <script data-th-inline="none" type="text/javascript">
     layui.use([ 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
         let $ = layui.jquery,
+            laydate = layui.laydate,
             febs = layui.febs,
             form = layui.form,
             table = layui.table,
@@ -187,6 +170,45 @@
 
         form.render();
         initPurchaseRequisitionTable();
+
+        var firstDate = new Date();
+        firstDate.setDate(1); //本月第一天
+        var datetime =firstDate.getFullYear() + '-' + (firstDate.getMonth() + 1) + '-' + firstDate.getDate();
+        /*  var endDate = new Date(firstDate);
+          endDate.setMonth(firstDate.getMonth()+1);
+          endDate.setDate(0);*///本月最后一天
+        //开始日期
+        var start = laydate.render({
+            elem: '#start_date',
+            max: 0 ,//设置一个默认最大值//最大值为当前日期
+            trigger: 'click',
+            value: new Date(firstDate),//初始赋值,//默认值本月第一天
+            done:function(value,date){
+                if(value && (value>$("#end_date").val())){
+                    /*开始时间大于结束时间时，清空结束时间*/
+                    $("#end_date").val("");
+                }
+                end.config.min ={
+                    year:date.year,
+                    month:date.month-1,
+                    date: date.date,
+                };
+            }
+        });
+        //结束日期
+        var end = laydate.render({
+            elem: '#end_date',
+            min : datetime,//最大值为当前日期
+            trigger: 'click',
+            value: new Date(),//初始赋值,//默认当前时间
+            done:function(value,date){
+                start.config.max={
+                    year:date.year,
+                    month:date.month-1,
+                    date: date.date,
+                }
+            }
+        });
 
         var purchaseTableData = new Array(); // 用于存放表格数据
         $query.on('click', function () {
@@ -208,10 +230,14 @@
                     {field: 'settlementNumbers', title: '单号', minWidth: 145,align:'center'},
                     {title: '口径', templet: '#settlementUse-state',align:'center',width:150},
                     {field: 'settlementSupplier', title: '供应商', minWidth: 120,align:'center'},
-                    {title: '库房', templet: '#settlementLibrary-state',align:'center',width:120},
+                    {field: 'settlementLibrary', title: '库房', minWidth: 120,align:'center'},
                     {field: 'settlementQuantity',title: '数量', minWidth: 55,align:'center'},
-                    {field: 'settlementMoney', title: '金额', minWidth: 95,align:'center'},
-                    {field: 'refundPreparer', title: '不含税金额', minWidth: 95,align:'center'},
+                    {field: 'settlementMoney', title: '金额', minWidth: 95,align:'center',templet:function (data) {
+                            var price = parseFloat(data.settlementMoney).toFixed(2); //设置小数点后个数
+                            return price;}},
+                    {field: 'settlementNoMoney', title: '不含税金额', minWidth: 95,align:'center',templet:function (data) {
+                            var price = parseFloat(data.settlementNoMoney).toFixed(2); //设置小数点后个数
+                            return price;}},
                     {field: 'currencyName', title: '币种', minWidth: 80,align:'center'},
                     {title: '是否开票', templet: '#settlementInvoice-state',align:'center',width:150},
                     {field: 'taxRateName', title: '税率', minWidth: 80,align:'center'}
@@ -263,12 +289,14 @@
                 let ids = [];
                 layui.each(checkStatus.data, function (key, item) {
                     ids.push(item.id)
-                    if(item.settlementState == 4){
-                        febs.alert.warn('该状态无法结算');
-                    }else {
-                        febs.modal.confirm('取消来货检验', '是否取消？', function () {
+                    ids.push(item.settlementUse)
+                    ids.push(item.settlementNumbers)
+                    if(item.settlementState == 2 || item.settlementState == 3){
+                        febs.modal.confirm('确认结算', '是否确认？', function () {
                             settlementPurchaseRequisition(ids);
                         });
+                    }else {
+                        febs.alert.warn('该状态无法结算');
                     }
                 });
             }
@@ -282,12 +310,14 @@
                 let ids = [];
                 layui.each(checkStatus.data, function (key, item) {
                     ids.push(item.id)
-                    if(item.settlementState == 1){
-                        febs.alert.warn('该状态无法取消');
-                    }else {
-                        febs.modal.confirm('取消来货检验', '是否取消？', function () {
+                    ids.push(item.settlementUse)
+                    ids.push(item.settlementNumbers)
+                    if(item.settlementState == 4){
+                        febs.modal.confirm('取消结算', '是否取消？', function () {
                             cancelPurchaseRequisition(ids.join(','));
                         });
+                    }else {
+                        febs.alert.warn('该状态无法取消');
                     }
                 });
             }

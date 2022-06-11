@@ -118,6 +118,7 @@ public class PurchaseRequisitionServiceImpl extends ServiceImpl<PurchaseRequisit
             String deliveryDate = jsonArrayOne.getJSONObject(i).getString("deliveryDate");
             String applyRemarks = jsonArrayOne.getJSONObject(i).getString("applyRemarks");
             String applyCategory = jsonArrayOne.getJSONObject(i).getString("applyCategory");
+            String applyLocation = jsonArrayOne.getJSONObject(i).getString("applyLocation");
             String applySubclass = jsonArrayOne.getJSONObject(i).getString("applySubclass");
             if (!applyCode.equals("")) {
                 purchaseRequisitionSchedule.setApplyCode(applyCode);
@@ -144,6 +145,7 @@ public class PurchaseRequisitionServiceImpl extends ServiceImpl<PurchaseRequisit
                 purchaseRequisitionSchedule.setApplySubclass(applySubclass);
             }
             purchaseRequisitionSchedule.setApplyCancel("1");
+            purchaseRequisitionSchedule.setApplyLocation(applyLocation);
             //添加到数据库
             baseMapper.savePurchaseRequisitionSchedule(purchaseRequisitionSchedule);
         }
@@ -170,6 +172,7 @@ public class PurchaseRequisitionServiceImpl extends ServiceImpl<PurchaseRequisit
             String deliveryDate = jsonArrayOne.getJSONObject(i).getString("deliveryDate");
             String applyRemarks = jsonArrayOne.getJSONObject(i).getString("applyRemarks");
             String applyCategory = jsonArrayOne.getJSONObject(i).getString("applyCategory");
+            String applyLocation = jsonArrayOne.getJSONObject(i).getString("applyLocation");
             String applySubclass = jsonArrayOne.getJSONObject(i).getString("applySubclass");
             if (!applyCode.equals("")) {
                 purchaseRequisitionSchedule.setApplyCode(applyCode);
@@ -196,6 +199,7 @@ public class PurchaseRequisitionServiceImpl extends ServiceImpl<PurchaseRequisit
                 purchaseRequisitionSchedule.setApplySubclass(applySubclass);
             }
             purchaseRequisitionSchedule.setApplyCancel("1");
+            purchaseRequisitionSchedule.setApplyLocation(applyLocation);
             //添加到数据库
             baseMapper.savePurchaseRequisitionSchedule(purchaseRequisitionSchedule);
         }
@@ -234,7 +238,7 @@ public class PurchaseRequisitionServiceImpl extends ServiceImpl<PurchaseRequisit
     public IPage<PurchaseRequisition> findOrderPurchaseRequisitionPage(QueryRequest request, PurchaseRequisition purchaseRequisition) {
         Page<PurchaseRequisition> page = new Page<>(request.getPageNum(), request.getPageSize());
         page.setSearchCount(false);
-        page.setTotal(baseMapper.countPurchaseRequisition(purchaseRequisition));
+        page.setTotal(baseMapper.countPurchaseRequisitions(purchaseRequisition));
         return baseMapper.findOrderPurchaseRequisitionPage(page,purchaseRequisition);
     }
 
@@ -254,5 +258,15 @@ public class PurchaseRequisitionServiceImpl extends ServiceImpl<PurchaseRequisit
     @Override
     public void downPurchaseCancel(String ids) {
         baseMapper.downPurchaseCancel(ids);
+    }
+
+    @Override
+    public void confirmPurchaseRequisition(String ids) {
+        baseMapper.confirmPurchaseRequisition(ids);
+    }
+
+    @Override
+    public void cancelPurchaseRequisition(String ids) {
+        baseMapper.cancelPurchaseRequisition(ids);
     }
 }

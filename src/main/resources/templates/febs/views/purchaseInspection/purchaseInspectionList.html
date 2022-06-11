@@ -257,7 +257,7 @@
                 febs.alert.warn('请选择一条需要修改的数据');
             }else{
                 layui.each(checkStatus.data, function (key, item) {
-                    febs.modal.open('【采购订单】 修改', 'purchase/purchaseInspection/update/' + item.inspectionNumber, {
+                    febs.modal.open('【来货检验】 修改', 'purchase/purchaseInspection/update/' + item.inspectionNumber, {
                         area: ["80%","60%"],
                         btn: ['删除行','删除整单','保存', '关闭'],
                         yes: function (index, layero) {let checkStatus = table.checkStatus('purchaseInspectionUpdateList')
@@ -330,13 +330,13 @@
             } else {
                 let ids = [];
                 layui.each(checkStatus.data, function (key, item) {
-                    ids.push(item.id)
-                    if(item.inspectionState == 2){
-                        febs.alert.warn('请勿重复确认');
-                    }else {
+                    ids.push(item.ids)
+                    if(item.inspectionState == 1){
                         febs.modal.confirm('确认来货检验', '是否确认？', function () {
                             confirmPurchaseRequisition(ids.join(','));
                         });
+                    }else {
+                        febs.alert.warn('请勿重复确认');
                     }
                 });
             }
@@ -348,7 +348,7 @@
             } else {
                 let ids = [];
                 layui.each(checkStatus.data, function (key, item) {
-                    ids.push(item.id)
+                    ids.push(item.ids)
                     if(item.inspectionState == 4){
                         febs.alert.warn('请勿重复取消');
                     }else {

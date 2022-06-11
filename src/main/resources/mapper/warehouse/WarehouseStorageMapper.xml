@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.warehouse.mapper.WarehouseStorageMapper">
+
+    <sql id="countWarehouseStorageSql">
+        SELECT
+            COUNT( 1 )
+        FROM
+            (
+                SELECT
+                    ws.id,
+                    ws.storage_state,
+                    ws.storage_date,
+                    ws.storage_coding,
+                    ws.storage_numbers,
+                    ws.supplier_name,
+                    wl.location_name locationName,
+                    sum( ws.storage_quantity ) storageQuantity,
+                    fpa.finance_parameter_name currencyName,
+                    fpb.finance_parameter_name taxRateName,
+                    ws.storage_preparer,
+                    ws.storage_preparer_date,
+                    ws.order_number,
+                    ws.storage_code,
+                    ws.storage_name,
+                    ws.storage_specifications,
+                    ws.storage_quality,
+                    ws.storage_brand,
+                    ws.storage_company,
+                    ws.unit_price,
+                    sum( ws.storage_quantity * ws.unit_price ) storageMoney,
+                    ws.storage_location,
+                    ws.storage_remarks,
+                    ws.storage_subclass,
+                    ws.storage_category,
+                    ws.storage_deposit,
+                    ws.uuid
+                FROM
+                    jr_warehouse_storage ws
+                        LEFT JOIN jr_finance_parameters fpa ON ( ws.currency_id = fpa.id )
+                        LEFT JOIN jr_finance_parameters fpb ON ( ws.tax_rate_id = fpb.id )
+                        LEFT JOIN jr_warehouse_location wl ON ( ws.storage_library = wl.location_sorting )
+                WHERE
+                    1 = 1
+                <if test="warehouseStorage.signedDateFrom != null and warehouseStorage.signedDateFrom !=''">
+                    And ws.storage_date &gt;= #{warehouseStorage.signedDateFrom}
+                </if>
+                <if test="warehouseStorage.signedDateTo != null and warehouseStorage.signedDateTo !=''">
+                    And ws.storage_date &lt;= #{warehouseStorage.signedDateTo}
+                </if>
+                <if test="warehouseStorage.supplierName != null and warehouseStorage.supplierName != ''">
+                    AND ws.supplier_name = #{warehouseStorage.supplierName}
+                </if>
+                <if test="warehouseStorage.storageState != null and warehouseStorage.storageState != ''">
+                    AND ws.storage_state = #{warehouseStorage.storageState}
+                </if>
+                <if test="warehouseStorage.storageCoding != null and warehouseStorage.storageCoding != ''">
+                    AND ws.storage_coding = #{warehouseStorage.storageCoding}
+                </if>
+                <if test="warehouseStorage.storageLibrary != null and warehouseStorage.storageLibrary != ''">
+                    AND ws.storage_library = #{warehouseStorage.storageLibrary}
+                </if>
+                GROUP BY
+                    ws.storage_coding
+            ) jr_warehouse_storage
+        WHERE
+            1 = 1
+    </sql>
+
+    <sql id="findWarehouseStoragePageSql">
+        SELECT
+            ws.id,
+            ws.storage_state,
+            ws.storage_date,
+            ws.storage_coding,
+            ws.storage_numbers,
+            ws.supplier_name,
+            wl.location_name locationName,
+            sum( ws.storage_quantity ) storageQuantity,
+            fpa.finance_parameter_name currencyName,
+            fpb.finance_parameter_name taxRateName,
+            ws.storage_preparer,
+            ws.storage_preparer_date,
+            ws.order_number,
+            ws.storage_code,
+            ws.storage_name,
+            ws.storage_specifications,
+            ws.storage_quality,
+            ws.storage_brand,
+            ws.storage_company,
+            ws.unit_price,
+            sum( ws.storage_money) storageMoney,
+            ws.storage_location,
+            ws.storage_remarks,
+            ws.storage_subclass,
+            ws.storage_category,
+            ws.storage_deposit,
+            ws.uuid
+        FROM
+            jr_warehouse_storage ws
+                LEFT JOIN jr_finance_parameters fpa ON ( ws.currency_id = fpa.id )
+                LEFT JOIN jr_finance_parameters fpb ON ( ws.tax_rate_id = fpb.id )
+                LEFT JOIN jr_warehouse_location wl ON ( ws.storage_library = wl.location_sorting )
+        WHERE
+            1 = 1
+        <if test="warehouseStorage.signedDateFrom != null and warehouseStorage.signedDateFrom !=''">
+            And ws.storage_date &gt;= #{warehouseStorage.signedDateFrom}
+        </if>
+        <if test="warehouseStorage.signedDateTo != null and warehouseStorage.signedDateTo !=''">
+            And ws.storage_date &lt;= #{warehouseStorage.signedDateTo}
+        </if>
+        <if test="warehouseStorage.supplierName != null and warehouseStorage.supplierName != ''">
+            AND ws.supplier_name = #{warehouseStorage.supplierName}
+        </if>
+        <if test="warehouseStorage.storageState != null and warehouseStorage.storageState != ''">
+            AND ws.storage_state = #{warehouseStorage.storageState}
+        </if>
+        <if test="warehouseStorage.storageCoding != null and warehouseStorage.storageCoding != ''">
+            AND ws.storage_coding = #{warehouseStorage.storageCoding}
+        </if>
+        <if test="warehouseStorage.storageLibrary != null and warehouseStorage.storageLibrary != ''">
+            AND ws.storage_library = #{warehouseStorage.storageLibrary}
+        </if>
+        GROUP BY
+            ws.storage_coding
+    </sql>
+
+    <select id="countWarehouseStorage" parameterType="com.erp.warehouse.entity.WarehouseStorage" resultType="long">
+        <include refid="countWarehouseStorageSql"/>
+    </select>
+
+    <select id="findWarehouseStoragePage" parameterType="com.erp.warehouse.entity.WarehouseStorage" resultType="com.erp.warehouse.entity.WarehouseStorage">
+        <include refid="findWarehouseStoragePageSql"/>
+    </select>
+
+    <select id="queryWarehouseStorage" parameterType="String" resultType="com.erp.warehouse.entity.WarehouseStorage">
+        SELECT
+            ws.storage_quantity,
+            ws.order_number,
+            ws.storage_code,
+            ws.storage_name,
+            ws.storage_specifications,
+            ws.storage_quality,
+            ws.storage_brand,
+            ws.storage_company,
+            ws.unit_price,
+            ws.storage_money,
+            ws.storage_location,
+            ws.storage_remarks,
+            ws.storage_subclass,
+            ws.storage_category,
+            ws.storage_deposit,
+            ws.uuid,
+            ws.storage_coding,
+            ws.supplier_name,
+            ws.storage_library,
+            ws.currency_id,
+            ws.tax_rate_id
+        FROM
+            jr_warehouse_storage ws
+        WHERE
+            ws.storage_coding = #{storageCoding}
+    </select>
+
+    <update id="warehouseStorageStorage" parameterType="com.erp.warehouse.entity.WarehouseStorage">
+        UPDATE
+            jr_warehouse_storage
+        set storage_state = 2
+        WHERE id = #{ids}
+    </update>
+
+    <update id="cancelWarehouseStorageStorage" parameterType="com.erp.warehouse.entity.WarehouseStorage">
+        UPDATE
+            jr_warehouse_storage
+        set storage_state = 1
+        WHERE id = #{ids}
+    </update>
+
+    <delete id="deletePurchaseSettlement">
+        delete from jr_purchase_settlement  where settlement_numbers = #{storageCoding}
+    </delete>
+
+    <delete id="deletePurchaseSettlementSchedule">
+        delete from jr_purchase_settlement_schedule  where settlement_number = #{storageCoding}
+    </delete>
+
+</mapper>

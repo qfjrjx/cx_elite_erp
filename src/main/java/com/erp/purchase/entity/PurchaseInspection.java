@@ -27,7 +27,6 @@ public class PurchaseInspection {
     /**
      * 状态
      */
-    @TableField("inspection_state")
     private String inspectionState;
 
     /**
@@ -73,12 +72,6 @@ public class PurchaseInspection {
     private Date inspectionPreparationDate;
 
     /**
-     * 质检员
-     */
-    @TableField("inspection_quality")
-    private String inspectionQuality;
-
-    /**
      * 备注
      */
     @TableField("inspection_remarks")
@@ -102,5 +95,51 @@ public class PurchaseInspection {
 
     private transient String signedDateFrom;
     private transient String signedDateTo;
+
+    //物料名称
+    private String materialName;
+
+    //规格型号
+    private String inspectionrSpecifications;
+
+    /**
+     * 合格数
+     */
+    private String inspectionQualified;
+
+    /**
+     * 质检员
+     */
+    private String inspectionQuality;
+
+    /**
+     * 质检日期
+     */
+    private Date inspectionQualityDate;
+
+    /**
+     * 送库人
+     */
+    private String inspectionLibrary;
+
+    /**
+     * 送库日期
+     */
+    private Date inspectionLibraryDate;
+
+    /**
+     * 入库单号
+     */
+    private String inspectionLibraryCode;
+
+    /**
+     * 检验结果描述
+     */
+    private String inspectionDescribe;
+
+    /**
+     * 附表主键
+     */
+    private Long ids;
 
 }

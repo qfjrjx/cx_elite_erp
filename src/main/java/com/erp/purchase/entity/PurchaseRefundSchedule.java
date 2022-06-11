@@ -126,4 +126,8 @@ public class PurchaseRefundSchedule {
      */
     @TableField("refund_deposit")
     private BigDecimal refundDeposit;
+
+    private String taxRateId;
+
+    private String currencyId;
 }

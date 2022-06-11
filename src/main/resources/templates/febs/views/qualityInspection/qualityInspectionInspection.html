@@ -1,0 +1,94 @@
+<style>
+    #qualityInspection-inspection {
+        padding: 20px 25px 25px 0;
+    }
+</style>
+<div class="layui-fluid" id="qualityInspection-inspection">
+    <form class="layui-form" action="" lay-filter="qualityInspection-inspection-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label">名称：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="materialName" id="materialName"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+            <label class="layui-form-label" >规&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;格：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="inspectionrSpecifications" id="inspectionrSpecifications"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" >数量：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="orderQuantity" id="orderQuantity"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+            <label class="layui-form-label">合格数量：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="inspectionQualified" id="inspectionQualified"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">检验说明：</label>
+            <div class="layui-input-block">
+                <input type="text" name="inspectionDescribe" id="inspectionDescribe"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item" style="display: none;">
+            <label class="layui-form-label">id：</label>
+            <div class="layui-input-block">
+                <input type="text" name="id" id="id"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item" style="display: none;">
+            <label class="layui-form-label">制单人：</label>
+            <div class="layui-input-block">
+                <input type="text" name="userName" id="userName"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item febs-hide">
+            <button class="layui-btn" lay-submit="" lay-filter="qualityInspection-inspection-form-submit" id="submit"></button>
+        </div>
+    </form>
+</div>
+<script langguage="JavaScript">
+    userName.value = currentUser.username;
+</script>
+<script data-th-inline="javascript">
+    layui.use(['febs', 'form', 'validate','table', 'xmSelect','upload','laydate'], function () {
+        let $ = layui.$,
+            febs = layui.febs,
+            layer = layui.layer,
+            form = layui.form,
+            purchaseInspectionSchedule = [[${purchaseInspectionSchedule}]],
+            upload = layui.upload,
+            uploadInst;
+
+        initPurchaseRequisitionCreatorValue();
+
+        function initPurchaseRequisitionCreatorValue() {
+            form.val("qualityInspection-inspection-form", {
+                "id": purchaseInspectionSchedule.id,
+                "orderQuantity": purchaseInspectionSchedule.orderQuantity,
+                "materialName": purchaseInspectionSchedule.materialName,
+                "inspectionrSpecifications": purchaseInspectionSchedule.inspectionrSpecifications,
+                "inspectionQualified": purchaseInspectionSchedule.inspectionQualified,
+                "inspectionDescribe": purchaseInspectionSchedule.inspectionDescribe
+            });
+        }
+
+        form.on('submit(qualityInspection-inspection-form-submit)', function (data) {
+            febs.post(ctx + 'qualityInspection/inspection', data.field,function () {
+                layer.closeAll();
+                febs.alert.success('修改参数成功');
+                $('#quality-inspection').find('#query').click();
+            });
+            return false;
+
+        });
+    })
+</script>

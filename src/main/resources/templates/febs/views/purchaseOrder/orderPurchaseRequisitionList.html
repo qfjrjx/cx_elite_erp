@@ -169,6 +169,7 @@
              var applyBrand = data.applyBrand;
              var applyCompany = data.applyCompany;
              var applyQuantity = data.applyQuantity;
+             var applyLocation = data.applyLocation;
              var deliveryDate = data.deliveryDate;
              var applyRemarks = data.applyRemarks;
             var applySubclass = data.applySubclass;
@@ -183,7 +184,7 @@
                         "applyName":applyName,"applySpecifications":applySpecifications,
                         "applyQuality":applyQuality,"applyBrand":applyBrand,
                         "applyCompany":applyCompany,"applyQuantity":applyQuantity,"deliveryDate":deliveryDate,
-                        "applyRemarks":applyRemarks, "applySubclass":applySubclass ,"applyCategory":applyCategory};
+                        "applyRemarks":applyRemarks, "applySubclass":applySubclass ,"applyCategory":applyCategory ,"applyLocation":applyLocation};
                     oldData.push(dataOne);
                     layui.table.reload('orderPurchaseRequisition-table',{
                         data : oldData
@@ -206,7 +207,7 @@
                             "orderCompany":oldData[i].applyCompany,"orderQuantity":oldData[i].applyQuantity,
                             "unitPrice":3,"orderMoney":oldData[i].applyQuantity * 3,
                             "deliveryDate":oldData[i].deliveryDate,"orderRemarks":oldData[i].applyRemarks,
-                            "orderSubclass":oldData[i].applySubclass,"orderCategory":oldData[i].applyCategory};
+                            "orderSubclass":oldData[i].applySubclass,"orderCategory":oldData[i].applyCategory,"orderLocation":oldData[i].applyLocation};
                         oldDataOne =  table.cache["purchaseOrderRequisition-table"];
                         oldDataOne.push(dataOne);
                     }
@@ -239,7 +240,7 @@
                     {field: 'applyQuality', title: '材质',align:'center', minWidth: 100},
                     {field: 'applyBrand', title: '品牌',align:'center', minWidth: 100},
                     {field: 'applyCompany', title: '单位',align:'center', minWidth: 60},
-                   /* {field: 'meteringCompany', title: '库存数量',align:'center', minWidth: 100},*/
+                   {field: 'applyLocation', title: '库位',align:'center', minWidth: 100},
                     {field: 'applyQuantity', title: '数量',align:'center', minWidth: 60},
                    /* {field: 'meteringCompany', title: '最近采购单价',align:'center', minWidth: 100},*/
                     {field: 'deliveryDate', title: '交期',align:'center',templet:'<div>{{ layui.util.toDateString(d.deliveryDate, "yyyy-MM-dd") }}</div>', minWidth: 130,},
@@ -262,7 +263,7 @@
                     {field: 'applyQuality', title: '材质',align:'center', minWidth: 100},
                     {field: 'applyBrand', title: '品牌',align:'center', minWidth: 100},
                     {field: 'applyCompany', title: '单位',align:'center', minWidth: 60},
-                    /* {field: 'meteringCompany', title: '库存数量',align:'center', minWidth: 100},*/
+                    {field: 'applyLocation', title: '库位',align:'center', minWidth: 100},
                     {field: 'applyQuantity', title: '数量',align:'center', minWidth: 60},
                     /* {field: 'meteringCompany', title: '最近采购单价',align:'center', minWidth: 100},*/
                     {field: 'deliveryDate', title: '交期',align:'center',templet:'<div>{{ layui.util.toDateString(d.deliveryDate, "yyyy-MM-dd") }}</div>', minWidth: 130,},

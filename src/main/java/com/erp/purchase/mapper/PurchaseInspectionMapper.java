@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.erp.purchase.entity.PurchaseInspection;
 import com.erp.purchase.entity.PurchaseInspectionSchedule;
+import com.erp.warehouse.entity.WarehouseStorage;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -36,7 +37,27 @@ public interface PurchaseInspectionMapper extends BaseMapper<PurchaseInspection>
 
     PurchaseInspection queryPurchaseInspection();
 
-    void confirmPurchaseInspection(String ids);
+    void confirmPurchaseInspection(@Param("ids") String ids);
 
-    void cancelPurchaseInspection(String ids);
+    void cancelPurchaseInspection(@Param("ids") String ids);
+
+    PurchaseInspectionSchedule qualityInspectionId(@Param("ids") Long ids);
+
+    void updateQualityInspection(@Param("purchaseInspectionSchedule") PurchaseInspectionSchedule purchaseInspectionSchedule);
+
+    void cancelInspection(@Param("ids") String ids);
+
+    PurchaseInspectionSchedule confirmOutsourcing(@Param("id") String id);
+
+    WarehouseStorage queryWarehouseStorage();
+
+    void saveWarehouseStorage(WarehouseStorage warehouseStorage);
+
+    void updatePurchaseInspectionSchedule(@Param("purchaseInspectionScheduleData") PurchaseInspectionSchedule purchaseInspectionScheduleData);
+
+    WarehouseStorage queryWarehouseStorageTwo(@Param("inspectionNumber") String inspectionNumber);
+
+    void deleteWarehouseStorage(@Param("uuid") String uuid);
+
+    void updateCancelLibrary(@Param("ids") String ids);
 }

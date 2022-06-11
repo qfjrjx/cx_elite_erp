@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.erp.common.entity.QueryRequest;
 import com.erp.purchase.entity.PurchaseRefund;
 import com.erp.purchase.entity.PurchaseRefundSchedule;
-import com.erp.purchase.entity.WarehouseStorageSchedule;
+import com.erp.warehouse.entity.WarehouseStorage;
 
 import java.text.ParseException;
 import java.util.List;
@@ -58,7 +58,11 @@ public interface IPurchaseRefundService extends IService<PurchaseRefund> {
 
     List<PurchaseRefundSchedule> queryPurchaseRefundSchedule(String oddNumbers);
 
-    IPage<WarehouseStorageSchedule> findPurchaseRefundAddQueryPage(QueryRequest request, WarehouseStorageSchedule warehouseStorage);
+    IPage<WarehouseStorage> findPurchaseRefundAddQueryPage(QueryRequest request, WarehouseStorage warehouseStorage);
 
     PurchaseRefund findPurchaseRefundQueryPage(Long id);
+
+    void otuPurchaseRefund(String ids) throws ParseException;
+
+    void cancelPurchaseRefund(String ids);
 }

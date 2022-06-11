@@ -72,7 +72,7 @@
                                     <br>
                                     <label class="layui-form-mid">口&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;径&nbsp;<b>:</b></label>
                                     <div class="layui-input-inline" style="width: 115px">
-                                        <select name="invoiceState">
+                                        <select name="invoiceUse">
                                             <option value=""></option>
                                             <option value="1">采购退回</option>
                                             <option value="2">采购入库</option>
@@ -181,6 +181,8 @@
             var settlementDeposit = data.settlementDeposit;
             var orderNumber = data.orderNumber;
             var settlementSubclass = data.settlementSubclass;
+            var settlementNoPrice = data.settlementNoPrice;
+            var settlementNoMoney = data.settlementNoMoney;
             $.ajax({
                 url: '/saleOrder/random',
                 success : function(data) {
@@ -191,7 +193,8 @@
                         "invoiceName":settlementName,"invoiceSpecifications":settlementSpecifications,
                         "invoiceQuantity":settlementQuantity,"taxPrice":settlementPrice,
                         "invoiceMoney":settlementMoney,"invoiceDeposit":settlementDeposit,"orderNumber":orderNumber,
-                        "invoiceBrand":settlementBrand,"invoiceCompany":settlementCompany,"invoiceCoding":settlementCode,"invoiceSubclass":settlementSubclass};
+                        "invoiceBrand":settlementBrand,"invoiceCompany":settlementCompany,"invoiceCoding":settlementCode,"invoiceSubclass":settlementSubclass,
+                        "taxNoPrice":settlementNoPrice,"taxNoMoney":settlementNoMoney};
                     oldData.push(dataOne);
                     layui.table.reload('purchaseInvoiceUpdateList',{
                         data : oldData
@@ -232,23 +235,23 @@
                         /* {field: 'meteringCompany', title: '最近采购单价',align:'center', minWidth: 100},*/
                         {field: 'settlementMoney', title: '含税金额',align:'center',minWidth: 80,edit: true},
                         {
-                            field: 'settlementPrice',
+                            field: 'settlementNoPrice',
                             title: '不含税单价',
                             minWidth: 55,
                             align: 'center',
                             templet: function (data) {
-                                var price = parseFloat(data.settlementPrice).toFixed(2); //设置小数点后个数
+                                var price = parseFloat(data.settlementNoPrice).toFixed(2); //设置小数点后个数
                                 return price;
                             }
                         },
                         //{field: 'refundMoney', title: '金额',align:'center', minWidth: 80},
                         {
-                            field: 'settlementMoney',
+                            field: 'settlementNoMoney',
                             title: '不含税金额',
                             minWidth: 55,
                             align: 'center',
                             templet: function (data) {
-                                var price = parseFloat(data.settlementMoney).toFixed(2); //设置小数点后个数
+                                var price = parseFloat(data.settlementNoMoney).toFixed(2); //设置小数点后个数
                                 return price;
                             }
                         },
@@ -278,11 +281,11 @@
                     {field: 'invoiceMoney',title: '含税金额', minWidth: 50,align:'center',templet:function (data) {
                             var price = parseFloat(data.invoiceMoney).toFixed(2); //设置小数点后个数
                             return price;}},
-                    {field: 'taxPrice',title: '不含税单价', minWidth: 50,align:'center',templet:function (data) {
-                            var price = parseFloat(data.taxPrice).toFixed(2); //设置小数点后个数
+                    {field: 'taxNoPrice',title: '不含税单价', minWidth: 50,align:'center',templet:function (data) {
+                            var price = parseFloat(data.taxNoPrice).toFixed(2); //设置小数点后个数
                             return price;}},
-                    {field: 'invoiceMoney',title: '不含税金额', minWidth: 50,align:'center',templet:function (data) {
-                            var price = parseFloat(data.invoiceMoney).toFixed(2); //设置小数点后个数
+                    {field: 'taxNoMoney',title: '不含税金额', minWidth: 50,align:'center',templet:function (data) {
+                            var price = parseFloat(data.taxNoMoney).toFixed(2); //设置小数点后个数
                             return price;}},
                     {field: 'invoiceQuantity', edit:true,title: '开票数量',minWidth: 55,align:'center',align:'center'},
                     {field: 'invoiceMoney',title: '开票金额', minWidth: 55,align:'center',templet:function (data) {

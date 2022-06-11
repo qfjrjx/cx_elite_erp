@@ -376,29 +376,40 @@
             let checkStatus = table.checkStatus('purchaseRequisitionTable');
             if (!checkStatus.data.length) {
                 febs.alert.warn('请选择需要确认的数据');
-            } else {
-                alert("确认")
-                /*layui.each(checkStatus.data, function (key, item) {
-                    $.ajax({
-                        url: ctx + '/ /',
-                        data: {
-                            "id": item.id
-                        },
-                        async: false,
-                        type: 'get',
-                        success: function (d) {
-                            (!d) && (result = '该用户名已存在')
-                        }
-                    });
-                });*/
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要确认的数据');
+            }else{
+                let ids = [];
+                layui.each(checkStatus.data, function (key, item) {
+                    ids.push(item.id)
+                    if(item.applyState == 1){
+                        febs.modal.confirm('确认采购申请', '是否确认？', function () {
+                            confirmPurchaseRequisition(ids.join(','));
+                        });
+                    }else {
+                        febs.alert.warn('该状态不允许此操作');
+                    }
+                });
             }
         });
         $cancelTo.on('click', function () {
             let checkStatus = table.checkStatus('purchaseRequisitionTable');
             if (!checkStatus.data.length) {
                 febs.alert.warn('请选择需要取消的数据');
-            } else {
-                alert("取消")
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要取消的数据');
+            }else{
+                let ids = [];
+                layui.each(checkStatus.data, function (key, item) {
+                    ids.push(item.id)
+                    if(item.applyState == 2){
+                        febs.modal.confirm('取消采购申请', '是否取消？', function () {
+                            cancelPurchaseRequisition(ids.join(','));
+                        });
+                    }else {
+                        febs.alert.warn('该状态不允许此操作');
+                    }
+                });
             }
         });
         $deleteTo.on('click', function () {
@@ -470,6 +481,20 @@
             let params = $searchForm.serializeJson();
             params.invalidate_ie_cache = new Date();
             return params;
+        }
+
+        function confirmPurchaseRequisition(ids) {
+            febs.get(ctx + 'purchaseRequisition/confirm/' + ids, null, function () {
+                febs.alert.success('确认采购申请成功');
+                $query.click();
+            });
+        }
+
+        function cancelPurchaseRequisition(ids) {
+            febs.get(ctx + 'purchaseRequisition/cancel/' + ids, null, function () {
+                febs.alert.success('取消采购申请成功');
+                $query.click();
+            });
         }
 
         function deletePurchaseRequisition(ids) {

@@ -1,0 +1,315 @@
+<style>
+    #procurement-storage xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #procurement-storage xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="procurement-storage" lay-title="采购入库">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="procurement-storage-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md12">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid layui-form-label-sm">状态</label>
+                                        <div class="layui-input-inline">
+                                            <select name="storageState">
+                                                <option value=""></option>
+                                                <option value="1">登记</option>
+                                                <option value="2">入库</option>
+                                                <option value="3">结算</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid">日期&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <input type="text" id="start_date" name="signedDateFrom" placeholder="" lay-verify='date' class="layui-input"/>
+                                            <i class="layui-icon" id="start_date_icon"></i>
+                                        </div>
+                                        <label class="layui-form-mid">至：</label>
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <input type="text" id="end_date" name="signedDateTo" placeholder="" lay-verify='date' class="layui-input"/>
+                                            <i class="layui-icon " id="end_date_icon"></i>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-mid layui-form-label-sm">单号</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="storageCoding" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-mid layui-form-label-sm">供应商</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="supplierName" id="supplierName" lay-verify="required" ondblclick="procurementStorageSupplierName()"
+                                                   autocomplete="off" class="layui-input" placeholder="双击选择" style="width: 145px"  readonly>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid">库房<b>:</b></label>
+                                        <div class="layui-input-inline">
+                                            <select id="storageLibrary"  name="storageLibrary" lay-verify="required" class="layui-form-select" >
+                                                <option value=""></option>
+                                                <option th:each="location:${location}" th:value="${location.locationSorting}">[[${location.locationName}]]</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="procurementStorageTable" id="procurementStorageTable" lay-data="{id: 'procurementStorageTable'}"></table>
+                    <div class="layui-col-md6">
+                        <div class="layui-form-item"></div>
+                    </div>
+                    <div class="layui-col-md6 layui-col-sm12 layui-col-xs12 table-action-area">
+                        <!--搜索按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                            <i class="layui-icon">&#xe848;</i>查询
+                        </div>
+                        <!-- 刷新表格按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain table-action" id="reset">
+                            <i class="layui-icon">&#xe79b;</i>刷新
+                        </div>
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
+                                     "shiro:hasAnyPermissions="procurementStorage:storage" id="storageTo">
+                            <i class="layui-icon">&#xe78a;</i>入库
+                        </div>
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="procurementStorage:cancel" id="cancelTo">
+                            <i class="layui-icon">&#xe642;</i>取消
+                        </div>
+                    </div>
+                    <br>
+                    <br>
+                    <table lay-filter="procurementStorage-table" id="procurementStorage-table" lay-data="{id: 'procurementStorage-table'}"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="storage-state">
+    {{#
+    let storageState = {
+    1: {title: '登记'},
+    2: {title: '入库'},
+    3: {title: '结算'}
+    }[d.storageState];
+    }}
+    <span>{{ storageState.title }}</span>
+</script>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+            laydate = layui.laydate,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            dropdownMenu = layui.dropdownMenu,
+            $view = $('#procurement-storage'),
+            $query = $view.find('#query'),
+            $storageTo = $view.find('#storageTo'),
+            $cancelTo = $view.find('#cancelTo'),
+            $reset = $view.find('#reset'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'createTime', type: null},
+            tableIns;
+
+        form.render();
+        initPurchaseRequisitionTable();
+
+        var firstDate = new Date();
+        firstDate.setDate(1); //本月第一天
+        var datetime =firstDate.getFullYear() + '-' + (firstDate.getMonth() + 1) + '-' + firstDate.getDate();
+        //开始日期
+        var start = laydate.render({
+            elem: '#start_date',
+            max: 0 ,//设置一个默认最大值//最大值为当前日期
+            trigger: 'click',
+            value: new Date(firstDate),//初始赋值,//默认值本月第一天
+            done:function(value,date){
+                if(value && (value>$("#end_date").val())){
+                    /*开始时间大于结束时间时，清空结束时间*/
+                    $("#end_date").val("");
+                }
+                end.config.min ={
+                    year:date.year,
+                    month:date.month-1,
+                    date: date.date,
+                };
+            }
+        });
+        //结束日期
+        var end = laydate.render({
+            elem: '#end_date',
+            min : datetime,//最大值为当前日期
+            trigger: 'click',
+            value: new Date(),//初始赋值,//默认当前时间
+            done:function(value,date){
+                start.config.max={
+                    year:date.year,
+                    month:date.month-1,
+                    date: date.date,
+                }
+            }
+        });
+
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        $reset.on('click', function () {
+            $searchForm[0].reset();
+            tableIns.reload({where: getQueryParams(), page: {curr: 1}});
+        });
+        var warehouseTableData = new Array(); // 用于存放表格数据
+
+        $storageTo.on('click', function () {
+            let checkStatus = table.checkStatus('procurementStorageTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要入库的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要入库的数据');
+            }else{
+                let ids = [];
+                layui.each(checkStatus.data, function (key, item) {
+                    ids.push(item.id)
+                    ids.push(item.storageCoding)
+                    if(item.storageState == 1){
+                        febs.modal.confirm('采购入库', '是否确认？', function () {
+                            procurementStorage(ids.join(','));
+                        });
+                    }else {
+                        febs.alert.warn('该状态不允许此操作');
+                    }
+                });
+            }
+        });
+
+        $cancelTo.on('click', function () {
+            let checkStatus = table.checkStatus('procurementStorageTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要取消的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要取消的数据');
+            }else{
+                let ids = [];
+                layui.each(checkStatus.data, function (key, item) {
+                    ids.push(item.id)
+                    ids.push(item.storageCoding)
+                    if(item.storageState == 2){
+                        febs.modal.confirm('取消入库', '是否确认？', function () {
+                            cancelProcurementStorage(ids.join(','));
+                        });
+                    }else {
+                        febs.alert.warn('该状态不允许此操作');
+                    }
+                });
+            }
+        });
+
+        function initPurchaseRequisitionTable() {
+            tableIns = febs.table.init({
+                elem: '#procurementStorageTable',
+                id: 'procurementStorageTable',
+                url: ctx + 'warehouseStorage/list',
+                cols: [[
+                    {type: 'checkbox'},
+                    {field:'number',title:'序号',align:'center',width:60,templet:function (d) {
+                            return d.LAY_INDEX;}},
+                    {title: '状态', templet: '#storage-state',align:'center',width:60},
+                    {field: 'storageDate', title: '日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.storageDate, "yyyy-MM-dd") }}</div>', minWidth: 110, sort: true},
+                    {field: 'storageCoding', title: '收货单号', minWidth: 145,align:'center'},
+                    {field: 'supplierName', title: '供应商', minWidth: 120,align:'center'},
+                    {field: 'locationName',title: '库房 ', minWidth: 55,align:'center'},
+                    {field: 'storageQuantity',title: '数量', minWidth: 55,align:'center'},
+                    {field: 'storageMoney', title: '金额', minWidth: 95,align:'center'},
+                    {field: 'currencyName', title: '币种', minWidth: 80,align:'center'},
+                    {field: 'taxRateName', title: '税率', minWidth: 80,align:'center'},
+                    {field: 'storagePreparer', title: '入库人', minWidth: 95,align:'center'},
+                    {field: 'storagePreparerDate', title: '入库日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.storagePreparerDate, "yyyy-MM-dd HH:mm:ss") }}</div>', minWidth: 160, sort: true}
+                ]]
+            });
+        }
+
+        table.on('row(procurementStorageTable)', function (obj) {
+            let storageCoding = obj.data.storageCoding;
+            $.ajax({
+                url: '/warehouseStorage/query',
+                data:{"storageCoding":storageCoding},
+                async:false
+                ,dataType:"json"
+                ,success : function(data) {
+                    warehouseTableData = data.replies;
+                    layui.table.reload('procurementStorage-table',{
+                        data : warehouseTableData
+                    });
+                }
+            });
+        });
+
+        table.render({
+            elem:'#procurementStorage-table',
+            data:warehouseTableData,
+            cols: [[
+                {field:'number',title:'序号',align:'center',width:60,templet:function (d) {
+                        return d.LAY_INDEX;}},
+                {field: 'storageCode',title: '编码', minWidth: 90,align:'center'},
+                {field: 'storageName', title: '名称', minWidth: 90,align:'center'},
+                {field: 'storageSpecifications', title: '规格', minWidth: 90,event:'specification',align:'center'},
+                {field: 'storageQuality',title: '材质', minWidth: 55,align:'center'},
+                {field: 'storageBrand',title: '品牌', minWidth: 55,align:'center'},
+                {field: 'storageCompany',title: '单位', minWidth: 55,align:'center'},
+                /*{field: 'orderQuantity',title: '订购数量', minWidth: 55,align:'center'},*/
+                {field: 'storageQuantity',title: '收货数量', minWidth: 55,align:'center'},
+                {field: 'unitPrice',title: '单价', minWidth: 55,align:'center'},
+                {field: 'storageMoney',title: '金额', minWidth: 55,align:'center'},
+                {field: 'orderNumber',title: '采购订单', minWidth: 55,align:'center'},
+                {field: 'storageLocation', title: '库位', minWidth: 72},
+                {field: 'storageRemarks', title: '备注', minWidth: 72}
+            ]]
+        });
+
+        function procurementStorage(ids) {
+            febs.get(ctx + 'warehouseStorage/storage/' + ids, null, function () {
+                febs.alert.success('采购入库操作成功');
+                $query.click();
+            });
+        }
+
+        function cancelProcurementStorage(ids) {
+            febs.get(ctx + 'warehouseStorage/cancel/' + ids, null, function () {
+                febs.alert.success('取消入库操作成功');
+                $query.click();
+            });
+        }
+
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+
+    })
+
+    function procurementStorageSupplierName(){
+        layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
+            let $ = layui.$,
+                febs = layui.febs;
+            febs.modal.open('供应商选择列表', 'purchase/purchaseSupplierSelectionList', {
+                area:["55%","60%"],
+                yes: function (index, layero) {
+                }
+            });
+        });
+    }
+</script>

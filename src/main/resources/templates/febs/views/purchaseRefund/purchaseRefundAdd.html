@@ -37,12 +37,8 @@
                                     </div>
                                     <label class="layui-form-mid">库&nbsp;房&nbsp;<b>:</b></label>
                                     <div class="layui-input-inline" style="width: 115px">
-                                        <select name="refundLibrary" id="refundLibrary">
-                                            <option value="1">外购库</option>
-                                            <option value="2">机加库</option>
-                                            <option value="3">废品库</option>
-                                            <option value="4">资产库</option>
-                                            <option value="5">成品库</option>
+                                        <select name="storageLibrary" id="storageLibrary">
+                                            <option th:each="location:${location}" th:value="${location.locationSorting}">[[${location.locationName}]]</option>
                                         </select>
                                     </div>
                                     <label class="layui-form-mid">币&nbsp;种&nbsp;<b>:</b></label>
@@ -113,31 +109,6 @@
     }[d.materialState];
     }}
     <span class="layui-badge febs-bg-{{materialState.color}}">{{ materialState.title }}</span>
-</script>
-<script type="text/html" id="refundLibrary-state">
-    {{#
-    let refundLibrary = {
-    1: {title: '外购库'},
-    2: {title: '机加库'},
-    3: {title: '废品库'},
-    4: {title: '资产库'},
-    5: {title: '成品库'}
-    }[d.refundLibrary];
-    }}
-    <span>{{ refundLibrary.title }}</span>
-</script>
-
-<script type="text/html" id="storageLibrary-state">
-    {{#
-    let storageLibrary = {
-    1: {title: '外购库'},
-    2: {title: '机加库'},
-    3: {title: '废品库'},
-    4: {title: '资产库'},
-    5: {title: '成品库'}
-    }[d.storageLibrary];
-    }}
-    <span>{{ storageLibrary.title }}</span>
 </script>
 <script type="text/html" id="zizeng">
     {{d.LAY_TABLE_INDEX+1}}
@@ -253,7 +224,7 @@
                 cols: [
                     [
                         {type: 'checkbox'},
-                        {title: '库房', templet: '#storageLibrary-state',align:'center',width:120},
+                        {field: 'storageLibrary', title: '库房',align:'center', minWidth: 120},
                         {field: 'supplierName', title: '供应商',align:'center', minWidth: 120},
                         {field: 'storageCode', title: '编码',align:'center', minWidth: 100},
                         {field: 'storageName', title: '名称',align:'center', minWidth: 100},
@@ -294,7 +265,7 @@
             data:tableData,
             cols: [[
                 {type: 'checkbox'},
-                {title: '库房', templet: '#refundLibrary-state',align:'center',width:120},
+                {field: 'refundLibrary', title: '库房',align:'center', minWidth: 120},
                 {field: 'supplierName', title: '供应商',align:'center', minWidth: 120},
                 {field: 'refundCode', title: '编码',align:'center', minWidth: 100},
                 {field: 'refundName', title: '名称',align:'center', minWidth: 100},

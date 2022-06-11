@@ -8,6 +8,27 @@
             jr_purchase_settlement ps
         WHERE
             1 = 1
+        <if test="purchaseSettlement.settlementState != null and purchaseSettlement.settlementState != ''">
+            AND ps.settlement_state = #{purchaseSettlement.settlementState}
+        </if>
+        <if test="purchaseSettlement.settlementNumbers != null and purchaseSettlement.settlementNumbers != ''">
+            AND ps.settlement_numbers = #{purchaseSettlement.settlementNumbers}
+        </if>
+        <if test="purchaseSettlement.settlementSupplier != null and purchaseSettlement.settlementSupplier != ''">
+            AND ps.settlement_supplier = #{purchaseSettlement.settlementSupplier}
+        </if>
+        <if test="purchaseSettlement.settlementLibrary != null and purchaseSettlement.settlementLibrary != ''">
+            AND ps.settlement_library = #{purchaseSettlement.settlementLibrary}
+        </if>
+        <if test="purchaseSettlement.settlementUse != null and purchaseSettlement.settlementUse != ''">
+            AND ps.settlement_use = #{purchaseSettlement.settlementUse}
+        </if>
+        <if test="purchaseSettlement.signedDateFrom != null and purchaseSettlement.signedDateFrom !=''">
+            And ps.settlement_date &gt;= #{purchaseSettlement.signedDateFrom}
+        </if>
+        <if test="purchaseSettlement.signedDateTo != null and purchaseSettlement.signedDateTo !=''">
+            And ps.settlement_date &lt;= #{purchaseSettlement.signedDateTo}
+        </if>
     </sql>
 
     <sql id="findPurchaseSettlementSql">
@@ -18,18 +39,19 @@
             ps.settlement_numbers,
             ps.settlement_use,
             ps.settlement_supplier,
-            ps.settlement_library,
+            wl.location_name settlementLibrary,
             sum(pss.settlement_quantity) settlementQuantity,
             sum(pss.settlement_money) settlementMoney,
-            ps.settlement_no_money,
             ps.settlement_invoice,
             fpa.finance_parameter_name currencyName,
-            fpb.finance_parameter_name taxRateName
+            fpb.finance_parameter_name taxRateName,
+            sum(pss.settlement_money) / ( 1 + fpb.finance_parameter_name * 0.01) settlementNoMoney
         FROM
             jr_purchase_settlement ps
-                LEFT JOIN jr_purchase_settlement_schedule pss ON ( ps.settlement_numbers = pss.settlement_number )
-                LEFT JOIN jr_finance_parameters fpa ON ( ps.currency_id = fpa.id )
-                LEFT JOIN jr_finance_parameters fpb ON ( ps.tax_rate_id = fpb.id )
+            LEFT JOIN jr_purchase_settlement_schedule pss ON ( ps.settlement_numbers = pss.settlement_number )
+            LEFT JOIN jr_finance_parameters fpa ON ( ps.currency_id = fpa.id )
+            LEFT JOIN jr_finance_parameters fpb ON ( ps.tax_rate_id = fpb.id )
+            LEFT JOIN jr_warehouse_location wl ON ( ps.settlement_library = wl.location_sorting )
         WHERE
             1 = 1
             <if test="purchaseSettlement.settlementState != null and purchaseSettlement.settlementState != ''">
@@ -43,6 +65,15 @@
             </if>
             <if test="purchaseSettlement.settlementLibrary != null and purchaseSettlement.settlementLibrary != ''">
                 AND ps.settlement_library = #{purchaseSettlement.settlementLibrary}
+            </if>
+            <if test="purchaseSettlement.settlementUse != null and purchaseSettlement.settlementUse != ''">
+                AND ps.settlement_use = #{purchaseSettlement.settlementUse}
+            </if>
+            <if test="purchaseSettlement.signedDateFrom != null and purchaseSettlement.signedDateFrom !=''">
+                And ps.settlement_date &gt;= #{purchaseSettlement.signedDateFrom}
+            </if>
+            <if test="purchaseSettlement.signedDateTo != null and purchaseSettlement.signedDateTo !=''">
+                And ps.settlement_date &lt;= #{purchaseSettlement.signedDateTo}
             </if>
         GROUP BY
             ps.settlement_numbers
@@ -73,14 +104,18 @@
             pss.settlement_deposit,
             pss.order_number,
             pss.settlement_subclass,
-            pss.whether_invoice
+            ps.settlement_invoice,
+            pss.settlement_money / ( 1 + fpb.finance_parameter_name * 0.01) settlementNoMoney,
+            pss.settlement_price / ( 1 + fpb.finance_parameter_name * 0.01) settlementNoPrice
         FROM
             jr_purchase_settlement_schedule pss
                 LEFT JOIN jr_purchase_settlement ps ON ( ps.settlement_numbers = pss.settlement_number )
+                LEFT JOIN jr_finance_parameters fpa ON ( ps.currency_id = fpa.id )
+                LEFT JOIN jr_finance_parameters fpb ON ( ps.tax_rate_id = fpb.id )
         WHERE
             1 = 1
         AND ps.settlement_supplier = #{purchaseSettlementSchedule.settlementSupplier}
-        AND pss.whether_invoice = '2'
+        AND ps.settlement_invoice = '1'
     </sql>
 
     <select id="countPurchaseSettlement" parameterType="com.erp.purchase.entity.PurchaseSettlement" resultType="long">
@@ -204,8 +239,43 @@
     <update id="cancelPurchaseSettlement"  parameterType="com.erp.purchase.entity.PurchaseSettlement">
         UPDATE
             jr_purchase_settlement
-        set settlement_state = 1
+        set settlement_state = 3
         WHERE id = #{ids}
+    </update>
+
+    <update id="cancelPurchaseSettlementData"  parameterType="com.erp.purchase.entity.PurchaseSettlement">
+        UPDATE
+            jr_purchase_settlement
+        set settlement_state = 2
+        WHERE id = #{ids}
+    </update>
+
+    <update id="updatePurchaseRefund"  parameterType="com.erp.purchase.entity.PurchaseRefund">
+        UPDATE
+            jr_purchase_refund
+        set refund_state = 3
+        WHERE refund_number = #{settlementNumbers}
+    </update>
+
+    <update id="updateWarehouseStorage"  parameterType="com.erp.warehouse.entity.WarehouseStorage">
+        UPDATE
+            jr_warehouse_storage
+        set storage_state = 3
+        WHERE storage_coding = #{settlementNumbers}
+    </update>
+
+    <update id="updatePurchaseRefundData"  parameterType="com.erp.purchase.entity.PurchaseRefund">
+        UPDATE
+            jr_purchase_refund
+        set refund_state = 2
+        WHERE refund_number = #{settlementNumbers}
+    </update>
+
+    <update id="updateWarehouseStorageData"  parameterType="com.erp.warehouse.entity.WarehouseStorage">
+        UPDATE
+            jr_warehouse_storage
+        set storage_state = 2
+        WHERE storage_coding = #{settlementNumbers}
     </update>
 
 </mapper>

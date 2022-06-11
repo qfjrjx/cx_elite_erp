@@ -136,6 +136,8 @@ public class PurchaseOrderServiceImpl extends ServiceImpl<PurchaseOrderMapper, P
             String orderRemarks = jsonArrayOne.getJSONObject(i).getString("orderRemarks");
             String orderSubclass = jsonArrayOne.getJSONObject(i).getString("orderSubclass");
             String orderCategory = jsonArrayOne.getJSONObject(i).getString("orderCategory");
+            String orderLocation = jsonArrayOne.getJSONObject(i).getString("orderLocation");
+            purchaseOrderSchedule.setOrderLocation(orderLocation);
             if (!applicationNo.equals("")) {
                 purchaseOrderSchedule.setApplicationNo(applicationNo);
             }if (!orderCode.equals("")) {
@@ -198,6 +200,8 @@ public class PurchaseOrderServiceImpl extends ServiceImpl<PurchaseOrderMapper, P
             String orderRemarks = jsonArrayOne.getJSONObject(i).getString("orderRemarks");
             String orderSubclass = jsonArrayOne.getJSONObject(i).getString("orderSubclass");
             String orderCategory = jsonArrayOne.getJSONObject(i).getString("orderCategory");
+            String orderLocation = jsonArrayOne.getJSONObject(i).getString("orderLocation");
+            purchaseOrderSchedule.setOrderLocation(orderLocation);
             if (!applicationNo.equals("")) {
                 purchaseOrderSchedule.setApplicationNo(applicationNo);
             }if (!orderCode.equals("")) {

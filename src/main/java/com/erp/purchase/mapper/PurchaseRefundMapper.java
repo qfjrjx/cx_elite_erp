@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.erp.purchase.entity.PurchaseRefund;
 import com.erp.purchase.entity.PurchaseRefundSchedule;
-import com.erp.purchase.entity.WarehouseStorageSchedule;
+import com.erp.warehouse.entity.WarehouseStorage;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -27,9 +27,9 @@ public interface PurchaseRefundMapper extends BaseMapper<PurchaseRefund> {
 
     List<PurchaseRefundSchedule> queryPurchaseRefundSchedule(@Param("oddNumbers") String oddNumbers);
 
-    IPage<WarehouseStorageSchedule> findPurchaseRefundAddQueryPage(Page<WarehouseStorageSchedule> page , @Param("warehouseStorage") WarehouseStorageSchedule warehouseStorage);
+    IPage<WarehouseStorage> findPurchaseRefundAddQueryPage(Page<WarehouseStorage> page , @Param("warehouseStorage") WarehouseStorage warehouseStorage);
 
-    long countPurchaseRefundAddQuery(@Param("warehouseStorage") WarehouseStorageSchedule warehouseStorage);
+    long countPurchaseRefundAddQuery(@Param("warehouseStorage") WarehouseStorage warehouseStorage);
 
     PurchaseRefund queryPurchaseRefund();
 
@@ -42,4 +42,12 @@ public interface PurchaseRefundMapper extends BaseMapper<PurchaseRefund> {
     void deletePurchaseRefundSchedule(@Param("refundNumber") String refundNumber);
 
     void deletePurchaseRefund(@Param("refundNumber") String refundNumber);
+
+    void otuPurchaseRefund(@Param("purchaseRefund") PurchaseRefund purchaseRefund);
+
+    void cancelPurchaseRefund(@Param("ids") String id);
+
+    void deletePurchaseSettlement(@Param("refundNumber") String refundNumber);
+
+    void deletePurchaseSettlementSchedule(@Param("refundNumber") String refundNumber);
 }

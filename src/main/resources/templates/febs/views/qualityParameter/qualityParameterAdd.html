@@ -1,0 +1,83 @@
+<style>
+    #qualityParameter-add {
+        padding: 20px 25px 25px 0;
+    }
+</style>
+<div class="layui-fluid" id="qualityParameter-add">
+    <form class="layui-form" action="" lay-filter="qualityParameter-add-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label">参数类别：</label>
+            <div class="layui-input-block">
+                <select name="parameterType">
+                    <option value="1">工序类型</option>
+                    <option value="2">检验类型</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">参数值：</label>
+            <div class="layui-input-block">
+                <input type="text" name="parameterValue" id="parameterValue"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" >参数名称：</label>
+            <div class="layui-input-block">
+                <input type="text" name="parameterName" id="parameterName"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" >排&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;序：</label>
+            <div class="layui-input-block">
+                <input type="text" name="parameterSorting" id="parameterSorting"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注：</label>
+            <div class="layui-input-block">
+                <input type="text" name="parameterNote" id="parameterNote"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">状&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;态：</label>
+            <div class="layui-input-block">
+                <select name="parameterState" id="parameterState">
+                    <option value="1">启用</option>
+                    <option value="2">禁止</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item febs-hide">
+            <button class="layui-btn" lay-submit="" lay-filter="qualityParameter-add-form-submit" id="submit"></button>
+        </div>
+    </form>
+</div>
+<script>
+    layui.use(['febs', 'form', 'validate', 'xmSelect', 'laydate'], function () {
+        let $ = layui.$,
+            febs = layui.febs,
+            layer = layui.layer,
+            form = layui.form,
+            validate = layui.validate,
+            upload = layui.upload,
+            laydate = layui.laydate,
+            uploadInst;
+
+        form.verify(validate);
+        form.render();
+
+        form.on('submit(qualityParameter-add-form-submit)', function (data) {
+            febs.post(ctx + 'qualityParameter/add', data.field,function () {
+                layer.closeAll();
+                febs.alert.success('新增参数成功');
+                $('#quality-parameter').find('#query').click();
+            });
+            return false;
+
+        });
+    })
+</script>

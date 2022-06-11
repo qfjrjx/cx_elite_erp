@@ -1,0 +1,93 @@
+<style>
+    #warehouseLocation-add {
+        padding: 20px 25px 25px 0;
+    }
+</style>
+<div class="layui-fluid" id="warehouseLocation-add">
+    <form class="layui-form" action="" lay-filter="warehouseLocation-add-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label">库房编码：</label>
+            <div class="layui-input-block">
+                <input type="text" name="locationCode"
+                       autocomplete="off" class="layui-input" placeholder="自动生成" readonly>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">库房类型：</label>
+            <div class="layui-input-block">
+                <select id="currencyName"  name="locationType" lay-verify="required" class="layui-form-select" >
+                    <option th:each="parameterValue:${parameterValue}" th:value="${parameterValue.id}">[[${parameterValue.parameterValue}]]</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" >库房名称：</label>
+            <div class="layui-input-block">
+                <input type="text" name="locationName" id="locationName"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" >排&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;序：</label>
+            <div class="layui-input-block">
+                <input type="text" name="locationSorting" id="locationSorting"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注：</label>
+            <div class="layui-input-block">
+                <input type="text" name="locationNote" id="locationNote"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">状&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;态：</label>
+            <div class="layui-input-block">
+                <select name="locationState" id="locationState">
+                    <option value="1">启用</option>
+                    <option value="2">禁止</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item" style="display: none;">
+            <label class="layui-form-label">制单人：</label>
+            <div class="layui-input-block">
+                <input type="text" name="locationCreate" id="locationCreate"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item febs-hide">
+            <button class="layui-btn" lay-submit="" lay-filter="warehouseLocation-add-form-submit" id="submit"></button>
+        </div>
+    </form>
+</div>
+<script langguage="JavaScript">
+    locationCreate.value = currentUser.username;
+
+</script>
+<script>
+    layui.use(['febs', 'form', 'validate', 'xmSelect', 'laydate'], function () {
+        let $ = layui.$,
+            febs = layui.febs,
+            layer = layui.layer,
+            form = layui.form,
+            validate = layui.validate,
+            upload = layui.upload,
+            laydate = layui.laydate,
+            uploadInst;
+
+        form.verify(validate);
+        form.render();
+
+        form.on('submit(warehouseLocation-add-form-submit)', function (data) {
+            febs.post(ctx + 'warehouseLocation/add', data.field,function () {
+                layer.closeAll();
+                febs.alert.success('新增参数成功');
+                $('#warehouse-location').find('#query').click();
+            });
+            return false;
+
+        });
+    })
+</script>

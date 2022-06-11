@@ -107,7 +107,7 @@ public class PurchaseSettlementSchedule {
     private BigDecimal settlementDeposit;
 
     /**
-     * 采购结算单号
+     * 采购订单
      */
     @TableField("order_number")
     private String orderNumber;
@@ -133,4 +133,14 @@ public class PurchaseSettlementSchedule {
      *供应商
      */
     private String settlementSupplier;
+
+    /**
+     * 不含税金额
+     */
+    private String settlementNoMoney;
+
+    /**
+     * 不含税单价
+     */
+    private String settlementNoPrice;
 }

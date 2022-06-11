@@ -53,9 +53,7 @@
                                         <div class="layui-input-inline" style="width: 90px">
                                             <select id="currencyName"  name="currencyName" lay-verify="required" class="layui-form-select" >
                                                 <option value=""></option>
-                                                <option value="4">人民币</option>
-                                                <option value="5">美元</option>
-                                                <option value="6">欧元</option>
+                                                <option th:each="currency:${currency}" th:value="${currency.id}">[[${currency.financeParameterName}]]</option>
                                             </select>
                                         </div>
                                     </div>
@@ -357,6 +355,7 @@
                     let paymentNumber = [];
                     layui.each(checkStatus.data, function (key, item) {
                         paymentNumber.push(item.paymentNumber)
+                        paymentNumber.push(item.invoiceNumbers)
                     });
                     deletePurchasePayment(paymentNumber.join(','));
                 });

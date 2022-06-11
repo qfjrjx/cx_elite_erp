@@ -73,12 +73,31 @@ public class PurchaseSettlementServiceImpl extends ServiceImpl<PurchaseSettlemen
 
     @Override
     public void settlementPurchaseSettlement(String ids) {
-        baseMapper.settlementPurchaseSettlement(ids);
+        String[] parts = ids.split(",");
+        String id = parts[0]; // id
+        String settlementUse = parts[1]; // 路径1：采购退货2：采购入库
+        String settlementNumbers = parts[2]; // 单号
+        baseMapper.settlementPurchaseSettlement(id);
+        if (settlementUse.equals("1")){
+            baseMapper.updatePurchaseRefund(settlementNumbers);
+        }else if (settlementUse.equals("2")){
+            baseMapper.updateWarehouseStorage(settlementNumbers);
+        }
     }
 
     @Override
     public void cancelPurchaseSettlement(String ids) {
-        baseMapper.cancelPurchaseSettlement(ids);
+        String[] parts = ids.split(",");
+        String id = parts[0]; // id
+        String settlementUse = parts[1]; // 路径1：采购退货2：采购入库
+        String settlementNumbers = parts[2]; // 单号
+        if (settlementUse.equals("1")){
+            baseMapper.cancelPurchaseSettlement(id);
+            baseMapper.updatePurchaseRefundData(settlementNumbers);
+        }else if (settlementUse.equals("2")){
+            baseMapper.cancelPurchaseSettlementData(id);
+            baseMapper.updateWarehouseStorageData(settlementNumbers);
+        }
     }
 
     @Override

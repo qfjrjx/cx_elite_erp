@@ -97,6 +97,7 @@
             prs.apply_remarks applyRemarks,
             prs.apply_subclass applySubclass,
             prs.apply_category applyCategory,
+            prs.apply_location applyLocation,
             pr.apply_preparer applyPreparer,
             pr.apply_preparation_date applyPreparationDate
         FROM
@@ -105,6 +106,7 @@
             LEFT JOIN jr_purchase_requisition_schedule prs ON ( pr.odd_numbers = prs.odd_numbers )
         WHERE
             1 = 1
+          AND pr.apply_state = 2
     </sql>
     <sql id="findPurchaseCancelPageSql">
         SELECT
@@ -154,6 +156,17 @@
         </if>
     </sql>
 
+    <sql id="countPurchaseRequisitionsSql">
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_purchase_requisition pr
+                LEFT JOIN t_dept d ON ( pr.department_id = d.dept_id )
+                LEFT JOIN jr_purchase_requisition_schedule prs ON ( pr.odd_numbers = prs.odd_numbers )
+        WHERE
+            1 = 1
+    </sql>
+
     <select id="countPurchaseRequisition" parameterType="com.erp.purchase.entity.PurchaseRequisition" resultType="long">
         <include refid="countPurchaseRequisitionSql"/>
     </select>
@@ -173,6 +186,11 @@
     <select id="countPurchaseCancel" parameterType="com.erp.purchase.entity.PurchaseRequisitionSchedule" resultType="long">
         <include refid="countPurchaseCancelSql"/>
     </select>
+
+    <select id="countPurchaseRequisitions" parameterType="com.erp.purchase.entity.PurchaseRequisition" resultType="long">
+        <include refid="countPurchaseRequisitionsSql"/>
+    </select>
+
 
     <!--查询出最后一个采购申请单号-->
     <select id="queryPurchaseRequisition" resultType="com.erp.purchase.entity.PurchaseRequisition">
@@ -217,7 +235,7 @@
     <insert id="savePurchaseRequisitionSchedule" parameterType="com.erp.purchase.entity.PurchaseRequisitionSchedule">
         INSERT INTO jr_purchase_requisition_schedule (
             odd_numbers, apply_code, apply_name,apply_specifications,apply_quality,apply_brand,apply_company
-            ,apply_quantity, delivery_date,apply_remarks,apply_subclass,apply_category,apply_cancel)
+            ,apply_quantity, delivery_date,apply_remarks,apply_subclass,apply_category,apply_cancel,apply_location)
         VALUES
             (#{oddNumbers},
              #{applyCode},
@@ -231,7 +249,8 @@
              #{applyRemarks},
              #{applySubclass},
              #{applyCategory},
-             #{applyCancel}
+             #{applyCancel},
+             #{applyLocation}
             )
     </insert>
 
@@ -298,6 +317,20 @@
         UPDATE
             jr_purchase_requisition_schedule
         set apply_cancel = 1
+        WHERE id = #{ids}
+    </update>
+
+    <update id="confirmPurchaseRequisition"  parameterType="com.erp.purchase.entity.PurchaseRequisition">
+        UPDATE
+            jr_purchase_requisition
+        set apply_state = 2
+        WHERE id = #{ids}
+    </update>
+
+    <update id="cancelPurchaseRequisition"  parameterType="com.erp.purchase.entity.PurchaseRequisition">
+        UPDATE
+            jr_purchase_requisition
+        set apply_state = 1
         WHERE id = #{ids}
     </update>
 </mapper>

@@ -93,16 +93,22 @@ public class PurchaseInvoice {
     private String invoiceRemarks;
 
     /**
-     *日期分类
+     *开票时间状态
      */
     @TableField("invoice_date_state")
     private String invoiceDateState;
 
     /**
-     *日期分类
+     *登记时间状态
      */
     @TableField("registration_date_state")
     private String registrationDateState;
+
+    /**
+     *付款状态1：登记2：已付款
+     */
+    @TableField("payment_state")
+    private String paymentState;
 
     /**
      * 入库数量总数
@@ -118,6 +124,11 @@ public class PurchaseInvoice {
      *开票数量
      */
     private String invoiceAmount;
+
+    /**
+     * 采购结算单号
+     */
+    private String invoiceCode;
 
     private transient String signedDateFrom;
     private transient String signedDateTo;

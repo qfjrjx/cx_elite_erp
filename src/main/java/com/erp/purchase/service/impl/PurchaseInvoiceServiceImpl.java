@@ -83,6 +83,7 @@ public class PurchaseInvoiceServiceImpl extends ServiceImpl<PurchaseInvoiceMappe
         purchaseInvoiceData.setCurrencyId(currencyName);
         purchaseInvoiceData.setTaxRateId(taxRateName);
         purchaseInvoiceData.setInvoiceRemarks(invoiceRemarks);
+        purchaseInvoiceData.setPaymentState("1");
 
         JSONArray jsonArrayOne = JSONArray.parseArray(dataTable);
         PurchaseInvoiceSchedule purchaseInvoiceSchedule = new PurchaseInvoiceSchedule();
@@ -227,11 +228,19 @@ public class PurchaseInvoiceServiceImpl extends ServiceImpl<PurchaseInvoiceMappe
 
     @Override
     public void confirmPurchaseInspection(String ids) {
-        baseMapper.confirmPurchaseInspection(ids);
+        String[] parts = ids.split(",");
+        String id = parts[0]; // id
+        String invoiceCode = parts[1]; // 单号
+        baseMapper.confirmPurchaseInspection(id);
+        baseMapper.updatePurchaseSettlement(invoiceCode);
     }
 
     @Override
     public void cancelPurchaseInspection(String ids) {
-        baseMapper.cancelPurchaseInspection(ids);
+        String[] parts = ids.split(",");
+        String id = parts[0]; // id
+        String invoiceCode = parts[1]; // 单号
+        baseMapper.cancelPurchaseInspection(id);
+        baseMapper.updatePurchaseSettlementData(invoiceCode);
     }
 }

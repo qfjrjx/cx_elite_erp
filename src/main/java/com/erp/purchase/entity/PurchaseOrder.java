@@ -184,6 +184,11 @@ public class PurchaseOrder {
      */
     private String orderCategory;
 
+    /**
+     * 库位
+     */
+    private String orderLocation;
+
     private transient String signedDateFrom;
     private transient String signedDateTo;
 

@@ -136,4 +136,54 @@ public class PurchaseInspectionController extends BaseController {
         this.purchaseInspectionService.cancelPurchaseInspection(ids);
         return new FebsResponse().success();
     }
+
+    /*品质外检检验*/
+    @ControllerEndpoint(operation = "修改PurchaseInspection", exceptionMessage = "修改PurchaseInspection失败")
+    @PostMapping("qualityInspection/inspection")
+    @ResponseBody
+    @RequiresPermissions("qualityInspection:inspection")
+    public FebsResponse updateQualityInspection(PurchaseInspectionSchedule purchaseInspectionSchedule) throws ParseException {
+        this.purchaseInspectionService.updateQualityInspection(purchaseInspectionSchedule);
+        return new FebsResponse().success();
+    }
+
+    /*取消检验*/
+    @ControllerEndpoint(operation = "取消检验", exceptionMessage = "取消检验失败")
+    @GetMapping("qualityInspection/cancelInspection/{ids}")
+    @ResponseBody
+    @RequiresPermissions("qualityInspection:cancelInspection")
+    public FebsResponse cancelInspection(@PathVariable String ids) {
+        this.purchaseInspectionService.cancelInspection(ids);
+        return new FebsResponse().success();
+    }
+
+    /*送库（外购）*/
+    @ControllerEndpoint(operation = "送库（外购）", exceptionMessage = "送库（外购）失败")
+    @GetMapping("qualityInspection/confirmOutsourcing/{ids}")
+    @ResponseBody
+    @RequiresPermissions("qualityInspection:outsourcing")
+    public FebsResponse confirmOutsourcing(@PathVariable String ids) throws ParseException {
+        this.purchaseInspectionService.confirmOutsourcing(ids);
+        return new FebsResponse().success();
+    }
+
+    /*送库（资产）*/
+    @ControllerEndpoint(operation = "送库（资产）", exceptionMessage = "送库（资产）失败")
+    @GetMapping("qualityInspection/confirmAssets/{ids}")
+    @ResponseBody
+    @RequiresPermissions("qualityInspection:assets")
+    public FebsResponse confirmAssets(@PathVariable String ids) throws ParseException {
+        this.purchaseInspectionService.confirmAssets(ids);
+        return new FebsResponse().success();
+    }
+
+    /*取消送库*/
+    @ControllerEndpoint(operation = "取消送库", exceptionMessage = "取消送库失败")
+    @GetMapping("qualityInspection/cancelLibrary/{ids}")
+    @ResponseBody
+    @RequiresPermissions("qualityInspection:cancelLibrary")
+    public FebsResponse cancelLibrary(@PathVariable String ids) throws ParseException {
+        this.purchaseInspectionService.cancelLibrary(ids);
+        return new FebsResponse().success();
+    }
 }

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.warehouse.mapper.WarehouseParameterMapper">
+
+    <sql id="countWarehouseParametersSql">
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_warehouse_parameter wp
+        WHERE
+            1 = 1
+        <if test="warehouseParameter.parameterName != null and warehouseParameter.parameterName != ''">
+            AND wp.parameter_name = #{warehouseParameter.parameterName}
+        </if>
+        <if test="warehouseParameter.parameterType != null and warehouseParameter.parameterType != ''">
+            AND wp.parameter_type = #{warehouseParameter.parameterType}
+        </if>
+        <if test="warehouseParameter.parameterState != null and warehouseParameter.parameterState != ''">
+            AND wp.parameter_state = #{warehouseParameter.parameterState}
+        </if>
+    </sql>
+
+    <sql id="findWarehouseParametersPageSql">
+        SELECT
+            wp.id,
+            wp.parameter_value,
+            wp.parameter_name,
+            wp.parameter_type,
+            wp.parameter_sorting,
+            wp.parameter_state,
+            wp.parameter_note
+        FROM
+            jr_warehouse_parameter wp
+        WHERE
+            1 = 1
+        <if test="warehouseParameter.parameterName != null and warehouseParameter.parameterName != ''">
+            AND wp.parameter_name = #{warehouseParameter.parameterName}
+        </if>
+        <if test="warehouseParameter.parameterType != null and warehouseParameter.parameterType != ''">
+            AND wp.parameter_type = #{warehouseParameter.parameterType}
+        </if>
+        <if test="warehouseParameter.parameterState != null and warehouseParameter.parameterState != ''">
+            AND wp.parameter_state = #{warehouseParameter.parameterState}
+        </if>
+    </sql>
+
+    <select id="countWarehouseParameters" parameterType="com.erp.warehouse.entity.WarehouseParameter" resultType="long">
+        <include refid="countWarehouseParametersSql"/>
+    </select>
+
+    <select id="findWarehouseParametersPage" parameterType="com.erp.warehouse.entity.WarehouseParameter" resultType="com.erp.warehouse.entity.WarehouseParameter">
+        <include refid="findWarehouseParametersPageSql"/>
+    </select>
+
+    <select id="warehouseParameterId" parameterType="Long" resultType="com.erp.warehouse.entity.WarehouseParameter">
+        SELECT
+            wp.id,
+            wp.parameter_value,
+            wp.parameter_name,
+            wp.parameter_type,
+            wp.parameter_sorting,
+            wp.parameter_state,
+            wp.parameter_note
+        FROM
+            jr_warehouse_parameter wp
+        WHERE
+            1 = 1
+          AND wp.id = #{id}
+    </select>
+
+    <delete id="deleteWarehouseParameter">
+        delete from jr_warehouse_parameter where id = #{ids}
+    </delete>
+
+    <select id="queryParameterValue" resultType="com.erp.warehouse.entity.WarehouseParameter">
+        SELECT
+            wp.id,
+            wp.parameter_value,
+            wp.parameter_name,
+            wp.parameter_type,
+            wp.parameter_sorting,
+            wp.parameter_state,
+            wp.parameter_note
+        FROM
+            jr_warehouse_parameter wp
+        WHERE
+            1 = 1
+          and wp.parameter_state = '1'
+    </select>
+
+</mapper>

@@ -64,9 +64,7 @@
                                         <div class="layui-input-inline" style="width: 90px">
                                             <select id="currencyId"  name="currencyId" lay-verify="required" class="layui-form-select" >
                                                 <option value=""></option>
-                                                <option value="4">人民币</option>
-                                                <option value="5">美元</option>
-                                                <option value="6">欧元</option>
+                                                <option th:each="currency:${currency}" th:value="${currency.id}">[[${currency.financeParameterName}]]</option>
                                             </select>
                                         </div>
                                     </div>
@@ -75,9 +73,7 @@
                                         <div class="layui-input-inline" style="width: 90px">
                                             <select id="taxRateId"  name="taxRateId" lay-verify="required" class="layui-form-select" >
                                                 <option value=""></option>
-                                                <option value="1">13%</option>
-                                                <option value="2">9%</option>
-                                                <option value="3">6%</option>
+                                                <option th:each="taxRate:${taxRate}" th:value="${taxRate.id}">[[${taxRate.financeParameterName}]]</option>
                                             </select>
                                         </div>
                                     </div>
@@ -300,12 +296,13 @@
                 let ids = [];
                 layui.each(checkStatus.data, function (key, item) {
                     ids.push(item.id)
+                    ids.push(item.invoiceCode)
                     if(item.invoiceState == 2){
-                        febs.alert.warn('请勿重复确认');
-                    }else {
                         febs.modal.confirm('确认采购发票', '是否确认？', function () {
                             confirmPurchaseInvoice(ids.join(','));
                         });
+                    }else {
+                        febs.alert.warn('请勿重复确认');
                     }
                 });
             }
@@ -318,12 +315,13 @@
                 let ids = [];
                 layui.each(checkStatus.data, function (key, item) {
                     ids.push(item.id)
+                    ids.push(item.invoiceCode)
                     if(item.invoiceState == 1){
-                        febs.alert.warn('请勿重复取消');
-                    }else {
                         febs.modal.confirm('取消采购发票', '是否取消？', function () {
                             cancePurchaseInvoice(ids.join(','));
                         });
+                    }else {
+                        febs.alert.warn('请勿重复取消');
                     }
                 });
             }

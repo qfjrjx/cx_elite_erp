@@ -13,6 +13,7 @@ import com.erp.purchase.entity.PurchaseInspection;
 import com.erp.purchase.entity.PurchaseInspectionSchedule;
 import com.erp.purchase.mapper.PurchaseInspectionMapper;
 import com.erp.purchase.service.IPurchaseInspectionService;
+import com.erp.warehouse.entity.WarehouseStorage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -21,10 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 /**
  * 来货检验 Service实现
@@ -112,7 +110,6 @@ public class PurchaseInspectionServiceImpl extends ServiceImpl<PurchaseInspectio
         purchaseInspectionDate.setTaxRateId(taxRateId);
         purchaseInspectionDate.setCurrencyId(currencyId);
         purchaseInspectionDate.setInspectionType("1");
-        purchaseInspectionDate.setInspectionState("1");
         JSONArray jsonArrayOne = JSONArray.parseArray(dataTable);
         PurchaseInspectionSchedule purchaseInspectionSchedule = new PurchaseInspectionSchedule();
         for(int i = 0; i < jsonArrayOne.size(); i++) {
@@ -127,9 +124,21 @@ public class PurchaseInspectionServiceImpl extends ServiceImpl<PurchaseInspectio
             String inspectionRemarks = jsonArrayOne.getJSONObject(i).getString("orderRemarks");
             String inspectionSubclass = jsonArrayOne.getJSONObject(i).getString("orderSubclass");
             String inspectionCategory = jsonArrayOne.getJSONObject(i).getString("orderCategory");
+            String inspectionLocation = jsonArrayOne.getJSONObject(i).getString("orderLocation");
+            String inspectionMaterial = jsonArrayOne.getJSONObject(i).getString("orderQuality");
+            String inspectionBrand = jsonArrayOne.getJSONObject(i).getString("orderBrand");
+            String inspectionCode = jsonArrayOne.getJSONObject(i).getString("orderCode");
+            String inspectionDeposit = jsonArrayOne.getJSONObject(i).getString("orderDeposit");
             purchaseInspectionSchedule.setInspectionRemarks(inspectionRemarks);
             BigDecimal inspectionMoneyTo = new BigDecimal(inspectionMoney);
             purchaseInspectionSchedule.setInspectionMoney(inspectionMoneyTo);
+            purchaseInspectionSchedule.setInspectionState("1");
+            purchaseInspectionSchedule.setInspectionLocation(inspectionLocation);
+            purchaseInspectionSchedule.setInspectionMaterial(inspectionMaterial);
+            purchaseInspectionSchedule.setInspectionBrand(inspectionBrand);
+            purchaseInspectionSchedule.setInspectionCode(inspectionCode);
+            BigDecimal inspectionDepositTo = new BigDecimal(inspectionDeposit);
+            purchaseInspectionSchedule.setInspectionDeposit(inspectionDepositTo);
             if (!orderNumber.equals("")){
                 purchaseInspectionSchedule.setOrderNumbers(orderNumber);
             }
@@ -178,9 +187,12 @@ public class PurchaseInspectionServiceImpl extends ServiceImpl<PurchaseInspectio
             String inspectionRemarks = jsonArrayOne.getJSONObject(i).getString("inspectionRemarks");
             String inspectionSubclass = jsonArrayOne.getJSONObject(i).getString("orderSubclass");
             String inspectionCategory = jsonArrayOne.getJSONObject(i).getString("orderCategory");
+            String inspectionLocation = jsonArrayOne.getJSONObject(i).getString("orderLocation");
             purchaseInspectionSchedule.setInspectionRemarks(inspectionRemarks);
             BigDecimal inspectionMoneyTo = new BigDecimal(inspectionMoney);
             purchaseInspectionSchedule.setInspectionMoney(inspectionMoneyTo);
+            purchaseInspectionSchedule.setInspectionState("1");
+            purchaseInspectionSchedule.setInspectionLocation(inspectionLocation);
             if (!orderNumber.equals("")){
                 purchaseInspectionSchedule.setOrderNumbers(orderNumber);
             }
@@ -248,4 +260,230 @@ public class PurchaseInspectionServiceImpl extends ServiceImpl<PurchaseInspectio
     public void cancelPurchaseInspection(String ids) {
         baseMapper.cancelPurchaseInspection(ids);
     }
+
+    @Override
+    public PurchaseInspectionSchedule qualityInspectionId(Long ids) {
+        return baseMapper.qualityInspectionId(ids);
+    }
+
+    @Override
+    public void updateQualityInspection(PurchaseInspectionSchedule purchaseInspectionSchedule) throws ParseException {
+        SimpleDateFormat simpleDateFormatTwo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
+        String dates = simpleDateFormatTwo.format(new Date());//系统当前时间
+        Date today = simpleDateFormatTwo.parse(dates);//格式化系统当前时间
+        purchaseInspectionSchedule.setInspectionQualityDate(today);
+        baseMapper.updateQualityInspection(purchaseInspectionSchedule);
+    }
+
+    @Override
+    public void cancelInspection(String ids) {
+        baseMapper.cancelInspection(ids);
+    }
+
+    @Override
+    public void confirmOutsourcing(String ids) throws ParseException {
+        String[] parts = ids.split(",");
+        String userName = parts[0]; // 创建人
+        String id = parts[1]; // id
+        PurchaseInspectionSchedule purchaseInspectionSchedule = null;
+        purchaseInspectionSchedule = baseMapper.confirmOutsourcing(id);
+        //采购入库表
+        WarehouseStorage warehouseStorage = new WarehouseStorage();
+        //来货检验附表
+        PurchaseInspectionSchedule purchaseInspectionScheduleData = new PurchaseInspectionSchedule();
+        /*单号案例 LLHRK22060017*/
+        String initials = "LLHRK";
+        String generateDocNo = null;
+        Date date = new Date();
+        //获取当前年
+        String yearLast = new SimpleDateFormat("yy", Locale.CHINESE).format(Calendar.getInstance().getTime());//打印当前月
+        //获取当月
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM");
+        //格式化当前月
+        String month = simpleDateFormat.format(date);
+        //查询是否有相同的数据
+        WarehouseStorage warehouseStorageTwo = null;
+        warehouseStorageTwo = baseMapper.queryWarehouseStorageTwo(purchaseInspectionSchedule.getInspectionNumber());
+        //查询出最后一个工作安排单号
+        WarehouseStorage warehouseStorageOne = null;
+        warehouseStorageOne = baseMapper.queryWarehouseStorage();
+        if (warehouseStorageOne != null){
+            String oddNumbers = warehouseStorageOne.getStorageCoding();
+            if (warehouseStorageTwo == null){
+                //判断月份是否相同
+                String oddNumbersOn = oddNumbers.substring(7,9);
+                if (oddNumbersOn.equals(month)){
+                    /*单号案例 LLHRK22060017*/
+                    String oddNumbersOne = oddNumbers.substring(9,13);
+                    int oddNumber = Integer.parseInt(oddNumbersOne);
+                    String oddNumberOne = null;
+                    if (oddNumber<10000){
+                        oddNumberOne = String.format("%04d",oddNumber+1);
+                    }
+                    generateDocNo = initials+yearLast+month+oddNumberOne;
+                    warehouseStorage.setStorageCoding(generateDocNo);
+                }else {
+                    for (int i=1;i<10000;i++){
+                        String oddNumberThree = String.format("%04d",i);
+                        generateDocNo = initials+yearLast+month+oddNumberThree;
+                        warehouseStorage.setStorageCoding(generateDocNo);
+                        break;
+                    }
+                }
+            }else {
+                warehouseStorage.setStorageCoding(warehouseStorageTwo.getStorageCoding());
+            }
+        }else {
+            for (int i=1;i<10000;i++){
+                String oddNumberThree = String.format("%04d",i);
+                generateDocNo = initials+yearLast+month+oddNumberThree;
+                warehouseStorage.setStorageCoding(generateDocNo);
+                break;
+            }
+        }
+        SimpleDateFormat simpleDateFormatTwo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
+        String dates = simpleDateFormatTwo.format(new Date());//系统当前时间
+        Date today = simpleDateFormatTwo.parse(dates);//格式化系统当前时间
+        warehouseStorage.setStoragePreparer(userName);
+        warehouseStorage.setStoragePreparerDate(today);
+        warehouseStorage.setStorageState("1");
+        warehouseStorage.setStorageDate(today);
+        warehouseStorage.setSupplierName(purchaseInspectionSchedule.getSupplierName());
+        warehouseStorage.setStorageLibrary("0");
+        warehouseStorage.setStorageQuantity(purchaseInspectionSchedule.getInspectionQualified());
+        warehouseStorage.setStorageMoney(purchaseInspectionSchedule.getInspectionMoney());
+        warehouseStorage.setCurrencyId(purchaseInspectionSchedule.getCurrencyId());
+        warehouseStorage.setTaxRateId(purchaseInspectionSchedule.getTaxRateId());
+        warehouseStorage.setOrderNumber(purchaseInspectionSchedule.getOrderNumbers());
+        warehouseStorage.setStorageCode(purchaseInspectionSchedule.getInspectionCode());
+        warehouseStorage.setStorageName(purchaseInspectionSchedule.getMaterialName());
+        warehouseStorage.setStorageSpecifications(purchaseInspectionSchedule.getInspectionrSpecifications());
+        warehouseStorage.setStorageQuality(purchaseInspectionSchedule.getInspectionMaterial());
+        warehouseStorage.setStorageBrand(purchaseInspectionSchedule.getInspectionBrand());
+        warehouseStorage.setStorageCompany(purchaseInspectionSchedule.getInspectionCompany());
+        warehouseStorage.setUnitPrice(purchaseInspectionSchedule.getUnitPrice());
+        warehouseStorage.setStorageLocation(purchaseInspectionSchedule.getInspectionLocation());
+        warehouseStorage.setStorageRemarks(purchaseInspectionSchedule.getInspectionRemarks());
+        warehouseStorage.setStorageSubclass(purchaseInspectionSchedule.getInspectionSubclass());
+        warehouseStorage.setStorageCategory(purchaseInspectionSchedule.getInspectionCategory());
+        warehouseStorage.setStorageNumbers(purchaseInspectionSchedule.getInspectionNumber());
+        warehouseStorage.setStorageDeposit(purchaseInspectionSchedule.getInspectionDeposit());
+        String uuid = UUID.randomUUID().toString();
+        warehouseStorage.setUuid(uuid);
+        baseMapper.saveWarehouseStorage(warehouseStorage);
+        purchaseInspectionScheduleData.setInspectionLibrary(userName);
+        purchaseInspectionScheduleData.setInspectionLibraryDate(today);
+        purchaseInspectionScheduleData.setInspectionLibraryCode(generateDocNo);
+        purchaseInspectionScheduleData.setUuid(uuid);
+        purchaseInspectionScheduleData.setId(Long.valueOf(id).longValue());
+        baseMapper.updatePurchaseInspectionSchedule(purchaseInspectionScheduleData);
+    }
+
+    @Override
+    public void confirmAssets(String ids) throws ParseException {
+        String[] parts = ids.split(",");
+        String userName = parts[0]; // 创建人
+        String id = parts[1]; // id
+        PurchaseInspectionSchedule purchaseInspectionSchedule = null;
+        purchaseInspectionSchedule = baseMapper.confirmOutsourcing(id);
+        //采购入库表
+        WarehouseStorage warehouseStorage = new WarehouseStorage();
+        //来货检验附表
+        PurchaseInspectionSchedule purchaseInspectionScheduleData = new PurchaseInspectionSchedule();
+        /*单号案例 LLHRK22060017*/
+        String initials = "LLHRK";
+        String generateDocNo = null;
+        Date date = new Date();
+        //获取当前年
+        String yearLast = new SimpleDateFormat("yy", Locale.CHINESE).format(Calendar.getInstance().getTime());//打印当前月
+        //获取当月
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM");
+        //格式化当前月
+        String month = simpleDateFormat.format(date);
+        //查询是否有相同的数据
+        WarehouseStorage warehouseStorageTwo = null;
+        warehouseStorageTwo = baseMapper.queryWarehouseStorageTwo(purchaseInspectionSchedule.getInspectionNumber());
+        //查询出最后一个工作安排单号
+        WarehouseStorage warehouseStorageOne = null;
+        warehouseStorageOne = baseMapper.queryWarehouseStorage();
+        if (warehouseStorageOne != null){
+            String oddNumbers = warehouseStorageOne.getStorageCoding();
+            if (warehouseStorageTwo == null){
+                //判断月份是否相同
+                String oddNumbersOn = oddNumbers.substring(7,9);
+                if (oddNumbersOn.equals(month)){
+                    /*单号案例 LLHRK22060017*/
+                    String oddNumbersOne = oddNumbers.substring(9,13);
+                    int oddNumber = Integer.parseInt(oddNumbersOne);
+                    String oddNumberOne = null;
+                    if (oddNumber<10000){
+                        oddNumberOne = String.format("%04d",oddNumber+1);
+                    }
+                    generateDocNo = initials+yearLast+month+oddNumberOne;
+                    warehouseStorage.setStorageCoding(generateDocNo);
+                }else {
+                    for (int i=1;i<10000;i++){
+                        String oddNumberThree = String.format("%04d",i);
+                        generateDocNo = initials+yearLast+month+oddNumberThree;
+                        warehouseStorage.setStorageCoding(generateDocNo);
+                        break;
+                    }
+                }
+            }else {
+                warehouseStorage.setStorageCoding(warehouseStorageTwo.getStorageCoding());
+            }
+        }else {
+            for (int i=1;i<10000;i++){
+                String oddNumberThree = String.format("%04d",i);
+                generateDocNo = initials+yearLast+month+oddNumberThree;
+                warehouseStorage.setStorageCoding(generateDocNo);
+                break;
+            }
+        }
+        SimpleDateFormat simpleDateFormatTwo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
+        String dates = simpleDateFormatTwo.format(new Date());//系统当前时间
+        Date today = simpleDateFormatTwo.parse(dates);//格式化系统当前时间
+        warehouseStorage.setStoragePreparer(userName);
+        warehouseStorage.setStoragePreparerDate(today);
+        warehouseStorage.setStorageState("1");
+        warehouseStorage.setStorageDate(today);
+        warehouseStorage.setSupplierName(purchaseInspectionSchedule.getSupplierName());
+        warehouseStorage.setStorageLibrary("5");
+        warehouseStorage.setStorageQuantity(purchaseInspectionSchedule.getInspectionQualified());
+        warehouseStorage.setStorageMoney(purchaseInspectionSchedule.getInspectionMoney());
+        warehouseStorage.setCurrencyId(purchaseInspectionSchedule.getCurrencyId());
+        warehouseStorage.setTaxRateId(purchaseInspectionSchedule.getTaxRateId());
+        warehouseStorage.setOrderNumber(purchaseInspectionSchedule.getOrderNumbers());
+        warehouseStorage.setStorageCode(purchaseInspectionSchedule.getInspectionCode());
+        warehouseStorage.setStorageName(purchaseInspectionSchedule.getMaterialName());
+        warehouseStorage.setStorageSpecifications(purchaseInspectionSchedule.getInspectionrSpecifications());
+        warehouseStorage.setStorageQuality(purchaseInspectionSchedule.getInspectionMaterial());
+        warehouseStorage.setStorageBrand(purchaseInspectionSchedule.getInspectionBrand());
+        warehouseStorage.setStorageCompany(purchaseInspectionSchedule.getInspectionCompany());
+        warehouseStorage.setUnitPrice(purchaseInspectionSchedule.getUnitPrice());
+        warehouseStorage.setStorageLocation(purchaseInspectionSchedule.getInspectionLocation());
+        warehouseStorage.setStorageRemarks(purchaseInspectionSchedule.getInspectionRemarks());
+        warehouseStorage.setStorageSubclass(purchaseInspectionSchedule.getInspectionSubclass());
+        warehouseStorage.setStorageCategory(purchaseInspectionSchedule.getInspectionCategory());
+        warehouseStorage.setStorageNumbers(purchaseInspectionSchedule.getInspectionNumber());
+        warehouseStorage.setStorageDeposit(purchaseInspectionSchedule.getInspectionDeposit());
+        String uuid = UUID.randomUUID().toString();
+        warehouseStorage.setUuid(uuid);
+        baseMapper.saveWarehouseStorage(warehouseStorage);
+        purchaseInspectionScheduleData.setInspectionLibrary(userName);
+        purchaseInspectionScheduleData.setInspectionLibraryDate(today);
+        purchaseInspectionScheduleData.setInspectionLibraryCode(generateDocNo);
+        purchaseInspectionScheduleData.setUuid(uuid);
+        purchaseInspectionScheduleData.setId(Long.valueOf(id).longValue());
+        baseMapper.updatePurchaseInspectionSchedule(purchaseInspectionScheduleData);
+    }
+
+    @Override
+    public void cancelLibrary(String ids) {
+        PurchaseInspectionSchedule purchaseInspectionSchedule = null;
+        purchaseInspectionSchedule = baseMapper.confirmOutsourcing(ids);
+        baseMapper.updateCancelLibrary(ids);
+        baseMapper.deleteWarehouseStorage(purchaseInspectionSchedule.getUuid());
+    }
+
 }

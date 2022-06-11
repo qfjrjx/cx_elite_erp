@@ -43,4 +43,8 @@ public interface PurchaseInvoiceMapper extends BaseMapper<PurchaseInvoice> {
     void confirmPurchaseInspection(@Param("ids") String ids);
 
     void cancelPurchaseInspection(@Param("ids") String ids);
+
+    void updatePurchaseSettlement(@Param("invoiceCode") String invoiceCode);
+
+    void updatePurchaseSettlementData(@Param("invoiceCode") String invoiceCode);
 }

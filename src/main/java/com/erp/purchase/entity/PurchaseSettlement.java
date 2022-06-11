@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- * 采购结算 Entity
+ *  Entity
  *
  * @author qiufeng
  * @date 2022-04-02 15:02:26
@@ -97,5 +97,8 @@ public class PurchaseSettlement {
     private Long taxRateId;
 
     private String taxRateName;
+
+    private transient String signedDateFrom;
+    private transient String signedDateTo;
 
 }

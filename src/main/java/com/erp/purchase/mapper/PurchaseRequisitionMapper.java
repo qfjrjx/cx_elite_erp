@@ -47,4 +47,10 @@ public interface PurchaseRequisitionMapper extends BaseMapper<PurchaseRequisitio
     void cancelPurchaseCancel(@Param("ids") String ids);
 
     void downPurchaseCancel(@Param("ids") String ids);
+
+    long countPurchaseRequisitions(@Param("purchaseRequisition") PurchaseRequisition purchaseRequisition);
+
+    void confirmPurchaseRequisition(@Param("ids") String ids);
+
+    void cancelPurchaseRequisition(@Param("ids") String ids);
 }

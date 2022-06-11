@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.erp.quality.mapper.QualityParameterMapper">
+
+    <sql id="countQualityParametersSql">
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_quality_parameter qp
+        WHERE
+            1 = 1
+        <if test="qualityParameter.parameterName != null and qualityParameter.parameterName != ''">
+            AND qp.parameter_name = #{qualityParameter.parameterName}
+        </if>
+        <if test="qualityParameter.parameterType != null and qualityParameter.parameterType != ''">
+            AND qp.parameter_type = #{qualityParameter.parameterType}
+        </if>
+        <if test="qualityParameter.parameterState != null and qualityParameter.parameterState != ''">
+            AND qp.parameter_state = #{qualityParameter.parameterState}
+        </if>
+    </sql>
+
+    <sql id="findQualityParametersPageSql">
+        SELECT
+            qp.id,
+            qp.parameter_value,
+            qp.parameter_name,
+            qp.parameter_type,
+            qp.parameter_sorting,
+            qp.parameter_state,
+            qp.parameter_note
+        FROM
+            jr_quality_parameter qp
+        WHERE
+            1 = 1
+        <if test="qualityParameter.parameterName != null and qualityParameter.parameterName != ''">
+            AND qp.parameter_name = #{qualityParameter.parameterName}
+        </if>
+        <if test="qualityParameter.parameterType != null and qualityParameter.parameterType != ''">
+            AND qp.parameter_type = #{qualityParameter.parameterType}
+        </if>
+        <if test="qualityParameter.parameterState != null and qualityParameter.parameterState != ''">
+            AND qp.parameter_state = #{qualityParameter.parameterState}
+        </if>
+    </sql>
+
+    <select id="countQualityParameters" parameterType="com.erp.quality.entity.QualityParameter" resultType="long">
+        <include refid="countQualityParametersSql"/>
+    </select>
+
+    <select id="findQualityParametersPage" parameterType="com.erp.quality.entity.QualityParameter" resultType="com.erp.quality.entity.QualityParameter">
+        <include refid="findQualityParametersPageSql"/>
+    </select>
+
+    <select id="qualityParameterId" parameterType="Long" resultType="com.erp.quality.entity.QualityParameter">
+        SELECT
+            qp.id,
+            qp.parameter_value,
+            qp.parameter_name,
+            qp.parameter_type,
+            qp.parameter_sorting,
+            qp.parameter_state,
+            qp.parameter_note
+        FROM
+            jr_quality_parameter qp
+        WHERE
+            1 = 1
+          AND qp.id = #{id}
+    </select>
+
+    <delete id="deleteQualityParameter">
+        delete from jr_quality_parameter where id = #{id}
+    </delete>
+</mapper>

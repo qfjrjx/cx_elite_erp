@@ -17,6 +17,7 @@
             sum(pis.invoice_quantity) invoiceQuantitySum,
             sum(pis.tax_money)taxMoneySum,
             pis.invoice_amount,
+            pis.invoice_code,
             pi.invoice_state,
             pi.invoice_date,
             pi.invoice_numbers,
@@ -112,13 +113,16 @@
             pis.invoice_quantity,
             pis.tax_price,
             pis.tax_money,
-            pis.tax_no_price,
-            pis.tax_no_money,
+            pis.tax_price / ( 1 + fpb.finance_parameter_name * 0.01) taxNoPrice,
+            pis.tax_money / ( 1 + fpb.finance_parameter_name * 0.01) taxNoMoney,
             pis.invoice_amount,
             pis.invoice_money,
             pis.invoice_numbers
         FROM
             jr_purchase_invoice_schedule pis
+                LEFT JOIN jr_purchase_invoice pi ON ( pi.invoice_numbers = pis.invoice_numbers )
+                LEFT JOIN jr_finance_parameters fpa ON ( pi.currency_id = fpa.id )
+                LEFT JOIN jr_finance_parameters fpb ON ( pi.tax_rate_id = fpb.id )
         WHERE
             pis.invoice_numbers = #{invoiceNumbers}
     </select>
@@ -138,7 +142,8 @@
             registration_date,
             invoice_remarks,
             invoice_date_state,
-            registration_date_state
+            registration_date_state,
+            payment_state
         )
         VALUES
             (
@@ -153,7 +158,8 @@
                 #{registrationDate},
                 #{invoiceRemarks},
                 #{invoiceDateState},
-                #{registrationDateState}
+                #{registrationDateState},
+                #{paymentState}
             )
     </insert>
 
@@ -219,7 +225,32 @@
         SELECT
             COUNT( 1 )
         FROM
-            jr_purchase_invoice_schedule
+            (
+                SELECT
+                    pis.invoice_date,
+                    pis.invoice_money,
+                    pis.invoice_numbers,
+                    pis.invoice_deposit,
+                    pis.order_number,
+                    pis.invoice_name,
+                    pis.invoice_coding,
+                    pis.invoice_brand,
+                    pis.invoice_specifications,
+                    pis.invoice_company,
+                    pis.invoice_quantity,
+                    pis.tax_price,
+                    pis.tax_money,
+                    pi.invoice_remarks,
+                    pis.invoice_subclass
+                FROM
+                    jr_purchase_invoice pi
+                        LEFT JOIN jr_purchase_invoice_schedule pis on pi.invoice_numbers = pis.invoice_numbers
+                where pi.invoice_supplier = #{purchaseInvoiceSchedule.invoiceSupplier}
+                  AND pi.payment_state = 1
+                GROUP BY
+                    pis.invoice_numbers
+            )
+                jr_purchase_invoice_schedule
         WHERE
             1 = 1
     </sql>
@@ -245,6 +276,9 @@
             jr_purchase_invoice pi
                 LEFT JOIN jr_purchase_invoice_schedule pis on pi.invoice_numbers = pis.invoice_numbers
         where pi.invoice_supplier = #{purchaseInvoiceSchedule.invoiceSupplier}
+        AND pi.payment_state = 1
+        GROUP BY
+            pis.invoice_numbers
     </sql>
 
     <select id="countPurchasePaymentAddQuery" parameterType="com.erp.purchase.entity.PurchaseInvoiceSchedule" resultType="long">
@@ -274,5 +308,19 @@
             jr_purchase_invoice
         set invoice_state = 1
         WHERE id = #{ids}
+    </update>
+
+    <update id="updatePurchaseSettlement"  parameterType="com.erp.purchase.entity.PurchaseSettlement">
+        UPDATE
+            jr_purchase_settlement
+        set settlement_invoice = 2
+        WHERE settlement_numbers = #{invoiceCode}
+    </update>
+
+    <update id="updatePurchaseSettlementData"  parameterType="com.erp.purchase.entity.PurchaseSettlement">
+        UPDATE
+            jr_purchase_settlement
+        set settlement_invoice = 1
+        WHERE settlement_numbers = #{invoiceCode}
     </update>
 </mapper>

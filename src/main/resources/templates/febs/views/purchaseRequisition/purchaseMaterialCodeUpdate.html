@@ -164,13 +164,16 @@
              var meteringCompany = data.meteringCompany;
              var materialSubclass = data.materialSubclass;
              var materialRemarks = data.materialRemarks;
+            var materialLocation = data.materialLocation;
              var materialState = data.materialState;
             $.ajax({
                 url: '/saleOrder/random',
                 success : function(data) {
                     var random = data.data;
                     var oldData =  table.cache["purchaseMaterialCodeTable_update"];
-                    var dataOne={"materialCode":materialCode,"materialName":materialName,"specificationsModel":specificationsModel,"materialQuality":materialQuality,"materialBrand":materialBrand,"meteringCompany":meteringCompany,"materialSubclass":materialSubclass,"materialRemarks":materialRemarks,"materialState":materialState};
+                    var dataOne={"materialCode":materialCode,"materialName":materialName,"specificationsModel":specificationsModel,"materialQuality":materialQuality,
+                        "materialBrand":materialBrand,"meteringCompany":meteringCompany,"materialSubclass":materialSubclass,"materialRemarks":materialRemarks,
+                        "materialLocation":materialLocation,"materialState":materialState};
                     oldData.push(dataOne);
                     layui.table.reload('purchaseMaterialCodeTable_update',{
                         data : oldData
@@ -187,7 +190,9 @@
                     var oldDataOne;
                     var oldData =  table.cache["purchaseMaterialCodeTable_update"];
                     for (i=0;i<oldData.length;i++){
-                        var dataOne={"applyCode":oldData[i].materialCode,"applyName":oldData[i].materialName,"applySpecifications":oldData[i].specificationsModel,"applyQuality":oldData[i].materialQuality,"applyBrand":oldData[i].materialBrand,"applyCompany":oldData[i].meteringCompany,"applyQuantity":0,"applyRemarks":oldData[i].materialRemarks};
+                        var dataOne={"applyCode":oldData[i].materialCode,"applyName":oldData[i].materialName,"applySpecifications":oldData[i].specificationsModel,
+                            "applyQuality":oldData[i].materialQuality,"applyBrand":oldData[i].materialBrand,"applyCompany":oldData[i].meteringCompany,
+                            "applyQuantity":0,"applyLocation":oldData[i].materialLocation,"applyRemarks":oldData[i].materialRemarks};
                         oldDataOne =  table.cache["purchaseRequisitionTableList"];
                         oldDataOne.push(dataOne);
                     }
@@ -217,6 +222,7 @@
                     {field: 'meteringCompany', title: '单位',align:'center', minWidth: 100},
                     {field: 'materialSubclass', title: '小类',align:'center', minWidth: 100},
                     {field: 'materialRemarks', title: '备注',align:'center', minWidth: 80},
+                        {field: 'materialLocation', title: '库位',align:'center', minWidth: 80},
                     {title: '状态', templet: '#material-state'}
                  ]
                 ]
@@ -234,6 +240,7 @@
                     {field: 'meteringCompany', title: '单位',align:'center', minWidth: 100},
                     {field: 'materialSubclass', title: '小类',align:'center', minWidth: 100},
                     {field: 'materialRemarks', title: '备注',align:'center', minWidth: 80},
+                    {field: 'materialLocation', title: '库位',align:'center', minWidth: 80},
                     {title: '状态', templet: '#material-state'}
                 ]]
             });

@@ -158,4 +158,24 @@ public class PurchaseRequisitionController extends BaseController {
         this.purchaseRequisitionService.downPurchaseCancel(ids);
         return new FebsResponse().success();
     }
+
+    //采购申请确认
+    @ControllerEndpoint(operation = "确认", exceptionMessage = "确认失败")
+    @GetMapping("purchaseRequisition/confirm/{ids}")
+    @ResponseBody
+    @RequiresPermissions("purchaseRequisition:confirm")
+    public FebsResponse confirmPurchaseRequisition(@PathVariable String ids) {
+        this.purchaseRequisitionService.confirmPurchaseRequisition(ids);
+        return new FebsResponse().success();
+    }
+
+    //采购申请取消
+    @ControllerEndpoint(operation = "取消", exceptionMessage = "取消失败")
+    @GetMapping("purchaseRequisition/cancel/{ids}")
+    @ResponseBody
+    @RequiresPermissions("purchaseRequisition:cancel")
+    public FebsResponse cancelPurchaseRequisition(@PathVariable String ids) {
+        this.purchaseRequisitionService.cancelPurchaseRequisition(ids);
+        return new FebsResponse().success();
+    }
 }

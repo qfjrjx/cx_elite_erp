@@ -94,4 +94,10 @@ public class PurchaseRequisitionSchedule {
     @TableField("apply_cancel")
     private String applyCancel;
 
+    /**
+     * 库位
+     */
+    @TableField("apply_location")
+    private String applyLocation;
+
 }

@@ -19,7 +19,7 @@
                 AND pi.supplier_name = #{purchaseInspection.supplierName}
             </if>
             <if test="purchaseInspection.inspectionState != null and purchaseInspection.inspectionState != ''">
-                AND pi.inspection_state = #{purchaseInspection.inspectionState}
+                AND pis.inspection_state = #{purchaseInspection.inspectionState}
             </if>
             <if test="purchaseInspection.inspectionNumber != null and purchaseInspection.inspectionNumber != ''">
                 AND pi.inspection_number = #{purchaseInspection.inspectionNumber}
@@ -32,7 +32,8 @@
     <sql id="findPurchaseInspectionPage">
         SELECT
             pi.id,
-            pi.inspection_state,
+            pis.id ids,
+            pis.inspection_state,
             pi.purchase_requisition_date,
             pi.inspection_number,
             pi.supplier_name,
@@ -40,11 +41,19 @@
             pis.order_quantity,
             pi.inspection_preparer,
             pi.inspection_preparation_date,
-            pi.inspection_quality,
-            pis.inspection_remarks
+            pis.inspection_remarks,
+            pis.material_name,
+            pis.inspectionr_specifications,
+            pis.inspection_qualified,
+            pis.inspection_quality,
+            pis.inspection_quality_date,
+            pis.inspection_library,
+            pis.inspection_library_date,
+            pis.inspection_library_code,
+            pis.inspection_describe
         FROM
             jr_purchase_inspection pi
-                LEFT JOIN jr_purchase_inspection_schedule pis ON ( pi.inspection_number = pis.inspection_number )
+        LEFT JOIN jr_purchase_inspection_schedule pis ON ( pi.inspection_number = pis.inspection_number )
         WHERE
             1 = 1
             <if test="purchaseInspection.signedDateFrom != null and purchaseInspection.signedDateFrom !=''">
@@ -57,7 +66,7 @@
                 AND pi.supplier_name = #{purchaseInspection.supplierName}
             </if>
             <if test="purchaseInspection.inspectionState != null and purchaseInspection.inspectionState != ''">
-                AND pi.inspection_state = #{purchaseInspection.inspectionState}
+                AND pis.inspection_state = #{purchaseInspection.inspectionState}
             </if>
             <if test="purchaseInspection.inspectionNumber != null and purchaseInspection.inspectionNumber != ''">
                 AND pi.inspection_number = #{purchaseInspection.inspectionNumber}
@@ -65,8 +74,6 @@
             <if test="purchaseInspection.inspectionType != null and purchaseInspection.inspectionType != ''">
                 AND pi.inspection_type = #{purchaseInspection.inspectionType}
             </if>
-        GROUP BY
-            pi.inspection_number
     </sql>
 
     <sql id="findPurchaseInspectionQueryPage">
@@ -104,7 +111,7 @@
     <!--修改回显-->
     <select id="queryPurchaseInspectionSchedule" parameterType="String" resultType="com.erp.purchase.entity.PurchaseInspectionSchedule">
         SELECT
-            pi.inspection_state,
+            pis.inspection_state,
             pis.order_numbers,
             pis.material_name,
             pis.inspectionr_specifications,
@@ -144,7 +151,13 @@
             inspection_number,
             inspection_remarks,
             inspection_subclass,
-            inspection_category
+            inspection_state,
+            inspection_category,
+            inspection_location,
+            inspection_material,
+            inspection_brand,
+            inspection_code,
+            inspection_deposit
         )
         VALUES
             (
@@ -158,7 +171,13 @@
                 #{inspectionNumber},
                 #{inspectionRemarks},
                 #{inspectionSubclass},
-                #{inspectionCategory}
+                #{inspectionState},
+                #{inspectionCategory},
+                #{inspectionLocation},
+                #{inspectionMaterial},
+                #{inspectionBrand},
+                #{inspectionCode},
+                #{inspectionDeposit}
             )
     </insert>
 
@@ -167,7 +186,6 @@
         INSERT INTO
             jr_purchase_inspection
         (
-            inspection_state,
             purchase_requisition_date,
             inspection_number,
             supplier_name,
@@ -175,14 +193,12 @@
             order_quantity,
             inspection_preparer,
             inspection_preparation_date,
-            inspection_quality,
             inspection_remarks,
             tax_rate_id,
             currency_id
         )
         VALUES
             (
-                #{inspectionState},
                 #{purchaseRequisitionDate},
                 #{inspectionNumber},
                 #{supplierName},
@@ -190,7 +206,6 @@
                 #{orderQuantity},
                 #{inspectionPreparer},
                 #{inspectionPreparationDate},
-                #{inspectionQuality},
                 #{inspectionRemarks},
                 #{taxRateId},
                 #{currencyId}
@@ -209,7 +224,6 @@
             pi.order_quantity,
             pi.inspection_preparer,
             pi.inspection_preparation_date,
-            pi.inspection_quality,
             pi.inspection_remarks
         FROM
             jr_purchase_inspection pi
@@ -222,17 +236,192 @@
             LIMIT 1;
     </select>
 
-    <update id="confirmPurchaseInspection"  parameterType="com.erp.purchase.entity.PurchaseInspection">
+    <update id="confirmPurchaseInspection"  parameterType="com.erp.purchase.entity.PurchaseInspectionSchedule">
         UPDATE
-            jr_purchase_inspection
+            jr_purchase_inspection_schedule
         set inspection_state = 2
         WHERE id = #{ids}
     </update>
 
-    <update id="cancelPurchaseInspection"  parameterType="com.erp.purchase.entity.PurchaseInspection">
+    <update id="cancelPurchaseInspection"  parameterType="com.erp.purchase.entity.PurchaseInspectionSchedule">
         UPDATE
-            jr_purchase_inspection
+            jr_purchase_inspection_schedule
         set inspection_state = 1
         WHERE id = #{ids}
     </update>
+
+    <select id="qualityInspectionId" parameterType="Long" resultType="com.erp.purchase.entity.PurchaseInspectionSchedule">
+        SELECT
+            pis.id,
+            pis.order_quantity,
+            pis.material_name,
+            pis.inspectionr_specifications,
+            pis.inspection_qualified,
+            pis.inspection_describe
+        FROM
+            jr_purchase_inspection_schedule pis
+        WHERE
+            1 = 1
+          AND pis.id = #{ids}
+    </select>
+
+    <update id="updateQualityInspection"  parameterType="com.erp.purchase.entity.PurchaseInspectionSchedule">
+        UPDATE
+            jr_purchase_inspection_schedule
+        set inspection_qualified = #{purchaseInspectionSchedule.inspectionQualified},inspection_quality = #{purchaseInspectionSchedule.userName},
+            inspection_quality_date = #{purchaseInspectionSchedule.inspectionQualityDate},inspection_describe = #{purchaseInspectionSchedule.inspectionDescribe},
+            inspection_state = 3
+        WHERE id = #{purchaseInspectionSchedule.id}
+    </update>
+
+    <update id="cancelInspection" parameterType="com.erp.purchase.entity.PurchaseInspectionSchedule">
+        UPDATE
+            jr_purchase_inspection_schedule
+        set inspection_qualified = "",inspection_quality = "",
+            inspection_describe = "",
+            inspection_state = 2
+        WHERE id = #{ids}
+    </update>
+
+    <select id="confirmOutsourcing" parameterType="String" resultType="com.erp.purchase.entity.PurchaseInspectionSchedule">
+        SELECT
+            pis.id,
+            pis.inspection_code,
+            pis.order_numbers,
+            pis.material_name,
+            pis.inspectionr_specifications,
+            pis.inspection_material,
+            pis.inspection_brand,
+            pis.inspection_company,
+            pis.inspection_qualified,
+            pis.unit_price,
+            pis.inspection_qualified * pis.unit_price as inspectionMoney ,
+            pis.inspection_location,
+            pis.inspection_remarks,
+            pi.supplier_name,
+            pi.currency_id,
+            pi.tax_rate_id,
+            pis.inspection_number,
+            pis.uuid,
+            pis.inspection_deposit
+        FROM
+            jr_purchase_inspection_schedule pis
+                LEFT JOIN jr_purchase_inspection pi ON ( pi.inspection_number = pis.inspection_number )
+        WHERE
+            1 = 1
+          AND pis.id = #{id}
+    </select>
+
+    <!--查询出最后一个采购入库单号-->
+    <select id="queryWarehouseStorage" resultType="com.erp.warehouse.entity.WarehouseStorage">
+        SELECT
+            ws.id,
+            ws.storage_coding,
+            ws.storage_numbers
+        FROM
+            jr_warehouse_storage ws
+        WHERE
+            1 = 1
+        GROUP BY
+            ws.storage_coding
+        ORDER BY
+            ws.storage_date DESC
+            LIMIT 1;
+    </select>
+
+    <insert id="saveWarehouseStorage" parameterType="com.erp.warehouse.entity.WarehouseStorage">
+        INSERT INTO
+            jr_warehouse_storage
+            (
+                storage_state,
+                storage_date,
+                storage_coding,
+                storage_numbers,
+                supplier_name,
+                storage_library,
+                storage_quantity,
+                tax_rate_id,
+                currency_id,
+                storage_preparer,
+                storage_preparer_date,
+                order_number,
+                storage_code,
+                storage_name,
+                storage_specifications,
+                storage_quality,
+                storage_brand,
+                storage_company,
+                unit_price,
+                storage_money,
+                storage_location,
+                storage_remarks,
+                storage_subclass,
+                storage_category,
+                uuid
+            )
+        VALUES
+            (
+                #{storageState},
+                #{storageDate},
+                #{storageCoding},
+                #{storageNumbers},
+                #{supplierName},
+                #{storageLibrary},
+                #{storageQuantity},
+                #{taxRateId},
+                #{currencyId},
+                #{storagePreparer},
+                #{storagePreparerDate},
+                #{orderNumber},
+                #{storageCode},
+                #{storageName},
+                #{storageSpecifications},
+                #{storageQuality},
+                #{storageBrand},
+                #{storageCompany},
+                #{unitPrice},
+                #{storageMoney},
+                #{storageLocation},
+                #{storageRemarks},
+                #{storageSubclass},
+                #{storageCategory},
+                #{uuid}
+            )
+    </insert>
+
+    <update id="updatePurchaseInspectionSchedule" parameterType="com.erp.purchase.entity.PurchaseInspectionSchedule">
+        UPDATE
+            jr_purchase_inspection_schedule
+        set inspection_library = #{purchaseInspectionScheduleData.inspectionLibrary},inspection_library_date = #{purchaseInspectionScheduleData.inspectionLibraryDate},
+            inspection_library_code = #{purchaseInspectionScheduleData.inspectionLibraryCode}, uuid = #{purchaseInspectionScheduleData.uuid},
+            inspection_state = 4
+        WHERE id = #{purchaseInspectionScheduleData.id}
+    </update>
+
+    <!--查询出最后一个采购入库单号-->
+    <select id="queryWarehouseStorageTwo" resultType="com.erp.warehouse.entity.WarehouseStorage">
+        SELECT
+            ws.id,
+            ws.storage_coding,
+            ws.storage_numbers
+        FROM
+            jr_warehouse_storage ws
+        WHERE
+            1 = 1
+          AND ws.storage_numbers = #{inspectionNumber}
+        GROUP BY
+            ws.storage_numbers
+    </select>
+
+    <delete id="deleteWarehouseStorage">
+        delete from jr_warehouse_storage  where uuid = #{uuid}
+    </delete>
+
+    <update id="updateCancelLibrary" parameterType="com.erp.purchase.entity.PurchaseInspectionSchedule">
+        UPDATE
+            jr_purchase_inspection_schedule
+        set inspection_library = "",inspection_library_code = "", uuid = "",inspection_state = 3
+        WHERE id = #{ids}
+    </update>
+
 </mapper>

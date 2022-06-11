@@ -1,0 +1,364 @@
+<style>
+    #quality-inspection xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #quality-inspection xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="quality-inspection" lay-title="品质外检">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="inspection-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md12">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid layui-form-label-sm">状态</label>
+                                        <div class="layui-input-inline">
+                                            <select name="inspectionState">
+                                                <option value=""></option>
+                                                <option value="1">登记</option>
+                                                <option value="2">确认</option>
+                                                <option value="3">检验</option>
+                                                <option value="4">送库</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid">日期&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <input type="text" id="start_date" name="signedDateFrom" placeholder="" lay-verify='date' class="layui-input"/>
+                                            <i class="layui-icon" id="start_date_icon"></i>
+                                        </div>
+                                        <label class="layui-form-mid">至：</label>
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <input type="text" id="end_date" name="signedDateTo" placeholder="" lay-verify='date' class="layui-input"/>
+                                            <i class="layui-icon " id="end_date_icon"></i>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-mid layui-form-label-sm">单号</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" name="inspectionNumber" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid layui-form-label-sm">类型</label>
+                                        <div class="layui-input-inline">
+                                            <select name="inspectionType">
+                                                <option value=""></option>
+                                                <option value="1">直接采购</option>
+                                                <option value="2">委外加工</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="qualityInspectionTable" id="qualityInspectionTable" lay-data="{id: 'qualityInspectionTable'}"></table>
+                    <div class="layui-col-md6">
+                        <div class="layui-form-item"></div>
+                    </div>
+                    <div class="layui-col-md6 layui-col-sm12 layui-col-xs12 table-action-area">
+                        <!--查询按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                            <i class="layui-icon">&#xe848;</i>查询
+                        </div>
+                        <!-- 刷新表格按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-green-plain table-action" id="reset">
+                            <i class="layui-icon">&#xe79b;</i>刷新
+                        </div>
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
+                                     "shiro:hasAnyPermissions="qualityInspection:inspection" id="inspectionTo">
+                            <i class="layui-icon">&#xe78a;</i>检验
+                        </div>
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="qualityInspection:outsourcing" id="outsourcingTo">
+                            <i class="layui-icon">&#xe642;</i>送库（外购）
+                        </div>
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
+                                     "shiro:hasAnyPermissions="qualityInspection:cancelInspection" id="cancelInspectionTo">
+                            <i class="layui-icon layui-icon-close"></i>取消检验
+                        </div>
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
+                                     "shiro:hasAnyPermissions="qualityInspection:assets" id="assetsTo">
+                            <i class="layui-icon">&#xe642;</i>送库（资产）
+                        </div>
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
+                                     "shiro:hasAnyPermissions="qualityInspection:cancelLibrary" id="cancelLibraryTo">
+                            <i class="layui-icon layui-icon-close"></i>取消送库
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="inspection-state">
+    {{#
+    let inspectionState = {
+    1: {title: '登记'},
+    2: {title: '确认'},
+    3: {title: '检验'},
+    4: {title: '送库'}
+    }[d.inspectionState];
+    }}
+    <span>{{ inspectionState.title }}</span>
+</script>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+            laydate = layui.laydate,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            dropdownMenu = layui.dropdownMenu,
+            $view = $('#quality-inspection'),
+            $query = $view.find('#query'),
+            $inspectionTo = $view.find('#inspectionTo'),
+            $cancelInspectionTo = $view.find('#cancelInspectionTo'),
+            $outsourcingTo = $view.find('#outsourcingTo'),
+            $assetsTo = $view.find('#assetsTo'),
+            $cancelLibraryTo = $view.find('#cancelLibraryTo'),
+            $reset = $view.find('#reset'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'createTime', type: null},
+            tableIns;
+
+        form.render();
+        initPurchaseRequisitionTable();
+
+        var firstDate = new Date();
+        firstDate.setDate(1); //本月第一天
+        var datetime =firstDate.getFullYear() + '-' + (firstDate.getMonth() + 1) + '-' + firstDate.getDate();
+        //开始日期
+        var start = laydate.render({
+            elem: '#start_date',
+            max: 0 ,//设置一个默认最大值//最大值为当前日期
+            trigger: 'click',
+            value: new Date(firstDate),//初始赋值,//默认值本月第一天
+            done:function(value,date){
+                if(value && (value>$("#end_date").val())){
+                    /*开始时间大于结束时间时，清空结束时间*/
+                    $("#end_date").val("");
+                }
+                end.config.min ={
+                    year:date.year,
+                    month:date.month-1,
+                    date: date.date,
+                };
+            }
+        });
+        //结束日期
+        var end = laydate.render({
+            elem: '#end_date',
+            min : datetime,//最大值为当前日期
+            trigger: 'click',
+            value: new Date(),//初始赋值,//默认当前时间
+            done:function(value,date){
+                start.config.max={
+                    year:date.year,
+                    month:date.month-1,
+                    date: date.date,
+                }
+            }
+        });
+
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        $reset.on('click', function () {
+            $searchForm[0].reset();
+            tableIns.reload({where: getQueryParams(), page: {curr: 1}});
+        });
+
+        $inspectionTo.on('click', function () {
+            let checkStatus = table.checkStatus('qualityInspectionTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要检验的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要检验的数据');
+            }else{
+                layui.each(checkStatus.data, function (key, item) {
+                        if(item.inspectionState == 1){
+                            febs.alert.warn('请先确认');
+                        }else if(item.inspectionState == 2){
+                            febs.modal.open('【品质检验】 检验', 'quality/qualityInspection/inspection/' + item.ids, {
+                                area: $(window).width() <= 750 ? '95%' : '50%',
+                                btn: ['保存', '关闭'],
+                                yes: function (index, layero) {
+                                    $('#qualityInspection-inspection').find('#submit').trigger('click');
+                                    return false;
+                                },
+                                btn2: function () {
+                                    layer.closeAll();
+                                }
+                            });
+                        }else {
+                            febs.alert.warn('该状态不允许此操作');
+                        }
+                });
+            }
+        });
+
+        $cancelInspectionTo.on('click', function () {
+            let checkStatus = table.checkStatus('qualityInspectionTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要检验的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要检验的数据');
+            }else{
+                let ids = [];
+                layui.each(checkStatus.data, function (key, item) {
+                    ids.push(item.ids)
+                    if(item.inspectionState == 3){
+                        febs.modal.confirm('确认取消检验', '是否确认？', function () {
+                            cancelInspection(ids.join(','));
+                        });
+                    }else {
+                        febs.alert.warn('该状态不允许此操作');
+                    }
+                });
+            }
+        });
+
+        $outsourcingTo.on('click', function () {
+            let checkStatus = table.checkStatus('qualityInspectionTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要送库的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要送库的数据');
+            }else{
+                let ids = [];
+                let userName = currentUser.username;
+                ids.push(userName)
+                layui.each(checkStatus.data, function (key, item) {
+                    ids.push(item.ids)
+                    if(item.inspectionState == 3){
+                        febs.modal.confirm('确认送库（外购）', '是否确认？', function () {
+                            confirmOutsourcing(ids.join(','));
+                        });
+                    }else {
+                        febs.alert.warn('该状态不允许此操作');
+                    }
+                });
+            }
+        });
+
+        $assetsTo.on('click', function () {
+            let checkStatus = table.checkStatus('qualityInspectionTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要送库的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要送库的数据');
+            }else{
+                let ids = [];
+                let userName = currentUser.username;
+                ids.push(userName)
+                layui.each(checkStatus.data, function (key, item) {
+                    ids.push(item.ids)
+                    if(item.inspectionState == 3){
+                        febs.modal.confirm('确认送库（资产）', '是否确认？', function () {
+                            confirmAssets(ids.join(','));
+                        });
+                    }else {
+                        febs.alert.warn('该状态不允许此操作');
+                    }
+                });
+            }
+        });
+
+        $cancelLibraryTo.on('click', function () {
+            let checkStatus = table.checkStatus('qualityInspectionTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要取消送库的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要取消送库的数据');
+            }else{
+                let ids = [];
+                layui.each(checkStatus.data, function (key, item) {
+                    ids.push(item.ids)
+                    if(item.inspectionState == 4){
+                        febs.modal.confirm('取消送库', '是否确认？', function () {
+                            cancelLibrary(ids.join(','));
+                        });
+                    }else {
+                        febs.alert.warn('该状态不允许此操作');
+                    }
+                });
+            }
+        });
+
+        function initPurchaseRequisitionTable() {
+            tableIns = febs.table.init({
+                elem: '#qualityInspectionTable',
+                id: 'qualityInspectionTable',
+                url: ctx + 'purchaseInspection/list',
+                cols: [[
+                    {type: 'checkbox'},
+                    {field:'number',title:'序号',align:'center',width:60,templet:function (d) {
+                            return d.LAY_INDEX;}},
+                    {title: '状态', templet: '#inspection-state',align:'center',width:60},
+                    {field: 'purchaseRequisitionDate', title: '报检日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.purchaseRequisitionDate, "yyyy-MM-dd") }}</div>', minWidth: 110, sort: true},
+                    {field: 'inspectionNumber', title: '单号', minWidth: 145,align:'center'},
+                    {field: 'supplierName', title: '供应商', minWidth: 120,align:'center'},
+                    {field: 'materialName', title: '物料名称', minWidth: 145,align:'center'},
+                    {field: 'inspectionrSpecifications', title: '规格型号', minWidth: 120,align:'center'},
+                    {field: 'orderQuantity', title: '报检数', minWidth: 95,align:'center'},
+                    {field: 'inspectionQualified', title: '合格数', minWidth: 95,align:'center'},
+                    {field: 'inspectionPreparer', title: '报检人', minWidth: 80,align:'center'},
+                    {field: 'inspectionPreparationDate', title: '报检日期', align:'center',templet:'<div>{{ layui.util.toDateString(d.inspectionPreparationDate, "yyyy-MM-dd HH:mm:ss") }}</div>', minWidth: 160, sort: true},
+                    {field: 'inspectionQuality', title: '质检员', minWidth: 95,align:'center'},
+                    {field: 'inspectionQualityDate', title: '质检日期', align:'center',templet:'<div>{{ layui.util.toDateString(d.inspectionQualityDate, "yyyy-MM-dd HH:mm:ss") }}</div>', minWidth: 160, sort: true},
+                    {field: 'inspectionLibrary', title: '送库人', minWidth: 95,align:'center'},
+                    {field: 'inspectionLibraryDate', title: '送库日期', align:'center',templet:'<div>{{ layui.util.toDateString(d.inspectionLibraryDate, "yyyy-MM-dd HH:mm:ss") }}</div>', minWidth: 160, sort: true},
+                    {field: 'inspectionLibraryCode', title: '入库单号', minWidth: 80,align:'center'},
+                    {field: 'inspectionDescribe', title: '检验结果描述', minWidth: 80,align:'center'}
+                ]]
+            });
+        }
+
+        function cancelInspection(ids) {
+            febs.get(ctx + 'qualityInspection/cancelInspection/' + ids, null, function () {
+                febs.alert.success('取消检验成功');
+                $query.click();
+            });
+        }
+
+        function confirmOutsourcing(ids) {
+            febs.get(ctx + 'qualityInspection/confirmOutsourcing/' + ids, null, function () {
+                febs.alert.success('送库（外购）操作成功');
+                $query.click();
+            });
+        }
+
+        function confirmAssets(ids) {
+            febs.get(ctx + 'qualityInspection/confirmAssets/' + ids, null, function () {
+                febs.alert.success('送库（资产）操作成功');
+                $query.click();
+            });
+        }
+
+        function cancelLibrary(ids) {
+            febs.get(ctx + 'qualityInspection/cancelLibrary/' + ids, null, function () {
+                febs.alert.success('取消送库操作成功');
+                $query.click();
+            });
+        }
+
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+
+    })
+</script>

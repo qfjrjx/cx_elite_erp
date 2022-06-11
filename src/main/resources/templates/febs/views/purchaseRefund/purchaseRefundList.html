@@ -58,11 +58,7 @@
                                         <div class="layui-input-inline">
                                             <select name="refundLibrary">
                                                 <option value=""></option>
-                                                <option value="1">外购库</option>
-                                                <option value="2">机加库</option>
-                                                <option value="3">废品库</option>
-                                                <option value="4">资产库</option>
-                                                <option value="5">成品库</option>
+                                                <option th:each="location:${location}" th:value="${location.locationSorting}">[[${location.locationName}]]</option>
                                             </select>
                                         </div>
                                     </div>
@@ -93,6 +89,14 @@
                              shiro:hasAnyPermissions="purchaseRefund:update" id="updateTo">
                             <i class="layui-icon">&#xe642;</i>修改
                         </div>
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
+                                     "shiro:hasAnyPermissions="purchaseRefund:otu" id="otuTo">
+                            <i class="layui-icon">&#xe78a;</i>出库
+                        </div>
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="purchaseRefund:cancel" id="cancelTo">
+                            <i class="layui-icon">&#xe642;</i>取消
+                        </div>
                     </div>
                     <br>
                     <br>
@@ -111,19 +115,6 @@
     }[d.refundState];
     }}
     <span>{{ refundState.title }}</span>
-</script>
-
-<script type="text/html" id="refundLibrary-state">
-    {{#
-    let refundLibrary = {
-    1: {title: '外购库'},
-    2: {title: '机加库'},
-    3: {title: '废品库'},
-    4: {title: '资产库'},
-    5: {title: '成品库'}
-    }[d.refundLibrary];
-    }}
-    <span>{{ refundLibrary.title }}</span>
 </script>
 
 <script type="text/html" id="parameter-option">
@@ -148,6 +139,8 @@
             $query = $view.find('#query'),
             $addTo = $view.find('#addTo'),
             $updateTo = $view.find('#updateTo'),
+            $otuTo = $view.find('#otuTo'),
+            $cancelTo = $view.find('#cancelTo'),
             $reset = $view.find('#reset'),
             $searchForm = $view.find('form'),
             sortObject = {field: 'createTime', type: null},
@@ -156,6 +149,7 @@
         form.render();
         initPurchaseRequisitionTable();
 
+        let userName = currentUser.username;
         var firstDate = new Date();
         firstDate.setDate(1); //本月第一天
         var datetime =firstDate.getFullYear() + '-' + (firstDate.getMonth() + 1) + '-' + firstDate.getDate();
@@ -280,57 +274,107 @@
                 febs.alert.warn('请选择一条需要修改的数据');
             }else{
                 layui.each(checkStatus.data, function (key, item) {
-                    febs.modal.open('【采购退货】 修改', 'purchase/purchaseRefund/update/' + item.id, {
-                        area: ["80%","60%"],
-                        btn: ['删除行','删除整单','保存', '关闭'],
-                        yes: function (index, layero) {
-                            let checkStatus = table.checkStatus('purchaseRefundRequisitionList')
-                                , demo = table.cache["purchaseRefundRequisitionList"];//获取表格中的数据
-                            if (checkStatus.data.length < 1) {
-                                layer.alert("请选择一条数据操作");
-                                return false;
-                            }else {
-                                var tablelist = [];//存储未选中的数据
-                                //循环表格数据
-                                for (var i in demo) {
-                                    //判断未选中数据
-                                    if (!demo[i].LAY_CHECKED) {
-                                        //存入数组
-                                        tablelist.push(demo[i]);
+                    if(item.refundState == 1){
+                        febs.modal.open('【采购退货】 修改', 'purchase/purchaseRefund/update/' + item.id, {
+                            area: ["80%","60%"],
+                            btn: ['删除行','删除整单','保存', '关闭'],
+                            yes: function (index, layero) {
+                                let checkStatus = table.checkStatus('purchaseRefundRequisitionList')
+                                    , demo = table.cache["purchaseRefundRequisitionList"];//获取表格中的数据
+                                if (checkStatus.data.length < 1) {
+                                    layer.alert("请选择一条数据操作");
+                                    return false;
+                                }else {
+                                    var tablelist = [];//存储未选中的数据
+                                    //循环表格数据
+                                    for (var i in demo) {
+                                        //判断未选中数据
+                                        if (!demo[i].LAY_CHECKED) {
+                                            //存入数组
+                                            tablelist.push(demo[i]);
+                                        }
                                     }
-                                }
-                                //重载表格
-                                table.reload('purchaseRefundRequisitionList', {
-                                    data: tablelist
-                                });
+                                    //重载表格
+                                    table.reload('purchaseRefundRequisitionList', {
+                                        data: tablelist
+                                    });
 
+                                }
+                                return false;
+                            },
+                            btn2: function () {
+                                let refundNumber = [];
+                                layui.each(checkStatus.data, function (key, item) {
+                                    refundNumber.push(item.refundNumber)
+                                });
+                                deletePurchaseRefundNumber(refundNumber.join(','));
+                                layer.closeAll();
+                                var dataBak = [];
+                                layui.table.reload('purchaseRefundRequisitionList',{
+                                    data:dataBak
+                                });
+                                return false;
+                            },
+                            btn3: function () {
+                                $('#purchaseRefund-update').find('#submit').trigger('click');
+                                return false;
+                            },
+                            btn4: function () {
+                                layer.closeAll();
                             }
-                            return false;
-                        },
-                        btn2: function () {
-                            let refundNumber = [];
-                            layui.each(checkStatus.data, function (key, item) {
-                                refundNumber.push(item.refundNumber)
-                            });
-                            deletePurchaseRefundNumber(refundNumber.join(','));
-                            layer.closeAll();
-                            var dataBak = [];
-                            layui.table.reload('purchaseRefundRequisitionList',{
-                                data:dataBak
-                            });
-                            return false;
-                        },
-                        btn3: function () {
-                            $('#purchaseRefund-update').find('#submit').trigger('click');
-                            return false;
-                        },
-                        btn4: function () {
-                            layer.closeAll();
-                        }
-                    });
+                        });
+                    }else {
+                        febs.alert.warn('该状态不允许修改');
+                    }
                 });
             }
         });
+
+        $otuTo.on('click', function () {
+            let checkStatus = table.checkStatus('purchaseRefundList');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要出库的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要出库的数据');
+            } else {
+                let ids = [];
+                layui.each(checkStatus.data, function (key, item) {
+                    ids.push(item.id)
+                    ids.push(item.refundNumber)
+                    ids.push(userName)
+                    if(item.refundState == 1){
+                        febs.modal.confirm('确认出库', '是否确认？', function () {
+                            otuPurchaseRefund(ids.join(','));
+                        });
+                    }else {
+                        febs.alert.warn('该状态不允许此操作');
+                    }
+                });
+            }
+        });
+
+        $cancelTo.on('click', function () {
+            let checkStatus = table.checkStatus('purchaseRefundList');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要取消出库的数据');
+            }else if(checkStatus.data.length>1){
+                febs.alert.warn('请选择一条需要取消出库的数据');
+            } else {
+                let ids = [];
+                layui.each(checkStatus.data, function (key, item) {
+                    ids.push(item.id)
+                    ids.push(item.refundNumber)
+                    if(item.refundState == 2){
+                        febs.modal.confirm('确认取消出库', '是否确认？', function () {
+                            cancelPurchaseRefund(ids.join(','));
+                        });
+                    }else {
+                        febs.alert.warn('此状态不允许此操作');
+                    }
+                });
+            }
+        });
+
         function initPurchaseRequisitionTable() {
             tableIns = febs.table.init({
                 elem: '#purchaseRefundList',
@@ -347,7 +391,7 @@
                     {field: 'refundDate', title: '日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.refundDate, "yyyy-MM-dd") }}</div>', minWidth: 110, sort: true},
                     {field: 'refundNumber', title: '退货单号', minWidth: 145,align:'center'},
                     {field: 'supplierName', title: '供应商', minWidth: 120,align:'center'},
-                    {title: '库房', templet: '#refundLibrary-state',align:'center',width:120},
+                    {field: 'refundLibrary', title: '库房', minWidth: 120,align:'center'},
                     {field: 'refundQuantity',title: '数量', minWidth: 55,align:'center'},
                     {field: 'refundMoney', title: '金额', minWidth: 95,align:'center'},
                     {field: 'currencyName', title: '币种', minWidth: 80,align:'center'},
@@ -395,6 +439,20 @@
                 {field: 'refundRemarks', title: '备注', minWidth: 72}
             ]]
         });
+
+        function otuPurchaseRefund(ids) {
+            febs.get(ctx + 'purchaseRefund/otu/' + ids, null, function () {
+                febs.alert.success('确认出库成功');
+                $query.click();
+            });
+        }
+
+        function cancelPurchaseRefund(ids) {
+            febs.get(ctx + 'purchaseRefund/cancel/' + ids, null, function () {
+                febs.alert.success('取消出库成功');
+                $query.click();
+            });
+        }
 
         function getQueryParams() {
             let params = $searchForm.serializeJson();

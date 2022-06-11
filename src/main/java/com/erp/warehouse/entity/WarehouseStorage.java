@@ -1,4 +1,4 @@
-package com.erp.purchase.entity;
+package com.erp.warehouse.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -10,20 +10,99 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- * 采购入库_附表 Entity
+ * 采购入库 Entity
  *
  * @author qiufeng
- * @date 2022-03-30 09:55:45
+ * @date 2022-06-03 15:17:46
  */
 @Data
-@TableName("jr_warehouse_storage_schedule")
-public class WarehouseStorageSchedule {
+@TableName("jr_warehouse_storage")
+public class WarehouseStorage {
 
     /**
      * 主键
      */
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
+
+    /**
+     * 状态
+     */
+    @TableField("storage_state")
+    private String storageState;
+
+    /**
+     * 日期
+     */
+    @TableField("storage_date")
+    private Date storageDate;
+
+    /**
+     * 单号
+     */
+    @TableField("storage_coding")
+    private String storageCoding;
+
+
+    /**
+     * 收货单号
+     */
+    @TableField("storage_numbers")
+    private String storageNumbers;
+
+    /**
+     * 供应商
+     */
+    @TableField("supplier_name")
+    private String supplierName;
+
+    /**
+     * 库房
+     */
+    @TableField("storage_library")
+    private String storageLibrary;
+
+    private String locationName;
+
+    /**
+     * 数量
+     */
+    @TableField("storage_quantity")
+    private String storageQuantity;
+
+    /**
+     * 币种
+     */
+    @TableField("currency_id")
+    private Long currencyId;
+
+    private String currencyName;
+
+    /**
+     * 税率
+     */
+    @TableField("tax_rate_id")
+    private Long taxRateId;
+
+    private String taxRateName;
+
+    /**
+     * 制单人
+     */
+    @TableField("storage_preparer")
+    private String storagePreparer;
+
+    /**
+     * 制单日期
+     */
+    @TableField("storage_preparer_date")
+    private Date storagePreparerDate;
+
+    /**
+     * 采购订单
+     */
+    @TableField("order_number")
+    private String orderNumber;
 
     /**
      * 编码
@@ -62,12 +141,6 @@ public class WarehouseStorageSchedule {
     private String storageCompany;
 
     /**
-     * 数量
-     */
-    @TableField("storage_quantity")
-    private String storageQuantity;
-
-    /**
      * 单价
      */
     @TableField("unit_price")
@@ -77,12 +150,6 @@ public class WarehouseStorageSchedule {
      */
     @TableField("storage_money")
     private BigDecimal storageMoney;
-    /**
-     * 采购订单
-     */
-    @TableField("order_numbers")
-    private String orderNumbers;
-
     /**
      * 库位
      */
@@ -102,12 +169,6 @@ public class WarehouseStorageSchedule {
     private String storageSubclass;
 
     /**
-     * 日期
-     */
-    @TableField("storage_date")
-    private Date storageDate;
-
-    /**
      * 大类
      */
     @TableField("storage_category")
@@ -120,23 +181,12 @@ public class WarehouseStorageSchedule {
     private BigDecimal storageDeposit;
 
     /**
-     * 收货单号
+     * UUID
      */
-    private String storageNumbers;
+    @TableField("uuid")
+    private String uuid;
 
-    /**
-     * 供应商
-     */
-    private String supplierName;
-
-    /**
-     * 库房
-     */
-    private String storageLibrary;
-
-    /**
-     * 订单号
-     */
-    private String orderNumber;
+    private transient String signedDateFrom;
+    private transient String signedDateTo;
 
 }

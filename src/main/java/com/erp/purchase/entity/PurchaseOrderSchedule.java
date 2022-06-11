@@ -112,4 +112,11 @@ public class PurchaseOrderSchedule {
      */
     @TableField("order_category")
     private String orderCategory;
+
+    /**
+     * 库位
+     */
+    @TableField("order_location")
+    private String orderLocation;
+
 }

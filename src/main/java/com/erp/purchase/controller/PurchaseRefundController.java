@@ -9,8 +9,8 @@ import com.erp.common.entity.QueryRequest;
 import com.erp.common.utils.FebsUtil;
 import com.erp.purchase.entity.PurchaseRefund;
 import com.erp.purchase.entity.PurchaseRefundSchedule;
-import com.erp.purchase.entity.WarehouseStorageSchedule;
 import com.erp.purchase.service.IPurchaseRefundService;
+import com.erp.warehouse.entity.WarehouseStorage;
 import com.wuwenze.poi.ExcelKit;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import lombok.RequiredArgsConstructor;
@@ -113,8 +113,26 @@ public class PurchaseRefundController extends BaseController {
     @GetMapping("purchaseRefundAdd/list")
     @ResponseBody
     @RequiresPermissions("purchaseRefund:view")
-    public FebsResponse purchaseRefundAddQuery(QueryRequest request, WarehouseStorageSchedule warehouseStorage) {
+    public FebsResponse purchaseRefundAddQuery(QueryRequest request, WarehouseStorage warehouseStorage) {
         Map<String, Object> dataTable = getDataTable(this.purchaseRefundService.findPurchaseRefundAddQueryPage(request,warehouseStorage));
         return new FebsResponse().success().data(dataTable);
+    }
+
+    @ControllerEndpoint(operation = "出库", exceptionMessage = "出库失败")
+    @GetMapping("purchaseRefund/otu/{ids}")
+    @ResponseBody
+    @RequiresPermissions("purchaseRefund:otu")
+    public FebsResponse otuPurchaseRefund(@PathVariable String ids) throws ParseException {
+        this.purchaseRefundService.otuPurchaseRefund(ids);
+        return new FebsResponse().success();
+    }
+
+    @ControllerEndpoint(operation = "取消出库", exceptionMessage = "取消出库失败")
+    @GetMapping("purchaseRefund/cancel/{ids}")
+    @ResponseBody
+    @RequiresPermissions("purchaseRefund:cancel")
+    public FebsResponse cancelPurchaseRefund(@PathVariable String ids) throws ParseException {
+        this.purchaseRefundService.cancelPurchaseRefund(ids);
+        return new FebsResponse().success();
     }
 }

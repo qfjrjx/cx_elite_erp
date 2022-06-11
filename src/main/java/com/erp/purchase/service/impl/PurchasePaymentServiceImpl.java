@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.erp.common.entity.QueryRequest;
+import com.erp.purchase.entity.PurchaseInvoice;
 import com.erp.purchase.entity.PurchaseOrderSchedule;
 import com.erp.purchase.entity.PurchasePayment;
 import com.erp.purchase.entity.PurchasePaymentSchedule;
@@ -209,6 +210,10 @@ public class PurchasePaymentServiceImpl extends ServiceImpl<PurchasePaymentMappe
             purchasePaymentSchedule.setInspectionSubclass(inspectionSubclass);
             purchasePaymentDate.setPaymentCode(orderNumber);
             baseMapper.savePurchasePaymentSchedule(purchasePaymentSchedule);
+            PurchaseInvoice purchaseInvoice = new PurchaseInvoice();
+            purchaseInvoice.setPaymentState("2");
+            purchaseInvoice.setInvoiceNumbers(invoiceNumbers);
+            baseMapper.updatePaymentState(purchaseInvoice);
         }
         baseMapper.savePurchasePaymentData(purchasePaymentDate);
     }
@@ -301,8 +306,12 @@ public class PurchasePaymentServiceImpl extends ServiceImpl<PurchasePaymentMappe
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deletePurchasePayment(String paymentNumber) {
-        baseMapper.deletePurchasePaymentSchedule(paymentNumber);
-        baseMapper.deletePurchasePayment(paymentNumber);
+        String[] parts = paymentNumber.split(",");
+        String paymentNumberData = parts[0]; // id
+        String invoiceNumbers = parts[1]; // 单号
+        baseMapper.deletePurchasePaymentSchedule(paymentNumberData);
+        baseMapper.deletePurchasePayment(paymentNumberData);
+        baseMapper.updateInvoiceNumbers(invoiceNumbers);
 	}
 
     @Override

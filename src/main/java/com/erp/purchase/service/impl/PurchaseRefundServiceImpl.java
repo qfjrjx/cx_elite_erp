@@ -9,10 +9,14 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.erp.common.entity.QueryRequest;
-import com.erp.purchase.entity.*;
+import com.erp.purchase.entity.PurchaseRefund;
+import com.erp.purchase.entity.PurchaseRefundSchedule;
+import com.erp.purchase.entity.PurchaseSettlement;
+import com.erp.purchase.entity.PurchaseSettlementSchedule;
 import com.erp.purchase.mapper.PurchaseRefundMapper;
 import com.erp.purchase.mapper.PurchaseSettlementMapper;
 import com.erp.purchase.service.IPurchaseRefundService;
+import com.erp.warehouse.entity.WarehouseStorage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -122,11 +126,8 @@ public class PurchaseRefundServiceImpl extends ServiceImpl<PurchaseRefundMapper,
         JSONArray jsonArrayOne = JSONArray.parseArray(dataTable);
         /*采购退货附表*/
         PurchaseRefundSchedule purchaseRefundSchedule = new PurchaseRefundSchedule();
-        /*采购结果附表*/
-        PurchaseSettlementSchedule purchaseSettlementSchedule = new PurchaseSettlementSchedule();
         for(int i = 0; i < jsonArrayOne.size(); i++) {
             purchaseRefundSchedule.setRefundNumber(generateDocNo);
-            purchaseSettlementSchedule.setSettlementNumber(generateDocNo);
             String refundLibraryOnt = jsonArrayOne.getJSONObject(i).getString("refundLibrary");
             String supplierNameOnt = jsonArrayOne.getJSONObject(i).getString("supplierName");
             String refundCode = jsonArrayOne.getJSONObject(i).getString("refundCode");
@@ -146,78 +147,46 @@ public class PurchaseRefundServiceImpl extends ServiceImpl<PurchaseRefundMapper,
 
             BigDecimal refundDepositOnt = new BigDecimal(refundDeposit);
             purchaseRefundSchedule.setRefundDeposit(refundDepositOnt);
-            purchaseSettlementSchedule.setSettlementDeposit(refundDepositOnt);
-            purchaseSettlementSchedule.setWhetherInvoice("2");
             if (!refundLibraryOnt.equals("")) {
                 purchaseRefundSchedule.setRefundLibrary(refundLibraryOnt);
             }if (!supplierNameOnt.equals("")) {
                 purchaseRefundSchedule.setSupplierName(supplierNameOnt);
             }if (!refundCode.equals("")) {
                 purchaseRefundSchedule.setRefundCode(refundCode);
-                purchaseSettlementSchedule.setSettlementCode(refundCode);
             }if (!refundName.equals("")) {
                 purchaseRefundSchedule.setRefundName(refundName);
-                purchaseSettlementSchedule.setSettlementName(refundName);
             }if (!refundSpecifications.equals("")) {
                 purchaseRefundSchedule.setRefundSpecifications(refundSpecifications);
-                purchaseSettlementSchedule.setSettlementSpecifications(refundSpecifications);
             }if (!refundQuality.equals("")) {
                 purchaseRefundSchedule.setRefundQuality(refundQuality);
-                purchaseSettlementSchedule.setSettlementQuality(refundQuality);
             }if (!refundCompany.equals("")) {
                 purchaseRefundSchedule.setRefundCompany(refundCompany);
-                purchaseSettlementSchedule.setSettlementCompany(refundCompany);
             }if (!refundAmount.equals("")) {
                 purchaseRefundSchedule.setRefundQuantity(refundAmount);
-                purchaseSettlementSchedule.setSettlementQuantity(refundAmount);
             }if (!refundPrice.equals("")) {
                 BigDecimal refundPriceOnt = new BigDecimal(refundPrice);
                 purchaseRefundSchedule.setRefundPrice(refundPriceOnt);
-                purchaseSettlementSchedule.setSettlementPrice(refundPriceOnt);
             }if (!refundMoney.equals("")) {
                 BigDecimal refundMoneyOnt = new BigDecimal(refundMoney);
                 purchaseRefundSchedule.setRefundMoney(refundMoneyOnt);
-                purchaseSettlementSchedule.setSettlementMoney(refundMoneyOnt);
             }if (!refundSpecifications.equals("")) {
                 purchaseRefundSchedule.setRefundSpecifications(refundSpecifications);
             }if (!refundRemarks.equals("")) {
                 purchaseRefundSchedule.setRefundRemarks(refundRemarks);
-                purchaseSettlementSchedule.setSettlementRemarks(refundRemarks);
             }if (!orderNumber.equals("")) {
                 purchaseRefundSchedule.setOrderNumber(orderNumber);
-                purchaseSettlementSchedule.setOrderNumber(orderNumber);
             }if (!refundBrand.equals("")) {
                 purchaseRefundSchedule.setRefundBrand(refundBrand);
-                purchaseSettlementSchedule.setSettlementBrand(refundBrand);
             }if (!refundSubclass.equals("")) {
                 purchaseRefundSchedule.setRefundSubclass(refundSubclass);
-                purchaseSettlementSchedule.setSettlementSubclass(refundSubclass);
             }if (!refundCategory.equals("")) {
                 purchaseRefundSchedule.setRefundCategory(refundCategory);
-                purchaseSettlementSchedule.setSettlementCategory(refundCategory);
             }
             //添加到数据库
             baseMapper.savePurchaseRefundSchedule(purchaseRefundSchedule);
-            /*添加到采购结果附表数据*/
-            purchaseSettlementMapper.savePurchaseSettlementSchedule(purchaseSettlementSchedule);
         }
         //添加到数据库
         baseMapper.savePurchaseRefundDate(purchaseRefundDate);
-
-        /*采购结果*/
-        PurchaseSettlement purchaseSettlement = new PurchaseSettlement();
-        purchaseSettlement.setSettlementState("1");
-        purchaseSettlement.setSettlementDate(today);
-        purchaseSettlement.setSettlementNumbers(generateDocNo);
-        purchaseSettlement.setSettlementUse("1");
-        purchaseSettlement.setSettlementSupplier(supplierName);
-        purchaseSettlement.setSettlementLibrary(refundLibrary);
-        purchaseSettlement.setCurrencyId(Long.parseLong(currencyId));
-        purchaseSettlement.setTaxRateId(Long.parseLong(taxRateId));
-        purchaseSettlement.setSettlementInvoice(Long.parseLong("1"));
-
-        purchaseSettlementMapper.savePurchaseSettlementDate(purchaseSettlement);
-
     }
 
     @Override
@@ -312,8 +281,8 @@ public class PurchaseRefundServiceImpl extends ServiceImpl<PurchaseRefundMapper,
     }
 
     @Override
-    public IPage<WarehouseStorageSchedule> findPurchaseRefundAddQueryPage(QueryRequest request, WarehouseStorageSchedule warehouseStorage) {
-        Page<WarehouseStorageSchedule> page = new Page<>(request.getPageNum(), request.getPageSize());
+    public IPage<WarehouseStorage> findPurchaseRefundAddQueryPage(QueryRequest request, WarehouseStorage warehouseStorage) {
+        Page<WarehouseStorage> page = new Page<>(request.getPageNum(), request.getPageSize());
         page.setSearchCount(false);
         page.setTotal(baseMapper.countPurchaseRefundAddQuery(warehouseStorage));
         return baseMapper.findPurchaseRefundAddQueryPage(page,warehouseStorage);
@@ -322,5 +291,88 @@ public class PurchaseRefundServiceImpl extends ServiceImpl<PurchaseRefundMapper,
     @Override
     public PurchaseRefund findPurchaseRefundQueryPage(Long id) {
         return baseMapper.findPurchaseRefundQueryPage(id);
+    }
+
+    @Override
+    public void otuPurchaseRefund(String ids) throws ParseException {
+        String[] parts = ids.split(",");
+        String id = parts[0]; // id
+        String refundNumber = parts[1]; // 单号
+        String userName = parts[2]; // 操作人
+        SimpleDateFormat simpleDateFormatTwo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
+        String dates = simpleDateFormatTwo.format(new Date());//系统当前时间
+        Date today = simpleDateFormatTwo.parse(dates);//格式化系统当前时间
+        PurchaseRefund purchaseRefund = new PurchaseRefund();
+        purchaseRefund.setRefundOutbound(userName);
+        purchaseRefund.setRefundOutboundDate(today);
+        purchaseRefund.setId(Long.valueOf(id));
+        baseMapper.otuPurchaseRefund(purchaseRefund);
+        List<PurchaseRefundSchedule> warehouseStorages = baseMapper.queryPurchaseRefundSchedule(refundNumber);
+        JSONArray jsonArrayOne= JSONArray.parseArray(JSON.toJSONString(warehouseStorages));
+        PurchaseSettlement purchaseSettlement = new PurchaseSettlement();
+        PurchaseSettlementSchedule purchaseSettlementSchedule = new PurchaseSettlementSchedule();
+        for(int i = 0; i < jsonArrayOne.size(); i++){
+            //采购结算主表数据
+            String settlementSupplier =  jsonArrayOne.getJSONObject(i).getString("supplierName");
+            String settlementLibrary =  jsonArrayOne.getJSONObject(i).getString("refundLibrary");
+            String currencyId =  jsonArrayOne.getJSONObject(i).getString("currencyId");
+            String taxRateId =  jsonArrayOne.getJSONObject(i).getString("taxRateId");
+            //采购结算附表数据
+            String settlementCode =  jsonArrayOne.getJSONObject(i).getString("refundCode");
+            String settlementName =  jsonArrayOne.getJSONObject(i).getString("refundName");
+            String settlementSpecifications =  jsonArrayOne.getJSONObject(i).getString("refundSpecifications");
+            String settlementQuantity =  jsonArrayOne.getJSONObject(i).getString("refundQuantity");
+            String settlementBrand =  jsonArrayOne.getJSONObject(i).getString("refundBrand");
+            String settlementCompany =  jsonArrayOne.getJSONObject(i).getString("refundCompany");
+            String settlementPrice =  jsonArrayOne.getJSONObject(i).getString("refundPrice");
+            String settlementMoney =  jsonArrayOne.getJSONObject(i).getString("refundMoney");
+            String settlementCategory =  jsonArrayOne.getJSONObject(i).getString("refundCategory");
+            String settlementSubclass =  jsonArrayOne.getJSONObject(i).getString("refundSubclass");
+            String settlementRemarks =  jsonArrayOne.getJSONObject(i).getString("refundRemarks");
+            String orderNumber =  jsonArrayOne.getJSONObject(i).getString("orderNumber");
+            String settlementQuality =  jsonArrayOne.getJSONObject(i).getString("refundQuality");
+            String settlementDeposit =  jsonArrayOne.getJSONObject(i).getString("refundDeposit");
+            purchaseSettlement.setSettlementState("3");
+            purchaseSettlement.setSettlementDate(today);
+            purchaseSettlement.setSettlementNumbers(refundNumber);
+            purchaseSettlement.setSettlementUse("1");
+            purchaseSettlement.setSettlementSupplier(settlementSupplier);
+            purchaseSettlement.setSettlementLibrary(settlementLibrary);
+            purchaseSettlement.setCurrencyId(Long.parseLong(currencyId));
+            purchaseSettlement.setTaxRateId(Long.parseLong(taxRateId));
+            purchaseSettlement.setSettlementInvoice(Long.parseLong("1"));
+            purchaseSettlementSchedule.setSettlementCode(settlementCode);
+            purchaseSettlementSchedule.setSettlementName(settlementName);
+            purchaseSettlementSchedule.setSettlementSpecifications(settlementSpecifications);
+            purchaseSettlementSchedule.setSettlementQuality(settlementQuality);
+            BigDecimal settlementDepositTo = new BigDecimal(settlementPrice);
+            purchaseSettlementSchedule.setSettlementDeposit(settlementDepositTo);
+            purchaseSettlementSchedule.setSettlementBrand(settlementDeposit);
+            purchaseSettlementSchedule.setSettlementCompany(settlementCompany);
+            purchaseSettlementSchedule.setSettlementQuantity(Long.parseLong(settlementQuantity));
+            BigDecimal settlementPriceTo = new BigDecimal(settlementPrice);
+            purchaseSettlementSchedule.setSettlementPrice(settlementPriceTo);
+            BigDecimal settlementMoneyTo = new BigDecimal(settlementMoney);
+            purchaseSettlementSchedule.setSettlementMoney(settlementMoneyTo);
+            purchaseSettlementSchedule.setSettlementCategory(settlementCategory);
+            purchaseSettlementSchedule.setSettlementSubclass(settlementSubclass);
+            purchaseSettlementSchedule.setSettlementRemarks(settlementRemarks);
+            purchaseSettlementSchedule.setSettlementNumber(refundNumber);
+            purchaseSettlementSchedule.setOrderNumber(orderNumber);
+            /*添加到采购结果附表数据*/
+            purchaseSettlementMapper.savePurchaseSettlementSchedule(purchaseSettlementSchedule);
+        }
+        //采购结算
+        purchaseSettlementMapper.savePurchaseSettlementDate(purchaseSettlement);
+    }
+
+    @Override
+    public void cancelPurchaseRefund(String ids) {
+        String[] parts = ids.split(",");
+        String id = parts[0]; // id
+        String refundNumber = parts[1]; // 单号
+        baseMapper.cancelPurchaseRefund(id);
+        baseMapper.deletePurchaseSettlement(refundNumber);
+        baseMapper.deletePurchaseSettlementSchedule(refundNumber);
     }
 }

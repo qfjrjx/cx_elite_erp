@@ -64,4 +64,16 @@ public interface IPurchaseInspectionService extends IService<PurchaseInspection>
     void confirmPurchaseInspection(String ids);
 
     void cancelPurchaseInspection(String ids);
+
+    PurchaseInspectionSchedule qualityInspectionId(Long ids);
+
+    void updateQualityInspection(PurchaseInspectionSchedule purchaseInspectionSchedule) throws ParseException;
+
+    void cancelInspection(String ids);
+
+    void confirmOutsourcing(String ids) throws ParseException;
+
+    void confirmAssets(String ids) throws ParseException;
+
+    void cancelLibrary(String ids);
 }

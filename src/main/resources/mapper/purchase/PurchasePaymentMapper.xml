@@ -84,7 +84,8 @@
             pp.payment_shape_date,
             pp.payment_code,
             pp.payment_number,
-            pp.currency_id
+            pp.currency_id,
+            pps.invoice_numbers
         FROM
             jr_purchase_payment pp
         LEFT JOIN jr_purchase_payment_schedule pps ON ( pp.payment_number = pps.payment_number )
@@ -329,6 +330,20 @@
             jr_purchase_payment
         set payment_shape = 1 , payment_shape_date = #{purchasePayment.paymentShapeDate}
         WHERE id=#{ids}
+    </update>
+
+    <update id="updatePaymentState"  parameterType="com.erp.purchase.entity.PurchaseInvoice">
+        UPDATE
+            jr_purchase_invoice
+        set payment_state = 2
+        WHERE invoice_numbers=#{purchaseInvoice.invoiceNumbers}
+    </update>
+
+    <update id="updateInvoiceNumbers"  parameterType="com.erp.purchase.entity.PurchaseInvoice">
+        UPDATE
+            jr_purchase_invoice
+        set payment_state = 1
+        WHERE invoice_numbers=#{invoiceNumbers}
     </update>
 
 </mapper>

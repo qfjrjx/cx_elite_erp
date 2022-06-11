@@ -67,4 +67,8 @@ public interface IPurchaseRequisitionService extends IService<PurchaseRequisitio
     void cancelPurchaseCancel(String ids);
 
     void downPurchaseCancel(String ids);
+
+    void confirmPurchaseRequisition(String ids);
+
+    void cancelPurchaseRequisition(String ids);
 }

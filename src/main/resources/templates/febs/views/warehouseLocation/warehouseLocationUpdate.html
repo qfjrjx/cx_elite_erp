@@ -1,0 +1,113 @@
+<style>
+    #warehouseLocation-update {
+        padding: 20px 25px 25px 0;
+    }
+</style>
+<div class="layui-fluid" id="warehouseLocation-update">
+    <form class="layui-form" action="" lay-filter="warehouseLocation-update-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label">库房编码：</label>
+            <div class="layui-input-block">
+                <input type="text" name="locationCode"
+                       autocomplete="off" class="layui-input" placeholder="自动生成" readonly>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">库房类型：</label>
+            <div class="layui-input-block">
+                <select name="locationType" id="locationType">
+                    <option value="1">物料</option>
+                    <option value="2">成品</option>
+                    <option value="3">原料</option>
+                    <option value="4">资产</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" >库房名称：</label>
+            <div class="layui-input-block">
+                <input type="text" name="locationName" id="locationName"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" >排&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;序：</label>
+            <div class="layui-input-block">
+                <input type="text" name="locationSorting" id="locationSorting"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注：</label>
+            <div class="layui-input-block">
+                <input type="text" name="locationNote" id="locationNote"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">状&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;态：</label>
+            <div class="layui-input-block">
+                <select name="locationState" id="locationState">
+                    <option value="1">启用</option>
+                    <option value="2">禁止</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item" style="display: none;">
+            <label class="layui-form-label">制单人：</label>
+            <div class="layui-input-block">
+                <input type="text" name="locationCreate" id="locationCreate"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item" style="display: none;">
+            <label class="layui-form-label">id：</label>
+            <div class="layui-input-block">
+                <input type="text" name="id" id="id"
+                       autocomplete="off" class="layui-input" placeholder="">
+            </div>
+        </div>
+        <div class="layui-form-item febs-hide">
+            <button class="layui-btn" lay-submit="" lay-filter="warehouseLocation-update-form-submit" id="submit"></button>
+        </div>
+    </form>
+</div>
+<script langguage="JavaScript">
+    locationCreate.value = currentUser.username;
+
+</script>
+<script data-th-inline="javascript">
+    layui.use(['febs', 'form', 'validate','table', 'xmSelect','upload','laydate'], function () {
+        let $ = layui.$,
+            febs = layui.febs,
+            layer = layui.layer,
+            form = layui.form,
+            warehouseLocation = [[${warehouseLocation}]],
+            upload = layui.upload,
+            uploadInst;
+
+        initPurchaseRequisitionCreatorValue();
+
+        function initPurchaseRequisitionCreatorValue() {
+            form.val("warehouseLocation-update-form", {
+                "id": warehouseLocation.id,
+                "locationCode": warehouseLocation.locationCode,
+                "locationType": warehouseLocation.locationType,
+                "locationName": warehouseLocation.locationName,
+                "locationSorting": warehouseLocation.locationSorting,
+                "locationNote": warehouseLocation.locationNote,
+                "locationState": warehouseLocation.locationState
+            });
+        }
+
+        form.on('submit(warehouseLocation-update-form-submit)', function (data) {
+            febs.post(ctx + 'warehouseLocation/update', data.field,function () {
+                layer.closeAll();
+                febs.alert.success('修改参数成功');
+                $('#warehouse-location').find('#query').click();
+            });
+            return false;
+
+        });
+    })
+</script>

@@ -18,6 +18,25 @@
             jr_warehouse_storage ws
         WHERE
             1 = 1
+        AND ws.supplier_name = #{warehouseStorage.supplierName}
+        <if test="warehouseStorage.storageLibrary != null and warehouseStorage.storageLibrary != ''">
+            AND ws.storage_library = #{warehouseStorage.storageLibrary}
+        </if>
+        <if test="warehouseStorage.storageNumbers != null and warehouseStorage.storageNumbers != ''">
+            AND ws.storage_numbers = #{warehouseStorage.storageNumbers}
+        </if>
+        <if test="warehouseStorage.storageCode != null and warehouseStorage.storageCode != ''">
+            AND ws.storage_code = #{warehouseStorage.storageCode}
+        </if>
+        <if test="warehouseStorage.storageName != null and warehouseStorage.storageName != ''">
+            AND ws.storage_name = #{warehouseStorage.storageName}
+        </if>
+        <if test="warehouseStorage.storageSpecifications != null and warehouseStorage.storageSpecifications != ''">
+            AND ws.storage_specifications = #{warehouseStorage.storageSpecifications}
+        </if>
+        <if test="warehouseStorage.storageSubclass != null and warehouseStorage.storageSubclass != ''">
+            AND ws.storage_subclass = #{warehouseStorage.storageSubclass}
+        </if>
     </sql>
 
     <sql id="findPurchaseRefundPageSql">
@@ -27,7 +46,7 @@
             pr.refund_date,
             pr.refund_number,
             pr.supplier_name,
-            pr.refund_library,
+            wl.location_name refundLibrary,
             sum(prs.refund_quantity) refundQuantity,
             sum(prs.refund_money) refundMoney,
             pr.refund_preparer,
@@ -42,6 +61,7 @@
                 LEFT JOIN jr_purchase_refund_schedule prs ON ( pr.refund_number = prs.refund_number )
                 LEFT JOIN jr_finance_parameters fpa ON ( pr.currency_id = fpa.id )
                 LEFT JOIN jr_finance_parameters fpb ON ( pr.tax_rate_id = fpb.id )
+                LEFT JOIN jr_warehouse_location wl ON ( pr.refund_library = wl.location_sorting )
         WHERE
             1 = 1
             <if test="purchaseRefund.signedDateFrom != null and purchaseRefund.signedDateFrom !=''">
@@ -87,7 +107,7 @@
 
     </sql>
 
-    <select id="countPurchaseRefundAddQuery" parameterType="com.erp.purchase.entity.WarehouseStorage" resultType="long">
+    <select id="countPurchaseRefundAddQuery" parameterType="com.erp.warehouse.entity.WarehouseStorage" resultType="long">
         <include refid="countPurchaseRefundAddQuerySql"/>
     </select>
 
@@ -118,35 +138,43 @@
             prs.order_number,
             prs.supplier_name,
             prs.refund_library,
-            prs.refund_remarks
+            prs.refund_remarks,
+            prs.refund_number,
+            prs.refund_subclass,
+            prs.refund_category,
+            prs.refund_deposit,
+            pr.refund_library,
+            pr.tax_rate_id,
+            pr.currency_id
         FROM
             jr_purchase_refund_schedule prs
+                LEFT JOIN jr_purchase_refund pr ON pr.refund_number = prs.refund_number
         WHERE
             prs.refund_number = #{oddNumbers}
     </select>
 
-    <select id="findPurchaseRefundAddQueryPage" parameterType="String" resultType="com.erp.purchase.entity.WarehouseStorageSchedule">
+    <select id="findPurchaseRefundAddQueryPage" parameterType="String" resultType="com.erp.warehouse.entity.WarehouseStorage">
         SELECT
             ws.supplier_name,
             ws.order_number,
-            ws.storage_library,
+            wl.location_name storageLibrary,
             ws.storage_numbers,
-            wss.storage_code,
-            wss.storage_name,
-            wss.storage_specifications,
-            wss.storage_quality,
-            wss.storage_company,
-            wss.storage_quantity,
-            wss.unit_price,
-            wss.storage_money,
-            wss.storage_remarks,
-            wss.storage_brand,
-            wss.storage_subclass,
-            wss.storage_category,
-            wss.storage_deposit
+            ws.storage_code,
+            ws.storage_name,
+            ws.storage_specifications,
+            ws.storage_quality,
+            ws.storage_company,
+            ws.storage_quantity,
+            ws.unit_price,
+            ws.storage_money,
+            ws.storage_remarks,
+            ws.storage_brand,
+            ws.storage_subclass,
+            ws.storage_category,
+            ws.storage_deposit
         FROM
             jr_warehouse_storage ws
-        LEFT JOIN jr_warehouse_storage_schedule wss ON ( ws.order_number = wss.order_numbers )
+        LEFT JOIN jr_warehouse_location wl ON ( ws.storage_library = wl.location_sorting )
         WHERE
             1 = 1
         AND ws.supplier_name = #{warehouseStorage.supplierName}
@@ -157,20 +185,23 @@
                 AND ws.storage_numbers = #{warehouseStorage.storageNumbers}
             </if>
             <if test="warehouseStorage.storageCode != null and warehouseStorage.storageCode != ''">
-                AND wss.storage_code = #{warehouseStorage.storageCode}
+                AND ws.storage_code = #{warehouseStorage.storageCode}
             </if>
             <if test="warehouseStorage.storageName != null and warehouseStorage.storageName != ''">
-                AND wss.storage_name = #{warehouseStorage.storageName}
+                AND ws.storage_name = #{warehouseStorage.storageName}
             </if>
             <if test="warehouseStorage.storageSpecifications != null and warehouseStorage.storageSpecifications != ''">
-                AND wss.storage_specifications = #{warehouseStorage.storageSpecifications}
+                AND ws.storage_specifications = #{warehouseStorage.storageSpecifications}
             </if>
             <if test="warehouseStorage.storageSubclass != null and warehouseStorage.storageSubclass != ''">
-                AND wss.storage_subclass = #{warehouseStorage.storageSubclass}
+                AND ws.storage_subclass = #{warehouseStorage.storageSubclass}
+            </if>
+            <if test="warehouseStorage.storageLibrary != null and warehouseStorage.storageLibrary != ''">
+                AND ws.storage_library = #{warehouseStorage.storageLibrary}
             </if>
     </select>
 
-    <!--查询出最后一个采购订单单号-->
+    <!--查询出最后一个单号-->
     <select id="queryPurchaseRefund" resultType="com.erp.purchase.entity.PurchaseRefund">
         SELECT
             pr.id,
@@ -290,6 +321,28 @@
 
     <delete id="deletePurchaseRefund">
         delete from jr_purchase_refund  where refund_number = #{refundNumber}
+    </delete>
+
+    <update id="otuPurchaseRefund"  parameterType="com.erp.purchase.entity.PurchaseRefund">
+        UPDATE
+            jr_purchase_refund
+        set refund_state = 2,refund_outbound = #{purchaseRefund.refundOutbound},refund_outbound_date = #{purchaseRefund.refundOutboundDate}
+        WHERE id = #{purchaseRefund.id}
+    </update>
+
+    <update id="cancelPurchaseRefund"  parameterType="com.erp.purchase.entity.PurchaseRefund">
+        UPDATE
+            jr_purchase_refund
+        set refund_state = 1,refund_outbound = ""
+        WHERE id = #{ids}
+    </update>
+
+    <delete id="deletePurchaseSettlement">
+        delete from jr_purchase_settlement  where settlement_numbers = #{refundNumber}
+    </delete>
+
+    <delete id="deletePurchaseSettlementSchedule">
+        delete from jr_purchase_settlement_schedule  where settlement_number = #{refundNumber}
     </delete>
 
 </mapper>

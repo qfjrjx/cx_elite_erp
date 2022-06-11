@@ -4,6 +4,7 @@ package com.erp.purchase.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.erp.purchase.entity.PurchaseInvoice;
 import com.erp.purchase.entity.PurchasePayment;
 import com.erp.purchase.entity.PurchasePaymentSchedule;
 import org.apache.ibatis.annotations.Param;
@@ -45,4 +46,8 @@ public interface PurchasePaymentMapper extends BaseMapper<PurchasePayment> {
     long countPurchasePaymentSchedule(PurchasePaymentSchedule purchasePaymentSchedule);
 
     IPage<PurchasePaymentSchedule> findPurchasePaymentSchedulePage(Page<PurchasePaymentSchedule> page,@Param("purchasePayment") PurchasePaymentSchedule purchasePaymentSchedule);
+
+    void updatePaymentState(@Param("purchaseInvoice") PurchaseInvoice purchaseInvoice);
+
+    void updateInvoiceNumbers(@Param("invoiceNumbers") String invoiceNumbers);
 }

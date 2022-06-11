@@ -19,7 +19,7 @@ import java.util.List;
  */
 public interface PurchaseSettlementMapper extends BaseMapper<PurchaseSettlement> {
 
-    long countPurchaseSettlement(PurchaseSettlement purchaseSettlement);
+    long countPurchaseSettlement(@Param("purchaseSettlement") PurchaseSettlement purchaseSettlement);
 
     IPage<PurchaseSettlement> findPurchaseSettlement(Page<PurchaseRefund> page, @Param("purchaseSettlement") PurchaseSettlement purchaseSettlement);
 
@@ -29,11 +29,21 @@ public interface PurchaseSettlementMapper extends BaseMapper<PurchaseSettlement>
 
     List<PurchaseSettlementSchedule> queryPurchaseSettlementSchedule(@Param("oddNumbers") String oddNumbers);
 
-    void settlementPurchaseSettlement(String ids);
+    void settlementPurchaseSettlement(@Param("ids") String ids);
 
-    void cancelPurchaseSettlement(String ids);
+    void cancelPurchaseSettlement(@Param("ids") String ids);
 
     long countPurchaseSettlementAddQuery(@Param("purchaseSettlementSchedule") PurchaseSettlementSchedule purchaseSettlementSchedule);
 
     IPage<PurchaseSettlementSchedule> purchaseSettlementAddQuery(@Param("purchaseSettlementSchedule") Page<PurchaseSettlementSchedule> page, PurchaseSettlementSchedule purchaseSettlementSchedule);
+
+    void updatePurchaseRefund(@Param("settlementNumbers") String settlementNumbers);
+
+    void updateWarehouseStorage(@Param("settlementNumbers") String settlementNumbers);
+
+    void updatePurchaseRefundData(@Param("settlementNumbers") String settlementNumbers);
+
+    void updateWarehouseStorageData(@Param("settlementNumbers") String settlementNumbers);
+
+    void cancelPurchaseSettlementData(@Param("ids") String ids);
 }

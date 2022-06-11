@@ -7,6 +7,8 @@ import com.erp.finance.entity.FinanceParameters;
 import com.erp.finance.service.IFinanceParametersService;
 import com.erp.purchase.entity.*;
 import com.erp.purchase.service.*;
+import com.erp.warehouse.entity.WarehouseLocation;
+import com.erp.warehouse.service.IWarehouseLocationService;
 import lombok.RequiredArgsConstructor;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.stereotype.Controller;
@@ -48,6 +50,8 @@ public class ViewController {
     private final IPurchaseInvoiceService purchaseInvoiceService;
     //采购付款 Service接口
     private final IPurchasePaymentService purchasePaymentService;
+    //库房区位service接口
+    private final IWarehouseLocationService warehouseLocationService;
 
 
     /*采购管理模块-采购档案开始*/
@@ -519,7 +523,10 @@ public class ViewController {
     /*采购退货列表*/
     @GetMapping("purchaseRefund/list")
     @RequiresPermissions("purchaseRefund:view")
-    public String purchaseRefundIndex(){
+    public String purchaseRefundIndex(Model model){
+        //查询库房信息
+        List<WarehouseLocation> location  = warehouseLocationService.queryLocationName();
+        model.addAttribute("location",location);
         return FebsUtil.view("purchaseRefund/purchaseRefundList");
     }
 
@@ -527,6 +534,9 @@ public class ViewController {
     @GetMapping("purchaseRefund/add")
     @RequiresPermissions("purchaseRefund:add")
     public String purchaseRefundAdd(Model model){
+        //查询库房信息
+        List<WarehouseLocation> location  = warehouseLocationService.queryLocationName();
+        model.addAttribute("location",location);
         //查询币种信息
         List<FinanceParameters> currency  = financeParametersService.queryCurrencyInformation(FinanceParameters.CURRENCY);
         model.addAttribute("currency",currency);
@@ -540,6 +550,9 @@ public class ViewController {
     @GetMapping("purchaseRefund/update/{id}")
     @RequiresPermissions("purchaseRefund:update")
     public String purchaseRefundUpdate(@PathVariable Long id,Model model){
+        //查询库房信息
+        List<WarehouseLocation> location  = warehouseLocationService.queryLocationName();
+        model.addAttribute("location",location);
         //查询币种信息
         List<FinanceParameters> currency  = financeParametersService.queryCurrencyInformation(FinanceParameters.CURRENCY);
         model.addAttribute("currency",currency);
@@ -581,7 +594,10 @@ public class ViewController {
 
     @GetMapping("purchaseSettlement/list")
     @RequiresPermissions("purchaseSettlement:view")
-    public String purchaseSettlementIndex(){
+    public String purchaseSettlementIndex(Model model){
+        //查询库房信息
+        List<WarehouseLocation> location  = warehouseLocationService.queryLocationName();
+        model.addAttribute("location",location);
         return FebsUtil.view("purchaseSettlement/purchaseSettlementList");
     }
 
@@ -599,7 +615,13 @@ public class ViewController {
 
     @GetMapping("purchaseInvoice/list")
     @RequiresPermissions("purchaseInvoice:view")
-    public String purchaseInvoiceIndex(){
+    public String purchaseInvoiceIndex(Model model){
+        //查询币种信息
+        List<FinanceParameters> currency  = financeParametersService.queryCurrencyInformation(FinanceParameters.CURRENCY);
+        model.addAttribute("currency",currency);
+        //查询税率信息
+        List<FinanceParameters> taxRate  = financeParametersService.queryCurrencyInformation(FinanceParameters.TAX_RATE);
+        model.addAttribute("taxRate",taxRate);
         return FebsUtil.view("purchaseInvoice/purchaseInvoiceList");
     }
 
@@ -668,7 +690,13 @@ public class ViewController {
     /*采购管理模块-采购付款开始*/
     @GetMapping("purchasePayment/list")
     @RequiresPermissions("purchasePayment:view")
-    public String purchasePaymentIndex(){
+    public String purchasePaymentIndex(Model model){
+        //查询币种信息
+        List<FinanceParameters> currency  = financeParametersService.queryCurrencyInformation(FinanceParameters.CURRENCY);
+        model.addAttribute("currency",currency);
+        //查询税率信息
+        List<FinanceParameters> taxRate  = financeParametersService.queryCurrencyInformation(FinanceParameters.TAX_RATE);
+        model.addAttribute("taxRate",taxRate);
         return FebsUtil.view("purchasePayment/purchasePaymentList");
     }
 

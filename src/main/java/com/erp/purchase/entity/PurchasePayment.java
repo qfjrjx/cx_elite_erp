@@ -113,6 +113,11 @@ public class PurchasePayment {
 
     private BigDecimal paymentMoney;
 
+    /**
+     * 发票号
+     */
+    private String invoiceNumbers;
+
     private transient String signedDateFrom;
     private transient String signedDateTo;
 
