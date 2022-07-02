@@ -4,10 +4,7 @@ package com.erp.production.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.erp.common.entity.QueryRequest;
-import com.erp.production.entity.ProductionPlan;
-import com.erp.production.entity.ProductionPlanSchedule;
-import com.erp.production.entity.SetupBom;
-import com.erp.production.entity.SetupBomSchedule;
+import com.erp.production.entity.*;
 
 import java.text.ParseException;
 import java.util.List;
@@ -82,4 +79,10 @@ public interface IProductionPlanService extends IService<ProductionPlan> {
     List<ProductionPlan> productionStatisticalExport(ProductionPlan productionPlan);
 
     void shipmentProductionPlan(ProductionPlan productionPlan);
+
+    void updatePurchaseProduction(ProductionPlan productionPlan);
+
+    void completePurchaseProductionTable(String ids) throws ParseException;
+
+    List<PurchaseProductionExport> purchaseProductionExport(PurchaseProductionExport purchaseProductionExport);
 }

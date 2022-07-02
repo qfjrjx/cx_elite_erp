@@ -1,16 +1,16 @@
 package com.erp.purchase.entity;
 
-import java.util.Date;
-import java.math.BigDecimal;
-
-import lombok.Data;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
+
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
- * 物料档案表 Entity
+ * 表 Entity
  *
  * @author qiufeng
  * @date 2022-01-08 11:20:19

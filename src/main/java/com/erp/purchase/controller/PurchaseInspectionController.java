@@ -186,4 +186,13 @@ public class PurchaseInspectionController extends BaseController {
         this.purchaseInspectionService.cancelLibrary(ids);
         return new FebsResponse().success();
     }
+
+    /*供应良率查询*/
+    @GetMapping("purchaseSupplyYield/list")
+    @ResponseBody
+    @RequiresPermissions("purchaseSupplyYield:view")
+    public FebsResponse purchaseSupplyYieldList(QueryRequest request, PurchaseInspection purchaseInspection) {
+        Map<String, Object> dataTable = getDataTable(this.purchaseInspectionService.purchaseSupplyYieldList(request, purchaseInspection));
+        return new FebsResponse().success().data(dataTable);
+    }
 }

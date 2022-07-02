@@ -60,4 +60,8 @@ public interface PurchaseInspectionMapper extends BaseMapper<PurchaseInspection>
     void deleteWarehouseStorage(@Param("uuid") String uuid);
 
     void updateCancelLibrary(@Param("ids") String ids);
+
+    long countPurchaseSupplyYield(@Param("purchaseInspection") PurchaseInspection purchaseInspection);
+
+    IPage<PurchaseInspection> findPurchaseSupplyYieldPage(Page<PurchaseInspection> page,@Param("purchaseInspection") PurchaseInspection purchaseInspection);
 }

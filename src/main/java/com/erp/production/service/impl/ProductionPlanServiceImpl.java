@@ -9,10 +9,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.erp.common.entity.QueryRequest;
-import com.erp.production.entity.ProductionPlan;
-import com.erp.production.entity.ProductionPlanSchedule;
-import com.erp.production.entity.SetupBom;
-import com.erp.production.entity.SetupBomSchedule;
+import com.erp.production.entity.*;
 import com.erp.production.mapper.ProductionPlanMapper;
 import com.erp.production.service.IProductionPlanService;
 import com.erp.technology.entity.TechnologyBomConfigurationSchedule;
@@ -422,5 +419,26 @@ public class ProductionPlanServiceImpl extends ServiceImpl<ProductionPlanMapper,
     @Override
     public void shipmentProductionPlan(ProductionPlan productionPlan) {
         baseMapper.shipmentProductionPlan(productionPlan);
+    }
+
+    @Override
+    public void updatePurchaseProduction(ProductionPlan productionPlan) {
+        baseMapper.updatePurchaseProduction(productionPlan);
+    }
+
+    @Override
+    public void completePurchaseProductionTable(String ids) throws ParseException {
+        ProductionPlan productionPlan = new ProductionPlan();
+        SimpleDateFormat simpleDateFormatTwo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
+        String dates = simpleDateFormatTwo.format(new Date());//系统当前时间
+        Date today = simpleDateFormatTwo.parse(dates);//格式化系统当前时间
+        productionPlan.setPlanActualDateTwo(today);
+        productionPlan.setId(Integer.valueOf(ids));
+        baseMapper.completePurchaseProductionTable(productionPlan);
+    }
+
+    @Override
+    public List<PurchaseProductionExport> purchaseProductionExport(PurchaseProductionExport purchaseProductionExport) {
+        return baseMapper.purchaseProductionExport(purchaseProductionExport);
     }
 }

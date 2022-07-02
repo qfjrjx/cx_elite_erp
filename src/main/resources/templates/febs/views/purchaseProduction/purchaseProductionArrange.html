@@ -1,0 +1,95 @@
+<style>
+    #purchaseProduction-arrange {
+        padding: 20px 25px 25px 0;
+    }
+</style>
+<div class="layui-fluid" id="purchaseProduction-arrange">
+    <form class="layui-form" action="" lay-filter="purchaseProduction-arrange-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="width: 110px">采购负责人：</label>
+            <div class="layui-input-block">
+                <input type="text" name="planNegative"id="planNegative" ondblclick="purchaseProductionArrangeOne()"
+                       autocomplete="off" class="layui-input" placeholder="请双击" readonly>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="width: 110px">采购预计完成：</label>
+            <div class="layui-input-block">
+                <input type="text" name="PlanExpectDateTwo" id="PlanExpectDateTwo"
+                       autocomplete="off" class="layui-input createDate" readonly>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="width: 110px">采购内容：</label>
+            <div class="layui-input-block">
+                <textarea name="planContentOne" maxlength="100" class="layui-textarea" placeholder=""></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item" style="display: none;">
+            <label class="layui-form-label">id：</label>
+            <div class="layui-input-block">
+                <textarea name="id" maxlength="100" class="layui-textarea" placeholder=""></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item febs-hide">
+            <button class="layui-btn" lay-submit="" lay-filter="purchaseProduction-arrange-form-submit" id="submit"></button>
+        </div>
+    </form>
+</div>
+
+<script data-th-inline="javascript">
+    layui.use(['febs', 'form', 'validate','table', 'xmSelect','upload','laydate'], function () {
+        let $ = layui.$,
+            febs = layui.febs,
+            layer = layui.layer,
+            laydate = layui.laydate,
+            form = layui.form,
+            productionPlan = [[${productionPlan}]],
+            PlanExpectDateTwo = [[${PlanExpectDateTwo}]],
+            upload = layui.upload,
+            uploadInst;
+
+        initPurchaseRequisitionCreatorValue();
+
+        function initPurchaseRequisitionCreatorValue() {
+            form.val("purchaseProduction-arrange-form", {
+                "PlanExpectDateTwo": PlanExpectDateTwo,
+                "planNegative": productionPlan.planNegative,
+                "planContentOne": productionPlan.planContentOne,
+                "id": productionPlan.id
+            })
+        }
+
+        //日期同时绑定多个
+        lay('.createDate').each(function(){
+            laydate.render({
+                elem: this
+                ,trigger: 'click'
+            });
+        });
+
+        form.on('submit(purchaseProduction-arrange-form-submit)', function (data) {
+            febs.post(ctx + 'purchaseProduction/arrange', data.field,function () {
+                layer.closeAll();
+                febs.alert.success('安排生产成功');
+                $('#purchaseProduction-list').find('#query').click();
+            });
+            return false;
+
+        });
+    })
+    function purchaseProductionArrangeOne(){
+        layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
+            let $ = layui.$,
+                febs = layui.febs;
+
+            febs.modal.open('生产负责人选择列表', 'purchase/purchaseProductionArrangeOne', {
+                area:["60%","90%"],
+                yes: function (index, layero) {
+
+                }
+
+            });
+        });
+    }
+</script>

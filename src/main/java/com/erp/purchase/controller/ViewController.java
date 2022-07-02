@@ -5,6 +5,8 @@ import com.erp.common.utils.DateUtil;
 import com.erp.common.utils.FebsUtil;
 import com.erp.finance.entity.FinanceParameters;
 import com.erp.finance.service.IFinanceParametersService;
+import com.erp.production.entity.ProductionPlan;
+import com.erp.production.service.IProductionPlanService;
 import com.erp.purchase.entity.*;
 import com.erp.purchase.service.*;
 import com.erp.warehouse.entity.WarehouseLocation;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -52,6 +55,8 @@ public class ViewController {
     private final IPurchasePaymentService purchasePaymentService;
     //库房区位service接口
     private final IWarehouseLocationService warehouseLocationService;
+    //生产计划Service接口
+    private final IProductionPlanService productionPlanService;
 
 
     /*采购管理模块-采购档案开始*/
@@ -792,4 +797,105 @@ public class ViewController {
     }
 
     /*采购管理模块-申请核销结束*/
+
+    /*采购统计模块-订购在途开始*/
+    @GetMapping("purchaseOrderTransit/list")
+    @RequiresPermissions("purchaseOrderTransit:view")
+    public String purchaseOrderTransitIndex(){
+        return FebsUtil.view("purchaseOrderTransit/purchaseOrderTransitList");
+    }
+
+    //供应商 双击跳到供应商选择列表页面  添加时用到
+    @GetMapping("purchaseOrderTransitSupplierName")
+    @RequiresPermissions("purchaseOrderTransit:view")
+    public String purchaseOrderTransitSupplierName(Model model) {
+
+        return FebsUtil.view("purchaseOrderTransit/purchaseOrderTransitSupplierName");
+    }
+    /*采购统计模块-订购在途结束*/
+
+    /*采购统计模块-收货统计开始*/
+    @GetMapping("purchaseGoodsStatistical/list")
+    @RequiresPermissions("purchaseGoodsStatistical:view")
+    public String purchaseGoodsStatisticalIndex(Model model){
+        //查询币种信息
+        List<FinanceParameters> currency  = financeParametersService.queryCurrencyInformation(FinanceParameters.CURRENCY);
+        model.addAttribute("currency",currency);
+        //查询库房信息
+        List<WarehouseLocation> location  = warehouseLocationService.queryLocationName();
+        model.addAttribute("location",location);
+        return FebsUtil.view("purchaseGoodsStatistical/purchaseGoodsStatisticalList");
+    }
+
+    //供应商 双击跳到供应商选择列表页面
+    @GetMapping("purchaseGoodsSupplierName")
+    @RequiresPermissions("purchaseGoodsStatistical:view")
+    public String purchaseGoodsSupplierName(Model model) {
+        return FebsUtil.view("purchaseGoodsStatistical/purchaseGoodsSupplierName");
+    }
+
+    //点击统计跳转页面
+
+    /*采购统计模块-收货统计结束*/
+
+    /*生产采购统计开始*/
+    @GetMapping("purchaseProduction/list")
+    @RequiresPermissions("purchaseProduction:view")
+    public String purchaseProductionIndex(){
+        return FebsUtil.view("purchaseProduction/purchaseProductionList");
+    }
+
+    //安排采购
+    @GetMapping("purchaseProduction/arrange/{id}")
+    @RequiresPermissions("purchaseProduction:arrange")
+    public String productionStatisticalArrange(@PathVariable Long id, Model model) throws ParseException {
+        purchaseProductionModel(id, model, false);
+        return FebsUtil.view("purchaseProduction/purchaseProductionArrange");
+    }
+
+    //安排生产回填
+    private void purchaseProductionModel(Long id, Model model, Boolean transform) throws ParseException {
+        ProductionPlan productionPlan = productionPlanService.productionPlanId(id);
+        model.addAttribute("productionPlan", productionPlan);
+        if (productionPlan.getPlanExpectDateTwo() != null) {
+            model.addAttribute("PlanExpectDateTwo", DateUtil.getDateFormat(productionPlan.getPlanExpectDateTwo(), DateUtil.FULL_TIME_SPLIT));
+        }
+    }
+
+    @GetMapping("purchaseProductionArrangeOne")
+    @RequiresPermissions("purchaseProduction:arrange")
+    public String productionHeadOne(){
+        return FebsUtil.view("purchaseProduction/purchaseProductionArrangeOne");
+    }
+    /*生产采购统计结束*/
+
+    /*供应良率开始*/
+    @GetMapping("purchaseSupplyYield/list")
+    @RequiresPermissions("purchaseSupplyYield:view")
+    public String purchaseSupplyYieldIndex(){
+        return FebsUtil.view("purchaseSupplyYield/purchaseSupplyYieldList");
+    }
+
+    //供应商 双击跳到供应商选择列表页面
+    @GetMapping("purchaseSupplyYieldSupplierName")
+    @RequiresPermissions("purchaseSupplyYield:view")
+    public String purchaseSupplyYieldSupplierName(Model model) {
+        return FebsUtil.view("purchaseSupplyYield/purchaseSupplyYieldSupplierName");
+    }
+    /*供应良率结束*/
+
+    /*发票统计开始*/
+    @GetMapping("purchaseInvoiceStatistical/list")
+    @RequiresPermissions("purchaseInvoiceStatistical:view")
+    public String purchaseInvoiceStatisticalIndex(){
+        return FebsUtil.view("purchaseInvoiceStatistical/purchaseInvoiceStatisticalList");
+    }
+
+    //供应商 双击跳到供应商选择列表页面
+    @GetMapping("purchaseInvoiceStatisticalSettlementSupplier")
+    @RequiresPermissions("purchaseInvoiceStatistical:view")
+    public String purchaseInvoiceStatisticalSettlementSupplier(Model model) {
+        return FebsUtil.view("purchaseInvoiceStatistical/purchaseInvoiceStatisticalSettlementSupplier");
+    }
+    /*发票统计结束*/
 }

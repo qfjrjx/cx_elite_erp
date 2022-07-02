@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.erp.common.entity.QueryRequest;
+import com.erp.purchase.entity.PurchaseInvoiceStatistical;
 import com.erp.purchase.entity.PurchaseRefund;
 import com.erp.purchase.entity.PurchaseSettlement;
 import com.erp.purchase.entity.PurchaseSettlementSchedule;
@@ -106,5 +107,43 @@ public class PurchaseSettlementServiceImpl extends ServiceImpl<PurchaseSettlemen
         page.setSearchCount(false);
         page.setTotal(baseMapper.countPurchaseSettlementAddQuery(purchaseSettlementSchedule));
         return baseMapper.purchaseSettlementAddQuery(page,purchaseSettlementSchedule);
+    }
+
+    /**
+     * 收货统计
+     * @param request
+     * @param purchaseSettlementSchedule
+     * @return
+     */
+    @Override
+    public IPage<PurchaseSettlementSchedule> findPurchaseGoodsStatistical(QueryRequest request, PurchaseSettlementSchedule purchaseSettlementSchedule) {
+        Page<PurchaseSettlementSchedule> page = new Page<>(request.getPageNum(), request.getPageSize());
+        page.setSearchCount(false);
+        page.setTotal(baseMapper.countPurchaseGoodsStatistical(purchaseSettlementSchedule));
+        return baseMapper.findPurchaseGoodsStatistical(page,purchaseSettlementSchedule);
+    }
+
+    @Override
+    public List<PurchaseSettlementSchedule> purchaseGoodsExport(PurchaseSettlementSchedule purchaseSettlementSchedule) {
+        return baseMapper.purchaseGoodsExport(purchaseSettlementSchedule);
+    }
+
+    /**
+     * 发票统计
+     * @param request
+     * @param purchaseInvoiceStatistical
+     * @return
+     */
+    @Override
+    public IPage<PurchaseInvoiceStatistical> findPurchaseInvoiceStatistical(QueryRequest request, PurchaseInvoiceStatistical purchaseInvoiceStatistical) {
+        Page<PurchaseInvoiceStatistical> page = new Page<>(request.getPageNum(), request.getPageSize());
+        page.setSearchCount(false);
+        page.setTotal(baseMapper.countPurchaseInvoiceStatistical(purchaseInvoiceStatistical));
+        return baseMapper.findPurchaseInvoiceStatistical(page,purchaseInvoiceStatistical);
+    }
+
+    @Override
+    public List<PurchaseInvoiceStatistical> purchaseInvoiceStatisticalExport(PurchaseInvoiceStatistical purchaseInvoiceStatistical) {
+        return baseMapper.purchaseInvoiceStatisticalExport(purchaseInvoiceStatistical);
     }
 }

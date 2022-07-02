@@ -168,4 +168,35 @@ public class PurchaseOrderController extends BaseController {
         Map<String, Object> dataTable = getDataTable(this.purchaseOrderService.findPurchasePriceChanges(request, purchaseOrder));
         return new FebsResponse().success().data(dataTable);
     }
+
+    /**
+     * 订购在途查询
+     */
+
+    @GetMapping("purchaseOrderTransit/list")
+    @ResponseBody
+    @RequiresPermissions("purchaseOrderTransit:view")
+    public FebsResponse purchaseOrderTransitList(QueryRequest request, PurchaseOrder purchaseOrder) throws ParseException {
+        Map<String, Object> dataTable = getDataTable(this.purchaseOrderService.findPurchaseOrderTransit(request, purchaseOrder));
+        return new FebsResponse().success().data(dataTable);
+    }
+
+    @ControllerEndpoint(operation = "核销", exceptionMessage = "核销失败")
+    @GetMapping("purchaseOrderTransit/nuclear/{ids}")
+    @ResponseBody
+    @RequiresPermissions("purchaseOrderTransit:nuclear")
+    public FebsResponse purchaseOrderTransitNuclear(@PathVariable String ids) {
+        this.purchaseOrderService.purchaseOrderTransitNuclear(ids);
+        return new FebsResponse().success();
+    }
+
+    @ControllerEndpoint(operation = "取消核销", exceptionMessage = "取消核销失败")
+    @GetMapping("purchaseOrderTransit/cancel/{ids}")
+    @ResponseBody
+    @RequiresPermissions("purchaseOrderTransit:cancel")
+    public FebsResponse purchaseOrderTransitCancel(@PathVariable String ids) {
+        this.purchaseOrderService.purchaseOrderTransitCancel(ids);
+        return new FebsResponse().success();
+    }
+
 }

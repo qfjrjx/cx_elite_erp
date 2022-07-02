@@ -57,4 +57,12 @@ public interface PurchaseOrderMapper extends BaseMapper<PurchaseOrder> {
     long countPurchasePriceChanges(@Param("purchaseOrder") PurchaseOrder purchaseOrder);
 
     List<PurchaseOrder> purchasePriceChangesExport(@Param("purchaseOrder") PurchaseOrder purchaseOrder);
+
+    long countPurchaseOrderTransit(@Param("purchaseOrder") PurchaseOrder purchaseOrder);
+
+    IPage<PurchaseOrder> findPurchaseOrderTransitPage(Page<PurchaseParameters> page,@Param("purchaseOrder") PurchaseOrder purchaseOrder);
+
+    void purchaseOrderTransitNuclear(@Param("ids") String ids);
+
+    void purchaseOrderTransitCancel(@Param("ids") String ids);
 }

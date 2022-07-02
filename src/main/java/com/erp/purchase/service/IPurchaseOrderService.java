@@ -70,4 +70,10 @@ public interface IPurchaseOrderService extends IService<PurchaseOrder> {
     IPage<PurchaseOrder> findPurchasePriceChanges(QueryRequest request, PurchaseOrder purchaseOrder);
 
     List<PurchaseOrder> purchasePriceChangesExport(PurchaseOrder purchaseOrder);
+
+    IPage<PurchaseOrder> findPurchaseOrderTransit(QueryRequest request, PurchaseOrder purchaseOrder) throws ParseException;
+
+    void purchaseOrderTransitNuclear(String ids);
+
+    void purchaseOrderTransitCancel(String ids);
 }

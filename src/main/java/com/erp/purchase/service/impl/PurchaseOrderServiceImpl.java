@@ -138,6 +138,7 @@ public class PurchaseOrderServiceImpl extends ServiceImpl<PurchaseOrderMapper, P
             String orderCategory = jsonArrayOne.getJSONObject(i).getString("orderCategory");
             String orderLocation = jsonArrayOne.getJSONObject(i).getString("orderLocation");
             purchaseOrderSchedule.setOrderLocation(orderLocation);
+            purchaseOrderSchedule.setOrderNuclear("1");
             if (!applicationNo.equals("")) {
                 purchaseOrderSchedule.setApplicationNo(applicationNo);
             }if (!orderCode.equals("")) {
@@ -202,6 +203,7 @@ public class PurchaseOrderServiceImpl extends ServiceImpl<PurchaseOrderMapper, P
             String orderCategory = jsonArrayOne.getJSONObject(i).getString("orderCategory");
             String orderLocation = jsonArrayOne.getJSONObject(i).getString("orderLocation");
             purchaseOrderSchedule.setOrderLocation(orderLocation);
+            purchaseOrderSchedule.setOrderNuclear("1");
             if (!applicationNo.equals("")) {
                 purchaseOrderSchedule.setApplicationNo(applicationNo);
             }if (!orderCode.equals("")) {
@@ -308,4 +310,23 @@ public class PurchaseOrderServiceImpl extends ServiceImpl<PurchaseOrderMapper, P
     public List<PurchaseOrder> purchasePriceChangesExport(PurchaseOrder purchaseOrder) {
         return baseMapper.purchasePriceChangesExport(purchaseOrder);
     }
+
+    @Override
+    public IPage<PurchaseOrder> findPurchaseOrderTransit(QueryRequest request, PurchaseOrder purchaseOrder) throws ParseException {
+        Page<PurchaseParameters> page = new Page<>(request.getPageNum(), request.getPageSize());
+        page.setSearchCount(false);
+        page.setTotal(baseMapper.countPurchaseOrderTransit(purchaseOrder));
+        return baseMapper.findPurchaseOrderTransitPage(page,purchaseOrder);
+    }
+
+    @Override
+    public void purchaseOrderTransitNuclear(String ids) {
+        baseMapper.purchaseOrderTransitNuclear(ids);
+    }
+
+    @Override
+    public void purchaseOrderTransitCancel(String ids) {
+        baseMapper.purchaseOrderTransitCancel(ids);
+    }
+
 }

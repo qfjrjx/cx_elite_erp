@@ -18,9 +18,9 @@ import java.util.Date;
  * @date 2022-04-02 15:03:00
  */
 @Data
-@Excel("收货统计")
+@Excel("发票统计")
 @TableName("jr_purchase_settlement_schedule")
-public class PurchaseSettlementSchedule {
+public class PurchaseInvoiceStatistical {
 
     /**
      * 主键
@@ -37,15 +37,14 @@ public class PurchaseSettlementSchedule {
     /**
      * 采购结算单号
      */
-    @ExcelField(value = "收货单号")
     @TableField("settlement_number")
     private String settlementNumber;
 
     /**
-     *口径
+     * 发票号
      */
-    @ExcelField(value = "口径", writeConverterExp = "1=采购退回,2=采购入库")
-    private String settlementUse;
+    @ExcelField(value = "发票号")
+    private String invoiceNumbers;
 
     /**
      *供应商
@@ -53,11 +52,6 @@ public class PurchaseSettlementSchedule {
     @ExcelField(value = "供应商")
     private String settlementSupplier;
 
-    /**
-     * 库房
-     */
-    @ExcelField(value = "库房")
-    private String settlementLibrary;
 
     /**
      * 编码
@@ -89,21 +83,12 @@ public class PurchaseSettlementSchedule {
     /**
      * 品牌
      */
-    @ExcelField(value = "品牌")
     @TableField("settlement_brand")
     private String settlementBrand;
 
     /**
-     * 单位
-     */
-    @ExcelField(value = "单位")
-    @TableField("settlement_company")
-    private String settlementCompany;
-
-    /**
      * 币种
      */
-    @ExcelField(value = "币种")
     private String currencyName;
 
     private String currencyId;
@@ -111,9 +96,28 @@ public class PurchaseSettlementSchedule {
     /**
      * 数量
      */
-    @ExcelField(value = "数量")
+    @ExcelField(value = "入库数量")
     @TableField("settlement_quantity")
     private Long settlementQuantity;
+
+    /**
+     * 开票数量
+     */
+    @ExcelField(value = "开票数量")
+    private String invoiceAmount;
+
+    /**
+     * 未票数量
+     */
+    @ExcelField(value = "未票数量")
+    private String notInvoice;
+
+    /**
+     * 单位
+     */
+    @ExcelField(value = "计量单位")
+    @TableField("settlement_company")
+    private String settlementCompany;
 
     /**
      * 单价
@@ -142,7 +146,6 @@ public class PurchaseSettlementSchedule {
     /**
      * 备注
      */
-    @ExcelField(value = "备注")
     @TableField("settlement_remarks")
     private String settlementRemarks;
 

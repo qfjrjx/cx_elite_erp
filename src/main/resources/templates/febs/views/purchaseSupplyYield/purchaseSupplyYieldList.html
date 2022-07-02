@@ -1,0 +1,190 @@
+<style>
+    #purchaseSupplyYield-list xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #purchaseSupplyYield-list xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="purchaseSupplyYield-list" lay-title="供应良率">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="purchaseSupplyYield-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md12">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid">日期：</label>
+                                        <div class="layui-input-inline" style="width: 90px">
+                                            <input type="text" id="start_date" name="signedDateFrom" placeholder="" lay-verify='date' class="layui-input"/>
+                                            <i class="layui-icon" id="start_date_icon"></i>
+                                        </div>
+                                        <label class="layui-form-mid">至：</label>
+                                        <div class="layui-input-inline" style="width: 90px">
+                                            <input type="text" id="end_date" name="signedDateTo" placeholder="" lay-verify='date' class="layui-input"/>
+                                            <i class="layui-icon " id="end_date_icon"></i>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid" >物料名称：</label>
+                                        <div class="layui-input-inline" style="width: 90px">
+                                            <input type="text" name="materialName" autocomplete="off" style="width: 90px" class="layui-input" >
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid">规格型号：</label>
+                                        <div class="layui-input-inline" style="width: 90px">
+                                            <input type="text" name="inspectionrSpecifications" autocomplete="off" style="width: 90px" class="layui-input" >
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid">类别：</label>
+                                        <div class="layui-input-inline" style="width: 90px">
+                                            <select name="planState">
+                                                <option value="">全部</option>
+                                                <option value="1">电脑</option>
+                                                <option value="2">键盘</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid">供应商&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 90px">
+                                            <input type="text" name="supplierName" id="supplierName" lay-verify="required" ondblclick="purchaseSupplyYieldSupplierName()"
+                                                   autocomplete="off" class="layui-input" placeholder="双击选择" style="width: 90px"  readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="purchaseSupplyYieldTable" lay-data="{id: 'purchaseSupplyYieldTable'}"></table>
+
+                    <div><span style="margin-left: 845px;color: #f5222d" data-th-text="${quantityNameCount}"></span></div>
+                    <div class="layui-col-md10">
+                        <div class="layui-form-item"></div>
+                    </div>
+                    <div class="layui-col-md2 layui-col-sm12 layui-col-xs12 table-action-area">
+                        <!--搜索按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                            <i class="layui-icon">&#xe848;</i>查询
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+            laydate = layui.laydate,
+            febs = layui.febs,
+            form = layui.form,
+            $view = $('#purchaseSupplyYield-list'),
+            $query = $view.find('#query'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'createTime', type: null},
+            tableIns;
+
+        form.render();
+
+        initTable();
+
+        var firstDate = new Date();
+        firstDate.setDate(1); //本月第一天
+        var datetime = firstDate.getFullYear() + '-' + (firstDate.getMonth() + 1) + '-' + firstDate.getDate();
+        //开始日期
+        var start = laydate.render({
+            elem: '#start_date',
+            max: 0,//设置一个默认最大值//最大值为当前日期
+            trigger: 'click',
+            value: new Date(firstDate),//初始赋值,//默认值本月第一天
+            done: function (value, date) {
+                if (value && (value > $("#end_date").val())) {
+                    /*开始时间大于结束时间时，清空结束时间*/
+                    $("#end_date").val("");
+                }
+                end.config.min = {
+                    year: date.year,
+                    month: date.month - 1,
+                    date: date.date,
+                };
+            }
+        });
+        //结束日期
+        var end = laydate.render({
+            elem: '#end_date',
+            min: datetime,//最大值为当前日期
+            trigger: 'click',
+            value: new Date(),//初始赋值,//默认当前时间
+            done: function (value, date) {
+                start.config.max = {
+                    year: date.year,
+                    month: date.month - 1,
+                    date: date.date,
+                }
+            }
+        });
+
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        function initTable() {
+            tableIns = febs.table.init({
+                elem: $view.find('table'),
+                id: 'purchaseSupplyYieldTable',
+                url: ctx + 'purchaseSupplyYield/list',
+                where:{
+                    signedDateFrom:$('#signedDateFrom').val(),
+                    signedDateTo:$('#signedDateTo').val()
+                },
+                page: true,
+                cols: [
+                    [
+                    {type: 'checkbox'},
+                    {field:'number',title:'序号',align:'center',width:60,templet:function (d) {
+                            return d.LAY_INDEX;}},
+                    {field: 'supplierName', title: '供应商', minWidth: 120,align:'center'},
+                    {field: 'materialName', title: '物料名称', minWidth: 145,align:'center'},
+                    {field: 'inspectionrSpecifications', title: '规格型号', minWidth: 120,align:'center'},
+                    {field: 'orderQuantity', title: '报检数', minWidth: 95,align:'center'},
+                    {field: 'inspectionQualified', title: '合格数', minWidth: 95,align:'center'},
+                    {field: 'storageQuantity', title: '合格率', minWidth: 90,align:'center',
+                         templet: function (data) {
+                        if (data.inspectionQualified / data.orderQuantity == 1){
+                            return 100+"%" ;
+                        }else {
+                            return data.inspectionQualified / data.orderQuantity * 100 + "%";
+                        }
+                    }},
+                ]
+                ]
+            });
+        }
+
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+    })
+
+    function purchaseSupplyYieldSupplierName(){
+        layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
+            let $ = layui.$,
+                febs = layui.febs;
+            febs.modal.open('供应商选择列表', 'purchase/purchaseSupplyYieldSupplierName', {
+                area:["55%","60%"],
+                yes: function (index, layero) {
+                }
+            });
+        });
+    }
+</script>

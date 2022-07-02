@@ -1,0 +1,260 @@
+<style>
+    #purchaseGoods-list xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #purchaseGoods-list xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="purchaseGoods-list" lay-title="收货统计">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="purchaseGoods-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md12">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-mid">日期&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <input type="text" id="start_date" name="signedDateFrom" placeholder="" lay-verify='date' class="layui-input"/>
+                                            <i class="layui-icon" id="start_date_icon"></i>
+                                        </div>
+                                        <label class="layui-form-mid">至&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <input type="text" id="end_date" name="signedDateTo" placeholder="" lay-verify='date' class="layui-input"/>
+                                            <i class="layui-icon " id="end_date_icon"></i>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-mid">单号&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <input type="text" name="settlementNumber" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid">供应商&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <input type="text" name="settlementSupplier" id="settlementSupplier" lay-verify="required" ondblclick="purchaseGoodsSupplierName()"
+                                                   autocomplete="off" class="layui-input" placeholder="双击选择" style="width: 110px"  readonly>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid">库房&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <select id="settlementLibrary"  name="settlementLibrary" lay-verify="required" class="layui-form-select" >
+                                                <option value=""></option>
+                                                <option th:each="location:${location}" th:value="${location.locationSorting}">[[${location.locationName}]]</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-mid">名称&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <input type="text" name="settlementName" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-mid">规格&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <input type="text" name="settlementSpecifications" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid">类别&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <select name="orderSubclass">
+                                                <option value=""></option>
+                                                <option value="1">电脑</option>
+                                                <option value="2">键盘</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid">口径&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <select name="settlementUse">
+                                                <option value=""></option>
+                                                <option value="2">采购入库</option>
+                                                <option value="1">采购退回</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid">币种&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 110px">
+                                            <select id="currencyId"  name="currencyId" lay-verify="required" class="layui-form-select" >
+                                                <option value=""></option>
+                                                <option th:each="currency:${currency}" th:value="${currency.id}">[[${currency.financeParameterName}]]</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="purchaseGoodsTable" id="purchaseGoodsTable" lay-data="{id: 'purchaseGoodsTable'}"></table>
+                    <div class="layui-col-md6">
+                        <div class="layui-form-item"></div>
+                    </div>
+                    <div class="layui-col-md6 layui-col-sm12 layui-col-xs12 table-action-area">
+                        <!--查询按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                            <i class="layui-icon">&#xe848;</i>查询
+                        </div>
+                        <!--添加按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
+                             "shiro:hasAnyPermissions="purchaseGoodsStatistical:statistics" id="statisticsTo">
+                            <i class="layui-icon">&#xe78a;</i>统计
+                        </div>
+                        <!--修改按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="purchaseGoodsStatistical:export" id="exportTo">
+                            <i class="layui-icon">&#xe642;</i>导出
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="settlementUse-state">
+    {{#
+    let settlementUse = {
+    1: {title: '采购退回'},
+    2: {title: '采购入库'}
+    }[d.settlementUse];
+    }}
+    <span>{{ settlementUse.title }}</span>
+</script>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+            laydate = layui.laydate,
+            febs = layui.febs,
+            table = layui.table,
+            form = layui.form,
+            $view = $('#purchaseGoods-list'),
+            $query = $view.find('#query'),
+            $statisticsTo = $view.find('#statisticsTo'),
+            $exportTo = $view.find('#exportTo'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'createTime', type: null},
+            tableIns;
+
+        form.render();
+        initPurchaseRequisitionTable();
+
+
+
+        if ($view.find('#statisticsTo') == true){
+            alert(111)
+        }else {
+
+        }
+
+        var firstDate = new Date();
+        firstDate.setDate(1); //本月第一天
+        var datetime = firstDate.getFullYear() + '-' + (firstDate.getMonth() + 1) + '-' + firstDate.getDate();
+        //开始日期
+        var start = laydate.render({
+            elem: '#start_date',
+            max: 0,//设置一个默认最大值//最大值为当前日期
+            trigger: 'click',
+            value: new Date(firstDate),//初始赋值,//默认值本月第一天
+            done: function (value, date) {
+                if (value && (value > $("#end_date").val())) {
+                    /*开始时间大于结束时间时，清空结束时间*/
+                    $("#end_date").val("");
+                }
+                end.config.min = {
+                    year: date.year,
+                    month: date.month - 1,
+                    date: date.date,
+                };
+            }
+        });
+        //结束日期
+        var end = laydate.render({
+            elem: '#end_date',
+            min: datetime,//最大值为当前日期
+            trigger: 'click',
+            value: new Date(),//初始赋值,//默认当前时间
+            done: function (value, date) {
+                start.config.max = {
+                    year: date.year,
+                    month: date.month - 1,
+                    date: date.date,
+                }
+            }
+        });
+
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        $exportTo.on('click', function () {
+            let params = getQueryParams();
+            params.pageSize = $view.find(".layui-laypage-limits option:selected").val();
+            params.pageNum = $view.find(".layui-laypage-em").next().html();
+            febs.download(ctx + 'purchaseGoods/excel', params, '收货统计.xlsx');
+        });
+
+        $statisticsTo.on('click', function () {
+            let checkStatus = table.checkStatus('purchaseGoodsTable');
+            layui.each(checkStatus.data, function (key, item) {
+                febs.modal.open('', 'purchase/purchaseGoods/statistics', {
+                    area: ["80%","60%"],
+                });
+            });
+        });
+
+        function initPurchaseRequisitionTable() {
+            tableIns = febs.table.init({
+                elem: '#purchaseGoodsTable',
+                id: 'purchaseGoodsTable',
+                url: ctx + 'purchaseGoods/list',
+                cols: [[
+                    {field:'number',title:'序号',align:'center',width:60,templet:function (d) {
+                            return d.LAY_INDEX;}},
+                    {field: 'settlementDate', title: '收货日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.settlementDate, "yyyy-MM-dd") }}</div>', minWidth: 110, sort: true},
+                    {field: 'settlementNumber', title: '收货单号', minWidth: 145,align:'center'},
+                    {title: '口径', templet: '#settlementUse-state',align:'center',width:120},
+                    {field: 'settlementSupplier', title: '供应商', minWidth: 95,align:'center'},
+                    {field: 'settlementLibrary', title: '库房', minWidth: 80,align:'center'},
+                    {field: 'settlementCode', title: '编码', minWidth: 120,align:'center'},
+                    {field: 'settlementName', title: '名称', minWidth: 120,align:'center'},
+                    {field: 'settlementSpecifications', title: '规格', minWidth: 95,align:'center'},
+                    {field: 'settlementBrand', title: '品牌',minWidth: 80,align:'center'},
+                    {field: 'settlementCompany', title: '单位', minWidth: 95,align:'center'},
+                    {field: 'currencyName', title: '币种', minWidth: 80,align:'center'},
+                    {field: 'settlementQuantity', title: '数量', minWidth: 120,align:'center'},
+                    {field: 'settlementPrice', title: '单价', minWidth: 120,align:'center'},
+                    {field: 'settlementMoney', title: '金额', minWidth: 95,align:'center'},
+                    {field: 'settlementRemarks', title: '备注',minWidth: 80,align:'center'}
+                ]]
+            });
+        }
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+    })
+
+    function purchaseGoodsSupplierName(){
+        layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
+            let $ = layui.$,
+                febs = layui.febs;
+            febs.modal.open('供应商选择列表', 'purchase/purchaseGoodsSupplierName', {
+                area:["55%","60%"],
+                yes: function (index, layero) {
+                }
+            });
+        });
+    }
+</script>

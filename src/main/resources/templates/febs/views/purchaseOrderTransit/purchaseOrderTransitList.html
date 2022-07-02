@@ -1,0 +1,318 @@
+<style>
+    #purchaseOrder-transit xm-select {
+        min-height: 30px;
+        line-height: 30px;
+    }
+    #purchaseOrder-transit xm-select > .xm-label .scroll .label-content {
+        display: flex;
+        padding: 0 30px 0 10px;
+    }
+</style>
+<div class="layui-fluid layui-anim febs-anim" id="purchaseOrder-transit" lay-title="订购在途">
+    <div class="layui-row febs-container">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body febs-table-full">
+                    <form class="layui-form layui-table-form" lay-filter="transit-table-form">
+                        <div class="layui-row">
+                            <div class="layui-col-md12">
+                                <div class="layui-form-item">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid layui-form-label-sm">状态</label>
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <select name="orderNuclear">
+                                                <option value=""></option>
+                                                <option value="1">未核销</option>
+                                                <option value="2">已核销</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid">日期&nbsp;<b>:</b></label>
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <input type="text" id="start_date" name="signedDateFrom" placeholder="" lay-verify='date' class="layui-input"/>
+                                            <i class="layui-icon" id="start_date_icon"></i>
+                                        </div>
+                                        <label class="layui-form-mid">至：</label>
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <input type="text" id="end_date" name="signedDateTo" placeholder="" lay-verify='date' class="layui-input"/>
+                                            <i class="layui-icon " id="end_date_icon"></i>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-mid layui-form-label-sm">单号</label>
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <input type="text" name="orderNumber" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-mid layui-form-label-sm">供应商</label>
+                                        <input type="text" name="supplierName" id="supplierName" lay-verify="required" ondblclick="purchaseOrderTransitSupplierName()"
+                                               autocomplete="off" class="layui-input" placeholder="双击选择" style="width: 145px"  readonly>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-mid layui-form-label-sm">名称</label>
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <input type="text" name="materialName" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <label class="layui-form-mid layui-form-label-sm">规格</label>
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <input type="text" name="orderSpecifications" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid layui-form-label-sm">类别</label>
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <select name="orderSubclass">
+                                                <option value=""></option>
+                                                <option value="1">电脑</option>
+                                                <option value="2">键盘</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="layui-inline">
+                                        <label class="layui-form-mid layui-form-label-sm">欠交天数</label>
+                                        <div class="layui-input-inline" style="width: 145px">
+                                            <select name="oweDay">
+                                                <option value=""></option>
+                                                <option value="20">超20天</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table lay-filter="purchaseOrderTransitTable" id="purchaseOrderTransitTable" lay-data="{id: 'purchaseOrderTransitTable'}"></table>
+                    <div class="layui-col-md6">
+                        <div class="layui-form-item"></div>
+                    </div>
+                    <div class="layui-col-md6 layui-col-sm12 layui-col-xs12 table-action-area">
+                        <!--搜索按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action" id="query">
+                            <i class="layui-icon">&#xe848;</i>查询
+                        </div>
+                        <!--添加按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action
+                                     "shiro:hasAnyPermissions="purchaseOrderTransit:nuclear" id="nuclearTo">
+                            <i class="layui-icon">&#xe78a;</i>核销
+                        </div>
+                        <!--修改按钮-->
+                        <div class="layui-btn layui-btn-sm layui-btn-primary febs-button-blue-plain table-action "
+                             shiro:hasAnyPermissions="purchaseOrderTransit:cancel" id="cancelTo">
+                            <i class="layui-icon">&#xe642;</i>取消
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="orderNuclear-state">
+    {{#
+    let orderNuclear = {
+    1: {title: '未核销'},
+    2: {title: '已核销'}
+    }[d.orderNuclear];
+    }}
+    <span>{{ orderNuclear.title }}</span>
+</script>
+<script langguage="JavaScript">
+    var deliveryDateTo = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate();
+</script>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['dropdownMenu', 'jquery', 'laydate', 'form', 'table', 'febs', 'xmSelect'], function () {
+        let $ = layui.jquery,
+            laydate = layui.laydate,
+            febs = layui.febs,
+            form = layui.form,
+            table = layui.table,
+            dropdownMenu = layui.dropdownMenu,
+            $view = $('#purchaseOrder-transit'),
+            $query = $view.find('#query'),
+            $nuclearTo = $view.find('#nuclearTo'),
+            $cancelTo = $view.find('#cancelTo'),
+            $confirmTo = $view.find('#confirmTo'),
+            $umpireTo = $view.find('#umpireTo'),
+            $deleteTo = $view.find('#deleteTo'),
+            $reset = $view.find('#reset'),
+            $searchForm = $view.find('form'),
+            sortObject = {field: 'createTime', type: null},
+            tableIns;
+
+        form.render();
+        initPurchaseRequisitionTable();
+
+        var firstDate = new Date();
+        firstDate.setDate(1); //本月第一天
+        var datetime =firstDate.getFullYear() + '-' + (firstDate.getMonth() + 1) + '-' + firstDate.getDate();
+        //开始日期
+        var start = laydate.render({
+            elem: '#start_date',
+            max: 0 ,//设置一个默认最大值//最大值为当前日期
+            trigger: 'click',
+            value: new Date(firstDate),//初始赋值,//默认值本月第一天
+            done:function(value,date){
+                if(value && (value>$("#end_date").val())){
+                    /*开始时间大于结束时间时，清空结束时间*/
+                    $("#end_date").val("");
+                }
+                end.config.min ={
+                    year:date.year,
+                    month:date.month-1,
+                    date: date.date,
+                };
+            }
+        });
+        //结束日期
+        var end = laydate.render({
+            elem: '#end_date',
+            min : datetime,//最大值为当前日期
+            trigger: 'click',
+            value: new Date(),//初始赋值,//默认当前时间
+            done:function(value,date){
+                start.config.max={
+                    year:date.year,
+                    month:date.month-1,
+                    date: date.date,
+                }
+            }
+        });
+
+        $query.on('click', function () {
+            let params = $.extend(getQueryParams(), {field: sortObject.field, order: sortObject.type});
+            tableIns.reload({where: params, page: {curr: 1}});
+        });
+
+        $reset.on('click', function () {
+            $searchForm[0].reset();
+            tableIns.reload({where: getQueryParams(), page: {curr: 1}});
+        });
+
+        $nuclearTo.on('click', function () {
+            let checkStatus = table.checkStatus('purchaseOrderTransitTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要核销的数据');
+            } else {
+                let ids = [];
+                layui.each(checkStatus.data, function (key, item) {
+                    ids.push(item.id)
+                    if(item.orderNuclear == 1){
+                        febs.modal.confirm('确认核销', '是否确认？', function () {
+                            nuclearPurchaseOrderTransit(ids.join(','));
+                        });
+                    }else {
+                        febs.alert.warn('请勿重复操作');
+                    }
+                });
+            }
+        });
+
+        $cancelTo.on('click', function () {
+            let checkStatus = table.checkStatus('purchaseOrderTransitTable');
+            if (!checkStatus.data.length) {
+                febs.alert.warn('请选择需要取消核销的数据');
+            } else {
+                let ids = [];
+                layui.each(checkStatus.data, function (key, item) {
+                    ids.push(item.id)
+                    if(item.orderNuclear == 2){
+                        febs.modal.confirm('取消核销', '是否确认？', function () {
+                            cancelPurchaseOrderTransit(ids.join(','));
+                        });
+                    }else {
+                        febs.alert.warn('请勿重复操作');
+                    }
+                });
+            }
+        });
+
+        function initPurchaseRequisitionTable() {
+            tableIns = febs.table.init({
+                elem: '#purchaseOrderTransitTable',
+                id: 'purchaseOrderTransitTable',
+                url: ctx + 'purchaseOrderTransit/list',
+                cols: [[
+                    {type: 'checkbox'},
+                    {field:'number',title:'序号',align:'center',width:60,templet:function (d) {
+                            return d.LAY_INDEX;}},
+                    {title: '状态', templet: '#orderNuclear-state',align:'center',width:90},
+                    {field: 'purchaseRequisitionDate', title: '日期',align:'center',templet:'<div>{{ layui.util.toDateString(d.purchaseRequisitionDate, "yyyy-MM-dd") }}</div>', minWidth: 110, sort: true},
+                    {field: 'orderNumber', title: '单号', minWidth: 145,align:'center'},
+                    {field: 'supplierName', title: '供应商', minWidth: 120,align:'center'},
+                    {field: 'orderCode', title: '编码', minWidth: 120,align:'center'},
+                    {field: 'materialName',title: '名称', minWidth: 55,align:'center'},
+                    {field: 'orderSpecifications', title: '规格', minWidth: 95,align:'center'},
+                    {field: 'orderBrand', title: '品牌', minWidth: 80,align:'center'},
+                    {field: 'orderQuantity', title: '订购数量', minWidth: 80,align:'center'},
+                    {field: 'storageQuantity', title: '收货数量', minWidth: 90,align:'center',
+                        templet: function (data) {
+                            if (data.storageQuantity != null){
+                                return data.storageQuantity;
+                            }else {
+                                return 0;
+                            }
+                        }},
+                    {field: 'refundQuantity', title: '退货数量', minWidth: 95,align:'center',
+                        templet: function (data) {
+                            if (data.refundQuantity != null){
+                                return data.refundQuantity;
+                            }else {
+                                return 0;
+                            }
+                        }},
+                    {field: 'amountPaid', title: '欠交数量', minWidth: 95,align:'center',
+                        templet: function (data) {
+                            return data.orderQuantity - data.storageQuantity;
+                        }
+                    },
+                    {field: 'oweDay', title: '欠交天数', minWidth: 95,align:'center',
+                        templet: function (data) {
+                            if (data.storageQuantity == null){
+                                return data.oweDay;
+                            }else {
+                                return 0;
+                            }
+                        }},
+                    {field: 'orderCompany', title: '计量单位', minWidth: 95,align:'center'},
+                    {field: 'orderSubclass', title: '类别', minWidth: 95,align:'center'},
+                    {field: 'orderRemarks', title: '备注', minWidth: 95,align:'center'}
+                ]]
+            });
+        }
+
+        function getQueryParams() {
+            let params = $searchForm.serializeJson();
+            params.invalidate_ie_cache = new Date();
+            return params;
+        }
+
+        function nuclearPurchaseOrderTransit(ids) {
+            febs.get(ctx + 'purchaseOrderTransit/nuclear/' + ids, null, function () {
+                febs.alert.success('确认核销成功');
+                $query.click();
+            });
+        }
+
+        function cancelPurchaseOrderTransit(ids) {
+            febs.get(ctx + 'purchaseOrderTransit/cancel/' + ids, null, function () {
+                febs.alert.success('取消核销成功');
+                $query.click();
+            });
+        }
+    })
+
+    function purchaseOrderTransitSupplierName(){
+        layui.use(['febs', 'form', 'validate', 'xmSelect'], function () {
+            let $ = layui.$,
+                febs = layui.febs;
+            febs.modal.open('供应商选择列表', 'purchase/purchaseOrderTransitSupplierName', {
+                area:["55%","60%"],
+                yes: function (index, layero) {
+                }
+            });
+        });
+    }
+</script>

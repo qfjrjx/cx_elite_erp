@@ -119,4 +119,10 @@ public class PurchaseOrderSchedule {
     @TableField("order_location")
     private String orderLocation;
 
+    /**
+     * 是否核销1：未核销2：已核销
+     */
+    @TableField("order_nuclear")
+    private String orderNuclear;
+
 }

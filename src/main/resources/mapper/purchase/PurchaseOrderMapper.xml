@@ -233,6 +233,132 @@
         </if>
     </sql>
 
+    <sql id="countPurchaseOrderTransitSql">
+        SELECT
+            COUNT( 1 )
+        FROM
+            (
+                SELECT
+                    pos.order_nuclear,
+                    po.purchase_requisition_date,
+                    po.order_number,
+                    po.supplier_name,
+                    pos.order_code,
+                    pos.material_name,
+                    pos.order_specifications,
+                    pos.order_brand,
+                    pos.order_quantity,
+                    pos.order_company,
+                    pos.order_subclass,
+                    pos.order_remarks,
+                    ws.storage_quantity,
+                    prs.refund_quantity,
+                    (SELECT TIMESTAMPDIFF(DAY,po.purchase_requisition_date ,DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%S')))oweDay
+                FROM
+                    jr_purchase_order po
+                        LEFT JOIN jr_purchase_order_schedule pos ON ( po.order_number = pos.odd_numbers )
+                        LEFT JOIN jr_warehouse_storage ws ON ( po.order_number = ws.order_number )
+                        LEFT JOIN jr_purchase_refund_schedule prs ON ( po.order_number = prs.order_number )
+
+                WHERE
+                    1 = 1
+                <if test="purchaseOrder.signedDateFrom != null and purchaseOrder.signedDateFrom !=''">
+                    And po.order_preparation_date &gt;= #{purchaseOrder.signedDateFrom}
+                </if>
+                <if test="purchaseOrder.signedDateTo != null and purchaseOrder.signedDateTo !=''">
+                    And po.order_preparation_date &lt;= #{purchaseOrder.signedDateTo}
+                </if>
+                <if test="purchaseOrder.supplierName != null and purchaseOrder.supplierName != ''">
+                    AND po.supplier_name = #{purchaseOrder.supplierName}
+                </if>
+                <if test="purchaseOrder.orderCode != null and purchaseOrder.orderCode != ''">
+                    AND pos.order_code = #{purchaseOrder.orderCode}
+                </if>
+                <if test="purchaseOrder.materialName != null and purchaseOrder.materialName != ''">
+                    AND pos.material_name = #{purchaseOrder.materialName}
+                </if>
+                <if test="purchaseOrder.orderSpecifications != null and purchaseOrder.orderSpecifications != ''">
+                    AND pos.order_specifications = #{purchaseOrder.orderSpecifications}
+                </if>
+                <if test="purchaseOrder.orderSubclass != null and purchaseOrder.orderSubclass != ''">
+                    AND pos.order_subclass = #{purchaseOrder.orderSubclass}
+                </if>
+                <if test="purchaseOrder.orderNuclear != null and purchaseOrder.orderNuclear != ''">
+                    AND pos.order_nuclear = #{purchaseOrder.orderNuclear}
+                </if>
+                <if test="purchaseOrder.oweDay != null and purchaseOrder.oweDay != ''">
+                    AND (SELECT TIMESTAMPDIFF(DAY,po.purchase_requisition_date ,DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%S'))) &gt;= 20
+                </if>
+                <if test="purchaseOrder.orderNumber != null and purchaseOrder.orderNumber != ''">
+                    AND pos.odd_numbers = #{purchaseOrder.orderNumber}
+                </if>
+                GROUP BY
+                    pos.order_code
+            )
+                jr_purchase_order
+        WHERE
+            1 = 1
+    </sql>
+
+    <sql id="findPurchaseOrderTransitPageSql">
+        SELECT
+            pos.id,
+            pos.order_nuclear,
+            po.purchase_requisition_date,
+            po.order_number,
+            po.supplier_name,
+            pos.order_code,
+            pos.material_name,
+            pos.order_specifications,
+            pos.order_brand,
+            pos.order_quantity,
+            pos.order_company,
+            pos.order_subclass,
+            pos.order_remarks,
+            ws.storage_quantity,
+            prs.refund_quantity,
+            (SELECT TIMESTAMPDIFF(DAY,po.purchase_requisition_date ,DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%S')))oweDay
+        FROM
+            jr_purchase_order po
+                LEFT JOIN jr_purchase_order_schedule pos ON ( po.order_number = pos.odd_numbers )
+                LEFT JOIN jr_warehouse_storage ws ON ( po.order_number = ws.order_number )
+                LEFT JOIN jr_purchase_refund_schedule prs ON ( po.order_number = prs.order_number )
+        WHERE
+            1 = 1
+        <if test="purchaseOrder.signedDateFrom != null and purchaseOrder.signedDateFrom !=''">
+            And po.order_preparation_date &gt;= #{purchaseOrder.signedDateFrom}
+        </if>
+        <if test="purchaseOrder.signedDateTo != null and purchaseOrder.signedDateTo !=''">
+            And po.order_preparation_date &lt;= #{purchaseOrder.signedDateTo}
+        </if>
+        <if test="purchaseOrder.supplierName != null and purchaseOrder.supplierName != ''">
+            AND po.supplier_name = #{purchaseOrder.supplierName}
+        </if>
+        <if test="purchaseOrder.orderCode != null and purchaseOrder.orderCode != ''">
+            AND pos.order_code = #{purchaseOrder.orderCode}
+        </if>
+        <if test="purchaseOrder.materialName != null and purchaseOrder.materialName != ''">
+            AND pos.material_name = #{purchaseOrder.materialName}
+        </if>
+        <if test="purchaseOrder.orderSpecifications != null and purchaseOrder.orderSpecifications != ''">
+            AND pos.order_specifications = #{purchaseOrder.orderSpecifications}
+        </if>
+        <if test="purchaseOrder.orderSubclass != null and purchaseOrder.orderSubclass != ''">
+            AND pos.order_subclass = #{purchaseOrder.orderSubclass}
+        </if>
+        <if test="purchaseOrder.orderNuclear != null and purchaseOrder.orderNuclear != ''">
+            AND pos.order_nuclear = #{purchaseOrder.orderNuclear}
+        </if>
+        <if test="purchaseOrder.oweDay != null and purchaseOrder.oweDay != ''">
+            AND (SELECT TIMESTAMPDIFF(DAY,po.purchase_requisition_date ,DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%S'))) &gt;= 20
+        </if>
+        <if test="purchaseOrder.orderNumber != null and purchaseOrder.orderNumber != ''">
+            AND pos.odd_numbers = #{purchaseOrder.orderNumber}
+        </if>
+        GROUP BY
+            pos.order_code
+    </sql>
+
     <select id="countPurchaseOrder" parameterType="com.erp.purchase.entity.PurchaseOrder" resultType="long">
         <include refid="countPurchaseOrderSql"/>
     </select>
@@ -251,6 +377,15 @@
 
     <select id="findPurchasePriceChanges" parameterType="com.erp.purchase.entity.PurchaseOrder" resultType="com.erp.purchase.entity.PurchaseOrder">
         <include refid="findPurchasePriceChangesSql"/>
+    </select>
+
+    <!--订购在途查询-->
+    <select id="countPurchaseOrderTransit" parameterType="com.erp.purchase.entity.PurchaseOrder" resultType="long">
+        <include refid="countPurchaseOrderTransitSql"/>
+    </select>
+
+    <select id="findPurchaseOrderTransitPage" parameterType="com.erp.purchase.entity.PurchaseOrder" resultType="com.erp.purchase.entity.PurchaseOrder">
+        <include refid="findPurchaseOrderTransitPageSql"/>
     </select>
 
     <select id="purchasePriceChangesExport" parameterType="com.erp.purchase.entity.PurchaseOrder" resultType="com.erp.purchase.entity.PurchaseOrder">
@@ -368,7 +503,8 @@
                 order_remarks,
                 order_subclass,
                 order_category,
-                order_location
+                order_location,
+                order_nuclear
              )
         VALUES
             (
@@ -387,7 +523,8 @@
              #{orderRemarks},
              #{orderSubclass},
              #{orderCategory},
-             #{orderLocation}
+             #{orderLocation},
+             #{orderNuclear}
             )
     </insert>
 
@@ -498,5 +635,19 @@
             pos.delivery_date DESC
             LIMIT 2,1;
     </select>
+
+    <update id="purchaseOrderTransitNuclear"  parameterType="com.erp.purchase.entity.PurchaseOrderSchedule">
+        UPDATE
+            jr_purchase_order_schedule
+        set order_nuclear = 2
+        WHERE id=#{ids}
+    </update>
+
+    <update id="purchaseOrderTransitCancel"  parameterType="com.erp.purchase.entity.PurchaseOrderSchedule">
+        UPDATE
+            jr_purchase_order_schedule
+        set order_nuclear = 1
+        WHERE id=#{ids}
+    </update>
 
 </mapper>

@@ -4,6 +4,7 @@ package com.erp.purchase.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.erp.purchase.entity.PurchaseInvoiceStatistical;
 import com.erp.purchase.entity.PurchaseRefund;
 import com.erp.purchase.entity.PurchaseSettlement;
 import com.erp.purchase.entity.PurchaseSettlementSchedule;
@@ -46,4 +47,16 @@ public interface PurchaseSettlementMapper extends BaseMapper<PurchaseSettlement>
     void updateWarehouseStorageData(@Param("settlementNumbers") String settlementNumbers);
 
     void cancelPurchaseSettlementData(@Param("ids") String ids);
+
+    long countPurchaseGoodsStatistical(@Param("purchaseSettlementSchedule") PurchaseSettlementSchedule purchaseSettlementSchedule);
+
+    IPage<PurchaseSettlementSchedule> findPurchaseGoodsStatistical(Page<PurchaseSettlementSchedule> page,@Param("purchaseSettlementSchedule")  PurchaseSettlementSchedule purchaseSettlementSchedule);
+
+    List<PurchaseSettlementSchedule> purchaseGoodsExport(@Param("purchaseSettlementSchedule")  PurchaseSettlementSchedule purchaseSettlementSchedule);
+
+    long countPurchaseInvoiceStatistical(@Param("purchaseInvoiceStatistical") PurchaseInvoiceStatistical purchaseInvoiceStatistical);
+
+    IPage<PurchaseInvoiceStatistical> findPurchaseInvoiceStatistical(Page<PurchaseInvoiceStatistical> page,@Param("purchaseInvoiceStatistical")  PurchaseInvoiceStatistical purchaseInvoiceStatistical);
+
+    List<PurchaseInvoiceStatistical> purchaseInvoiceStatisticalExport(@Param("purchaseInvoiceStatistical") PurchaseInvoiceStatistical purchaseInvoiceStatistical);
 }

@@ -118,6 +118,175 @@
         AND ps.settlement_invoice = '1'
     </sql>
 
+    <sql id="countPurchaseGoodsStatisticalSql">
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_purchase_settlement_schedule pss
+                LEFT JOIN jr_purchase_settlement ps ON ( ps.settlement_numbers = pss.settlement_number )
+                LEFT JOIN jr_warehouse_location wl ON ( ps.settlement_library = wl.location_sorting )
+                LEFT JOIN jr_finance_parameters fpa ON ( ps.currency_id = fpa.id )
+        WHERE
+            1 = 1
+        <if test="purchaseSettlementSchedule.signedDateFrom != null and purchaseSettlementSchedule.signedDateFrom !=''">
+            And ps.settlement_date &gt;= #{purchaseSettlementSchedule.signedDateFrom}
+        </if>
+        <if test="purchaseSettlementSchedule.signedDateTo != null and purchaseSettlementSchedule.signedDateTo !=''">
+            And ps.settlement_date &lt;= #{purchaseSettlementSchedule.signedDateTo}
+        </if>
+        <if test="purchaseSettlementSchedule.settlementNumber != null and purchaseSettlementSchedule.settlementNumber != ''">
+            AND pss.settlement_number = #{purchaseSettlementSchedule.settlementNumber}
+        </if>
+        <if test="purchaseSettlementSchedule.settlementSupplier != null and purchaseSettlementSchedule.settlementSupplier != ''">
+            AND ps.settlement_supplier = #{purchaseSettlementSchedule.settlementSupplier}
+        </if>
+        <if test="purchaseSettlementSchedule.settlementLibrary != null and purchaseSettlementSchedule.settlementLibrary != ''">
+            AND ps.settlement_library = #{purchaseSettlementSchedule.settlementLibrary}
+        </if>
+        <if test="purchaseSettlementSchedule.settlementUse != null and purchaseSettlementSchedule.settlementUse != ''">
+            AND ps.settlement_use = #{purchaseSettlementSchedule.settlementUse}
+        </if>
+        <if test="purchaseSettlementSchedule.currencyId != null and purchaseSettlementSchedule.currencyId != ''">
+            AND ps.currency_id = #{purchaseSettlementSchedule.currencyId}
+        </if>
+        <if test="purchaseSettlementSchedule.settlementSpecifications != null and purchaseSettlementSchedule.settlementSpecifications != ''">
+            AND pss.settlement_specifications = #{purchaseSettlementSchedule.settlementSpecifications}
+        </if>
+        <if test="purchaseSettlementSchedule.settlementName != null and purchaseSettlementSchedule.settlementName != ''">
+            AND pss.settlement_name = #{purchaseSettlementSchedule.settlementName}
+        </if>
+    </sql>
+
+    <sql id="findPurchaseGoodsStatisticalSql">
+        SELECT
+            ps.settlement_date,
+            pss.settlement_number,
+            ps.settlement_use,
+            ps.settlement_supplier,
+            wl.location_name settlementLibrary,
+            pss.settlement_code,
+            pss.settlement_name,
+            pss.settlement_specifications,
+            pss.settlement_brand,
+            pss.settlement_company,
+            fpa.finance_parameter_name currencyName,
+            pss.settlement_quantity,
+            pss.settlement_price,
+            pss.settlement_money,
+            pss.settlement_remarks
+        FROM
+            jr_purchase_settlement_schedule pss
+                LEFT JOIN jr_purchase_settlement ps ON ( ps.settlement_numbers = pss.settlement_number )
+                LEFT JOIN jr_warehouse_location wl ON ( ps.settlement_library = wl.location_sorting )
+                LEFT JOIN jr_finance_parameters fpa ON ( ps.currency_id = fpa.id )
+        WHERE
+             1 = 1
+        <if test="purchaseSettlementSchedule.signedDateFrom != null and purchaseSettlementSchedule.signedDateFrom !=''">
+            And ps.settlement_date &gt;= #{purchaseSettlementSchedule.signedDateFrom}
+        </if>
+        <if test="purchaseSettlementSchedule.signedDateTo != null and purchaseSettlementSchedule.signedDateTo !=''">
+            And ps.settlement_date &lt;= #{purchaseSettlementSchedule.signedDateTo}
+        </if>
+        <if test="purchaseSettlementSchedule.settlementNumber != null and purchaseSettlementSchedule.settlementNumber != ''">
+            AND pss.settlement_number = #{purchaseSettlementSchedule.settlementNumber}
+        </if>
+        <if test="purchaseSettlementSchedule.settlementSupplier != null and purchaseSettlementSchedule.settlementSupplier != ''">
+            AND ps.settlement_supplier = #{purchaseSettlementSchedule.settlementSupplier}
+        </if>
+        <if test="purchaseSettlementSchedule.settlementLibrary != null and purchaseSettlementSchedule.settlementLibrary != ''">
+            AND ps.settlement_library = #{purchaseSettlementSchedule.settlementLibrary}
+        </if>
+        <if test="purchaseSettlementSchedule.settlementUse != null and purchaseSettlementSchedule.settlementUse != ''">
+            AND ps.settlement_use = #{purchaseSettlementSchedule.settlementUse}
+        </if>
+        <if test="purchaseSettlementSchedule.currencyId != null and purchaseSettlementSchedule.currencyId != ''">
+            AND ps.currency_id = #{purchaseSettlementSchedule.currencyId}
+        </if>
+        <if test="purchaseSettlementSchedule.settlementSpecifications != null and purchaseSettlementSchedule.settlementSpecifications != ''">
+            AND pss.settlement_specifications = #{purchaseSettlementSchedule.settlementSpecifications}
+        </if>
+        <if test="purchaseSettlementSchedule.settlementName != null and purchaseSettlementSchedule.settlementName != ''">
+            AND pss.settlement_name = #{purchaseSettlementSchedule.settlementName}
+        </if>
+    </sql>
+
+    <sql id="countPurchaseInvoiceStatisticalSql">
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_purchase_settlement_schedule pss
+                LEFT JOIN jr_purchase_settlement ps ON ( ps.settlement_numbers = pss.settlement_number )
+                LEFT JOIN jr_purchase_invoice_schedule pis ON ( pis.invoice_code = pss.settlement_number )
+        WHERE
+            1 = 1
+        <if test="purchaseInvoiceStatistical.signedDateFrom != null and purchaseInvoiceStatistical.signedDateFrom !=''">
+            And ps.settlement_date &gt;= #{purchaseInvoiceStatistical.signedDateFrom}
+        </if>
+
+        <if test="purchaseInvoiceStatistical.signedDateTo != null and purchaseInvoiceStatistical.signedDateTo !=''">
+            And ps.settlement_date &lt;= #{purchaseInvoiceStatistical.signedDateTo}
+        </if>
+        <if test="purchaseInvoiceStatistical.whetherInvoice != null and purchaseInvoiceStatistical.whetherInvoice != ''">
+            AND pss.whether_invoice = #{purchaseInvoiceStatistical.whetherInvoice}
+        </if>
+        <if test="purchaseInvoiceStatistical.settlementNumber != null and purchaseInvoiceStatistical.settlementNumber != ''">
+            AND pss.settlement_number = #{purchaseInvoiceStatistical.settlementNumber}
+        </if>
+        <if test="purchaseInvoiceStatistical.settlementNumber != null and purchaseInvoiceStatistical.settlementNumber != ''">
+            AND pss.settlement_specifications = #{purchaseInvoiceStatistical.settlementSpecifications}
+        </if>
+        <if test="purchaseInvoiceStatistical.settlementSubclass != null and purchaseInvoiceStatistical.settlementSubclass != ''">
+            AND pss.settlement_subclass = #{purchaseInvoiceStatistical.settlementSubclass}
+        </if>
+        <if test="purchaseInvoiceStatistical.settlementSupplier != null and purchaseInvoiceStatistical.settlementSupplier != ''">
+            AND ps.settlement_supplier = #{purchaseInvoiceStatistical.settlementSupplier}
+        </if>
+    </sql>
+
+    <sql id="findPurchaseInvoiceStatisticalSql">
+        SELECT
+            ps.settlement_date,
+            pis.invoice_numbers,
+            ps.settlement_supplier,
+            pss.settlement_code,
+            pss.settlement_name,
+            pss.settlement_specifications,
+            pss.settlement_quantity,
+            pis.invoice_amount,
+            (pis.invoice_amount - pss.settlement_quantity) notInvoice,
+            pss.settlement_company,
+            pss.settlement_price,
+            pss.settlement_money
+        FROM
+            jr_purchase_settlement_schedule pss
+                LEFT JOIN jr_purchase_settlement ps ON ( ps.settlement_numbers = pss.settlement_number )
+                LEFT JOIN jr_purchase_invoice_schedule pis ON ( pis.invoice_code = pss.settlement_number )
+        WHERE
+            1 = 1
+        <if test="purchaseInvoiceStatistical.signedDateFrom != null and purchaseInvoiceStatistical.signedDateFrom !=''">
+            And ps.settlement_date &gt;= #{purchaseInvoiceStatistical.signedDateFrom}
+        </if>
+
+        <if test="purchaseInvoiceStatistical.signedDateTo != null and purchaseInvoiceStatistical.signedDateTo !=''">
+            And ps.settlement_date &lt;= #{purchaseInvoiceStatistical.signedDateTo}
+        </if>
+        <if test="purchaseInvoiceStatistical.whetherInvoice != null and purchaseInvoiceStatistical.whetherInvoice != ''">
+            AND pss.whether_invoice = #{purchaseInvoiceStatistical.whetherInvoice}
+        </if>
+        <if test="purchaseInvoiceStatistical.settlementName != null and purchaseInvoiceStatistical.settlementName != ''">
+            AND pss.settlement_name = #{purchaseInvoiceStatistical.settlementName}
+        </if>
+        <if test="purchaseInvoiceStatistical.settlementSpecifications != null and purchaseInvoiceStatistical.settlementSpecifications != ''">
+            AND pss.settlement_specifications = #{purchaseInvoiceStatistical.settlementSpecifications}
+        </if>
+        <if test="purchaseInvoiceStatistical.settlementSubclass != null and purchaseInvoiceStatistical.settlementSubclass != ''">
+            AND pss.settlement_subclass = #{purchaseInvoiceStatistical.settlementSubclass}
+        </if>
+        <if test="purchaseInvoiceStatistical.settlementSupplier != null and purchaseInvoiceStatistical.settlementSupplier != ''">
+            AND ps.settlement_supplier = #{purchaseInvoiceStatistical.settlementSupplier}
+        </if>
+    </sql>
+
     <select id="countPurchaseSettlement" parameterType="com.erp.purchase.entity.PurchaseSettlement" resultType="long">
         <include refid="countPurchaseSettlementSql"/>
     </select>
@@ -133,6 +302,24 @@
     <!--采购发票查询-->
     <select id="purchaseSettlementAddQuery" parameterType="com.erp.purchase.entity.PurchaseSettlementSchedule" resultType="com.erp.purchase.entity.PurchaseSettlementSchedule">
         <include refid="purchaseSettlementAddQuerySql"/>
+    </select>
+
+    <!--收货统计查询-->
+    <select id="countPurchaseGoodsStatistical" parameterType="com.erp.purchase.entity.PurchaseSettlementSchedule" resultType="long">
+        <include refid="countPurchaseGoodsStatisticalSql"/>
+    </select>
+
+    <select id="findPurchaseGoodsStatistical" parameterType="com.erp.purchase.entity.PurchaseSettlementSchedule" resultType="com.erp.purchase.entity.PurchaseSettlementSchedule">
+        <include refid="findPurchaseGoodsStatisticalSql"/>
+    </select>
+
+    <!--发票统计查询-->
+    <select id="countPurchaseInvoiceStatistical" parameterType="com.erp.purchase.entity.PurchaseInvoiceStatistical" resultType="long">
+        <include refid="countPurchaseInvoiceStatisticalSql"/>
+    </select>
+
+    <select id="findPurchaseInvoiceStatistical" parameterType="com.erp.purchase.entity.PurchaseInvoiceStatistical" resultType="com.erp.purchase.entity.PurchaseInvoiceStatistical">
+        <include refid="findPurchaseInvoiceStatisticalSql"/>
     </select>
 
     <!--向数据库添加采购订单数据-->
@@ -277,5 +464,51 @@
         set storage_state = 2
         WHERE storage_coding = #{settlementNumbers}
     </update>
+
+    <select id="purchaseGoodsExport" parameterType="com.erp.purchase.entity.PurchaseSettlementSchedule" resultType="com.erp.purchase.entity.PurchaseSettlementSchedule">
+        SELECT
+            ps.settlement_date,
+            pss.settlement_number,
+            ps.settlement_use,
+            ps.settlement_supplier,
+            wl.location_name settlementLibrary,
+            pss.settlement_code,
+            pss.settlement_name,
+            pss.settlement_specifications,
+            pss.settlement_brand,
+            pss.settlement_company,
+            fpa.finance_parameter_name currencyName,
+            pss.settlement_quantity,
+            pss.settlement_price,
+            pss.settlement_money,
+            pss.settlement_remarks
+        FROM
+            jr_purchase_settlement_schedule pss
+                LEFT JOIN jr_purchase_settlement ps ON ( ps.settlement_numbers = pss.settlement_number )
+                LEFT JOIN jr_warehouse_location wl ON ( ps.settlement_library = wl.location_sorting )
+                LEFT JOIN jr_finance_parameters fpa ON ( ps.currency_id = fpa.id )
+    </select>
+
+    <select id="purchaseInvoiceStatisticalExport" parameterType="com.erp.purchase.entity.PurchaseInvoiceStatistical" resultType="com.erp.purchase.entity.PurchaseInvoiceStatistical">
+        SELECT
+            ps.settlement_date,
+            pis.invoice_numbers,
+            ps.settlement_supplier,
+            pss.settlement_code,
+            pss.settlement_name,
+            pss.settlement_specifications,
+            pss.settlement_quantity,
+            pis.invoice_amount,
+            (pis.invoice_amount - pss.settlement_quantity) notInvoice,
+            pss.settlement_company,
+            pss.settlement_price,
+            pss.settlement_money
+        FROM
+            jr_purchase_settlement_schedule pss
+                LEFT JOIN jr_purchase_settlement ps ON ( ps.settlement_numbers = pss.settlement_number )
+                LEFT JOIN jr_purchase_invoice_schedule pis ON ( pis.invoice_code = pss.settlement_number )
+        WHERE
+            1 = 1
+    </select>
 
 </mapper>

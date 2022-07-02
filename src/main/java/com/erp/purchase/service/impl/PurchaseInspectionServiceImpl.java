@@ -486,4 +486,12 @@ public class PurchaseInspectionServiceImpl extends ServiceImpl<PurchaseInspectio
         baseMapper.deleteWarehouseStorage(purchaseInspectionSchedule.getUuid());
     }
 
+    @Override
+    public IPage<PurchaseInspection> purchaseSupplyYieldList(QueryRequest request, PurchaseInspection purchaseInspection) {
+        Page<PurchaseInspection> page = new Page<>(request.getPageNum(), request.getPageSize());
+        page.setSearchCount(false);
+        page.setTotal(baseMapper.countPurchaseSupplyYield(purchaseInspection));
+        return baseMapper.findPurchaseSupplyYieldPage(page,purchaseInspection);
+    }
+
 }

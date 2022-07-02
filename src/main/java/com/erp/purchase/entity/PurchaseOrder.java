@@ -189,6 +189,26 @@ public class PurchaseOrder {
      */
     private String orderLocation;
 
+    /**
+     * 是否核销
+     */
+    private String orderNuclear;
+
+    /**
+     * 入库数量
+     */
+    private String storageQuantity;
+
+    /**
+     * 退货数量
+     */
+    private String refundQuantity;
+
+    /**
+     * 欠交天数
+     */
+    private String oweDay;
+
     private transient String signedDateFrom;
     private transient String signedDateTo;
 

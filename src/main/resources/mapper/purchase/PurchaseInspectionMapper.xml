@@ -94,6 +94,61 @@
 
     </sql>
 
+    <sql id="findPurchaseSupplyYieldPageSql">
+        SELECT
+            pi.supplier_name,
+            pis.order_quantity,
+            pis.material_name,
+            pis.inspectionr_specifications,
+            pis.inspection_qualified
+        FROM
+            jr_purchase_inspection pi
+            LEFT JOIN jr_purchase_inspection_schedule pis ON ( pi.inspection_number = pis.inspection_number )
+        WHERE
+            1 = 1
+        AND (pis.inspection_state = '3' or pis.inspection_state = '4')
+        <if test="purchaseInspection.signedDateFrom != null and purchaseInspection.signedDateFrom !=''">
+            And pi.purchase_requisition_date &gt;= #{purchaseInspection.signedDateFrom}
+        </if>
+        <if test="purchaseInspection.signedDateTo != null and purchaseInspection.signedDateTo !=''">
+            And pi.purchase_requisition_date &lt;= #{purchaseInspection.signedDateTo}
+        </if>
+        <if test="purchaseInspection.supplierName != null and purchaseInspection.supplierName != ''">
+            AND pi.supplier_name = #{purchaseInspection.supplierName}
+        </if>
+        <if test="purchaseInspection.materialName != null and purchaseInspection.materialName != ''">
+            AND pis.material_name = #{purchaseInspection.materialName}
+        </if>
+        <if test="purchaseInspection.inspectionrSpecifications != null and purchaseInspection.inspectionrSpecifications != ''">
+            AND pis.inspectionr_specifications = #{purchaseInspection.inspectionrSpecifications}
+        </if>
+    </sql>
+
+    <sql id="countPurchaseSupplyYieldSql">
+        SELECT
+            COUNT( 1 )
+        FROM
+            jr_purchase_inspection pi
+            LEFT JOIN jr_purchase_inspection_schedule pis ON ( pi.inspection_number = pis.inspection_number )
+        WHERE
+             1 = 1
+        AND (pis.inspection_state = '3' or pis.inspection_state = '4')
+        <if test="purchaseInspection.signedDateFrom != null and purchaseInspection.signedDateFrom !=''">
+            And pi.purchase_requisition_date &gt;= #{purchaseInspection.signedDateFrom}
+        </if>
+        <if test="purchaseInspection.signedDateTo != null and purchaseInspection.signedDateTo !=''">
+            And pi.purchase_requisition_date &lt;= #{purchaseInspection.signedDateTo}
+        </if>
+        <if test="purchaseInspection.supplierName != null and purchaseInspection.supplierName != ''">
+            AND pi.supplier_name = #{purchaseInspection.supplierName}
+        </if>
+        <if test="purchaseInspection.materialName != null and purchaseInspection.materialName != ''">
+            AND pis.material_name = #{purchaseInspection.materialName}
+        </if>
+        <if test="purchaseInspection.inspectionrSpecifications != null and purchaseInspection.inspectionrSpecifications != ''">
+            AND pis.inspectionr_specifications = #{purchaseInspection.inspectionrSpecifications}
+        </if>
+    </sql>
 
     <select id="countPurchaseInspection" parameterType="com.erp.purchase.entity.PurchaseInspection" resultType="long">
         <include refid="countPurchaseInspection"/>
@@ -101,6 +156,14 @@
 
     <select id="findPurchaseInspectionPage" parameterType="com.erp.purchase.entity.PurchaseInspection" resultType="com.erp.purchase.entity.PurchaseInspection">
         <include refid="findPurchaseInspectionPage"/>
+    </select>
+
+    <select id="countPurchaseSupplyYield" parameterType="com.erp.purchase.entity.PurchaseInspection" resultType="long">
+        <include refid="countPurchaseSupplyYieldSql"/>
+    </select>
+
+    <select id="findPurchaseSupplyYieldPage" parameterType="com.erp.purchase.entity.PurchaseInspection" resultType="com.erp.purchase.entity.PurchaseInspection">
+        <include refid="findPurchaseSupplyYieldPageSql"/>
     </select>
 
     <!-- 来货检验查询数据 -->

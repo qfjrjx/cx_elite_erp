@@ -7,10 +7,7 @@ import com.erp.common.entity.FebsConstant;
 import com.erp.common.entity.FebsResponse;
 import com.erp.common.entity.QueryRequest;
 import com.erp.common.utils.FebsUtil;
-import com.erp.production.entity.ProductionPlan;
-import com.erp.production.entity.ProductionPlanSchedule;
-import com.erp.production.entity.SetupBom;
-import com.erp.production.entity.SetupBomSchedule;
+import com.erp.production.entity.*;
 import com.erp.production.service.IProductionPlanService;
 import com.wuwenze.poi.ExcelKit;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -212,4 +209,38 @@ public class ProductionPlanController extends BaseController {
         List<ProductionPlan> productionPlans = this.productionPlanService.productionStatisticalExport(productionPlan);
         ExcelKit.$Export(ProductionPlan.class, response).downXlsx(productionPlans, false);
     }
+
+    /**
+     * 安排采购
+     * @param productionPlan
+     * @return
+     * @throws ParseException
+     */
+    @ControllerEndpoint(operation = "新增ProductionPlan", exceptionMessage = "新增ProductionPlan失败")
+    @PostMapping("purchaseProduction/arrange")
+    @ResponseBody
+    @RequiresPermissions("purchaseProduction:arrange")
+    public FebsResponse updatePurchaseProduction(@Valid ProductionPlan productionPlan) throws ParseException {
+        this.productionPlanService.updatePurchaseProduction(productionPlan);
+        return new FebsResponse().success();
+    }
+
+    @ControllerEndpoint(operation = "确认", exceptionMessage = "确认失败")
+    @GetMapping("purchaseProduction/complete/{ids}")
+    @ResponseBody
+    @RequiresPermissions("purchaseProduction:complete")
+    public FebsResponse completePurchaseProductionTable(@PathVariable String ids) throws ParseException {
+        this.productionPlanService.completePurchaseProductionTable(ids);
+        return new FebsResponse().success();
+    }
+
+    @ControllerEndpoint(operation = "导出PersonnelDormitoryInformation", exceptionMessage = "导出Excel失败")
+    @GetMapping("purchaseProduction/export")
+    @RequiresPermissions("purchaseProduction:export")
+    public void purchaseProductionExport(PurchaseProductionExport purchaseProductionExport, HttpServletResponse response) {
+        List<PurchaseProductionExport> productionStatisticalExports = this.productionPlanService.purchaseProductionExport(purchaseProductionExport);
+        ExcelKit.$Export(PurchaseProductionExport.class, response).downXlsx(productionStatisticalExports, false);
+    }
+
+
 }

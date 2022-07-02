@@ -22,8 +22,8 @@ import java.util.Date;
  */
 @Data
 @TableName("jr_production_plan")
-@Excel("生产计划")
-public class ProductionPlan {
+@Excel("生产采购统计")
+public class PurchaseProductionExport {
 
     /**
      * 主键
@@ -35,7 +35,7 @@ public class ProductionPlan {
      * 状态：1 登记 2 完成
      */
     @TableField("plan_state")
-    @ExcelField(value = "状态", writeConverterExp = "1=登记,2=完成")
+    @ExcelField(value = "状态", writeConverterExp = "1=未完,2=完成")
     private String planState;
 
     /**
@@ -173,14 +173,12 @@ public class ProductionPlan {
      * 金额
      */
     @TableField("plan_money")
-    @ExcelField(value = "金额")
     private BigDecimal planMoney;
 
     /**
      * 生产负责人
      */
     @TableField("plan_head")
-    @ExcelField(value = "生产负责人")
     private String planHead;
 
     /**
@@ -188,7 +186,6 @@ public class ProductionPlan {
      */
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     @DateTimeFormat(pattern="yyyy-MM-dd")
-    @ExcelField(value = "生产预计完成", writeConverter = TimeConverter.class)
     @TableField("plan_expect_date")
     private Date planExpectDate;
 
@@ -197,7 +194,6 @@ public class ProductionPlan {
      */
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     @DateTimeFormat(pattern="yyyy-MM-dd")
-    @ExcelField(value = "生产实际完成", writeConverter = TimeConverter.class)
     @TableField("plan_actual_date")
     private Date planActualDate;
 
@@ -205,14 +201,12 @@ public class ProductionPlan {
      * 生产工资
      */
     @TableField("plan_wage")
-    @ExcelField(value = "生产工资")
     private BigDecimal planWage;
 
     /**
      * 生产负责人
      */
     @TableField("plan_head_one")
-    @ExcelField(value = "生产负责人")
     private String planHeadOne;
 
     /**
@@ -220,7 +214,6 @@ public class ProductionPlan {
      */
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     @DateTimeFormat(pattern="yyyy-MM-dd")
-    @ExcelField(value = "生产预计完成", writeConverter = TimeConverter.class)
     @TableField("plan_expect_date_one")
     private Date planExpectDateOne;
 
@@ -229,7 +222,6 @@ public class ProductionPlan {
      */
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     @DateTimeFormat(pattern="yyyy-MM-dd")
-    @ExcelField(value = "生产实际完成", writeConverter = TimeConverter.class)
     @TableField("plan_actual_date_one")
     private Date planActualDateOne;
 
@@ -237,14 +229,12 @@ public class ProductionPlan {
      * 生产工资
      */
     @TableField("plan_wage_one")
-    @ExcelField(value = "生产工资")
     private BigDecimal planWageOne;
 
     /**
      * 生产内容
      */
     @TableField("plan_content")
-    @ExcelField(value = "生产内容")
     private String planContent;
 
     /**
@@ -261,13 +251,14 @@ public class ProductionPlan {
      * 采购负责人
      */
     @TableField("plan_negative")
+    @ExcelField(value = "采购负责人")
     private String planNegative;
 
     /**
      * 采购预计完成时间
      */
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
-    @DateTimeFormat(pattern="yyyy-MM-dd")
+    @ExcelField(value = "采购预计完成时间", writeConverter = TimeConverter.class)
     @TableField("plan_expect_date_two")
     private Date planExpectDateTwo;
 
@@ -275,7 +266,7 @@ public class ProductionPlan {
      * 采购实际完成时间
      */
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
-    @DateTimeFormat(pattern="yyyy-MM-dd")
+    @ExcelField(value = "采购实际完成时间", writeConverter = TimeConverter.class)
     @TableField("plan_actual_date_two")
     private Date planActualDateTwo;
 
@@ -283,10 +274,7 @@ public class ProductionPlan {
      * 采购内容
      */
     @TableField("plan_content_one")
+    @ExcelField(value = "采购内容")
     private String planContentOne;
-
-    //采购实际完成时间
-    private transient String signedDateFromTwo;
-    private transient String signedDateToTwo;
 
 }

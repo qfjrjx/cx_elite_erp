@@ -4,6 +4,7 @@ package com.erp.purchase.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.erp.common.entity.QueryRequest;
+import com.erp.purchase.entity.PurchaseInvoiceStatistical;
 import com.erp.purchase.entity.PurchaseSettlement;
 import com.erp.purchase.entity.PurchaseSettlementSchedule;
 
@@ -61,4 +62,12 @@ public interface IPurchaseSettlementService extends IService<PurchaseSettlement>
     void cancelPurchaseSettlement(String ids);
 
     IPage<PurchaseSettlementSchedule> purchaseSettlementAddQuery(QueryRequest request, PurchaseSettlementSchedule purchaseSettlementSchedule);
+
+    IPage<PurchaseSettlementSchedule> findPurchaseGoodsStatistical(QueryRequest request, PurchaseSettlementSchedule purchaseSettlementSchedule);
+
+    List<PurchaseSettlementSchedule> purchaseGoodsExport(PurchaseSettlementSchedule purchaseSettlementSchedule);
+
+    IPage<PurchaseInvoiceStatistical> findPurchaseInvoiceStatistical(QueryRequest request, PurchaseInvoiceStatistical purchaseInvoiceStatistical);
+
+    List<PurchaseInvoiceStatistical> purchaseInvoiceStatisticalExport(PurchaseInvoiceStatistical purchaseInvoiceStatistical);
 }

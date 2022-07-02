@@ -4,10 +4,7 @@ package com.erp.production.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.erp.production.entity.ProductionPlan;
-import com.erp.production.entity.ProductionPlanSchedule;
-import com.erp.production.entity.SetupBom;
-import com.erp.production.entity.SetupBomSchedule;
+import com.erp.production.entity.*;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -73,4 +70,10 @@ public interface ProductionPlanMapper extends BaseMapper<ProductionPlan> {
     List<ProductionPlan> productionStatisticalExport(@Param("productionPlan") ProductionPlan productionPlan);
 
     void shipmentProductionPlan(@Param("productionPlan") ProductionPlan productionPlan);
+
+    void updatePurchaseProduction(@Param("productionPlan") ProductionPlan productionPlan);
+
+    void completePurchaseProductionTable(@Param("productionPlan") ProductionPlan productionPlan);
+
+    List<PurchaseProductionExport> purchaseProductionExport(@Param("productionPlan") PurchaseProductionExport purchaseProductionExport);
 }

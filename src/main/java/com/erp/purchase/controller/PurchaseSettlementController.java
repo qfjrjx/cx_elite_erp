@@ -7,6 +7,7 @@ import com.erp.common.entity.FebsConstant;
 import com.erp.common.entity.FebsResponse;
 import com.erp.common.entity.QueryRequest;
 import com.erp.common.utils.FebsUtil;
+import com.erp.purchase.entity.PurchaseInvoiceStatistical;
 import com.erp.purchase.entity.PurchaseSettlement;
 import com.erp.purchase.entity.PurchaseSettlementSchedule;
 import com.erp.purchase.service.IPurchaseSettlementService;
@@ -137,5 +138,57 @@ public class PurchaseSettlementController extends BaseController {
     public FebsResponse purchaseSettlementAddQuery(QueryRequest request, PurchaseSettlementSchedule purchaseSettlementSchedule) {
         Map<String, Object> dataTable = getDataTable(this.purchaseSettlementService.purchaseSettlementAddQuery(request,purchaseSettlementSchedule));
         return new FebsResponse().success().data(dataTable);
+    }
+
+    /**
+     * 收货统计查询
+     */
+    @GetMapping("purchaseGoods/list")
+    @ResponseBody
+    @RequiresPermissions("purchaseGoodsStatistical:view")
+    public FebsResponse purchaseGoodsStatisticalList(QueryRequest request, PurchaseSettlementSchedule purchaseSettlementSchedule) {
+        Map<String, Object> dataTable = getDataTable(this.purchaseSettlementService.findPurchaseGoodsStatistical(request, purchaseSettlementSchedule));
+        return new FebsResponse().success().data(dataTable);
+    }
+
+    /**
+     * 收货统计导出
+     * @param
+     * @param purchaseSettlementSchedule
+     * @param response
+     */
+    @ControllerEndpoint(operation = "导出purchasePriceChanges", exceptionMessage = "导出Excel失败")
+    @GetMapping("purchaseGoods/excel")
+    @RequiresPermissions("purchasePriceChanges:export")
+    public void export(PurchaseSettlementSchedule purchaseSettlementSchedule, HttpServletResponse response) {
+        List<PurchaseSettlementSchedule> purchaseSettlementScheduleData = this.purchaseSettlementService.purchaseGoodsExport(purchaseSettlementSchedule);
+        ExcelKit.$Export(PurchaseSettlementSchedule.class, response).downXlsx(purchaseSettlementScheduleData, false);
+    }
+
+    /**
+     * 发票统计查询
+     * @param request
+     * @param purchaseInvoiceStatistical
+     * @return
+     */
+    @GetMapping("purchaseInvoiceStatistical/list")
+    @ResponseBody
+    @RequiresPermissions("purchaseInvoiceStatistical:view")
+    public FebsResponse purchaseInvoiceStatisticalList(QueryRequest request, PurchaseInvoiceStatistical purchaseInvoiceStatistical) {
+        Map<String, Object> dataTable = getDataTable(this.purchaseSettlementService.findPurchaseInvoiceStatistical(request, purchaseInvoiceStatistical));
+        return new FebsResponse().success().data(dataTable);
+    }
+
+    /**
+     * 发票导出
+     * @param purchaseInvoiceStatistical
+     * @param response
+     */
+    @ControllerEndpoint(operation = "导出purchasePriceChanges", exceptionMessage = "导出Excel失败")
+    @GetMapping("purchaseInvoiceStatistical/excel")
+    @RequiresPermissions("purchaseInvoiceStatistical:export")
+    public void purchaseInvoiceStatisticalExport(PurchaseInvoiceStatistical purchaseInvoiceStatistical, HttpServletResponse response) {
+        List<PurchaseInvoiceStatistical> purchaseSettlementScheduleData = this.purchaseSettlementService.purchaseInvoiceStatisticalExport(purchaseInvoiceStatistical);
+        ExcelKit.$Export(PurchaseInvoiceStatistical.class, response).downXlsx(purchaseSettlementScheduleData, false);
     }
 }

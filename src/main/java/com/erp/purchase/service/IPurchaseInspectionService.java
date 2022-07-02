@@ -76,4 +76,6 @@ public interface IPurchaseInspectionService extends IService<PurchaseInspection>
     void confirmAssets(String ids) throws ParseException;
 
     void cancelLibrary(String ids);
+
+    IPage<PurchaseInspection> purchaseSupplyYieldList(QueryRequest request, PurchaseInspection purchaseInspection);
 }
